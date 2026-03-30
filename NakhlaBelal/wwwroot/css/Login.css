@@ -1,0 +1,115 @@
+﻿* {
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+
+.Samebody {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* container */
+.container2 {
+    background-color: var(--jade-color);
+    width: 400px;
+    border-radius: 15px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+    
+}
+.container2 button{
+    background-color:var(--evergreen-color) !important;
+}
+
+/* form */
+.form-container {
+    padding: 40px;
+}
+    .form-container .LoginSpanEdited {
+        color: var(--evergreen-color);
+    }
+    .form-container button {
+        background-color: var(--evergreen-color) !important;
+        color: var(--cotton-color);
+    }
+        .form-container button:hover {
+            background-color: var(--cotton-color) !important;
+            color: var(--evergreen-color);
+        }
+
+    .form-container h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: var(--evergreen-color);
+    }
+
+/* social icons */
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+    .social-icons .icon {
+        width: 40px;
+        height: 40px;
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #555;
+        transition: 0.3s;
+    }
+
+        .social-icons .icon:hover {
+            background-color: #667eea;
+            color: #fff;
+            border-color: #667eea;
+        }
+
+/* text */
+.form-container span {
+    display: block;
+    text-align: center;
+    font-size: 13px;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* inputs */
+.form-container input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: 0.3s;
+}
+
+    .form-container input:focus {
+        border-color: #667eea;
+        outline: none;
+    }
+
+/* button */
+.form-container button {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: none;
+    background-color: #667eea;
+    color: #fff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .form-container button:hover {
+        background-color: #5563d6;
+    }

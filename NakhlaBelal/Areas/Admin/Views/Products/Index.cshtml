@@ -1,0 +1,953 @@
+﻿@model List<Product>
+@{
+    // ===========================================================================
+    // PAGE METADATA SECTION
+    // ===========================================================================
+    // This section defines metadata for the page layout and title display
+    ViewBag.Title = "Product Management";
+    ViewBag.PageTitle = "Products";
+    ViewBag.Subtitle = "Manage your product catalog";
+}
+
+<!-- =========================================================================== -->
+<!-- MOBILE TABLE HINT -->
+<!-- =========================================================================== -->
+<!--
+    This hint is only visible on mobile devices to inform users they can swipe
+    horizontally to see all table columns on smaller screens
+-->
+<div class="mobile-scroll-hint" style="display: none; background: #f1f5f9; padding: 8px; text-align: center; color: #64748b; font-size: 12px; border-radius: 6px; margin-bottom: 15px;">
+    <i class="fas fa-arrows-left-right"></i> Swipe horizontally to view all columns
+</div>
+
+<!-- =========================================================================== -->
+<!-- PAGE HEADER SECTION -->
+<!-- =========================================================================== -->
+<!--
+    Contains the main page title, subtitle, and action buttons.
+    The "Add Product" button navigates to /admin/products/create
+-->
+<div class="page-header">
+    <div>
+        <h2>Product Catalog</h2>
+        <p class="page-subtitle">Manage your product inventory</p>
+    </div>
+    <div class="header-actions">
+        <!-- Filter button -->
+        <button class="btn btn-secondary">
+            <i class="fas fa-filter"></i>
+            <span class="desktop-text">Filter</span>
+        </button>
+        <!-- "Add Product" button - Navigates to create page -->
+        <a href="/admin/products/create" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <span class="desktop-text">Add Product</span>
+        </a>
+    </div>
+</div>
+
+<!-- =========================================================================== -->
+<!-- STATS CARDS SECTION -->
+<!-- =========================================================================== -->
+<!--
+    Displays key metrics and statistics about products.
+    Dynamic calculations based on actual database data
+-->
+<div class="stats-container">
+    @{
+        var activeCount = Model.Count(p => p.Status);
+        var totalStock = Model.Sum(p => p.StockQuantity);
+        var avgPrice = Model.Count > 0 ? Model.Average(p => p.Price) : 0;
+    }
+
+    <!-- Total Products Card -->
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-title">Total Products</div>
+            <div class="stat-icon">
+                <i class="fas fa-box"></i>
+            </div>
+        </div>
+        <div class="stat-value">@Model.Count</div>
+        <div class="stat-desc">All products in system</div>
+    </div>
+
+    <!-- Active Products Card -->
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-title">Active Products</div>
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </div>
+        <div class="stat-value">@activeCount</div>
+        <div class="stat-desc">Visible on website</div>
+    </div>
+
+    <!-- Total Stock Card -->
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-title">Total Stock</div>
+            <div class="stat-icon">
+                <i class="fas fa-warehouse"></i>
+            </div>
+        </div>
+        <div class="stat-value">@totalStock</div>
+        <div class="stat-desc">Units in inventory</div>
+    </div>
+
+    <!-- Average Price Card -->
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-title">Avg. Price</div>
+            <div class="stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+        </div>
+        <div class="stat-value">$@avgPrice.ToString("N2")</div>
+        <div class="stat-desc">Per product average</div>
+    </div>
+</div>
+
+<!-- =========================================================================== -->
+<!-- PRODUCTS TABLE SECTION -->
+<!-- =========================================================================== -->
+<!--
+    Main data table displaying all products with sorting, selection, and action buttons.
+    Includes pagination for navigating through multiple pages of results
+-->
+<div class="data-table-container">
+    <!-- Table header with title and action buttons -->
+    <div class="table-header">
+        <h2>All Products</h2>
+        <div class="table-actions">
+            <!-- Export All button -->
+            <button class="table-action" onclick="exportAllProducts()">
+                <i class="fas fa-file-export"></i>
+                <span class="desktop-text">Export All</span>
+            </button>
+            <!-- Print button -->
+            <button class="table-action" onclick="window.print()">
+                <i class="fas fa-print"></i>
+                <span class="desktop-text">Print</span>
+            </button>
+            <!-- Refresh button -->
+            <button class="table-action" onclick="refreshProducts()">
+                <i class="fas fa-sync-alt"></i>
+                <span class="desktop-text">Refresh</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main products table -->
+    <table class="data-table">
+        <thead>
+            <tr>
+                <!-- Checkbox column for selecting multiple rows -->
+                <th style="width: 40px;">
+                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                </th>
+                <!-- Sortable columns with sort icons -->
+                <th data-sortable="true">Product <i class="fas fa-sort"></i></th>
+                <th data-sortable="true">SKU <i class="fas fa-sort"></i></th>
+                <th data-sortable="true">Category <i class="fas fa-sort"></i></th>
+                <th data-sortable="true">Price <i class="fas fa-sort"></i></th>
+                <th data-sortable="true">Stock <i class="fas fa-sort"></i></th>
+                <th data-sortable="true">Status <i class="fas fa-sort"></i></th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                <!-- Loop through each product in the model -->
+                @foreach (var product in Model)
+                {
+                    <!-- Table row for each product with click handler for selection -->
+                    <tr class="table-row" data-item-id="@product.Id" onclick="selectRow(event, this)">
+                        <!-- Checkbox for row selection -->
+                        <td>
+                            <input type="checkbox" class="row-select" value="@product.Id" onchange="updateSelection(this)">
+                        </td>
+                        <!-- Product name and description -->
+                        <td>
+                            <div class="customer-name">@product.Name</div>
+                            @* <div class="text-muted">@(product.ShortDescription ?? product.Description?.Substring(0, Math.Min(50, product.Description?.Length ?? 0)) + "...")</div> *@
+                        </td>
+                        <!-- SKU -->
+                        <td>
+                            <span class="badge rounded-pill text-bg-secondary">@product.SKU</span>
+                        </td>
+                        <!-- Category -->
+                        <td>
+                            <span class="badge text-bg-primary">@product.Category?.Name</span>
+                        </td>
+                        <!-- Price -->
+                        <td>
+                            <div class="price-display">
+                                <strong>$@product.Price.ToString("N2")</strong>
+                                @if (product.SpecialPrice.HasValue)
+                                {
+                                    <div class="text-muted" style="text-decoration: line-through; font-size: 0.9em;">
+                                        $@product.SpecialPrice.Value.ToString("N2")
+                                    </div>
+                                }
+                            </div>
+                        </td>
+                        <!-- Stock with colored indicator -->
+                        <td>
+                            @if (product.StockQuantity > 0)
+                            {
+                                <span class="stock-indicator @(product.StockQuantity <= product.LowStockThreshold ? "stock-low" : "stock-available")">
+                                    @product.StockQuantity in stock
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="stock-indicator stock-out">Out of stock</span>
+                            }
+                        </td>
+                        <!-- Status with colored dot indicator -->
+                        <td>
+                            @{
+                                var statusClass = product.Status ? "dot-active" : "dot-inactive";
+                                var statusText = product.Status ? "Active" : "Inactive";
+                            }
+                            <span class="status-dot @statusClass"></span>
+                            <span class="mobile-text">@statusText</span>
+                        </td>
+                        <!-- Action buttons (View, Edit, Delete) -->
+                        <td onclick="event.stopPropagation()">
+                            <div class="row-actions">
+                                <!-- View button - opens modal with product details -->
+                                <button class="row-action view" onclick="loadViewModal('@product.Id', event)">
+                                    <i class="fas fa-eye"></i>
+                                    <span class="desktop-text">View</span>
+                                </button>
+                                <!-- Edit button - opens modal with edit form -->
+                                <button class="row-action edit" onclick="loadEditModal('@product.Id', event)">
+                                    <i class="fas fa-edit"></i>
+                                    <span class="desktop-text">Edit</span>
+                                </button>
+                                <!-- Delete button - shows confirmation then deletes product -->
+                                <button class="row-action delete" onclick="deleteProduct('@product.Id', '@product.Name.Replace("'", "\\'")', event)">
+                                    <i class="fas fa-trash"></i>
+                                    <span class="desktop-text">Delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <!-- Empty state when no products exist -->
+                <tr>
+                    <td colspan="8" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-box fa-3x text-muted"></i>
+                            <h4>No Products Found</h4>
+                            <p>Get started by creating your first product.</p>
+                            <a href="/admin/products/create" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add First Product
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- =========================================================================== -->
+    <!-- PAGINATION SECTION -->
+    <!-- =========================================================================== -->
+    <!--
+        Pagination controls for navigating between pages of products.
+        Shows previous/next buttons and numbered page links
+    -->
+    <div class="row">
+        <div class="col-12 d-flex justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    @if (ViewBag.currentPage > 1)
+                    {
+                        <li class="page-item"><a class="page-link" href="/Admin/Products/Index?page=@(ViewBag.currentPage - 1)">Previous</a></li>
+                    }
+
+                    @for (var i = 1; i <= ViewBag.TotalPages; i++)
+                    {
+                        @if (i == ViewBag.currentPage)
+                        {
+                            <li class="page-item active"><a class="page-link" href="/Admin/Products/Index?page=@i">@i</a></li>
+                        }
+                        else
+                        {
+                            <li class="page-item"><a class="page-link" href="/Admin/Products/Index?&page=@i">@i</a></li>
+                        }
+
+                    }
+
+                    @if (ViewBag.currentPage != ViewBag.TotalPages && Model.Any())
+                    {
+                        <li class="page-item"><a class="page-link" href="/Admin/Products/Index?page=@(ViewBag.currentPage + 1)">Next</a></li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+
+
+    <!-- =========================================================================== -->
+    <!-- SELECTION ACTIONS BAR -->
+    <!-- =========================================================================== -->
+    <!--
+        Appears when one or more products are selected.
+        Provides actions for the selected items (export, delete, clear)
+    -->
+    <div class="selection-actions" id="selectionActions">
+        <div class="selected-count">
+            <span id="selectedCount">0</span> products selected
+        </div>
+        <div class="selection-buttons">
+            <!-- Export selected products -->
+            <button class="btn btn-secondary btn-sm" onclick="exportSelectedProducts()">
+                <i class="fas fa-file-export"></i>
+                <span class="desktop-text">Export</span>
+            </button>
+            <!-- Delete selected products -->
+            <button class="btn btn-danger btn-sm" onclick="deleteSelectedProducts()">
+                <i class="fas fa-trash"></i>
+                <span class="desktop-text">Delete</span>
+            </button>
+            <!-- Clear selection -->
+            <button class="btn btn-secondary btn-sm" onclick="clearSelection()">
+                <i class="fas fa-times"></i>
+                <span class="desktop-text">Clear</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- =========================================================================== -->
+    <!-- MODAL CONTAINER -->
+    <!-- =========================================================================== -->
+    <!--
+        Modal container for View and Edit operations.
+        Content is loaded dynamically via AJAX when buttons are clicked
+    -->
+    <div id="productModalContainer" class="modal" style="display: none;">
+        <div class="modal-content">
+            <!-- Content will be loaded dynamically via AJAX -->
+        </div>
+    </div>
+
+    <!-- =========================================================================== -->
+    <!-- JAVASCRIPT SECTION -->
+    <!-- =========================================================================== -->
+@section Scripts {
+        <script>
+            // ===========================================================================
+            // INITIALIZATION
+            // ===========================================================================
+
+            /**
+             * Initializes the page when DOM is fully loaded
+             */
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log('Products page loaded');
+                initProductsPage();
+                setupModalEvents();
+            });
+
+            /**
+             * Initializes product-specific functionality
+             * Sets up event listeners for checkboxes
+             */
+            function initProductsPage() {
+                // Add event listeners to all row selection checkboxes
+                const checkboxes = document.querySelectorAll('.row-select');
+                checkboxes.forEach(cb => {
+                    cb.addEventListener('change', function() {
+                        updateSelection(this);
+                    });
+                });
+            }
+
+            // ===========================================================================
+            // MODAL FUNCTIONS (VIEW/EDIT)
+            // ===========================================================================
+
+            /**
+             * Loads the edit modal for a specific product
+             * param {number} productId - The ID of the product to edit
+             * param {Event} event - The click event
+             */
+            function loadEditModal(productId, event) {
+                if (event) event.stopPropagation();
+
+                const modalContainer = document.getElementById('productModalContainer');
+                const modalContent = modalContainer.querySelector('.modal-content');
+                modalContent.innerHTML = '<div class="modal-loading">Loading edit form...</div>';
+                modalContainer.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+
+                console.log('Loading edit form for product ID:', productId);
+
+                // Load the GetEdit partial view
+                $.ajax({
+                    url: '/Admin/Products/GetEdit/' + productId,
+                    type: 'GET',
+                    success: function(response) {
+                        console.log('Edit form loaded successfully');
+                        modalContent.innerHTML = response;
+                        setupModalEvents();
+                        attachEditFormHandlers();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Error loading edit form:', error);
+                        modalContent.innerHTML = `
+                            <div class="modal-error">
+                                <h4>Error Loading Edit Form</h4>
+                                <p>Status: ${xhr.status} - ${xhr.statusText}</p>
+                                <p>Error: ${error}</p>
+                                <button class="btn btn-primary mt-3" onclick="closeModal()">Close</button>
+                            </div>`;
+                    }
+                });
+            }
+
+            /**
+             * Loads the view modal for a specific product
+             * param {number} productId - The ID of the product to view
+             * param {Event} event - The click event
+             */
+            function loadViewModal(productId, event) {
+                if (event) event.stopPropagation();
+
+                console.log('Loading product details for ID:', productId);
+
+                const modalContainer = document.getElementById('productModalContainer');
+                const modalContent = modalContainer.querySelector('.modal-content');
+                modalContent.innerHTML = '<div class="modal-loading">Loading product details...</div>';
+                modalContainer.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+
+                // Load the GetDetails partial view
+                $.ajax({
+                    url: '/Admin/Products/GetDetails/' + productId,
+                    type: 'GET',
+                    success: function(response) {
+                        console.log('Success! Response received');
+                        modalContent.innerHTML = response;
+                        setupModalEvents();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', {
+                            status: xhr.status,
+                            statusText: xhr.statusText,
+                            error: error
+                        });
+
+                        if (xhr.status === 404) {
+                            modalContent.innerHTML = `
+                                <div class="modal-error">
+                                    <h4>Product Not Found</h4>
+                                    <p>The product with ID ${productId} was not found.</p>
+                                    <p>It may have been deleted or the URL is incorrect.</p>
+                                    <button class="btn btn-primary mt-3" onclick="closeModal()">Close</button>
+                                </div>`;
+                        } else {
+                            modalContent.innerHTML = `
+                                <div class="modal-error">
+                                    <h4>Error Loading Details</h4>
+                                    <p><strong>Status:</strong> ${xhr.status} - ${xhr.statusText}</p>
+                                    <p><strong>Error:</strong> ${error}</p>
+                                    <p>Please check if the Details action exists in your controller.</p>
+                                    <button class="btn btn-primary mt-3" onclick="closeModal()">Close</button>
+                                </div>`;
+                        }
+                    }
+                });
+            }
+
+            /**
+             * Closes the modal
+             */
+            function closeModal() {
+                const modalContainer = document.getElementById('productModalContainer');
+                if (modalContainer) {
+                    modalContainer.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+
+            /**
+             * Sets up event listeners for the modal
+             * - Close on backdrop click
+             * - Close on Escape key
+             * - Prevent clicks inside modal from closing it
+             */
+            function setupModalEvents() {
+                const modalContainer = document.getElementById('productModalContainer');
+                if (!modalContainer) return;
+
+                // Close on backdrop click
+                modalContainer.addEventListener('click', function(e) {
+                    if (e.target === this || e.target.closest('.modal-close')) {
+                        closeModal();
+                    }
+                });
+
+                // Close on Escape key
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && modalContainer.style.display === 'flex') {
+                        closeModal();
+                    }
+                });
+
+                // Prevent clicks inside modal content from closing modal
+                const modalContent = modalContainer.querySelector('.modal-content');
+                if (modalContent) {
+                    modalContent.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                }
+            }
+
+            /**
+             * Attaches form submission handlers to the edit form
+             * Handles AJAX submission and response processing
+             */
+            function attachEditFormHandlers() {
+                // Handle edit form submission
+                const editForm = document.getElementById('editProductFormPartial');
+                if (editForm) {
+                    console.log('Edit form found, attaching submit handler');
+
+                    editForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        console.log('Edit form submitted');
+
+                        // Show loading state
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                        submitBtn.disabled = true;
+
+                        $.ajax({
+                            url: this.action,
+                            type: 'POST',
+                            data: $(this).serialize(),
+                            success: function(response) {
+                                console.log('Edit response:', response);
+
+                                if (response.success) {
+                                    // Show success message
+                                    alert(response.message || 'Product updated successfully!');
+                                    closeModal();
+                                    // Reload the page to show updated data
+                                    window.location.reload();
+                                } else {
+                                    // Show validation errors or error message
+                                    if (response.error) {
+                                        alert('Error: ' + response.error);
+                                    } else if (response.errors) {
+                                        // Show validation errors
+                                        alert('Validation errors: ' + response.errors.join(', '));
+                                    } else {
+                                        // Assume response contains HTML with validation errors
+                                        const modalContent = document.querySelector('#productModalContainer .modal-content');
+                                        modalContent.innerHTML = response;
+                                        // Re-attach handlers to the new form
+                                        attachEditFormHandlers();
+                                    }
+                                }
+                            },
+                            error: function(xhr, status, error) {
+                                console.error('Edit AJAX error:', error);
+                                alert('Error updating product. Please try again.');
+
+                                // Reset button
+                                submitBtn.innerHTML = originalText;
+                                submitBtn.disabled = false;
+                            },
+                            complete: function() {
+                                // Reset button if not already reset
+                                if (submitBtn.disabled) {
+                                    submitBtn.innerHTML = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            }
+                        });
+                    });
+                } else {
+                    console.log('Edit form not found');
+                }
+            }
+
+            // ===========================================================================
+            // DELETE FUNCTIONS
+            // ===========================================================================
+
+            /**
+             * Deletes a single product after confirmation
+             * param {number} productId - The ID of the product to delete
+             * param {string} productName - The name of the product (for confirmation message)
+             * param {Event} event - The click event
+             */
+            function deleteProduct(productId, productName, event) {
+                // Show confirmation dialog
+                if (!confirm(`Are you sure you want to delete "${productName}"?\n\nThis action cannot be undone.`)) {
+                    return;
+                }
+
+                console.log('Deleting product:', productId);
+
+                // Show loading on the delete button
+                const deleteBtn = event.target.closest('.delete');
+                if (deleteBtn) {
+                    const originalHtml = deleteBtn.innerHTML;
+                    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    deleteBtn.disabled = true;
+                }
+
+                // Get anti-forgery token for security
+                const token = $('input[name="__RequestVerificationToken"]').val();
+
+                // Send AJAX request to delete from database
+                $.ajax({
+                    url: '/Admin/Products/Delete/' + productId,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token
+                    },
+                    data: {
+                        __RequestVerificationToken: token,
+                        id: productId
+                    },
+                    contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                    success: function(response) {
+                        console.log('Delete response:', response);
+
+                        if (response.success) {
+                            // Show success message
+                            alert(response.message || 'Product deleted successfully!');
+
+                            // Remove from UI with fade animation
+                            const row = document.querySelector(`tr[data-item-id="${productId}"]`);
+                            if (row) {
+                                row.style.transition = 'opacity 0.3s';
+                                row.style.opacity = '0';
+
+                                setTimeout(() => {
+                                    row.remove();
+                                    updateSelectionUI();
+
+                                    // Check if table is now empty
+                                    if (document.querySelectorAll('.data-table tbody tr').length === 0) {
+                                        showEmptyState();
+                                    }
+                                }, 300);
+                            }
+                        } else {
+                            // Show error message
+                            alert(response.message || 'Error deleting product.');
+
+                            // Reset button
+                            if (deleteBtn) {
+                                deleteBtn.innerHTML = '<i class="fas fa-trash"></i><span class="desktop-text">Delete</span>';
+                                deleteBtn.disabled = false;
+                            }
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Delete error:', error);
+                        console.error('Response:', xhr.responseText);
+                        alert('Error deleting product. Please check console for details.');
+
+                        // Reset button
+                        if (deleteBtn) {
+                            deleteBtn.innerHTML = '<i class="fas fa-trash"></i><span class="desktop-text">Delete</span>';
+                            deleteBtn.disabled = false;
+                        }
+                    }
+                });
+            }
+
+            /**
+             * Deletes multiple selected products after confirmation
+             */
+            function deleteSelectedProducts() {
+                const selected = document.querySelectorAll('.row-select:checked');
+                if (selected.length === 0) {
+                    alert('Please select at least one product to delete.');
+                    return;
+                }
+
+                const productIds = Array.from(selected).map(checkbox => checkbox.value);
+                const count = selected.length;
+
+                // Show confirmation dialog
+                if (!confirm(`Are you sure you want to delete ${count} selected product(s)?\n\nThis action cannot be undone.`)) {
+                    return;
+                }
+
+                // Show loading on delete button
+                const deleteBtn = document.querySelector('#selectionActions .btn-danger');
+                if (deleteBtn) {
+                    const originalHtml = deleteBtn.innerHTML;
+                    deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                    deleteBtn.disabled = true;
+                }
+
+                // Get anti-forgery token
+                const token = $('input[name="__RequestVerificationToken"]').val();
+
+                // Send AJAX request for bulk deletion
+                $.ajax({
+                    url: '/Admin/Products/DeleteMultiple',
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': token,
+                        'Content-Type': 'application/json'
+                    },
+                    data: JSON.stringify({
+                        ids: productIds,
+                        __RequestVerificationToken: token
+                    }),
+                    success: function(response) {
+                        console.log('Bulk delete response:', response);
+
+                        if (response.success) {
+                            // Show success message
+                            alert(response.message || `${count} product(s) deleted successfully!`);
+
+                            // Remove selected rows from UI with fade animation
+                            selected.forEach(checkbox => {
+                                const row = checkbox.closest('tr');
+                                if (row) {
+                                    row.style.transition = 'opacity 0.3s';
+                                    row.style.opacity = '0';
+
+                                    setTimeout(() => {
+                                        row.remove();
+                                    }, 300);
+                                }
+                            });
+
+                            // Clear selection and update UI
+                            setTimeout(() => {
+                                clearSelection();
+
+                                // Check if table is now empty
+                                if (document.querySelectorAll('.data-table tbody tr').length === 0) {
+                                    showEmptyState();
+                                }
+                            }, 400);
+                        } else {
+                            // Show error message
+                            alert(response.message || 'Error deleting products.');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Bulk delete error:', error);
+                        alert('Error deleting products. Please try again.');
+                    },
+                    complete: function() {
+                        // Reset button
+                        if (deleteBtn) {
+                            deleteBtn.innerHTML = '<i class="fas fa-trash"></i><span class="desktop-text">Delete</span>';
+                            deleteBtn.disabled = false;
+                        }
+                    }
+                });
+            }
+
+            /**
+             * Shows empty state when no products exist
+             */
+            function showEmptyState() {
+                const tbody = document.querySelector('.data-table tbody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" class="text-center">
+                                <div class="empty-state">
+                                    <i class="fas fa-box fa-3x text-muted"></i>
+                                    <h4>No Products Found</h4>
+                                    <p>Get started by creating your first product.</p>
+                                    <a href="/admin/products/create" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> Add First Product
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+
+            // ===========================================================================
+            // SELECTION MANAGEMENT FUNCTIONS
+            // ===========================================================================
+
+            // Set to store selected item IDs
+            let selectedItems = new Set();
+
+            /**
+             * Handles row selection when clicking on a table row
+             * param {Event} event - The click event
+             * param {HTMLElement} row - The table row element
+             */
+            function selectRow(event, row) {
+                // Don't trigger selection if clicking on checkbox, action buttons, or links
+                if (event.target.type === 'checkbox' ||
+                    event.target.closest('.row-actions') ||
+                    event.target.tagName === 'A') {
+                    return;
+                }
+
+                const checkbox = row.querySelector('.row-select');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    updateSelection(checkbox);
+                }
+            }
+
+            /**
+             * Updates the selection state when a checkbox changes
+             * param {HTMLInputElement} checkbox - The checkbox element
+             */
+            function updateSelection(checkbox) {
+                const itemId = checkbox.value;
+
+                if (checkbox.checked) {
+                    selectedItems.add(itemId);
+                    checkbox.closest('tr').classList.add('selected');
+                } else {
+                    selectedItems.delete(itemId);
+                    checkbox.closest('tr').classList.remove('selected');
+                    const selectAll = document.getElementById('selectAll');
+                    if (selectAll) selectAll.checked = false;
+                }
+
+                updateSelectionUI();
+            }
+
+            /**
+             * Toggles selection of all rows
+             * param {HTMLInputElement} selectAllCheckbox - The "select all" checkbox
+             */
+            function toggleSelectAll(selectAllCheckbox) {
+                const checkboxes = document.querySelectorAll('.row-select');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectAllCheckbox.checked;
+                    updateSelection(checkbox);
+                });
+            }
+
+            /**
+             * Updates the selection UI (counter and actions bar)
+             */
+            function updateSelectionUI() {
+                const count = selectedItems.size;
+                const selectedCountEl = document.getElementById('selectedCount');
+                const actionsBar = document.getElementById('selectionActions');
+
+                if (selectedCountEl) {
+                    selectedCountEl.textContent = count;
+                }
+
+                if (actionsBar) {
+                    if (count > 0) {
+                        actionsBar.classList.add('active');
+                    } else {
+                        actionsBar.classList.remove('active');
+                    }
+                }
+            }
+
+            /**
+             * Clears all selections
+             */
+            function clearSelection() {
+                selectedItems.clear();
+                document.querySelectorAll('.row-select').forEach(cb => {
+                    cb.checked = false;
+                    cb.closest('tr')?.classList.remove('selected');
+                });
+                const selectAll = document.getElementById('selectAll');
+                if (selectAll) selectAll.checked = false;
+                updateSelectionUI();
+            }
+
+            // ===========================================================================
+            // OTHER PRODUCT OPERATIONS
+            // ===========================================================================
+
+            /**
+             * Exports selected products (simulated)
+             */
+            function exportSelectedProducts() {
+                const selected = document.querySelectorAll('.row-select:checked');
+                if (selected.length === 0) {
+                    alert('Please select at least one product to export.');
+                    return;
+                }
+
+                const productIds = Array.from(selected).map(checkbox => checkbox.value);
+                const count = selected.length;
+
+                // Show loading
+                const exportBtn = document.querySelector('#selectionActions .btn-secondary');
+                const originalText = exportBtn ? exportBtn.innerHTML : '';
+
+                if (exportBtn) {
+                    exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing...';
+                    exportBtn.disabled = true;
+                }
+
+                // Simulate export
+                setTimeout(() => {
+                    alert(`Exporting ${count} selected products...\nProduct IDs: ${productIds.join(', ')}`);
+
+                    // Reset button
+                    if (exportBtn) {
+                        exportBtn.innerHTML = originalText;
+                        exportBtn.disabled = false;
+                    }
+                }, 1000);
+            }
+
+            /**
+             * Exports all products (simulated)
+             */
+            function exportAllProducts() {
+                const allProductIds = Array.from(document.querySelectorAll('.row-select')).map(cb => cb.value);
+
+                if (allProductIds.length === 0) {
+                    alert('No products to export.');
+                    return;
+                }
+
+                alert(`Exporting all ${allProductIds.length} products...\nProduct IDs: ${allProductIds.join(', ')}`);
+            }
+
+            /**
+             * Refreshes the products table
+             */
+            function refreshProducts() {
+                // Show loading
+                const refreshBtn = document.querySelector('.table-action:nth-child(3)');
+                const originalText = refreshBtn ? refreshBtn.innerHTML : '';
+
+                if (refreshBtn) {
+                    refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                    refreshBtn.disabled = true;
+                }
+
+                // Reload the page
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+        </script>
+}

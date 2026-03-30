@@ -1,0 +1,105 @@
+﻿@model IEnumerable<ApplicationUser>
+
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-6">
+            <h2 class="display-6">All Users</h2>
+        </div>
+        <div class="col-md-6 text-md-end text-start mt-2 mt-md-0">
+            <a href="/Admin/User/Create" class="btn btn-success">Create</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <th scope="row">@item.Id</th>
+                            <td>@item.FirstName @item.LastName</td>
+                            <td>@item.Email</td>
+                            @if (item.LockoutEnabled)
+                            {
+                                <td><span class="badge text-bg-success">Active</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="badge text-bg-danger">InActive</span></td>
+                            }
+                            @if (User.IsInRole(SD.SUPER_ADMIN_ROLE) || User.IsInRole(SD.ADMIN_ROLE))
+                            {
+                                @if (item.LockoutEnabled)
+                                {
+                                    <td><a href="/Admin/User/LockUnLock/@item.Id" class="btn btn-danger">Lock</a></td>
+                                }
+                                else
+                                {
+                                    <td><a href="/Admin/User/LockUnLock/@item.Id" class="btn btn-success">Un Lock</a></td>
+                                }
+                            }
+                            else
+                            {
+                                <td>No Actions!</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".btn-danger");
+
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault(); // stop normal navigation
+
+                const url = this.getAttribute("href");
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "This action cannot be undone!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, Block it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                          title: "Blocked!",
+                          text: "Your user has been blocked.",
+                          icon: "success"
+                        });
+
+                        // Redirect to delete URL
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+@section Scripts {
+
+    <partial name="_NotificationPartial">
+
+}
+
+

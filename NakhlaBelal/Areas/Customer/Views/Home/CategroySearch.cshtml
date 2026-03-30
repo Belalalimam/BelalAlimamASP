@@ -1,0 +1,358 @@
+﻿@model List<Product>
+@{
+    var category = ViewBag.SelectedCategory as Category;
+    var fabricType = ViewBag.SelectedFabricType as FabricType;
+    var projectCategory = ViewBag.SelectedProject as ProjectCategory;
+    var productTag = ViewBag.SelectedTag as ProductTag;
+    var color = ViewBag.SelectedColor as Color;
+    var composition = ViewBag.SelectedComposition as Composition;
+}
+
+<div class="container">
+    <!-- Category Header Section -->
+    <div class="category-header-section">
+        <div class="container">
+            <div class="category-header">
+                @* 1. إذا كان الفلتر المختار هو Fabric Type *@
+                @if (Model.Any() && fabricType != null)
+                {
+                    <div class="category-image-container">
+                        <img src="~/images/@fabricType.ImageUrl" class="category-image" alt="@fabricType.Name">
+                        </div>
+                        <div class="category-content">
+                            <h1 class="category-title">@fabricType.Name</h1>
+                            @if (!string.IsNullOrEmpty(fabricType.Description))
+                            {
+                                <p class="category-subtitle">@fabricType.Description</p>
+                            }
+                        </div>
+                    }
+                
+@* 2. إذا كان الفلتر المختار هو Category *@
+                else if (Model.Any() && category != null)
+                    {
+                        <div class="category-image-container">
+                            @* تأكد إن عندك حقل ImageUrl في جدول الكاتيجوري *@
+                            <img src="~/images/@category.ImageUrl" class="category-image" alt="@category.Name">
+                            </div>
+                            <div class="category-content">
+                                <h1 class="category-title">@category.Name</h1>
+                                @if (!string.IsNullOrEmpty(category.Description))
+                                {
+                                    <p class="category-subtitle">@category.Description</p>
+                                }
+                            </div>
+                        }
+
+                else if (Model.Any() && projectCategory != null)
+                    {
+                        <div class="category-image-container">
+                            @* تأكد إن عندك حقل ImageUrl في جدول الكاتيجوري *@
+                                <img src="~/images/@projectCategory.ImageUrl" class="category-image" alt="@projectCategory.Name">
+                            </div>
+                            <div class="category-content">
+                                    <h1 class="category-title">@projectCategory.Name</h1>
+                                    @if (!string.IsNullOrEmpty(projectCategory.Description))
+                                {
+                                        <p class="category-subtitle">@projectCategory.Description</p>
+                                }
+                            </div>
+                        }
+
+                else if (Model.Any() && color != null)
+                    {
+                        <div class="category-image-container">
+                            @* تأكد إن عندك حقل ImageUrl في جدول الكاتيجوري *@
+                                    <img src="~/images/@color.ImageUrl" class="category-image" alt="@color.Name">
+                            </div>
+                            <div class="category-content">
+                                        <h1 class="category-title">@color.Name</h1>
+                                        @if (!string.IsNullOrEmpty(color.Description))
+                                {
+                                            <p class="category-subtitle">@color.Description</p>
+                                }
+                            </div>
+                        }
+
+
+                else if (Model.Any() && composition != null)
+                    {
+                        <div class="category-image-container">
+                            @* تأكد إن عندك حقل ImageUrl في جدول الكاتيجوري *@
+                                        <img src="~/images/@composition.ImageUrl" class="category-image" alt="@composition.Name">
+                            </div>
+                            <div class="category-content">
+                                            <h1 class="category-title">@composition.Name</h1>
+                                            @if (!string.IsNullOrEmpty(composition.Description))
+                                {
+                                                <p class="category-subtitle">@composition.Description</p>
+                                }
+                            </div>
+                        }
+     
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+
+
+        <div class="row">
+            <!-- Filter Sidebar -->
+            <aside class="col-3 mb-4 ">
+                <div class="filter-sidebar">
+                    <h3 class="filter-title">Filters</h3>
+
+                    <div class="filter-section">
+                        <div class="filter-section-title">
+                            <span>Search Products</span>
+                            <a href="#" class="filter-reset">Clear</a>
+                        </div>
+                        <input type="text" class="filter-input" placeholder="Type & hit ENTER">
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-section-title">
+                            <span>Sort by</span>
+                            <a href="#" class="filter-reset">Reset</a>
+                        </div>
+                        <select class="filter-input">
+                            <option>New arrivals</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Most Popular</option>
+                            <option>Customer Rating</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-section-title">
+                            <span>Height</span>
+                            <a href="#" class="filter-reset">Reset</a>
+                        </div>
+                        <input type="range" class="filter-range" min="100" max="200" value="140">
+                        <div class="filter-range-labels">
+                            <span>129 cm</span>
+                            <span>150 cm</span>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-section-title">
+                            <span>Weight</span>
+                            <a href="#" class="filter-reset">Reset</a>
+                        </div>
+                        <input type="range" class="filter-range" min="200" max="700" value="444">
+                        <div class="filter-range-labels">
+                            <span>232 g</span>
+                            <span>656 g</span>
+                        </div>
+                    </div>
+
+                    <a href="/Customer/Home/Product" class="view-all-btn">
+                        View All Products 
+                    </a>
+                </div>
+            </aside>
+
+            <!-- Products Grid -->
+            <div class="col-9 ">
+
+                <div class="quick-filter-bar">
+                    <span class="filter-label">Filter by:</span>
+                    <select class="quick-filter-select">
+                        <option>Color</option>
+                        <option>Black</option>
+                        <option>White</option>
+                        <option>Red</option>
+                        <option>Blue</option>
+                        <option>Green</option>
+                    </select>
+                    <select class="quick-filter-select">
+                        <option>Type</option>
+                        <option>Tweed</option>
+                        <option>Bouclé</option>
+                        <option>Jacquard</option>
+                        <option>Velvet</option>
+                    </select>
+                    <select class="quick-filter-select">
+                        <option>Quality</option>
+                        <option>Premium</option>
+                        <option>Standard</option>
+                        <option>Economy</option>
+                    </select>
+                    <select class="quick-filter-select">
+                        <option>Composition</option>
+                        <option>100% Wool</option>
+                        <option>Wool Blend</option>
+                        <option>Silk</option>
+                        <option>Cotton</option>
+                    </select>
+                    <select class="quick-filter-select">
+                        <option>Pattern</option>
+                        <option>Solid</option>
+                        <option>Checkered</option>
+                        <option>Striped</option>
+                        <option>Floral</option>
+                    </select>
+                </div>
+
+                @if (Model.Any())
+                {
+                    <div class="row">
+                        @foreach (var item in Model)
+                        {
+                            <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })" class="col-4">
+                                <div class="product-card m-1">
+                                    <img src="~/images/@item.MainImage" alt="@item.Name" />
+
+                                    <div class="product-info">
+                                        <h3>@item.Name</h3>
+
+                                        <div class="rowProduct d-flex justify-content-center align-items-center">
+                                             
+                                                    @if (item.ProductCompositions != null && item.ProductCompositions.Any())
+                                                    {
+                                                        @foreach (var comp in item.ProductCompositions.Take(3)) // نأخذ أول 3 فقط للحفاظ على الشكل
+                                                        {
+                                                            <span class="px-2"
+                                                                  title="@comp.Composition?.Name: @comp.Percentage%">
+                                                                @comp.Composition?.Name?.Substring(0, Math.Min(comp.Composition.Name.Length, 3))..
+                                                                <small class="">@comp.Percentage%</small>
+                                                            </span>
+                                                        }
+                                                    }
+                                                    
+                                        </div>
+
+                                        <div class="rowProduct split px-3">
+                                            <span>@item.Width cm</span>
+                                            <span>@item.Weight g / m</span>
+                                        </div>
+
+                                        <div class="rowProduct split bottom px-3">
+                                            <span class="price">€ @item.Price / m</span>
+                                            <span class="stock">@item.StockQuantity m</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        }
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="row">
+                        <div class="col-12 d-flex justify-content-center">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    @if (ViewBag.currentPage > 1)
+                                    {
+                                        <li class="page-item"><a class="page-link" href="/Customer/home/CategroySearch?page=@(ViewBag.currentPage - 1)">Previous</a></li>
+                                    }
+
+                                    @for (var i = 1; i <= ViewBag.totalNumberOfPages; i++)
+                                    {
+                                        @if (i == ViewBag.currentPage)
+                                        {
+                                            <li class="page-item active"><a class="page-link" href="/Customer/home/CategroySearch?Name=@ViewBag.ProductName&MinPrice=@ViewBag.MinPrice&MaxPrice=@ViewBag.MaxPrice&CategoryId=@ViewBag.CategoryId&IsHot=@ViewBag.IsHot&page=@i">@i</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Customer/home/CategroySearch?Name=@ViewBag.ProductName&MinPrice=@ViewBag.MinPrice&MaxPrice=@ViewBag.MaxPrice&CategoryId=@ViewBag.CategoryId&IsHot=@ViewBag.IsHot&page=@i">@i</a></li>
+                                        }
+
+                                    }
+
+                                    @if (ViewBag.currentPage != ViewBag.totalNumberOfPages && Model.Any())
+                                    {
+                                        <li class="page-item"><a class="page-link" href="/Customer/home/CategroySearch?page=@(ViewBag.currentPage + 1)">Next</a></li>
+                                    }
+                                </ul>
+                            </nav>
+                        </div>
+
+
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 ifNoProductText">
+                        <h3>No products found in this category</h3>
+                        <p>Please check back later or browse other categories.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for interactive elements -->
+@section Scripts {
+    <script>
+        // Add to Cart functionality
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const productId = this.getAttribute('data-product-id');
+                const productName = this.closest('.product-card').querySelector('.product-title').textContent;
+
+                // Add to cart logic here
+                console.log(`Adding product ${productId} to cart`);
+
+                // Show feedback
+                const originalText = this.innerHTML;
+                this.innerHTML = '<span>Added!</span>';
+                this.style.background = '#27ae60';
+
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.style.background = '';
+                }, 1500);
+            });
+        });
+
+        // Range slider value display
+        document.querySelectorAll('.filter-range').forEach(slider => {
+            slider.addEventListener('input', function() {
+                const labels = this.nextElementSibling;
+                if (labels && labels.classList.contains('filter-range-labels')) {
+                    const min = this.getAttribute('min');
+                    const max = this.getAttribute('max');
+                    const value = this.value;
+
+                    // Update second label to show current value
+                    const labelSpans = labels.querySelectorAll('span');
+                    if (labelSpans.length >= 2) {
+                        labelSpans[1].textContent = `${value} ${this.previousElementSibling.textContent.includes('Height') ? 'cm' : 'g'}`;
+                    }
+                }
+            });
+        });
+
+        // Filter reset functionality
+        document.querySelectorAll('.filter-reset').forEach(resetLink => {
+            resetLink.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const section = this.closest('.filter-section');
+                const input = section.querySelector('input, select');
+
+                if (input) {
+                    if (input.type === 'range') {
+                        const min = input.getAttribute('min');
+                        const max = input.getAttribute('max');
+                        const defaultValue = Math.round((parseInt(min) + parseInt(max)) / 2);
+                        input.value = defaultValue;
+
+                        // Trigger change event
+                        input.dispatchEvent(new Event('input'));
+                    } else {
+                        input.value = '';
+                    }
+                }
+            });
+        });
+    </script>
+}

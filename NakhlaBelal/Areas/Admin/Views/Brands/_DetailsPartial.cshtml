@@ -1,0 +1,109 @@
+﻿@model NakhlaBelal.Models.Brand
+
+<div class="modal-header">
+    <h3>@Model.Name - Details</h3>
+    <button type="button" class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Status:</strong></label>
+                <div>
+                    @if (Model.Status == "Active")
+                    {
+                        <span class="badge badge-success">@Model.Status</span>
+                    }
+                    else if (Model.Status == "Inactive")
+                    {
+                        <span class="badge badge-secondary">@Model.Status</span>
+                    }
+                    else
+                    {
+                        <span class="badge badge-warning">@Model.Status</span>
+                    }
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Website:</strong></label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.Website))
+                    {
+                        <a href="@Model.Website" target="_blank" class="text-primary">
+                            <i class="fas fa-external-link-alt"></i> @Model.Website
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not specified</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Featured Brand:</strong></label>
+                <div>
+                    @if (Model.IsFeatured)
+                    {
+                        <span class="badge badge-info"><i class="fas fa-star"></i> Featured</span>
+                    }
+                    else
+                    {
+                        <span class="text-muted">No</span>
+                    }
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Created Date:</strong></label>
+                <div>
+                    @Model.CreatedDate.ToString("dd MMM yyyy")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label"><strong>Description:</strong></label>
+        <div class="p-3 bg-light rounded">
+            @if (string.IsNullOrEmpty(Model.Description))
+            {
+                <span class="text-muted">No description provided</span>
+            }
+            else
+            {
+                @Model.Description
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label"><strong>Products Count:</strong></label>
+        <div>
+            <span class="badge badge-primary">
+                <i class="fas fa-box"></i>
+                @(Model.Products?.Count ?? 0) products
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" onclick="closeModal()">
+        <i class="fas fa-times"></i> Close
+    </button>
+    @* <a href="@Url.Action("Edit", "Brands", new { id = Model.Id })"
+       class="btn btn-primary"
+       onclick="loadEditModal('@Model.Id', event)">
+        <i class="fas fa-edit"></i> Edit
+    </a> *@
+    <button type="button" class="btn btn-primary" onclick="loadEditModal('@Model.Id', event)">
+        <i class="fas fa-edit"></i> Edit Brand
+    </button>
+</div>

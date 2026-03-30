@@ -1,0 +1,42 @@
+﻿@model NavMenuViewModel
+
+<li class="dropdown1">
+    <a href="#" class="dropdown1-btn">By Type</a>
+    <div class="dropdown1-menu">
+        @foreach (var type in Model.FabricTypes)
+        {
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-FabricTypeId="@type.Id">@type.Name</a>
+        }
+    </div>
+</li>
+
+<li class="dropdown1">
+    <a href="#" class="dropdown1-btn">By Project</a>
+    <div class="dropdown1-menu">
+        @foreach (var project in Model.ProjectCategories)
+        {
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-ProjectCategoryId="@project.Id">@project.Name</a>
+
+        }
+    </div>
+</li>
+
+<li class="dropdown1">
+    <a href="#" class="dropdown1-btn">By Color</a>
+    <div class="dropdown1-menu">
+        @foreach (var color in Model.Colors)
+        {
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-ColorId="@color.Id">@color.Name</a>
+        }
+    </div>
+</li>
+
+<li class="dropdown1">
+    <a href="#" class="dropdown1-btn">By Composition</a>
+    <div class="dropdown1-menu">
+        @foreach (var comp in Model.Compositions)
+        {
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-CompositionId="@comp.Id">@comp.Name</a>
+        }
+    </div>
+</li>

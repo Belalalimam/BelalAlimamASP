@@ -1,0 +1,196 @@
+﻿@model NakhlaBelal.Models.Category
+
+    <div class="modal-header">
+        <h3>Edit Category: @Model.Name</h3>
+        <button type="button" class="modal-close" onclick="closeModal()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+
+    <form id="editCategoryForm" method="post" action="/Admin/Categories/Edit/@Model.Id">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="Id" value="@Model.Id" />
+
+        <div class="modal-body">
+            <div class="validation-summary">
+                @Html.ValidationSummary(true, "", new { @class = "alert alert-danger", style = "display: none;" })
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        @Html.LabelFor(model => model.Name, "Category Name", new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Name, new {
+                        @class = "form-control",
+                                            placeholder = "Enter category name",
+                                            required = "required"
+                                            })
+                        @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        @Html.LabelFor(model => model.Status, "Status", new { @class = "form-label" })
+                        @{
+                            var statusList = new SelectList(new[]
+                            {
+                                            new SelectListItem { Text = "Active", Value = "Active" },
+                                            new SelectListItem { Text = "Inactive", Value = "Inactive" },
+                                            new SelectListItem { Text = "Archived", Value = "Archived" },
+                                            new SelectListItem { Text = "Draft", Value = "Draft" }
+                                            }, "Value", "Text", Model.Status);
+                        }
+                        @Html.DropDownListFor(model => model.Status, statusList, "Select Status", new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.Status, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(model => model.Description, "Description", new { @class = "form-label" })
+                @Html.TextAreaFor(model => model.Description, new {
+                @class = "form-control",
+                            rows = "3",
+                            placeholder = "Enter category description (optional)"
+                            })
+                @Html.ValidationMessageFor(model => model.Description, null, new { @class = "text-danger" })
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        @Html.LabelFor(model => model.DisplayOrder, "Display Order", new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.DisplayOrder, new {
+                                            @class = "form-control",
+                                            type = "number",
+                                            min = "0",
+                                            max = "1000",
+                                            placeholder = "0"
+                                            })
+                        <small class="text-muted">Lower numbers appear first</small>
+                        @Html.ValidationMessageFor(model => model.DisplayOrder, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        @Html.LabelFor(model => model.ImageUrl, "Image URL", new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.ImageUrl, new {
+                                            @class = "form-control",
+                                            placeholder = "https://example.com/image.jpg"
+                                            })
+                        <small class="text-muted">Optional category image</small>
+                        @Html.ValidationMessageFor(model => model.ImageUrl, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        @Html.LabelFor(model => model.Slug, "URL Slug", new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.Slug, new {
+                                            @class = "form-control",
+                                            placeholder = "category-name"
+                                            })
+                        <small class="text-muted">URL-friendly name (auto-generated if empty)</small>
+                        @Html.ValidationMessageFor(model => model.Slug, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        @Html.LabelFor(model => model.IconClass, "Icon Class", new { @class = "form-label" })
+                        @Html.TextBoxFor(model => model.IconClass, new {
+                                            @class = "form-control",
+                                            placeholder = "fas fa-tag"
+                                            })
+                        <small class="text-muted">Font Awesome icon class (optional)</small>
+                        @Html.ValidationMessageFor(model => model.IconClass, null, new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(model => model.MetaTitle, "Meta Title", new { @class = "form-label" })
+                @Html.TextBoxFor(model => model.MetaTitle, new {
+                            @class = "form-control",
+                            placeholder = "SEO title for search engines"
+                            })
+                <small class="text-muted">Appears in browser tab and search results</small>
+                @Html.ValidationMessageFor(model => model.MetaTitle, null, new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(model => model.MetaDescription, "Meta Description", new { @class = "form-label" })
+                @Html.TextAreaFor(model => model.MetaDescription, new {
+                            @class = "form-control",
+                            rows = "2",
+                            placeholder = "SEO description for search engines"
+                            })
+                <small class="text-muted">Appears in search results (max 160 characters)</small>
+                @Html.ValidationMessageFor(model => model.MetaDescription, null, new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+    </form>
+
+    <!-- In your _EditPartial.cshtml -->
+    <script>
+        $(document).ready(function() {
+            // Form validation
+            $('#editCategoryForm').validate({
+                // your validation rules...
+            });
+
+            // Handle form submission via AJAX
+            $('#editCategoryForm').on('submit', function(e) {
+                e.preventDefault();
+
+                if (!$(this).valid()) {
+                    return false;
+                }
+
+                const form = this;
+                const submitBtn = $(form).find('button[type="submit"]');
+                const originalHtml = submitBtn.html();
+
+                // Show loading
+                submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Saving...');
+                submitBtn.prop('disabled', true);
+
+                // AJAX submission
+                $.ajax({
+                    url: $(form).attr('action'),  // This should be /Admin/Categories/Edit/{id}
+                    type: 'POST',
+                    data: $(form).serialize(),
+                    success: function(response) {
+                        if (response.success) {
+                            // Show success message
+                            alert(response.message || 'Category updated successfully!');
+                            closeModal();
+                            // Reload the page to show updated data
+                            window.location.reload();
+                        } else {
+                            // Show error
+                            alert(response.error || 'Error updating category');
+                            submitBtn.html(originalHtml);
+                            submitBtn.prop('disabled', false);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('Edit AJAX error:', error);
+                        alert('Error updating category. Please try again.');
+                        submitBtn.html(originalHtml);
+                        submitBtn.prop('disabled', false);
+                    }
+                });
+
+                return false;
+            });
+        });
+    </script>

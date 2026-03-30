@@ -1,0 +1,476 @@
+﻿<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="theme-color" content="#06c1db" />
+    <meta name="author" content="">
+    <title>NAKHLA BELAL EMBROIDERY</title>
+    <script type="importmap"></script>
+    <link rel="icon" type="image/svg+xml" href="~/Logo.png" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Customer/Hero.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Customer/CategorySearch.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Customer/cart.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Customer/ProductCard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Customer/DetailsProduct.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Navbar.css" asp-append-version="true" />
+
+
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.8.0/fonts/remixicon.css" rel="stylesheet" />
+</head>
+
+@{
+    var categories = ViewBag.Categories as List<NakhlaBelal.Models.Category> ?? new List<NakhlaBelal.Models.Category>();
+    var brands = ViewBag.Brands as List<NakhlaBelal.Models.Brand> ?? new List<NakhlaBelal.Models.Brand>();
+    var validationErrors = ViewBag.ValidationErrors as List<string> ?? new List<string>();
+}
+<body>
+
+
+    <div class="text-black text-center py-2 small">
+        <u>شحن مجاني</u> للطلبات المحلية بقيمة 1000 جنيه أو أكثر
+    </div>
+    <div class="site">
+        <header class="">
+            <div class="container1 ">
+                <div class="content ">
+
+                    <div class="left">
+                        <a class="trigger"><i class="ri-menu-line"></i></a>
+                        <div class="logo"><a href="/">NAKHLA EMBROIDERY</a></div>
+                    </div>
+
+
+
+
+
+                    <div class="middle">
+                        <nav>
+                            <ul>
+                                <li><a href="/Customer/home/product">ِAll Fabrics</a></li>
+                                
+                                @await Component.InvokeAsync("NavMenu")
+                                
+                                <li class="dropdown1">
+                                    <a href="/" class="dropdown1-btn">By Pattern</a>
+                                    <div class="dropdown1-menu">
+                                        <a href="https://localhost:7286/customer/home/CategroySearch?categoryId=13">item 1</a>
+                                        <a href="https://localhost:7286/customer/home/CategroySearch?categoryId=14">item 2</a>
+                                        <a href="https://localhost:7286/customer/home/CategroySearch?categoryId=15">item 3</a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a href="#">Promo</a>
+                                    
+                                </li>
+                            </ul>
+                        </nav>
+
+                    </div>
+
+                    <div class="right">
+                        <ul>
+                            <li class="d-flex justify-content-center ">
+                                @* <a href="#"><i class="ri-search-line"></i></a> *@
+                                <form class="" action="@Url.Action("CategroySearch", "Home")" method="get">
+                                    <input type="text" name="Name" placeholder="Type & hit 'enter'" />
+                                </form>
+                                
+                            </li>
+
+                            <li>
+                                <a href="/Customer/Cart/index">
+                                    <span id="cartBadge" class="num d-none">0</span>
+                                    <i class="ri-shopping-bag-2-line"></i>
+                                </a>
+                            </li>
+
+
+                            @* <li class="nav-item">
+                                <a class="nav-link position-relative" href="
+
+
+("Index", "Cart", new { area = "Customer" })">
+                                    <i class="ri-shopping-bag-2-line"></i>
+                                    @if (User.Identity.IsAuthenticated)
+                                    {
+                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge"
+                                              id="cartBadge" style="font-size: 0.6rem;">
+                                            0
+                                        </span>
+                                    }
+                                </a>
+                            </li> *@
+                            @* <li><a href="#"><span class="num">3</span><i class="ri-heart-line"></i></a></li> *@
+                            <li><a href="/Identity/Account/Logout"><i class="ri-door-line"></i></a></li>
+                            <li><a href="/Identity/Profile/index"><i class="ri-user-line"> @User.Identity.Name </i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+
+        <main role="main">
+            <div class="content-body">
+
+                @RenderBody()
+            </div>
+        </main>
+
+
+        <nav class="mobile-menu">
+            <div class="mini">
+                <a href="#" class="mini-close"><i class="ri-close-line"></i></a>
+                <div class="menu-head">
+                    <div class="top">
+                        <ul>
+                            <li><a href="#" data-target="bag"><span class="num">0</span><i class="ri-shopping-bag-2-line"></i></a></li>
+                            <li><a href="#" data-target="wishlist"><span class="num">3</span><i class="ri-heart-line"></i></a></li>
+                            <li><a href="#" data-target="compare"><span class="num">0</span><i class="ri-arrow-left-right-line"></i></a></li>
+                            <li><a href="/Identity/home/Account" data-target="account"><i class="ri-user-line"></i></a></li>
+                            <li><a href="#" data-target="lunguage"><i class="ri-globe-line"></i></a></li>
+                        </ul>
+                    </div>
+                    <div class="logo"><a href="/">NAKHLA EMBROIDERY</a></div>
+                    <div class="socials">
+                        <ul>
+                            <li><a href="#"><i class="ri-instagram-line"></i></a></li>
+                            <li><a href="#"><i class="ri-facebook-line"></i></a></li>
+                            <li><a href="#"><i class="ri-twitter-line"></i></a></li>
+                            <li><a href="#"><i class="ri-whatsapp-line"></i></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="wider">
+                <div class="main-menu">
+                    <div class="search">
+                        <i class="ri-search-line"></i>
+                        <form action="/">
+                            <input type="search" placeholder="Search Products" />
+                        </form>
+                    </div>
+                    <div class="menu-list">
+                        <ul>
+                            <li class="has-child">
+                                <a href="#"><span>Products</span><i class="ri-arrow-right-line"></i></a>
+                                <ul>
+                                    <li class="back">
+                                        <a href="#">
+                                            <span>Products</span><i class="ri-arrow-left-line"></i>
+                                        </a>
+                                    </li>
+                                    <li><a href="#">Automotive</a></li>
+                                    <li><a href="#">Baby</a></li>
+                                    <li><a href="#">Beauty</a></li>
+                                    <li><a href="#">Fashion</a></li>
+                                    <li><a href="#">Health</a></li>
+                                    <li><a href="#">Home & Kitchen</a></li>
+                                </ul>
+                            </li>
+
+
+                            <li class="has-child">
+                                <a href="#"><span>LookBook</span><i class="ri-arrow-right-line"></i></a>
+                                <ul>
+                                    <li class="back">
+                                        <a href="#">
+                                            <span>LookBook</span><i class="ri-arrow-left-line"></i>
+                                        </a>
+                                    </li>
+
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Category </label>
+                                        <select class="form-control" required>
+                                            <option value="">Select </option>
+                                            @foreach (var category in categories)
+                                            {
+                                                <option value="@category.Id">@category.Name</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </ul>
+                            </li>
+
+
+                            <li><a href="#"><span>Blog</span></a></li>
+
+
+                            <li class="has-child">
+                                <a href="#"><span>Careers</span><i class="ri-arrow-right-line"></i></a>
+                                <ul>
+                                    <li class="back">
+                                        <a href="#">
+                                            <span>Careers</span><i class="ri-arrow-left-line"></i>
+                                        </a>
+                                    </li>
+                                    <li><a href="#">Abroad</a></li>
+                                    <li><a href="#">Urgent Positions</a></li>
+                                </ul>
+                            </li>
+
+
+
+                            <li class="has-child">
+                                <a href="#"><span>Product3</span><i class="ri-arrow-right-line"></i></a>
+                                <ul>
+                                    <li class="back">
+                                        <a href="#">
+                                            <span>Products</span><i class="ri-arrow-left-line"></i>
+                                        </a>
+                                    </li>
+                                    <li><a href="#">Product1</a></li>
+                                    <li><a href="#">Product2</a></li>
+                                </ul>
+                            </li>
+
+
+                            <li><a href="#"><span>contact</span></a></li>
+
+                        </ul>
+                    </div>
+                    <div class="copyright">
+                        <p>2023 made with belal alimam</p>
+                    </div>
+                </div>
+
+                <div id="bag" data-target="bag">
+                    <span>cart</span><i class="ri-shopping-bag-2-line"></i>
+                </div>
+                <div id="wishlist" data-target="wishlist">
+                    <span>wishlist</span><i class="ri-heart-line"></i>
+                </div>
+                <div id="compare" data-target="compare">
+                    <span>compare</span><i class="ri-arrow-left-right-line"></i>
+                </div>
+                <div id="account" data-target="account">
+                    <span>account</span><i class="ri-user-line"></i>
+                </div>
+                <div id="lunguage" data-target="lunguage">
+                    <span>lunguage</span><i class="ri-globe-line"></i>
+                </div>
+
+
+            </div>
+        </nav>
+        <div class="overlay"></div>
+
+
+    </div>
+
+
+    <div class="footer-nav">
+        <div class="container">
+            <div class="row">
+                <!-- HELP Column -->
+                <div class="col-lg-3 col-md-6 nav-column">
+                    <h4 class="nav-title">HELP</h4>
+                    <ul class="nav-list">
+                        <li><a href="@Url.Action("FAQs", "Help")">FAQs</a></li>
+                        <li><a href="@Url.Action("Contact", "Help")">Contact Us</a></li>
+                        <li><a href="@Url.Action("Index", "Account")">My Account</a></li>
+                        <li><a href="@Url.Action("Track", "Order")">Track Order</a></li>
+                        <li><a href="@Url.Action("RequestSample", "Order")">Request Fabrics Samples</a></li>
+                        <li><a href="@Url.Action("Sitemap", "Home")">Sitemap</a></li>
+                    </ul>
+
+                    <h4 class="nav-title mt-4">TEXTILE GUIDES</h4>
+                    <ul class="nav-list">
+                        <li><a href="@Url.Action("Glossary", "Guide")">Textile Glossary</a></li>
+                        <li><a href="@Url.Action("Weaves", "Guide")">Weaves Glossary</a></li>
+                        <li><a href="@Url.Action("Drape", "Guide")">A Guide to Fabric Drape</a></li>
+                        <li><a href="@Url.Action("Abbreviations", "Guide")">Textile Fiber Abbreviations</a></li>
+                    </ul>
+                </div>
+
+                <!-- ABOUT Column -->
+                <div class="col-lg-3 col-md-6 nav-column">
+                    <h4 class="nav-title">ABOUT</h4>
+                    <ul class="nav-list">
+                        <li><a href="@Url.Action("About", "Home")">About us</a></li>
+                        <li><a href="@Url.Action("Quality", "Home")">Quality Control</a></li>
+                        <li><a href="@Url.Action("Sustainability", "Home")">Sustainability</a></li>
+                        <li><a href="@Url.Action("Shipping", "Home")">Shipping Rates</a></li>
+                        <li><a href="@Url.Action("Payment", "Home")">Payment Methods</a></li>
+                    </ul>
+
+                    <h4 class="nav-title mt-4">FOLLOW US</h4>
+                    <div class="social-icons">
+                        <a href="https://facebook.com" class="social-icon" target="_blank">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://instagram.com" class="social-icon" target="_blank">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://pinterest.com" class="social-icon" target="_blank">
+                            <i class="fab fa-pinterest-p"></i>
+                        </a>
+                        <a href="https://youtube.com" class="social-icon" target="_blank">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+
+                    <h4 class="nav-title mt-4">LEGAL INFO</h4>
+                    <ul class="nav-list">
+                        <li><a href="@Url.Action("Terms", "Legal")">Terms & Conditions</a></li>
+                        <li><a href="@Url.Action("ODR", "Legal")">ODR</a></li>
+                        <li><a href="@Url.Action("Labelling", "Legal")">Labelling of packaging</a></li>
+                        <li><a href="@Url.Action("Privacy", "Legal")">Privacy Policy</a></li>
+                        <li><a href="@Url.Action("Cookies", "Legal")">Cookie Preferences</a></li>
+                    </ul>
+                </div>
+
+                <!-- BROWSE OUR FABRICS Column -->
+                <div class="col-lg-3 col-md-6 nav-column">
+                    <h4 class="nav-title">BROWSE OUR FABRICS</h4>
+                    <ul class="nav-list">
+                        <li><a href="@Url.Action("NewArrivals", "Fabrics")">New Arrivals</a></li>
+                        <li><a href="@Url.Action("OnSale", "Fabrics")">Fabrics on Sale</a></li>
+                        <li><a href="@Url.Action("Bridal", "Fabrics")">Bridal Fabrics</a></li>
+                        <li><a href="@Url.Action("SpecialOccasions", "Fabrics")">Special Occasions Fabrics</a></li>
+                        <li><a href="@Url.Action("Coating", "Fabrics")">Coating Fabrics</a></li>
+                        <li><a href="@Url.Action("Suiting", "Fabrics")">Fine Suiting Fabrics</a></li>
+                        <li><a href="@Url.Action("Prints", "Fabrics")">Prints</a></li>
+                        <li><a href="@Url.Action("Jacquards", "Fabrics")">Jacquards</a></li>
+                        <li><a href="@Url.Action("Laces", "Fabrics")">Laces and Embroidery</a></li>
+                        <li><a href="@Url.Action("Boucle", "Fabrics")">Bouclé</a></li>
+                        <li><a href="@Url.Action("Velvet", "Fabrics")">Velvet</a></li>
+                    </ul>
+                </div>
+
+                <!-- CUSTOMER SUPPORT Column -->
+                <div class="col-lg-3 col-md-6 nav-column">
+                    <h4 class="nav-title">CUSTOMER SUPPORT</h4>
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-label">Contact Form</div>
+                            <div class="contact-value">
+                                <a href="@Url.Action("Contact", "Support")">Send us a message</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-label">WhatsApp</div>
+                            <div class="contact-value">
+                                <a href="https://wa.me/393316345321" class="whatsapp-link">+39 331 634 5321</a>
+                            </div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-label">Support time</div>
+                            <div class="contact-value">Mon-Fri 09:00 - 17:00 (UTC+1)</div>
+                        </div>
+
+                        <div class="contact-item">
+                            <div class="contact-label">Warehouse and Offices</div>
+                            <div class="contact-value">
+                                Via S. Gottardo, 8<br>
+                                22079 Villa Guardia (CO) Italy<br>
+                                <a href="https://maps.google.com/?q=Via+S.+Gottardo,+8+22079+Villa+Guardia+(CO)+Italy"
+                                       target="_blank" class="map-link">
+                                    View on Google Maps <i class="fas fa-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Site Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="copyright">
+                        &copy; 2015-@DateTime.Now.Year Cleric Tessuto & C. SpA &nbsp;|&nbsp;
+                        VAT ID IT01651870139 &nbsp;|&nbsp; Credits
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="legal-links">
+                        <a href="@Url.Action("Terms", "Legal")">Terms</a>
+                        <a href="@Url.Action("Privacy", "Legal")">Privacy</a>
+                        <a href="@Url.Action("Cookies", "Legal")">Cookies</a>
+                        <a href="@Url.Action("Accessibility", "Legal")">Accessibility</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Custom JS -->
+    <script>
+            // Highlight current page in navigation
+            document.addEventListener('DOMContentLoaded', function() {
+                const currentPath = window.location.pathname.toLowerCase();
+
+                // Check main navigation
+                document.querySelectorAll('.nav-link-custom').forEach(link => {
+                    const href = link.getAttribute('href').toLowerCase();
+                    if (currentPath.includes(href.split('/').pop())) {
+                        link.style.color = 'var(--accent-color)';
+                        link.style.fontWeight = '600';
+                    }
+                });
+
+                // Check footer navigation
+                document.querySelectorAll('.nav-list a').forEach(link => {
+                    const href = link.getAttribute('href').toLowerCase();
+                    if (currentPath.includes(href.split('/').pop())) {
+                        link.style.color = 'var(--primary-color)';
+                        link.style.fontWeight = '600';
+                    }
+                });
+            });
+    </script>
+
+    <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // نتحقق إذا كان المستخدم مسجل دخول
+                if ("@User.Identity.IsAuthenticated" === "True") {
+                    updateCartCount();
+                }
+
+                function updateCartCount() {
+                    fetch('/Customer/Cart/GetCartCount')
+                        .then(response => response.json())
+                        .then(data => {
+                            const badge = document.getElementById('cartBadge');
+                            if (badge) {
+                                badge.textContent = data.count;
+                                // إذا كانت السلة فيها منتجات، نظهر الدائرة، وإذا كانت 0 نخفيها
+                                if (data.count > 0) {
+                                    badge.classList.remove('d-none');
+                                } else {
+                                    badge.classList.add('d-none');
+                                }
+                            }
+                        })
+                        .catch(error => console.error('Error fetching cart count:', error));
+                }
+            });
+    </script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-element-bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
+
+    <script src="~/js/site.js"></script>
+    <script src="~/js/Navbar.js" asp-append-version="true"></script>
+    <script src="~/js/newFile.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

@@ -1,0 +1,71 @@
+﻿@model NakhlaBelal.Models.Brand
+
+<div class="modal-header">
+    <h3>@Model.Name - Details</h3>
+    <button type="button" class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Status:</strong></label>
+                <div>
+                    <span class="badge @(Model.Status == "Active" ? "badge-success" : "badge-secondary")">
+                        @Model.Status
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Website:</strong></label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.Website))
+                    {
+                        <a href="@Model.Website" target="_blank">@Model.Website</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not specified</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Featured:</strong></label>
+                <div>
+                    @(Model.IsFeatured ? "Yes" : "No")
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Created Date:</strong></label>
+                <div>
+                    @Model.CreatedDate.ToString("yyyy-MM-dd")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label"><strong>Description:</strong></label>
+        <div class="p-3 bg-light rounded">
+            @(string.IsNullOrEmpty(Model.Description) ? "No description provided" : Model.Description)
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label"><strong>Products Count:</strong></label>
+        <div>
+            <span class="badge badge-primary">@(Model.Products?.Count ?? 0) products</span>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+</div>

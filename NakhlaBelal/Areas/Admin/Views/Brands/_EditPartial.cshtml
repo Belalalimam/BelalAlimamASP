@@ -1,0 +1,118 @@
+﻿@model NakhlaBelal.Models.Brand
+
+<div class="modal-header">
+    <h3>Edit Brand: @Model.Name</h3>
+    <button type="button" class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+    </button>
+</div> 
+
+<form id="editBrandForm" method="post" action="/Admin/Brands/Edit/@Model.Id">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="Id" value="@Model.Id" />
+
+    <div class="modal-body">
+        <div class="validation-summary">
+            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger", style = "display: none;" })
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    @Html.LabelFor(model => model.Name, "Brand Name", new { @class = "form-label" })
+                    @Html.TextBoxFor(model => model.Name, new {
+                    @class = "form-control",
+                                        placeholder = "Enter brand name",
+                                        required = "required"
+                                        })
+                    @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    @Html.LabelFor(model => model.Status, "Status", new { @class = "form-label" })
+                    @{
+                        var statusList = new SelectList(new[]
+                        {
+                                        new SelectListItem { Text = "Active", Value = "Active" },
+                                        new SelectListItem { Text = "Inactive", Value = "Inactive" },
+                                        new SelectListItem { Text = "Pending", Value = "Pending" }
+                                        }, "Value", "Text", Model.Status);
+                    }
+                    @Html.DropDownListFor(model => model.Status, statusList, "Select Status", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.Status, null, new { @class = "text-danger" })
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group mb-3">
+            @Html.LabelFor(model => model.Description, "Description", new { @class = "form-label" })
+            @Html.TextAreaFor(model => model.Description, new {
+            @class = "form-control",
+                        rows = "3",
+                        placeholder = "Enter brand description (optional)"
+                        })
+            @Html.ValidationMessageFor(model => model.Description, null, new { @class = "text-danger" })
+        </div>
+
+        <div class="form-group mb-3">
+            @Html.LabelFor(model => model.Website, "Website", new { @class = "form-label" })
+            @Html.TextBoxFor(model => model.Website, new {
+                        @class = "form-control",
+                        placeholder = "https://example.com"
+                        })
+            @Html.ValidationMessageFor(model => model.Website, null, new { @class = "text-danger" })
+        </div>
+
+        <div class="form-check mb-4">
+            @Html.CheckBoxFor(model => model.IsFeatured, new { @class = "form-check-input" })
+            <input type="hidden" name="IsFeatured" value="false" />
+            @Html.LabelFor(model => model.IsFeatured, "Featured Brand", new { @class = "form-check-label" })
+            <small class="text-muted d-block">Featured brands will be highlighted on the homepage</small>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Save Changes
+        </button>
+    </div>
+</form>
+
+<!-- Add this at the bottom of _EditPartial.cshtml -->
+<script>
+    $(document).ready(function() {
+        $('#editBrandForm').validate({
+            rules: {
+                Name: {
+                    required: true,
+                    minlength: 2
+                },
+                Website: {
+                    url: true
+                }
+            },
+            messages: {
+                Name: {
+                    required: "Brand name is required",
+                    minlength: "Brand name must be at least 2 characters"
+                },
+                Website: {
+                    url: "Please enter a valid URL"
+                }
+            },
+            errorElement: 'span',
+            errorClass: 'text-danger',
+            highlight: function(element) {
+                $(element).addClass('is-invalid');
+            },
+            unhighlight: function(element) {
+                $(element).removeClass('is-invalid');
+            },
+            errorPlacement: function(error, element) {
+                error.insertAfter(element);
+            }
+        });
+    });
+</script>

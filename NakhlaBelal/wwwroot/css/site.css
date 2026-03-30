@@ -1,0 +1,98 @@
+/*Start Nav*/
+:root {
+    --primary-color: #0984e3;
+    --pink-color: #ef97eb;
+    --blue-color: #74b9ff;
+    --white-color: #ffffff;
+    --light-color: #f5faff;
+    --gray-color: #909090;
+    --dark-color: #252525;
+
+
+
+    --cotton-color: #EDEAE1;
+    --jade-color: #C1C3AC;
+    --dustyolive-color: #80866E;
+    --evergreen-color: #013220;
+}
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+*,
+::before,
+::after {
+    box-sizing: border-box;
+}
+a {
+    text-decoration: none;
+    color: var(--dark-color);
+    -webkit-tap-highlight-color: transparent; 
+}
+
+
+.content-body {
+/*    background-image: url("~/images/nakhlal.png") !important;*/
+    background-color: var(--cotton-color) !important;
+}
+
+.border1 {
+    border: 1px solid red !important;
+}
+
+.BodyOfProfial {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important;
+    
+    background-color: var(--jade-color);
+    border-radius: 4px;
+}
+
+
+
+.DetailsContainer{
+    color: var(--evergreen-color); 
+}
+.form-group label{
+    color: var(--evergreen-color) !important;
+}
+
+.Update-link {
+    padding: 10px 16px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: var(--cotton-color);
+    background-color: var(--evergreen-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .Update-link:hover {
+        background: #f8f6f3;
+        border-color: #8b7355;
+        color: #8b7355;
+    }
+.Cancel-link {
+    padding: 10px 16px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;    
+    background: #f8f6f3;
+    color: #8b7355;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .Cancel-link:hover {        
+        border-color: #8b7355;
+        background-color: var(--evergreen-color);
+        color: var(--cotton-color);
+    }
+
+input {
+    background-color: var(--cotton-color) !important;
+}
+select {
+    background-color: var(--cotton-color) !important;
+}

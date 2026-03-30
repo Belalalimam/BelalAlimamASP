@@ -1,0 +1,183 @@
+﻿@model List<Product>
+
+
+@if (Model.Any())
+{
+    <div class="container py-4">
+        <div class="row">
+
+            <aside class="col-3 mb-4 ">
+                <div class="filter-sidebar">
+                    <h3 class="filter-title">Filters</h3>
+
+                    <div class="filter-section">
+                        <div class="filter-section-title">
+                            <span>Search Products</span>
+                            <a href="#" class="filter-reset">Clear</a>
+                        </div>
+                        <input type="text" class="filter-input" placeholder="Type & hit ENTER">
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-section-title">
+                            <span>Sort by</span>
+                            <a href="#" class="filter-reset">Reset</a>
+                        </div>
+                        <select class="filter-input">
+                            <option>New arrivals</option>
+                            <option>Price: Low to High</option>
+                            <option>Price: High to Low</option>
+                            <option>Most Popular</option>
+                            <option>Customer Rating</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-section-title">
+                            <span>Height</span>
+                            <a href="#" class="filter-reset">Reset</a>
+                        </div>
+                        <input type="range" class="filter-range" min="100" max="200" value="140">
+                        <div class="filter-range-labels">
+                            <span>129 cm</span>
+                            <span>150 cm</span>
+                        </div>
+                    </div>
+
+                    <div class="filter-section">
+                        <div class="filter-section-title">
+                            <span>Weight</span>
+                            <a href="#" class="filter-reset">Reset</a>
+                        </div>
+                        <input type="range" class="filter-range" min="200" max="700" value="444">
+                        <div class="filter-range-labels">
+                            <span>232 g</span>
+                            <span>656 g</span>
+                        </div>
+                    </div>
+
+                    <a href="/Customer/Home/Product" class="view-all-btn">
+                        View All Products
+                    </a>
+                </div>
+            </aside>
+
+            <div class="col-9">
+
+                <div class="quick-filter-bar">
+                    <span class="filter-label">Filter by:</span>
+                    <select class="quick-filter-select">
+                        <option>Color</option>
+                        <option>Black</option>
+                        <option>White</option>
+                        <option>Red</option>
+                        <option>Blue</option>
+                        <option>Green</option>
+                    </select>
+                    <select class="quick-filter-select">
+                        <option>Type</option>
+                        <option>Tweed</option>
+                        <option>Bouclé</option>
+                        <option>Jacquard</option>
+                        <option>Velvet</option>
+                    </select>
+                    <select class="quick-filter-select">
+                        <option>Quality</option>
+                        <option>Premium</option>
+                        <option>Standard</option>
+                        <option>Economy</option>
+                    </select>
+                    <select class="quick-filter-select">
+                        <option>Composition</option>
+                        <option>100% Wool</option>
+                        <option>Wool Blend</option>
+                        <option>Silk</option>
+                        <option>Cotton</option>
+                    </select>
+                    <select class="quick-filter-select">
+                        <option>Pattern</option>
+                        <option>Solid</option>
+                        <option>Checkered</option>
+                        <option>Striped</option>
+                        <option>Floral</option>
+                    </select>
+                </div>
+                <div class="row">
+                    @foreach (var item in Model)
+                    {
+                        <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })" class="col-4">
+                            <div class="product-card ">
+                                <img src="~/images/@item.MainImage" alt="@item.Name" />
+
+                                <div class="product-info">
+                                    <h3>@item.Name</h3>
+
+                                    <div class="rowProduct d-flex justify-content-center align-items-center">
+                                        @if (item.ProductCompositions != null && item.ProductCompositions.Any())
+                                        {
+                                            @foreach (var comp in item.ProductCompositions.Take(3)) // نأخذ أول 3 فقط للحفاظ على الشكل
+                                            {
+                                                <span class="px-2"
+                                                      title="@comp.Composition?.Name: @comp.Percentage%">
+                                                    @comp.Composition?.Name?.Substring(0, Math.Min(comp.Composition.Name.Length, 2))..
+                                                    <small class="">@comp.Percentage%</small>
+                                                </span>
+                                            }
+                                        }
+                                    </div>
+
+                                    <div class="rowProduct split px-3">
+                                        <span>@item.Width cm</span>
+                                        <span>@item.Weight g / m</span>
+                                    </div>
+
+                                    <div class="rowProduct split bottom px-3">
+                                        <span class="price">€ @item.Price / m</span>
+                                        <span class="stock">@item.StockQuantity m</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    }
+                </div>
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-12 d-flex justify-content-center mt-5">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            @if (ViewBag.currentPage > 1)
+                            {
+                                <li class="page-item"><a class="page-link" href="/Customer/home/product?page=@(ViewBag.currentPage - 1)">Previous</a></li>
+                            }
+
+                            @* @for (var i = 1; i <= ViewBag.totalNumberOfPages; i++)
+                            {
+                                @if (i == ViewBag.currentPage)
+                                {
+                                    <li class="page-item active"><a class="page-link" href="/Customer/home/product?Name=@ViewBag.ProductName&MinPrice=@ViewBag.MinPrice&MaxPrice=@ViewBag.MaxPrice&CategoryId=@ViewBag.CategoryId&IsHot=@ViewBag.IsHot&page=@i">@i</a></li>
+                                }
+                                else
+                                {
+                                    <li class="page-item"><a class="page-link" href="/Customer/home/product?Name=@ViewBag.ProductName&MinPrice=@ViewBag.MinPrice&MaxPrice=@ViewBag.MaxPrice&CategoryId=@ViewBag.CategoryId&IsHot=@ViewBag.IsHot&page=@i">@i</a></li>
+                                }
+
+                            } *@
+
+                            @if (ViewBag.currentPage != ViewBag.totalNumberOfPages && Model.Any())
+                            {
+                                <li class="page-item"><a class="page-link" href="/Customer/home/product?page=@(ViewBag.currentPage + 1)">Next</a></li>
+                            }
+                        </ul>
+                    </nav>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+}
+
+

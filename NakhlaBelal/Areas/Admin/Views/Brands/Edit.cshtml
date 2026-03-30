@@ -1,0 +1,111 @@
+﻿@model NakhlaBelal.Models.Brand
+
+<div class="modal-header">
+    <h3>Edit Brand</h3>
+    <button type="button" class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+@using (Html.BeginForm("Edit", "Brands", FormMethod.Post, new { id = "editBrandForm" }))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+
+    <div class="modal-body"> 
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, new { @class = "form-label" })
+            @Html.TextBoxFor(model => model.Name, new { @class = "form-control", required = "required" })
+            @Html.ValidationMessageFor(model => model.Name)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Description, new { @class = "form-label" })
+            @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "3" })
+            @Html.ValidationMessageFor(model => model.Description)
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Website, new { @class = "form-label" })
+            @Html.TextBoxFor(model => model.Website, new { @class = "form-control", type = "url" })
+            @Html.ValidationMessageFor(model => model.Website)
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.Status, new { @class = "form-label" })
+                    @Html.DropDownListFor(model => model.Status,
+                    new SelectList(new[] { "Active", "Inactive", "Pending" }),
+                                new { @class = "form-control" })
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-group">
+                <label class="form-label">Products Count</label>
+                <input type="number" class="form-control" value="@Model.Products?.Count()" readonly />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-check mb-3">
+        @Html.CheckBoxFor(model => model.IsFeatured, new { @class = "form-check-input" })
+        @Html.LabelFor(model => model.IsFeatured, "Featured Brand", new { @class = "form-check-label" })
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Created</label>
+        <div class="form-control" style="background: #f8fafc;">
+            @Model.CreatedDate.ToString("MMM dd, yyyy")
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+    <button type="submit" class="btn btn-primary">
+        <i class="fas fa-save"></i> Save Changes
+    </button>
+</div>
+}
+
+<script>
+    // Handle form submission via AJAX
+    $(document).ready(function() {
+        $('#editBrandForm').on('submit', function(e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('action'),
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function(response) {
+                    if (response.success) {
+                        // Close modal and update table row
+                        closeModal();
+                        updateBrandRow(response.brand);
+                    } else {
+                        $('#editBrandForm').html(response);
+                    }
+                },
+                error: function() {
+                    alert('Error updating brand');
+                }
+            });
+        });
+    });
+
+    function updateBrandRow(brandData) {
+        // Update the specific row in the table
+        const row = document.querySelector(`tr[data-item-id="${brandData.id}"]`);
+        if (row) {
+            row.querySelector('.customer-name').textContent = brandData.name;
+            row.querySelector('.text-muted').textContent = brandData.description;
+            row.querySelector('.mobile-text').textContent = brandData.status;
+
+            // Update status dot
+            const dot = row.querySelector('.status-dot');
+            dot.className = 'status-dot ' + (brandData.status === 'Active' ? 'dot-active' : 'dot-inactive');
+        }
+    }
+</script>

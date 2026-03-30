@@ -1,0 +1,52 @@
+﻿@model NakhlaBelal.ViewModels.RegisterVM
+
+<div class="Samebody">
+    <div class="container2" id="container2 border1">
+        <div class="form-container sign-up">
+
+            <form asp-action="Register" method="post">
+                @Html.AntiForgeryToken()
+
+                <h1>Create Account</h1>
+
+                <div class="social-icons">
+                    <a href="#" class="icon"><i class="ri-google-line"></i></a>
+                    <a href="#" class="icon"><i class="ri-facebook-line"></i></a>
+                    <a href="#" class="icon"><i class="ri-github-line"></i></a>
+                    <a href="#" class="icon"><i class="ri-linkedin-line"></i></a>
+                </div>
+
+                <span>or use your email for registration</span>
+
+                <!-- Validation summary -->
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <input asp-for="FirstName" placeholder="FirstName" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+
+                <input asp-for="LastName" placeholder="LastName" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+
+                <input asp-for="Email" placeholder="Email" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+
+                <input asp-for="UserName" placeholder="User Name" />
+                <span asp-validation-for="UserName" class="text-danger"></span>
+
+                <input asp-for="Password" placeholder="Password" type="password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+
+                <input asp-for="ConfirmPassword" placeholder="Confirm Password" type="password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+
+                <button type="submit">Sign Up</button>
+
+                <p class="mt-3">
+                    Already have an account?
+                    <a asp-action="Login" asp-controller="Account">Login</a>
+                </p>
+            </form>
+
+        </div>
+    </div>
+</div>

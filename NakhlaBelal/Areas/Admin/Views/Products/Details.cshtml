@@ -1,0 +1,314 @@
+﻿@model NakhlaBelal.Models.Product
+@{
+    ViewBag.Title = "Product Details";
+    ViewBag.PageTitle = "Product Details";
+}
+
+<div class="page-header">
+    <div>
+        <h2>@Model.Name</h2>
+        <p class="page-subtitle">Product Details</p>
+    </div>
+    <div class="header-actions">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit
+        </a>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="detail-item mb-3">
+                            <strong>SKU:</strong>
+                            <span>@Model.SKU</span>
+                        </div>
+
+                        <div class="detail-item mb-3">
+                            <strong>Category:</strong>
+                            <span class="badge bg-primary">@Model.Category?.Name</span>
+                        </div>
+
+
+                        <!-- New Section -->
+
+                        <div class="detail-item mb-3">
+                            <strong>Fabric Type:</strong>
+                            @if (Model.FabricType != null)
+                            {
+                                <span class="badge bg-info">@Model.FabricType.Name</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not set</span>
+                            }
+                        </div>
+
+
+
+                      @*   <div class="detail-item mb-3">
+                            <strong>Colors:</strong>
+                            @if (Model.Color != null && Model.Color.Any())
+                            {
+                                @foreach (var color in Model.Color)
+                                {
+                                    <span class="badge bg-secondary me-1">
+                                        @color.Name
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">No colors</span>
+                            }
+                        </div> *@
+
+
+
+
+
+                        <div class="detail-item mb-3">
+                            <strong>Project Categories:</strong>
+                            @if (Model.ProjectCategories != null && Model.ProjectCategories.Any())
+                            {
+                                @foreach (var pc in Model.ProjectCategories)
+                                {
+                                    <span class="badge bg-dark me-1">@pc.Name</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not assigned</span>
+                            }
+                        </div>
+
+
+
+
+                        <div class="detail-item mb-3">
+                            <strong>Composition:</strong>
+                            @* <span>@(string.IsNullOrEmpty(Model.) ? "Not set" : Model.ProductCompositions)</span> *@
+                        </div>
+
+
+
+
+
+                        <div class="detail-item mb-3">
+                            <strong>Tags:</strong>
+                            @if (Model.ProductTags != null && Model.ProductTags.Any())
+                            {
+                                @foreach (var tag in Model.ProductTags)
+                                {
+                                    <span class="badge bg-warning text-dark me-1">
+                                        @tag.Name
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">No tags</span>
+                            }
+                        </div>
+
+
+                        <!-- New Section -->
+
+
+
+
+
+
+
+                        <div class="detail-item mb-3">
+                            <strong>Brand:</strong>
+                            <span>@Model.Brand?.Name</span>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="detail-item mb-3">
+                            <strong>Price:</strong>
+                            <span>$@Model.Price.ToString("N2")</span>
+                        </div>
+
+                        <div class="detail-item mb-3">
+                            <strong>Cost Price:</strong>
+                            <span>$@Model.CostPrice.ToString("N2")</span>
+                        </div>
+
+                        <div class="detail-item mb-3">
+                            <strong>Stock:</strong>
+                            @if (Model.StockQuantity > 0)
+                            {
+                                <span class="badge @(Model.StockQuantity <= Model.LowStockThreshold ? "bg-warning" : "bg-success")">
+                                    @Model.StockQuantity in stock
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Out of stock</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-item mb-3">
+                    <strong>Status:</strong>
+                    <span class="badge @(Model.Status ? "bg-success" : "bg-secondary")">
+                        @(Model.Status ? "Active" : "Inactive")
+                    </span>
+                </div>
+
+                @if (Model.IsFeatured)
+                {
+                    <div class="detail-item mb-3">
+                        <strong>Featured:</strong>
+                        <span class="badge bg-info">Yes</span>
+                    </div>
+                }
+
+                <div class="detail-section mt-4">
+                    <h5>Description</h5>
+                    <p>@(string.IsNullOrEmpty(Model.Description) ? "No description provided" : Model.Description)</p>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.ShortDescription))
+                {
+                    <div class="detail-section mt-3">
+                        <h5>Short Description</h5>
+                        <p>@Model.ShortDescription</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.MainImage))
+        {
+            <div class="card mt-3">
+                <div class="card-body">
+                    <h5>Main Image</h5>
+                    <img src="~/images/@Model.MainImage" alt="@Model.Name" class="img-fluid rounded" style="max-height: 300px;" />
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <h5>Product Information</h5>
+
+                <div class="detail-item mb-2">
+                    <strong>Created:</strong>
+                    <span>@Model.CreatedAt.ToString("dd MMM yyyy HH:mm")</span>
+                </div>
+
+                <div class="detail-item mb-2">
+                    <strong>Created By:</strong>
+                    <span>@Model.CreatedBy</span>
+                </div>
+
+                @if (Model.UpdatedAt.HasValue)
+                {
+                    <div class="detail-item mb-2">
+                        <strong>Last Updated:</strong>
+                        <span>@Model.UpdatedAt.Value.ToString("dd MMM yyyy HH:mm")</span>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.UpdatedBy))
+                    {
+                        <div class="detail-item mb-2">
+                            <strong>Updated By:</strong>
+                            <span>@Model.UpdatedBy</span>
+                        </div>
+                    }
+                }
+
+                <div class="detail-item mb-2">
+                    <strong>URL Slug:</strong>
+                    <code>@Model.Slug</code>
+                </div>
+
+                @if (Model.IsBestSeller)
+                {
+                    <div class="detail-item mb-2">
+                        <strong>Best Seller:</strong>
+                        <span class="badge bg-warning">Yes</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5>SEO Information</h5>
+
+                <div class="detail-item mb-2">
+                    <strong>Meta Title:</strong>
+                    <span>@(string.IsNullOrEmpty(Model.MetaTitle) ? "Not set" : Model.MetaTitle)</span>
+                </div>
+
+                <div class="detail-item mb-2">
+                    <strong>Meta Description:</strong>
+                    <span>@(string.IsNullOrEmpty(Model.MetaDescription) ? "Not set" : Model.MetaDescription)</span>
+                </div>
+
+                @if (!string.IsNullOrEmpty(Model.MetaKeywords))
+                {
+                    <div class="detail-item">
+                        <strong>Meta Keywords:</strong>
+                        <span>@Model.MetaKeywords</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5>Quick Actions</h5>
+                <div class="d-grid gap-2">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                        <i class="fas fa-edit"></i> Edit Product
+                    </a>
+                    <button class="btn btn-danger" onclick="confirmDelete(@Model.Id, '@Model.Name.Replace("'", "\\'")')">
+                        <i class="fas fa-trash"></i> Delete Product
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete(id, name) {
+            if (confirm(`Are you sure you want to delete "${name}"?`)) {
+                $.ajax({
+                    url: '/Admin/Products/Delete/' + id,
+                    type: 'POST',
+                    headers: {
+                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Product deleted successfully!');
+                            window.location.href = '/admin/products';
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    },
+                    error: function() {
+                        alert('Error deleting product');
+                    }
+                });
+            }
+        }
+    </script>
+}

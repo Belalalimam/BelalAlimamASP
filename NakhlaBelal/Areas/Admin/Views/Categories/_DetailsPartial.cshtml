@@ -1,0 +1,121 @@
+﻿@model NakhlaBelal.Models.Category
+
+<div class="modal-header">
+    <h3>@Model.Name - Category Details</h3>
+    <button type="button" class="modal-close" onclick="closeModal()">
+        <i class="fas fa-times"></i>
+    </button>
+</div>
+
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Status:</strong></label>
+                <div>
+                    <span class="badge @(Model.Status.ToString() == "Active" ? "badge-success" : "badge-secondary")">
+                        @Model.Status.ToString()
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Display Order:</strong></label>
+                <div>@Model.DisplayOrder</div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>URL Slug:</strong></label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.Slug))
+                    {
+                        <code>/category/@Model.Slug</code>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not set</span>
+                    }
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Created:</strong></label>
+                <div>@Model.CreatedAt.ToString("dd MMM yyyy")</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label"><strong>Description:</strong></label>
+        <div class="p-3 bg-light rounded">
+            @if (string.IsNullOrEmpty(Model.Description))
+            {
+                <span class="text-muted">No description provided</span>
+            }
+            else
+            {
+                @Model.Description
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label"><strong>Products Count:</strong></label>
+        <div>
+            <span class="badge badge-primary">
+                <i class="fas fa-box"></i>
+                @(Model.Products?.Count() ?? 0) products
+            </span>
+        </div>
+    </div>
+
+    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+    {
+        <div class="mb-3">
+            <label class="form-label"><strong>Category Image:</strong></label>
+            <div>
+                <img src="~/images/@Model.ImageUrl" alt="@Model.Name" class="img-thumbnail" style="max-width: 200px;" />
+            </div>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.IconClass))
+    {
+        <div class="mb-3">
+            <label class="form-label"><strong>Icon:</strong></label>
+            <div>
+                <i class="@Model.IconClass me-2"></i> @Model.IconClass
+            </div>
+        </div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Meta Title:</strong></label>
+                <div class="text-truncate">
+                    @(string.IsNullOrEmpty(Model.MetaTitle) ? "Not set" : Model.MetaTitle)
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Meta Description:</strong></label>
+                <div class="text-truncate" title="@Model.MetaDescription">
+                    @(string.IsNullOrEmpty(Model.MetaDescription) ? "Not set" : Model.MetaDescription)
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" onclick="closeModal()">
+        <i class="fas fa-times"></i> Close
+    </button>
+    <button type="button" class="btn btn-primary" onclick="loadEditModal('@Model.Id', event)">
+        <i class="fas fa-edit"></i> Edit Category
+    </button>
+</div>

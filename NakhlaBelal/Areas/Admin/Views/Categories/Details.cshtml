@@ -1,0 +1,261 @@
+﻿@model NakhlaBelal.Models.Category
+
+@{
+    ViewBag.Title = "Category Details";
+    // Hide sidebar and make it look like a modal page
+    ViewBag.HideSidebar = true;
+    Layout = "_AdminLayout"; // or your layout
+}
+
+<style>
+    /* Make the page look like a modal */
+    body {
+        background: rgba(0,0,0,0.5) !important;
+        overflow: hidden !important;
+    }
+
+    .sidebar {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 0 !important;
+    }
+
+    .container-fluid {
+        max-width: 800px;
+        margin: 50px auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        padding: 0;
+    }
+
+    /* Modal header style */
+    .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e9ecef;
+        background: #f8f9fa;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #6c757d;
+        cursor: pointer;
+    }
+
+    /* Modal body */
+    .modal-body {
+        padding: 1.5rem;
+    }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #495057;
+        display: block;
+    }
+
+    /* Footer buttons */
+    .modal-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #e9ecef;
+        background: #f8f9fa;
+        border-radius: 0 0 8px 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Image thumbnail */
+    .img-thumbnail {
+        border: 1px solid #dee2e6;
+        border-radius: 4px;
+        padding: 2px;
+    }
+</style>
+
+<!-- Modal Header -->
+<div class="modal-header">
+    <h3>@Model.Name - Category Details</h3>
+    <a asp-action="Index" class="modal-close">
+        <i class="fas fa-times"></i>
+    </a>
+</div>
+
+<!-- Modal Body -->
+<div class="modal-body">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Status:</strong></label>
+                <div>
+                    <span class="badge @(Model.Status.ToString() == "Active" ? "badge-success" : "badge-secondary")">
+                        @Model.Status.ToString()
+                    </span>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Display Order:</strong></label>
+                <div>@Model.DisplayOrder</div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>URL Slug:</strong></label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.Slug))
+                    {
+                        <code>/category/@Model.Slug</code>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Not set</span>
+                    }
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label"><strong>Created:</strong></label>
+                <div>@Model.CreatedAt.ToString("dd MMM yyyy HH:mm")</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label"><strong>Description:</strong></label>
+        <div class="p-3 bg-light rounded">
+            @if (string.IsNullOrEmpty(Model.Description))
+            {
+                <span class="text-muted">No description provided</span>
+            }
+            else
+            {
+                @Model.Description
+            }
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label"><strong>Products Count:</strong></label>
+        <div>
+            <span class="badge badge-primary">
+                <i class="fas fa-box"></i>
+                @(Model.Products?.Count() ?? 0) products
+            </span>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Category Image:</strong></label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.Name" class="img-thumbnail" style="max-width: 200px;" />
+                    }
+                    else
+                    {
+                        <span class="text-muted">No image</span>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Icon:</strong></label>
+                <div>
+                    @if (!string.IsNullOrEmpty(Model.IconClass))
+                    {
+                        <i class="@Model.IconClass me-2"></i> 
+                        @Model.IconClass
+                    }
+                    else
+                    {
+                        <span class="text-muted">No icon</span>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Meta Title:</strong></label>
+                <div class="p-2 bg-light rounded">
+                    @(string.IsNullOrEmpty(Model.MetaTitle) ? "Not set" : Model.MetaTitle)
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label"><strong>Meta Description:</strong></label>
+                <div class="p-2 bg-light rounded">
+                    @(string.IsNullOrEmpty(Model.MetaDescription) ? "Not set" : Model.MetaDescription)
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.UpdatedAt.HasValue)
+    {
+        <div class="mb-3">
+            <label class="form-label"><strong>Last Updated:</strong></label>
+            <div>@Model.UpdatedAt.Value.ToString("dd MMM yyyy HH:mm")</div>
+        </div>
+    }
+</div>
+
+<!-- Modal Footer -->
+<div class="modal-footer">
+    <div>
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit Category
+        </a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Make the page behave like a modal
+        document.addEventListener('DOMContentLoaded', function() {
+            // Close on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    window.location.href = '/admin/categories';
+                }
+            });
+
+            // Close on backdrop click
+            document.querySelector('.container-fluid').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    window.location.href = '/admin/categories';
+                }
+            });
+        });
+    </script>
+}

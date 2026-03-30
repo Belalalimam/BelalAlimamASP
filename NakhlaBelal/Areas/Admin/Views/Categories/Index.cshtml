@@ -1,0 +1,1012 @@
+﻿@model List<Category>
+@{
+    // ===========================================================================
+    // PAGE METADATA SECTION
+    // ===========================================================================
+    // This section defines metadata for the page layout and title display
+    ViewBag.Title = "Category Management";
+    ViewBag.PageTitle = "Categories";
+    ViewBag.Subtitle = "Manage product categories";
+}
+
+<!-- =========================================================================== -->
+<!-- MOBILE TABLE HINT -->
+<!-- =========================================================================== -->
+<!--
+    This hint is only visible on mobile devices to inform users they can swipe
+    horizontally to see all table columns on smaller screens
+-->
+<div class="mobile-scroll-hint" style="display: none; background: #f1f5f9; padding: 8px; text-align: center; color: #64748b; font-size: 12px; border-radius: 6px; margin-bottom: 15px;">
+    <i class="fas fa-arrows-left-right"></i> Swipe horizontally to view all columns
+</div>
+
+<!-- =========================================================================== -->
+<!-- PAGE HEADER SECTION -->
+<!-- =========================================================================== -->
+<!--
+    Contains the main page title, subtitle, and action buttons.
+    The "Add Category" button navigates to /admin/categories/create
+-->
+<div class="page-header">
+    <div>
+        <h2>Product Categories</h2>
+        <p class="page-subtitle">Organize your products into categories</p>
+    </div>
+    <div class="header-actions">
+        <!-- Filter button (functionality not implemented yet) -->
+        <button class="btn btn-secondary">
+            <i class="fas fa-filter"></i>
+            <span class="desktop-text">Filter</span>
+        </button>
+        <!-- "Add Category" button - Navigates to create page -->
+        <a href="/admin/categories/create" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
+            <span class="desktop-text">Add Category</span>
+        </a>
+    </div>
+</div>
+
+<!-- =========================================================================== -->
+<!-- STATS CARDS SECTION -->
+<!-- =========================================================================== -->
+<!--
+    Displays key metrics and statistics about categories.
+    Dynamic calculations based on actual database data
+--> 
+<div class="stats-container">
+    @{
+        // Use CategoryStatus.Active enum, not string
+        var activeCount = Model.Count(c => c.Status == CategoryStatus.Active);
+        var totalProducts = Model.Sum(c => c.Products?.Count ?? 0);
+        var avgProducts = Model.Count > 0 ? totalProducts / Model.Count : 0;
+    }
+
+    <!-- Total Categories Card -->
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-title">Total Categories</div>
+            <div class="stat-icon">
+                <i class="fas fa-tags"></i>
+            </div>
+        </div>
+        <div class="stat-value">@Model.Count</div>
+        <div class="stat-desc">All categories in system</div>
+    </div>
+
+    <!-- Active Categories Card -->
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-title">Active Categories</div>
+            <div class="stat-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+        </div>
+        <div class="stat-value">@activeCount</div>
+        <div class="stat-desc">Visible on website</div>
+    </div>
+
+    <!-- Total Products Card -->
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-title">Total Products</div>
+            <div class="stat-icon">
+                <i class="fas fa-box"></i>
+            </div>
+        </div>
+        <div class="stat-value">@totalProducts</div>
+        <div class="stat-desc">Across all categories</div>
+    </div>
+
+    <!-- Average Products per Category Card -->
+    <div class="stat-card">
+        <div class="stat-header">
+            <div class="stat-title">Avg. Products/Category</div>
+            <div class="stat-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+        </div>
+        <div class="stat-value">@avgProducts</div>
+        <div class="stat-desc">Per category average</div>
+    </div>
+</div>
+
+<!-- =========================================================================== -->
+<!-- CATEGORIES TABLE SECTION -->
+<!-- =========================================================================== -->
+<!--
+    Main data table displaying all categories with sorting, selection, and action buttons.
+    Includes pagination for navigating through multiple pages of results
+-->
+<div class="data-table-container">
+    <!-- Table header with title and action buttons -->
+    <div class="table-header">
+        <h2>All Categories</h2>
+        <div class="table-actions">
+            <!-- Export All button -->
+            <button class="table-action" onclick="exportAllCategories()">
+                <i class="fas fa-file-export"></i>
+                <span class="desktop-text">Export All</span>
+            </button>
+            <!-- Print button -->
+            <button class="table-action" onclick="window.print()">
+                <i class="fas fa-print"></i>
+                <span class="desktop-text">Print</span>
+            </button>
+            <!-- Refresh button -->
+            <button class="table-action" onclick="refreshCategories()">
+                <i class="fas fa-sync-alt"></i>
+                <span class="desktop-text">Refresh</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main categories table -->
+    <table class="data-table">
+        <thead>
+            <tr>
+                <!-- Checkbox column for selecting multiple rows -->
+                <th style="width: 40px;">
+                    <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
+                </th>
+                <!-- Sortable columns with sort icons -->
+                <th data-sortable="true">Category Name <i class="fas fa-sort"></i></th>
+                <th data-sortable="true">Products <i class="fas fa-sort"></i></th>
+                <th data-sortable="true">Status <i class="fas fa-sort"></i></th>
+                <th data-sortable="true">Created <i class="fas fa-sort"></i></th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                <!-- Loop through each category in the model -->
+                @foreach (var category in Model)
+                {
+                    <!-- Table row for each category with click handler for selection -->
+                    <tr class="table-row" data-item-id="@category.Id" onclick="selectRow(event, this)">
+                        <!-- Checkbox for row selection -->
+                        <td>
+                            <input type="checkbox" class="row-select" value="@category.Id" onchange="updateSelection(this)">
+                        </td>
+                        <!-- Category name and description -->
+                        <td>
+                            <div class="customer-name">@category.Name</div>
+                            @* <div class="text-muted text-wrap overflow-x-hidden">@(category.Description ?? "No description")</div> *@
+                        </td>
+                        <!-- Products count with badge -->
+                        <td>
+                            <span class="badge badge-primary">@(category.Products?.Count ?? 0) products</span>
+                        </td>
+                        <!-- Status with colored dot indicator -->
+                        <td>
+                            @{
+                                var statusClass = category.Status.ToString().ToLowerInvariant();
+                                var statusText = category.Status.ToString();
+                            }
+                            <span class="status-dot dot-@statusClass"></span>
+                            <span class="mobile-text">@statusText</span>
+                        </td>
+                        <!-- Creation date -->
+                        <td>
+                            <div class="order-date">@category.CreatedAt.ToString("dd MMM yyyy")</div>
+                        </td>
+                        <!-- Action buttons (View, Edit, Delete) -->
+                        <td onclick="event.stopPropagation()">
+                            <div class="row-actions">
+                                <!-- View button - opens modal with category details -->
+                                <button class="row-action view" onclick="loadViewModal('@category.Id', event)">
+                                    <i class="fas fa-eye"></i>
+                                    <span class="desktop-text">View</span>
+                                </button>
+                                <!-- Edit button - opens modal with edit form -->
+                                <button class="row-action edit" onclick="loadEditModal('@category.Id', event)">
+                                    <i class="fas fa-edit"></i>
+                                    <span class="desktop-text">Edit</span>
+                                </button>
+                                <!-- Delete button - shows confirmation then deletes category -->
+                                <button class="row-action delete" onclick="deleteCategory('@category.Id', '@category.Name.Replace("'", "\\'")', event)">
+                                    <i class="fas fa-trash"></i>
+                                    <span class="desktop-text">Delete</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <!-- Empty state when no categories exist -->
+                <tr>
+                    <td colspan="6" class="text-center">
+                        <div class="empty-state">
+                            <i class="fas fa-inbox fa-3x text-muted"></i>
+                            <h4>No Categories Found</h4>
+                            <p>Get started by creating your first category.</p>
+                            <a href="/admin/categories/create" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Add First Category
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- =========================================================================== -->
+    <!-- PAGINATION SECTION -->
+    <!-- =========================================================================== -->
+    <!--
+        Pagination controls for navigating between pages of categories.
+        Shows previous/next buttons and numbered page links
+    -->
+    <nav aria-label="Page navigation example ">
+        <ul class="pagination d-flex justify-content-center">
+            <!-- Previous page link -->
+            @if (ViewBag.currentPage > 1)
+            {
+                <li class="page-item"><a class="page-link" href="/admin/categories/index?page=@(ViewBag.currentPage - 1)">Previous</a></li>
+            }
+
+            <!-- Page number links -->
+            @for (var i = 1; i <= ViewBag.totalHodsOfPage; i++)
+            {
+                if (i == ViewBag.currentPage)
+                {
+                    <!-- Current page (active) -->
+                    <li class="page-item active"><a class="page-link" href="/admin/categories/index?page=@i">@i</a></li>
+                }
+                else
+                {
+                    <!-- Other pages -->
+                    <li class="page-item"><a class="page-link" href="/admin/categories'index?page=@i">@i</a></li>
+                }
+            }
+
+            <!-- Next page link -->
+            @if (ViewBag.currentPage != ViewBag.totalHodsOfPage && Model.Any())
+            {
+                <li class="page-item"><a class="page-link" href="/admin/categories/index?page=@(ViewBag.currentPage + 1)">Next</a></li>
+            }
+        </ul>
+    </nav>
+</div>
+
+<!-- =========================================================================== -->
+<!-- SELECTION ACTIONS BAR -->
+<!-- =========================================================================== -->
+<!--
+    Appears when one or more categories are selected.
+    Provides actions for the selected items (export, delete, clear)
+-->
+<div class="selection-actions" id="selectionActions">
+    <div class="selected-count">
+        <span id="selectedCount">0</span> categories selected
+    </div>
+    <div class="selection-buttons">
+        <!-- Export selected categories -->
+        <button class="btn btn-secondary btn-sm" onclick="exportSelectedCategories()">
+            <i class="fas fa-file-export"></i>
+            <span class="desktop-text">Export</span>
+        </button>
+        <!-- Delete selected categories -->
+        <button class="btn btn-danger btn-sm" onclick="deleteSelectedCategories()">
+            <i class="fas fa-trash"></i>
+            <span class="desktop-text">Delete</span>
+        </button>
+        <!-- Clear selection -->
+        <button class="btn btn-secondary btn-sm" onclick="clearSelection()">
+            <i class="fas fa-times"></i>
+            <span class="desktop-text">Clear</span>
+        </button>
+    </div>
+</div>
+
+<!-- =========================================================================== -->
+<!-- MODAL CONTAINER -->
+<!-- =========================================================================== -->
+<!--
+    Modal container for View and Edit operations.
+    Content is loaded dynamically via AJAX when buttons are clicked
+-->
+<div id="categoryModalContainer" class="modal" style="display: none;">
+    <div class="modal-content">
+        <!-- Content will be loaded dynamically via AJAX -->
+    </div>
+</div>
+
+<!-- =========================================================================== -->
+<!-- JAVASCRIPT SECTION -->
+<!-- =========================================================================== -->
+@section Scripts {
+    <script>
+        // ===========================================================================
+        // INITIALIZATION
+        // ===========================================================================
+
+        /**
+         * Initializes the page when DOM is fully loaded
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Categories page loaded');
+            initCategoriesPage();
+            setupModalEvents();
+        });
+
+        /**
+         * Initializes category-specific functionality
+         * Sets up event listeners for checkboxes
+         */
+        function initCategoriesPage() {
+            // Add event listeners to all row selection checkboxes
+            const checkboxes = document.querySelectorAll('.row-select');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    updateSelection(this);
+                });
+            });
+        }
+
+        // ===========================================================================
+        // MODAL FUNCTIONS (VIEW/EDIT)
+        // ===========================================================================
+
+        /**
+         * Loads the edit modal for a specific category
+         * param {number} categoryId - The ID of the category to edit
+         * param {Event} event - The click event
+         */
+                // In your Index.cshtml - FIND THIS FUNCTION:
+        function loadEditModal(categoryId, event) {
+            if (event) event.stopPropagation();
+
+            const modalContainer = document.getElementById('categoryModalContainer');
+            const modalContent = modalContainer.querySelector('.modal-content');
+            modalContent.innerHTML = '<div class="modal-loading">Loading edit form...</div>';
+            modalContainer.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            console.log('Loading edit form for category ID:', categoryId);
+
+            // CHANGE THIS URL FROM Edit to GetEdit:
+            $.ajax({
+                url: '/Admin/Categories/GetEdit/' + categoryId,  // <-- CHANGE THIS LINE
+                type: 'GET',
+                success: function(response) {
+                    console.log('Edit form loaded successfully');
+                    modalContent.innerHTML = response;
+                    setupModalEvents();
+                    attachEditFormHandlers(); // Attach form submission handler
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error loading edit form:', error);
+                    modalContent.innerHTML = `
+                        <div class="modal-error">
+                            <h4>Error Loading Edit Form</h4>
+                            <p>Status: ${xhr.status} - ${xhr.statusText}</p>
+                            <p>Error: ${error}</p>
+                            <button class="btn btn-primary mt-3" onclick="closeModal()">Close</button>
+                        </div>`;
+                }
+            });
+        }
+
+        /**
+         * Loads the view modal for a specific category
+         * param {number} categoryId - The ID of the category to view
+         * param {Event} event - The click event
+         */
+        function loadViewModal(categoryId, event) {
+            if (event) event.stopPropagation();
+
+            console.log('Loading category details for ID:', categoryId);
+
+            const modalContainer = document.getElementById('categoryModalContainer');
+            const modalContent = modalContainer.querySelector('.modal-content');
+            modalContent.innerHTML = '<div class="modal-loading">Loading category details...</div>';
+            modalContainer.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            // Make AJAX request to get category details
+            $.ajax({
+                url: '/Admin/Categories/Details/' + categoryId,
+                type: 'GET',
+                success: function(response) {
+                    console.log('Success! Response received');
+
+                    // If we get a partial view, display it directly
+                    if (response.trim().startsWith('<') || response.includes('modal-header')) {
+                        modalContent.innerHTML = response;
+                    } else {
+                        // Wrap simple responses in modal structure
+                        modalContent.innerHTML = `
+                            <div class="modal-header">
+                                <h3>Category Details</h3>
+                                <button type="button" class="modal-close" onclick="closeModal()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                ${response}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+                            </div>
+                        `;
+                    }
+
+                    // Re-setup modal events for the new content
+                    setupModalEvents();
+                },
+                error: function(xhr, status, error) {
+                    console.error('AJAX Error:', {
+                        status: xhr.status,
+                        statusText: xhr.statusText,
+                        error: error
+                    });
+
+                    if (xhr.status === 404) {
+                        modalContent.innerHTML = `
+                            <div class="modal-error">
+                                <h4>Category Not Found</h4>
+                                <p>The category with ID ${categoryId} was not found.</p>
+                                <p>It may have been deleted or the URL is incorrect.</p>
+                                <button class="btn btn-primary mt-3" onclick="closeModal()">Close</button>
+                            </div>`;
+                    } else {
+                        modalContent.innerHTML = `
+                            <div class="modal-error">
+                                <h4>Error Loading Details</h4>
+                                <p><strong>Status:</strong> ${xhr.status} - ${xhr.statusText}</p>
+                                <p><strong>Error:</strong> ${error}</p>
+                                <p>Please check if the Details action exists in your controller.</p>
+                                <button class="btn btn-primary mt-3" onclick="closeModal()">Close</button>
+                            </div>`;
+                    }
+                }
+            });
+        }
+
+        /**
+         * Closes the modal
+         */
+        function closeModal() {
+            const modalContainer = document.getElementById('categoryModalContainer');
+            if (modalContainer) {
+                modalContainer.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        /**
+         * Sets up event listeners for the modal
+         * - Close on backdrop click
+         * - Close on Escape key
+         * - Prevent clicks inside modal from closing it
+         */
+        function setupModalEvents() {
+            const modalContainer = document.getElementById('categoryModalContainer');
+            if (!modalContainer) return;
+
+            // Close on backdrop click
+            modalContainer.addEventListener('click', function(e) {
+                if (e.target === this || e.target.closest('.modal-close')) {
+                    closeModal();
+                }
+            });
+
+            // Close on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modalContainer.style.display === 'flex') {
+                    closeModal();
+                }
+            });
+
+            // Prevent clicks inside modal content from closing modal
+            const modalContent = modalContainer.querySelector('.modal-content');
+            if (modalContent) {
+                modalContent.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+        }
+
+        /**
+         * Attaches form submission handlers to the edit form
+         * Handles AJAX submission and response processing
+         */
+        function attachEditFormHandlers() {
+            // Handle edit form submission
+            const editForm = document.getElementById('editCategoryForm');
+            if (editForm) {
+                console.log('Edit form found, attaching submit handler');
+
+                editForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Edit form submitted');
+
+                    // Show loading state
+                    const submitBtn = this.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+                    submitBtn.disabled = true;
+
+                    $.ajax({
+                        url: this.action,
+                        type: 'POST',
+                        data: $(this).serialize(),
+                        success: function(response) {
+                            console.log('Edit response:', response);
+
+                            if (response.success) {
+                                // Show success message
+                                alert(response.message || 'Category updated successfully!');
+                                closeModal();
+                                // Reload the page to show updated data
+                                window.location.reload();
+                            } else {
+                                // Show validation errors or error message
+                                if (response.error) {
+                                    alert('Error: ' + response.error);
+                                } else {
+                                    // Assume response contains HTML with validation errors
+                                    const modalContent = document.querySelector('#categoryModalContainer .modal-content');
+                                    modalContent.innerHTML = response;
+                                    // Re-attach handlers to the new form
+                                    attachEditFormHandlers();
+                                }
+                            }
+                        },
+                        error: function(xhr, status, error) {
+                            console.error('Edit AJAX error:', error);
+                            alert('Error updating category. Please try again.');
+
+                            // Reset button
+                            submitBtn.innerHTML = originalText;
+                            submitBtn.disabled = false;
+                        },
+                        complete: function() {
+                            // Reset button if not already reset
+                            if (submitBtn.disabled) {
+                                submitBtn.innerHTML = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        }
+                    });
+                });
+            } else {
+                console.log('Edit form not found');
+            }
+        }
+
+        // ===========================================================================
+        // DELETE FUNCTIONS
+        // ===========================================================================
+
+        /**
+         * Deletes a single category after confirmation
+         * param {number} categoryId - The ID of the category to delete
+         * param {string} categoryName - The name of the category (for confirmation message)
+         * param {Event} event - The click event
+         */
+        function deleteCategory(categoryId, categoryName, event) {
+            // Show confirmation dialog
+            if (!confirm(`Are you sure you want to delete "${categoryName}"?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            console.log('Deleting category:', categoryId);
+
+            // Show loading on the delete button
+            const deleteBtn = event.target.closest('.delete');
+            if (deleteBtn) {
+                const originalHtml = deleteBtn.innerHTML;
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                deleteBtn.disabled = true;
+            }
+
+            // Get anti-forgery token for security
+            const token = $('input[name="__RequestVerificationToken"]').val();
+
+            // Send AJAX request to delete from database
+            $.ajax({
+                url: '/Admin/Categories/Delete/' + categoryId,
+                type: 'POST',
+                headers: {
+                    'RequestVerificationToken': token
+                },
+                // Send token as form data
+                data: {
+                    __RequestVerificationToken: token,
+                    id: categoryId  // Explicitly send the ID
+                },
+                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                success: function(response) {
+                    console.log('Delete response:', response);
+
+                    if (response.success) {
+                        // Show success message
+                        alert(response.message || 'Category deleted successfully!');
+
+                        // Remove from UI with fade animation
+                        const row = document.querySelector(`tr[data-item-id="${categoryId}"]`);
+                        if (row) {
+                            row.style.transition = 'opacity 0.3s';
+                            row.style.opacity = '0';
+
+                            setTimeout(() => {
+                                row.remove();
+                                updateSelectionUI();
+
+                                // Check if table is now empty
+                                if (document.querySelectorAll('.data-table tbody tr').length === 0) {
+                                    showEmptyState();
+                                }
+                            }, 300);
+                        }
+                    } else {
+                        // Show error message
+                        alert(response.message || 'Error deleting category.');
+
+                        // Reset button
+                        if (deleteBtn) {
+                            deleteBtn.innerHTML = '<i class="fas fa-trash"></i><span class="desktop-text">Delete</span>';
+                            deleteBtn.disabled = false;
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Delete error:', error);
+                    console.error('Response:', xhr.responseText);
+                    alert('Error deleting category. Please check console for details.');
+
+                    // Reset button
+                    if (deleteBtn) {
+                        deleteBtn.innerHTML = '<i class="fas fa-trash"></i><span class="desktop-text">Delete</span>';
+                        deleteBtn.disabled = false;
+                    }
+                }
+            });
+        }
+
+        /**
+         * Deletes multiple selected categories after confirmation
+         */
+        function deleteSelectedCategories() {
+            const selected = document.querySelectorAll('.row-select:checked');
+            if (selected.length === 0) {
+                alert('Please select at least one category to delete.');
+                return;
+            }
+
+            const categoryIds = Array.from(selected).map(checkbox => checkbox.value);
+            const count = selected.length;
+
+            // Show confirmation dialog
+            if (!confirm(`Are you sure you want to delete ${count} selected category(s)?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            // Show loading on delete button
+            const deleteBtn = document.querySelector('#selectionActions .btn-danger');
+            if (deleteBtn) {
+                const originalHtml = deleteBtn.innerHTML;
+                deleteBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deleting...';
+                deleteBtn.disabled = true;
+            }
+
+            // Get anti-forgery token
+            const token = $('input[name="__RequestVerificationToken"]').val();
+
+            // Send AJAX request for bulk deletion
+            $.ajax({
+                url: '/Admin/Categories/DeleteMultiple',
+                type: 'POST',
+                headers: {
+                    'RequestVerificationToken': token,
+                    'Content-Type': 'application/json'
+                },
+                // Send as JSON with IDs array
+                data: JSON.stringify({
+                    ids: categoryIds,
+                    __RequestVerificationToken: token
+                }),
+                success: function(response) {
+                    console.log('Bulk delete response:', response);
+
+                    if (response.success) {
+                        // Show success message
+                        alert(response.message || `${count} category(s) deleted successfully!`);
+
+                        // Remove selected rows from UI with fade animation
+                        selected.forEach(checkbox => {
+                            const row = checkbox.closest('tr');
+                            if (row) {
+                                row.style.transition = 'opacity 0.3s';
+                                row.style.opacity = '0';
+
+                                setTimeout(() => {
+                                    row.remove();
+                                }, 300);
+                            }
+                        });
+
+                        // Clear selection and update UI
+                        setTimeout(() => {
+                            clearSelection();
+
+                            // Check if table is now empty
+                            if (document.querySelectorAll('.data-table tbody tr').length === 0) {
+                                showEmptyState();
+                            }
+                        }, 400);
+                    } else {
+                        // Show error message
+                        alert(response.message || 'Error deleting categories.');
+                    }
+                },
+                error: function(xhr, status, error) {
+                    console.error('Bulk delete error:', error);
+                    alert('Error deleting categories. Please try again.');
+                },
+                complete: function() {
+                    // Reset button
+                    if (deleteBtn) {
+                        deleteBtn.innerHTML = '<i class="fas fa-trash"></i><span class="desktop-text">Delete</span>';
+                        deleteBtn.disabled = false;
+                    }
+                }
+            });
+        }
+
+        /**
+         * Shows empty state when no categories exist
+         */
+        function showEmptyState() {
+            const tbody = document.querySelector('.data-table tbody');
+            if (tbody) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            <div class="empty-state">
+                                <i class="fas fa-inbox fa-3x text-muted"></i>
+                                <h4>No Categories Found</h4>
+                                <p>Get started by creating your first category.</p>
+                                <a href="/admin/categories/create" class="btn btn-primary">
+                                    <i class="fas fa-plus"></i> Add First Category
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        /**
+         * Gets the anti-forgery token from the page
+         * returns {string} The anti-forgery token value
+         */
+        function getAntiForgeryToken() {
+            // Try to find the token in the page
+            const tokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (tokenElement) {
+                return tokenElement.value;
+            }
+
+            // If not found, try to get it from the form
+            const form = document.querySelector('form input[name="__RequestVerificationToken"]');
+            if (form) {
+                return form.value;
+            }
+
+            console.warn('Anti-forgery token not found');
+            return '';
+        }
+
+        /**
+         * Sets up AJAX to include anti-forgery token in all requests
+         */
+        $.ajaxSetup({
+            beforeSend: function(xhr) {
+                const token = getAntiForgeryToken();
+                if (token) {
+                    xhr.setRequestHeader('RequestVerificationToken', token);
+                }
+            }
+        });
+
+        // ===========================================================================
+        // OTHER CATEGORY OPERATIONS
+        // ===========================================================================
+
+        /**
+         * Exports selected categories (simulated)
+         */
+        function exportSelectedCategories() {
+            const selected = document.querySelectorAll('.row-select:checked');
+            if (selected.length === 0) {
+                alert('Please select at least one category to export.');
+                return;
+            }
+
+            const categoryIds = Array.from(selected).map(checkbox => checkbox.value);
+            const count = selected.length;
+
+            // Show loading
+            const exportBtn = document.querySelector('#selectionActions .btn-secondary');
+            const originalText = exportBtn ? exportBtn.innerHTML : '';
+
+            if (exportBtn) {
+                exportBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Preparing...';
+                exportBtn.disabled = true;
+            }
+
+            // Simulate export (you can implement actual export here)
+            setTimeout(() => {
+                alert(`Exporting ${count} selected categories...\nCategory IDs: ${categoryIds.join(', ')}`);
+
+                // Reset button
+                if (exportBtn) {
+                    exportBtn.innerHTML = originalText;
+                    exportBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        /**
+         * Exports all categories (simulated)
+         */
+        function exportAllCategories() {
+            // Get all category IDs from the table
+            const allCategoryIds = Array.from(document.querySelectorAll('.row-select')).map(cb => cb.value);
+
+            if (allCategoryIds.length === 0) {
+                alert('No categories to export.');
+                return;
+            }
+
+            alert(`Exporting all ${allCategoryIds.length} categories...\nCategory IDs: ${allCategoryIds.join(', ')}`);
+        }
+
+        /**
+         * Refreshes the categories table
+         */
+        function refreshCategories() {
+            // Show loading
+            const refreshBtn = document.querySelector('.table-action:nth-child(3)');
+            const originalText = refreshBtn ? refreshBtn.innerHTML : '';
+
+            if (refreshBtn) {
+                refreshBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                refreshBtn.disabled = true;
+            }
+
+            // Reload the page
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        }
+
+        // ===========================================================================
+        // SELECTION MANAGEMENT FUNCTIONS
+        // ===========================================================================
+
+        // Set to store selected item IDs
+        let selectedItems = new Set();
+
+        /**
+         * Handles row selection when clicking on a table row
+         * param {Event} event - The click event
+         * param {HTMLElement} row - The table row element
+         */
+        function selectRow(event, row) {
+            // Don't trigger selection if clicking on checkbox, action buttons, or links
+            if (event.target.type === 'checkbox' ||
+                event.target.closest('.row-actions') ||
+                event.target.tagName === 'A') {
+                return;
+            }
+
+            const checkbox = row.querySelector('.row-select');
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+                updateSelection(checkbox);
+            }
+        }
+
+        /**
+         * Updates the selection state when a checkbox changes
+         * param {HTMLInputElement} checkbox - The checkbox element
+         */
+        function updateSelection(checkbox) {
+            const itemId = checkbox.value;
+
+            if (checkbox.checked) {
+                selectedItems.add(itemId);
+                checkbox.closest('tr').classList.add('selected');
+            } else {
+                selectedItems.delete(itemId);
+                checkbox.closest('tr').classList.remove('selected');
+                const selectAll = document.getElementById('selectAll');
+                if (selectAll) selectAll.checked = false;
+            }
+
+            updateSelectionUI();
+        }
+
+        /**
+         * Toggles selection of all rows
+         * param {HTMLInputElement} selectAllCheckbox - The "select all" checkbox
+         */
+        function toggleSelectAll(selectAllCheckbox) {
+            const checkboxes = document.querySelectorAll('.row-select');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = selectAllCheckbox.checked;
+                updateSelection(checkbox);
+            });
+        }
+
+        /**
+         * Updates the selection UI (counter and actions bar)
+         */
+        function updateSelectionUI() {
+            const count = selectedItems.size;
+            const selectedCountEl = document.getElementById('selectedCount');
+            const actionsBar = document.getElementById('selectionActions');
+
+            if (selectedCountEl) {
+                selectedCountEl.textContent = count;
+            }
+
+            if (actionsBar) {
+                if (count > 0) {
+                    actionsBar.classList.add('active');
+                } else {
+                    actionsBar.classList.remove('active');
+                }
+            }
+        }
+
+        /**
+         * Clears all selections
+         */
+        function clearSelection() {
+            selectedItems.clear();
+            document.querySelectorAll('.row-select').forEach(cb => {
+                cb.checked = false;
+                cb.closest('tr')?.classList.remove('selected');
+            });
+            const selectAll = document.getElementById('selectAll');
+            if (selectAll) selectAll.checked = false;
+            updateSelectionUI();
+        }
+
+        // ===========================================================================
+        // MOBILE FUNCTIONS
+        // ===========================================================================
+
+        /**
+         * Checks if the device is mobile
+         * returns {boolean} True if mobile, false otherwise
+         */
+        function isMobile() {
+            return window.innerWidth <= 768;
+        }
+
+        /**
+         * Shows/hides mobile hint based on screen size
+         */
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileHint = document.querySelector('.mobile-scroll-hint');
+            if (mobileHint && isMobile()) {
+                mobileHint.style.display = 'block';
+            }
+
+            // Update on resize
+            window.addEventListener('resize', function() {
+                if (mobileHint) {
+                    mobileHint.style.display = isMobile() ? 'block' : 'none';
+                }
+            });
+        });
+    </script>
+}

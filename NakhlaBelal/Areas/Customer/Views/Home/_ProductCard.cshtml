@@ -1,0 +1,106 @@
+﻿@model Product
+
+<div class="card product-card border-0 shadow-sm h-100 rounded-4 overflow-hidden">
+    <!-- Badges -->
+    <div class="position-absolute top-0 start-0 m-3 z-1">
+        @if (Model.IsOnSale)
+        {
+            <span class="badge bg-danger rounded-pill px-2 py-1">
+                <small><i class="fas fa-tag me-1"></i>SALE</small>
+            </span>
+        }
+        @if (Model.IsNew)
+        {
+            <span class="badge bg-success rounded-pill px-2 py-1 mt-1">
+                <small><i class="fas fa-star me-1"></i>NEW</small>
+            </span>
+        }
+    </div>
+
+    <!-- Product Image -->
+    <div class="position-relative overflow-hidden" style="height: 200px; background: #f8f9fa;">
+        <img src="~/images/@Model.MainImage"
+             class="img-fluid w-100 h-100 object-fit-cover"
+             alt="@Model.Name"
+             onerror="this.src='https://via.placeholder.com/300x200?text=Product'">
+
+        <!-- Quick Actions -->
+        <div class="position-absolute top-0 end-0 m-3 z-1">
+            <button class="btn btn-light btn-sm rounded-circle shadow-sm"
+                    onclick="addToWishlist(@Model.Id)">
+                <i class="far fa-heart"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Product Info -->
+    <div class="card-body p-3">
+        <!-- Category -->
+        <small class="text-muted d-block mb-1">@Model.Category?.Name</small>
+
+        <!-- Name -->
+        <h6 class="card-title fw-bold mb-2">
+            <a href="@Url.Action("Details", "Home", new { id = Model.Id, area = "Customer" })"
+               class="text-decoration-none text-dark">
+                @(Model.Name.Length > 50 ? Model.Name.Substring(0, 50) + "..." : Model.Name)
+            </a>
+        </h6>
+
+        <!-- Rating -->
+        <div class="d-flex align-items-center mb-2">
+            <div class="rating-stars small">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <i class="@(i <= Math.Floor(Model.AverageRating) ? "fas" : "far") fa-star text-warning"></i>
+                }
+            </div>
+            <small class="text-muted ms-2">(@Model.ReviewCount)</small>
+        </div>
+
+        <!-- Price -->
+        <div class="d-flex align-items-center mb-3">
+            @if (Model.IsOnSale)
+            {
+                <span class="h5 mb-0 fw-bold text-danger">$@Model.FinalPrice.ToString("N2")</span>
+                <small class="text-muted text-decoration-line-through ms-2">$@Model.Price.ToString("N2")</small>
+            }
+            else
+            {
+                <span class="h5 mb-0 fw-bold">$@Model.Price.ToString("N2")</span>
+            }
+        </div>
+
+        <!-- Add to Cart -->
+        <div class="d-grid">
+            <button class="btn btn-outline-primary btn-sm rounded-pill"
+                    onclick="addToCart(@Model.Id, 1)">
+                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addToCart(productId, quantity) {
+        fetch('/Customer/Cart/AddToCart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+            },
+            body: `productId=${productId}&count=${quantity}`
+        }).then(response => {
+            if (response.ok) {
+                // Show success notification
+                alert('Product added to cart!');
+                // Update cart count
+                updateCartCount();
+            }
+        });
+    }
+
+    function addToWishlist(productId) {
+        // Implement wishlist functionality
+        console.log('Add to wishlist:', productId);
+    }
+</script>

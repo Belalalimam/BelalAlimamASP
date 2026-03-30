@@ -1,0 +1,501 @@
+﻿@model ProductWithRelatedVM
+<div class="product-detail-page container">
+    @* <!-- Breadcrumb -->
+    <div class="container">
+        <div class="product-breadcrumb">
+            <a href="/">Home</a>
+            <span>></span>
+            <a href="/Customer/Home/Product">Shop</a>
+            <span>></span>
+            <span>@Model.Product.Name</span>
+        </div>
+    </div> *@
+
+    <!-- Main Product Section -->
+    <div class="container-fluid">
+        <div class="product-main-section">
+            <!-- Product Gallery -->
+            <div class="product-gallery">
+                @if (Model.ProductImages != null && Model.ProductImages.Any())
+                {
+                    var firstImage = Model.ProductImages.OrderBy(pi => pi.DisplayOrder).First();
+                    <img src="~/images/@firstImage.ImageUrl"
+                         alt="@(firstImage.AltText ?? Model.Product.Name)"
+                         class="product-main-image"
+                         id="mainProductImage">
+
+                    <div class="product-thumbnails">
+                        @foreach (var image in Model.ProductImages.OrderBy(pi => pi.DisplayOrder))
+                        {
+                            <img src="~/images/@image.ImageUrl"
+                                 alt="@(image.AltText ?? Model.Product.Name)"
+                                 class="product-thumbnail @(Model.ProductImages.OrderBy(pi => pi.DisplayOrder).First() == image ? "active" : "")"
+                                 onclick="changeImage(this.src, '@image.AltText')"
+                                 data-alt="@image.AltText">
+                        }
+                    </div>
+                }
+                else if (!string.IsNullOrEmpty(Model.Product.MainImage))
+                {
+                    <img src="~/images/@Model.Product.MainImage"
+                         alt="@Model.Product.Name"
+                         class="product-main-image"
+                         id="mainProductImage">
+
+                    <div class="product-thumbnails">
+                        <img src="~/images/@Model.Product.MainImage"
+                             alt="@Model.Product.Name"
+                             class="product-thumbnail active"
+                             onclick="changeImage(this.src, '@Model.Product.Name')">
+                    </div>
+                }
+                else
+                {
+                    <img src="~/images/products/default.jpg"
+                         alt="@Model.Product.Name"
+                         class="product-main-image"
+                         id="mainProductImage">
+                }
+
+                <!-- Colors Section -->
+                                    @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+                                    {
+                                        <div class="colors-section mt-5">
+                                            <h3 class="section-title">Available Colors</h3>
+
+                                            <div class="color-options">
+                                                @foreach (var item in Model.RelatedProducts)
+                                                {
+                                                    /* هنا التعديل:
+                                                       الرابط يجب أن يذهب لـ Id المنتج (اللون) الذي ضغطت عليه
+                                                    */
+                                                    <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })">
+                                                        <div class="d-flex flex-column mx-1">
+                                                            <img src="~/images/@item.MainImage" width="120px" height="80px" class="rounded-3" alt="" />
+
+                                                            @* إذا كان عندك حقل اسم اللون في جدول Product استخدمه هنا
+                           بدل SKU ليكون البحث دقيقاً 
+                        *@
+                                                            <span class="color-name">@item.SKU</span>
+                                                        </div>
+                                                    </a>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+            </div>
+
+
+
+            <!-- Product Info -->
+            <div class="bordre1">
+
+                <div class="detailes-product-info px-4 ">
+                    <h1 class="detailes-product-title ">@Model.Product.Name</h1>
+                    <div class="detailes-product-code ">@Model.Product.SKU</div>
+                    
+
+                    <div class="product-description">
+                        @if (!string.IsNullOrEmpty(Model.Product.Description))
+                        {
+                            var paragraphs = Model.Product.Description.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                            foreach (var paragraph in paragraphs)
+                            {
+                                <div>@paragraph</div>
+                            }
+                        }
+                        else
+                        {
+                            <div>An elegant white and silver Chanel-style tweed fabric, enriched with delicate lilac yarn inserts; sophisticated and stylish, it is perfect for both classic and modern inspired garments.</div>
+                        }
+                    </div>
+
+
+
+
+
+                    <!-- Pricing Section -->
+                    <div class="product-pricing-section">
+                        @{
+                            var discountedPrice = Model.Product.Price - (Model.Product.Price * (Model.Product.Discount / 100));
+                            var priceString = discountedPrice.ToString("C").Replace("$", "€").Replace("USD", "€");
+                            var bulkPrice = discountedPrice * 0.92m;
+                            var bulkPriceString = bulkPrice.ToString("C").Replace("$", "€").Replace("USD", "€");
+                        }
+
+                        <div class="price-main">
+                            @priceString <span class="price-unit">/ m + VAT if applicable <i class="ri-money-pound-circle-line"></i></span>
+                        </div>
+
+                        @if (Model.Product.Discount > 0)
+                        {
+                            <div class="price-discount">
+                                Save @Model.Product.Discount% - buy 8 meters or more at @bulkPriceString / m
+                            </div>
+                        }
+                    </div>
+
+                    <!-- StockQuntity -->
+                    <div>
+                        @if (Model.Product.StockQuantity != null)
+                        {
+                            <div style="font-size:16px; color:green;">@Model.Product.StockQuantity m in stock</div>
+                        }
+                    </div>
+
+                                        <div style="font-size:17px; color:var(--dustyolive-color);" class="mt-4">
+                        Shipping in <b>2 business days</b>.
+                    </div>
+
+
+
+                    <!-- Order Form -->
+                    <div class="order-form ">
+                                            <form method="post" asp-area="Customer" asp-controller="Cart" asp-action="AddToCart" class="d-flex justify-content-evenly align-items-center ">
+                            <input type="hidden" name="ProductId" value="@Model.Product.Id">
+
+                            <div class="form-group ">
+                                <div class="quantity-control ">
+                                    <button type="button" class="quantity-btn" onclick="decrementQuantity()">-</button>
+                                    <input type="number" name="count" id="quantityInput" value="1" min="1" max="@Model.Product.StockQuantity" class="quantity-input">
+                                    <button type="button" class="quantity-btn" onclick="incrementQuantity()">+</button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <button type="submit" class="add-to-cart-btn-main ">
+                                    
+                                    Add to Cart
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+
+
+                    <!-- Product Specs -->
+
+                    <div class="container  ">
+                        <div class="row">
+
+                                <div class="col-12 d-flex flex-column borderContainer justify-content-center align-items-center px-5 py-3 rounded-top-5">
+                                    <span class="spec-label">Composition:</span>
+                                        <span class="spec-value">
+                                            <div class="product-compositions mt-3">
+                                                <ul class="list-unstyled d-flex gap-4">
+                                                                
+                                                    @if (Model.SelectedCompositions != null && Model.SelectedCompositions.Any())
+                                                    {
+                                                        foreach (var item in Model.SelectedCompositions)
+                                                        {
+                                                            <li>
+                                                                <strong>@item.CompositionName:</strong>
+                                                                <span class="text-dark">@item.Percentage %</span>
+                                                            </li>
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <li class="text-muted">No composition details available</li>
+                                                    }
+                                                </ul>
+                                            </div>
+                                        </span>
+                                </div>
+                            
+                        </div>
+
+                        <div class="row">
+                            @if (Model.Product.Height.HasValue)
+                            {
+                                <div class="col-6 d-flex flex-column borderContainer justify-content-center align-items-center px-5 py-3">
+                                    <span class="spec-label">Height:</span>
+                                    <span class="spec-value">@Model.Product.Height cm</span>
+                                </div>
+                            }
+
+                            @if (Model.Product.Weight.HasValue)
+                            {
+                                <div class="col-6 d-flex flex-column borderContainer justify-content-center align-items-center px-5 py-3">
+                                    <span class="spec-label">Weight:</span>
+                                    <span class="spec-value">@Model.Product.Weight g/m</span>
+                                </div>
+                            }
+                            @if (Model.Product.Width.HasValue)
+                            {
+                                <div class="col-6 d-flex flex-column borderContainer justify-content-center align-items-center px-5 py-3">
+                                    <span class="spec-label">Width:</span>
+                                    <span class="spec-value">@Model.Product.Width cm</span>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="row">
+                            @if (Model.Product.ProjectCategories != null && Model.Product.ProjectCategories.Any())
+                            {
+                                <div class="col-12 d-flex borderContainer justify-content-center align-items-center flex-column px-5 py-3 gap-3">
+                                  <span class="spec-label">PROJECT</span>
+                                    <div class="d-flex justify-content-center align-items-center flex-row">
+                                    @foreach (var category in Model.Product.ProjectCategories)
+                                    {
+                                        <a href="#">
+                                            <div class="text-center">
+                                                <i class="@category.Icon d-block mb-1" style="font-size: 1.5rem;"></i>
+                                            </div>
+                                        </a>
+                                    }
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="row">
+                            @if (Model.Product.Category != null)
+                            {
+                                                    <div class="col-12 d-flex flex-column borderContainer justify-content-center align-items-center px-5 py-3 rounded-bottom-5">
+                                    <span class="spec-label">Care Instructions:</span>
+                                    <div>
+                                        <i class="ri-shopping-bag-2-line"></i>
+                                        <i class="ri-shopping-bag-2-line"></i>
+                                        <i class="ri-shopping-bag-2-line"></i>
+                                        <i class="ri-shopping-bag-2-line"></i>
+                                        <i class="ri-shopping-bag-2-line"></i>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Accordion -->
+                    <div class="accordion accordion-flush mt-4" id="accordionFlushExample">
+
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                                    Fabric Details
+                                </button>
+                            </h2>
+
+
+
+
+
+                            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="detailes-product-code1 mx-2">                                    
+                                    <div class="product-info-item ">
+                                        <h6 class="text-uppercase fw-bold">Color Is :</h6>
+                                        @if (Model.Product.Color != null)
+                                        {
+                                            <div class="d-flex align-items-center">
+                                                <div class="color-box me-3"
+                                                        style="background-color: @Model.Product.Color.HexCode; width: 40px; height: 40px; border-radius: 8px; border: 2px solid #eee;">
+                                                </div>
+                                                <div>
+                                                    <span class="d-block fw-bold">@Model.Product.Color.Name</span>
+                                                    <small class="text-muted">@Model.Product.Color.HexCode</small>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+
+
+
+
+
+                        <div class="accordion-item">
+                            <h2 class="accordion-header rounded-5">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    Reviews
+                                </button>
+                            </h2>
+                            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+                                <div class="accordion-body">
+                                    <strong>This is the second item’s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It’s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- You May Also Like -->
+    <!-- You may also be interested in... -->
+    @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+    {
+        <div class="container-md ">
+            <div class="section-header">
+                <h2>You may also be interested in...</h2>
+                <a href="@Url.Action("Product", "Home", new { area = "Customer" })" class="view-all-link">View all</a>
+            </div>
+
+            <div class="product-category-grid">
+                @foreach (var item in Model.RelatedProducts.Take(4))
+                {
+                    <a href="@Url.Action("FlashSale", "Products")" class="product-category-card ">
+                        <img src="~/images/warm-coating-fabrics.webp" alt="Flash Sale" />
+                        <div class="category-overlay">
+                            <h3>Flash Sale</h3>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+
+
+
+
+    @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+    {
+        <div class="container related-products-section">
+            <div class="section-header">
+                <h2>Recently viewed products</h2>
+                <a href="@Url.Action("Category", "Product", new { categoryId = Model.Product.CategoryId })"
+                   class="view-all-link">View all</a>
+            </div>
+
+            <div class="related-products-grid">
+                @foreach (var item in Model.RelatedProducts.Take(4))
+                {
+                    <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })" class="col">
+                        <div class="product-card m-1">
+                            <img src="~/images/@item.MainImage" alt="@item.Name" />
+
+                            <div class="product-info">
+                                <h3>@item.Name</h3>
+
+                                <div class="
+                                    split bottom px-3">
+                                    <span class="price">€ @item.Price / m</span>
+                                    <span class="stock">@item.StockQuantity m</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+
+
+
+
+
+    <!-- More Inspirations -->
+    <div class="container related-products-section">
+        <div class="section-header">
+            <h2>More inspirations</h2>
+        </div>
+
+        <div class="related-products-grid d-flex justify-content-between">
+            <a href="@Url.Action("Product", "Home", new { area = "Customer", IsHot = true })" class="related-product-card1" style="background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); text-align: center;">
+                <h3 class="related-product-title">ON SALE FABRICS</h3>
+            </a>
+
+            <a href="@Url.Action("Product", "Home", new { area = "Customer" })" class="related-product-card1" style="background: linear-gradient(135deg, #89CFF0 0%, #B2E5FF 100%); text-align: center;">
+                <h3 class="related-product-title">NEW ARRIVALS</h3>
+            </a>
+
+            <a href="@Url.Action("Product", "Home", new { area = "Customer", CategoryName = "Organic" })" class="related-product-card1" style="background: linear-gradient(135deg, #90EE90 0%, #C1FFC1 100%); text-align: center;">
+                <h3 class="related-product-title">ORGANIC FABRICS</h3>
+            </a>
+        </div>
+    </div>
+
+    <!-- Newsletter -->
+    <div class="newsletter-section">
+        <div class="container">
+            <h3 class="newsletter-title">Subscribe to our Newsletter and get a bonus for your next order!</h3>
+            <p class="newsletter-subtitle">Be the first to know about new arrivals, exclusive offers, and style inspiration.</p>
+
+            <form class="newsletter-form">
+                <input type="email" placeholder="Your email address" class="newsletter-input" required>
+                <button type="submit" class="newsletter-btn">SUBSCRIBE</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeImage(src, altText) {
+            const mainImage = document.getElementById('mainProductImage');
+            mainImage.src = src;
+            if (altText) {
+                mainImage.alt = altText;
+            }
+            document.querySelectorAll('.product-thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        function incrementQuantity() {
+            const input = document.getElementById('quantityInput');
+            const max = parseInt(input.max);
+            if (parseInt(input.value) < max) {
+                input.value = parseInt(input.value) + 1;
+            }
+        }
+
+        function decrementQuantity() {
+            const input = document.getElementById('quantityInput');
+            if (parseInt(input.value) > 1) {
+                input.value = parseInt(input.value) - 1;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const stock = @Model.Product.StockQuantity;
+            document.getElementById('quantityInput').max = stock;
+
+            document.querySelectorAll('.product-thumbnail').forEach(thumb => {
+                thumb.addEventListener('click', function() {
+                    const src = this.src;
+                    const alt = this.getAttribute('data-alt') || this.alt;
+                    changeImage(src, alt);
+                });
+            });
+        });
+    </script>
+}
+
+@functions {
+    private string GetColorHex(string colorName)
+    {
+        var colors = new Dictionary<string, string>
+        {
+            { "TC001426", "#f5f5f5" },
+            { "TC001425", "#7fffd4" },
+            { "TC001403", "#8b7355" },
+            { "WHITE", "#ffffff" },
+            { "BLACK", "#000000" },
+            { "RED", "#ff0000" },
+            { "BLUE", "#0000ff" },
+            { "GREEN", "#00ff00" },
+            { "SILVER", "#c0c0c0" },
+            { "GOLD", "#ffd700" },
+            { "BEIGE", "#f5f5dc" },
+            { "BROWN", "#a52a2a" },
+            { "PINK", "#ffc0cb" },
+            { "PURPLE", "#800080" },
+            { "ORANGE", "#ffa500" },
+            { "YELLOW", "#ffff00" },
+            { "GRAY", "#808080" }
+        };
+
+        var key = colorName.ToUpper();
+        return colors.ContainsKey(key) ? colors[key] : "#cccccc";
+    }
+}

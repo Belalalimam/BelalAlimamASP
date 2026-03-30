@@ -1,0 +1,526 @@
+﻿.hero {
+    position: relative;
+    height: 50vh;
+    background-image: url('/images/crepe-satin-stretch-confetto-033247.webp'); /* your fabric image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+}
+
+.hero-content {
+    position: relative;
+    max-width: 700px;
+    color: var(--cotton-color);
+    z-index: 2;
+} 
+
+.hero h1 {
+    font-size: 3.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    opacity: 0.95;
+}
+
+.btn-hero {
+    display: inline-block;
+    background-color: var(--evergreen-color);
+    color: var(--cotton-color);
+    padding: 14px 32px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .btn-hero:hover {
+        background-color: #f2f2f2;
+        transform: translateY(-2px);
+    }
+
+
+@media (max-width: 768px) {
+    .hero {
+        height: 70vh;
+        text-align: center;
+    }
+
+    .hero-content {
+        margin: auto;
+        padding: 0 20px;
+    }
+
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+}
+
+
+/* FitureListSection Start */
+.categories {
+    margin: 80px auto;
+}
+
+.category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+
+.category-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 240px;
+    text-decoration: none;
+}
+
+    .category-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .category-card:hover img {
+        transform: scale(1.08);
+    }
+
+.category-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .category-overlay h3 {
+        color: var(--cotton-color);
+        font-size: 1.4rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 0 20px;
+    }
+@media (max-width: 992px) {
+    .category-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .category-card {
+        height: 240px;
+    }
+}
+
+/* FitureListSection End */
+
+/* COLOR FILTER */
+.color-filter {
+    margin: 40px auto 80px;
+}
+
+.color-row {
+    display: flex;
+    gap: 18px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.color-circle {
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid #ddd;
+    cursor: pointer;
+    transition: transform .2s ease;
+}
+
+    .color-circle:hover {
+        transform: scale(1.1);
+    }
+
+    .color-circle.border {
+        background: #fff;
+    }
+
+/* FABRIC TYPES */
+.fabric-types h2 {
+    text-align: center;
+    font-weight: 400;
+    margin-bottom: 50px;
+    color: var(--evergreen-color);
+}
+
+.fabric-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+    .fabric-grid a span {
+        color: var(--cotton-color);
+    }
+.changeColor{
+    color:var(--evergreen-color);
+}
+
+.fabric-card {
+    position: relative;
+    height: 100px;
+    border-radius: 14px;
+    overflow: hidden;
+    text-decoration: none;
+}
+
+    .fabric-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform .4s ease;
+    }
+
+    .fabric-card:hover img {
+        transform: scale(1.1);
+    }
+
+    .fabric-card span {
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,.35);
+        color: #fff;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+        text-align: center;
+    }
+@media (max-width: 992px) {
+    .fabric-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 576px) {
+    .fabric-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+/*search page*/
+
+.search-box input {
+    width: 320px;
+    padding: 14px 16px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.or-text {
+    margin-top: 60px;
+    font-size: 28px;
+}
+
+.sub-text {
+    color: #666;
+    margin-bottom: 40px;
+}
+
+.categories2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+}
+    .categories2 a {
+        background-color: var(--dustyolive-color);
+        color:var(--cotton-color);
+    }
+
+.cat {
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    padding: 18px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+    background: #fff;
+}
+
+    .cat:hover {
+        background: #f5f5f5;
+        border-color: #000;
+    }
+
+
+.seo-section {
+    margin-top: 90px;
+    padding: 60px 20px;
+    border-top: 1px solid #e6e6e6;
+}
+
+.seo-container {
+    max-width: 1200px;
+    margin: auto;
+    
+    font-family: Arial, sans-serif;
+}
+
+    .seo-container h2 {
+        font-size: 26px;
+        margin-bottom: 18px;
+        color: var(--evergreen-color);
+    }
+
+    .seo-container p {
+        font-size: 15px;
+        line-height: 1.9;
+        color: var(--evergreen-color);
+        margin-bottom: 16px;
+    }
+/*footer*/
+
+:root {
+    --primary-color: #000;
+    --secondary-color: #666;
+    --accent-color: #007bff;
+    --light-gray: #f8f9fa;
+    --border-color: #dee2e6;
+}
+
+body {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* Header Styles */
+.site-header {
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px 0;
+}
+
+.brand-name {
+    font-size: 32px;
+    font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+.brand-tagline {
+    font-size: 12px;
+    color: var(--secondary-color);
+    letter-spacing: 3px;
+    margin-top: 5px;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+    align-items: center;
+}
+
+.header-icon {
+    color: var(--primary-color);
+    font-size: 18px;
+    text-decoration: none;
+    position: relative;
+}
+
+.cart-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Navigation Styles */
+.main-nav {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-link-custom {
+    color: var(--primary-color);
+    font-weight: 500;
+    padding: 15px 20px;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+
+    .nav-link-custom:hover {
+        color: var(--accent-color);
+        background-color: var(--light-gray);
+    }
+
+/* Footer Navigation Grid */
+.footer-nav {
+    padding: 60px 0 40px;
+    border-top: 1px solid var(--border-color);
+    background-color: var(--jade-color);
+}
+
+.nav-column {
+    margin-bottom: 30px;
+}
+
+.nav-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+    .nav-list li {
+        margin-bottom: 10px;
+    }
+
+    .nav-list a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        font-size: 13px;
+        transition: color 0.2s;
+    }
+
+        .nav-list a:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+/* Social Media */
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-icon {
+    color: var(--secondary-color);
+    font-size: 16px;
+    transition: color 0.2s;
+}
+
+    .social-icon:hover {
+        color: var(--accent-color);
+    }
+
+/* Contact Info */
+.contact-info {
+    background: var(--cotton-color);
+    padding: 20px;
+    border-radius: 4px;
+}
+
+.contact-item {
+    margin-bottom: 15px;
+}
+
+.contact-label {
+    font-weight: 600;
+    color: var(--primary-color);
+    font-size: 13px;
+    margin-bottom: 5px;
+}
+
+.contact-value {
+    color: var(--secondary-color);
+    font-size: 13px;
+}
+
+.whatsapp-link {
+    color: #25D366;
+    font-weight: 600;
+}
+
+.map-link {
+    color: var(--accent-color);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+    .map-link:hover {
+        text-decoration: underline;
+    }
+
+/* Site Footer */
+.site-footer {
+    background: #111;
+    color: #999;
+    padding: 30px 0;
+    font-size: 12px;
+}
+
+.copyright {
+    color: #777;
+}
+
+.legal-links {
+    text-align: right;
+}
+
+    .legal-links a {
+        color: #999;
+        text-decoration: none;
+        margin-left: 20px;
+    }
+
+        .legal-links a:hover {
+            color: #fff;
+        }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-actions {
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+    .legal-links {
+        text-align: left;
+        margin-top: 15px;
+    }
+
+        .legal-links a {
+            margin-left: 0;
+            margin-right: 20px;
+        }
+}

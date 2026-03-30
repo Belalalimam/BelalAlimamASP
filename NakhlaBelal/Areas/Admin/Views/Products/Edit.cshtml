@@ -1,0 +1,396 @@
+﻿@model NakhlaBelal.Models.Product
+@{
+    ViewBag.Title = "Edit Product";
+    ViewBag.PageTitle = "Edit Product";
+
+    var categories = ViewBag.Categories as List<NakhlaBelal.Models.Category> ?? new List<NakhlaBelal.Models.Category>();
+    var brands = ViewBag.Brands as List<NakhlaBelal.Models.Brand> ?? new List<NakhlaBelal.Models.Brand>();
+}
+
+<div class="page-header">
+    <div>
+        <h2>Edit Product: @Model.Name</h2>
+        <p class="page-subtitle">Update product information</p>
+    </div>
+    <div class="header-actions">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Edit" method="post" id="editProductForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedAt" />
+            <input type="hidden" asp-for="CreatedBy" />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="Name" class="form-label">Product Name *</label>
+                        <input asp-for="Name" class="form-control" required>
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="SKU" class="form-label">SKU *</label>
+                        <input asp-for="SKU" class="form-control" required>
+                        <span asp-validation-for="SKU" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Slug" class="form-label">URL Slug</label>
+                        <input asp-for="Slug" class="form-control">
+                        <span asp-validation-for="Slug" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="ShortDescription" class="form-label">Short Description</label>
+                        <textarea asp-for="ShortDescription" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="ShortDescription" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="CategoryId" class="form-label">Category *</label>
+                        <select asp-for="CategoryId" class="form-control" required>
+                            <option value="">Select Category</option>
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category.Id" selected="@(category.Id == Model.CategoryId)">@category.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="BrandId" class="form-label">Brand</label>
+                        <select asp-for="BrandId" class="form-control">
+                            <option value="">Select Brand</option>
+                            @foreach (var brand in brands)
+                            {
+                                <option value="@brand.Id" selected="@(brand.Id == Model.BrandId)">@brand.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="BrandId" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="Price" class="form-label">Price ($) *</label>
+                                <input asp-for="Price" type="number" step="0.01" class="form-control" required>
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="CostPrice" class="form-label">Cost Price ($)</label>
+                                <input asp-for="CostPrice" type="number" step="0.01" class="form-control">
+                                <span asp-validation-for="CostPrice" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="StockQuantity" class="form-label">Stock Quantity *</label>
+                                <input asp-for="StockQuantity" type="number" class="form-control" required>
+                                <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group mb-3">
+                                <label asp-for="LowStockThreshold" class="form-label">Low Stock Alert</label>
+                                <input asp-for="LowStockThreshold" type="number" class="form-control">
+                                <span asp-validation-for="LowStockThreshold" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label class="form-label font-weight-bold">Fabric Composition (%)</label>
+                        <div id="composition-container">
+                            @{
+                                int compIndex = 0;
+                            }
+                            @if (Model.ProductCompositions != null && Model.ProductCompositions.Any())
+                            {
+                                @foreach (var pc in Model.ProductCompositions)
+                                {
+                                    <div class="composition-row row mb-2 g-2 align-items-center">
+                                        <div class="col-7">
+                                            <select name="ProductCompositions[@compIndex].CompositionId" class="form-select form-control" required>
+                                                @foreach (var comp in ViewBag.Compositions)
+                                                {
+                                                    <option value="@comp.Id" selected="@(pc.CompositionId == comp.Id)">@comp.Name</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-3">
+                                            <input type="number" name="ProductCompositions[@compIndex].Percentage" class="form-control" value="@pc.Percentage" min="1" max="100" required>
+                                        </div>
+                                        <div class="col-2">
+                                            <button type="button" class="btn btn-outline-danger btn-sm remove-composition">×</button>
+                                        </div>
+                                    </div>
+                                    compIndex++;
+                                }
+                            }
+                        </div>
+                        <button type="button" id="add-composition" class="btn btn-sm btn-outline-primary mt-2">
+                            <i class="fas fa-plus"></i> Add Material
+                        </button>
+                    </div>
+                </div>
+
+
+                                            <div class="col-md-6">
+                                                <div class="form-group mb-3">
+                                                    <label asp-for="ColorId" class="control-label">Product Color</label>
+                                                    <select asp-for="ColorId" class="form-select select2" asp-items="@(new SelectList(ViewBag.Colors, "Id", "Name"))">
+                                                        <option value="">--Select Color--</option>
+                                                    </select>
+                                                    <span asp-validation-for="ColorId" class="text-danger"></span>
+                                                </div>
+                                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addColorModal">
+                                                    + إضافة لون جديد
+                                                </button>
+
+                                                <div class="modal fade" id="addColorModal" tabindex="-1">
+                                                    <div class="modal-dialog modal-sm">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title">إضافة لون جديد</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <div class="mb-3">
+                                                                    <label>اسم اللون</label>
+                                                                    <input type="text" id="newColorName" class="form-control" placeholder="مثلاً: أحمر ملكي" />
+                                                                </div>
+                                                                <div class="mb-3">
+                                                                    <label>اختر اللون</label>
+                                                                    <input type="color" id="newColorHex" class="form-control form-control-color" value="#563d7c" style="width:100%" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-primary w-100" onclick="saveNewColor()">حفظ اللون</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+
+            <div class="
+
+
+
+mb-3">
+                <label asp-for="Description" class="form-label">Full Description</label>
+                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="MainImage" class="form-label">Main Image URL</label>
+                        <input asp-for="MainImage" class="form-control">
+                        <span asp-validation-for="MainImage" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="MetaTitle" class="form-label">Meta Title (SEO)</label>
+                        <input asp-for="MetaTitle" class="form-control">
+                        <span asp-validation-for="MetaTitle" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="MetaDescription" class="form-label">Meta Description (SEO)</label>
+                        <textarea asp-for="MetaDescription" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="MetaDescription" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="MetaKeywords" class="form-label">Meta Keywords (SEO)</label>
+                        <input asp-for="MetaKeywords" class="form-control">
+                        <span asp-validation-for="MetaKeywords" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="row">  
+                <div class="col-md-12">
+                    <div class="form-group mb-6">
+                        <label asp-for="Width" class="form-label">Width</label>
+                        <textarea asp-for="Width" class="form-control" rows="2"></textarea>
+                        <span asp-validation-for="Width" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-6">
+                        <label asp-for="Height" class="form-label">Height</label>
+                        <input asp-for="Height" class="form-control">
+                            <span asp-validation-for="Height" class="text-danger"></span>
+                    </div>
+                    <div class="form-group mb-6">
+                        <label asp-for="Length" class="form-label">Length</label>
+                        <input asp-for="Length" class="form-control">
+                            <span asp-validation-for="Length" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-check mb-3">
+                        <input asp-for="Status" class="form-check-input">
+                        <label asp-for="Status" class="form-check-label">Active</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check mb-3">
+                        <input asp-for="IsFeatured" class="form-check-input">
+                        <label asp-for="IsFeatured" class="form-check-label">Featured Product</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check mb-3">
+                        <input asp-for="IsBestSeller" class="form-check-input">
+                        <label asp-for="IsBestSeller" class="form-check-label">Best Seller</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions mt-4 pt-4 border-top">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Update Product
+                </button>
+                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // حساب الـ Index بناءً على عدد الأسطر الموجودة فعلياً عند تحميل الصفحة
+            let compIndex = $('.composition-row').length;
+
+            $('#add-composition').off('click').on('click', function () {
+                const container = $('#composition-container');
+                
+                // نجهز خيارات الـ Select من ViewBag
+                let options = '<option value="">Select Material</option>';
+                @foreach (var comp in ViewBag.Compositions)
+                {
+                        <text>options += '<option value="@comp.Id">@comp.Name</option>';</text>
+                }
+
+                const html = `
+                    <div class="composition-row row mb-2 g-2 align-items-center">
+                        <div class="col-7">
+                            <select name="ProductCompositions[${compIndex}].CompositionId" class="form-select form-control" required>
+                                ${options}
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <input type="number" name="ProductCompositions[${compIndex}].Percentage"
+                                    class="form-control" placeholder="%" min="1" max="100" required>
+                        </div>
+                        <div class="col-2">
+                            <button type="button" class="btn btn-outline-danger btn-sm remove-composition">×</button>
+                        </div>
+                    </div>`;
+                
+                container.append(html);
+                compIndex++; // زيادة العداد للسطر القادم
+            });
+
+            // حذف السطر
+            $(document).on('click', '.remove-composition', function() {
+                $(this).closest('.composition-row').remove();
+            });
+            
+            // باقي كود الـ Validation والـ Ajax الخاص بك يبقى كما هو...
+        });
+
+
+                                                                            function saveNewColor() {
+                                                                        var name = $('#newColorName').val();
+                                                                        var hex = $('#newColorHex').val();
+
+                                                                        $.post('/Admin/Products/AddNewColor', { name: name, hexCode: hex }, function(response) {
+                                                                            if (response.success) {
+                                                                                // 1. إضافة اللون الجديد لجميع قوائم الـ Select الخاصة بالألوان في الصفحة
+                                                                                var newOption = new Option(response.name, response.id, true, true);
+                                                                                $('select[name="ColorId"]').append(newOption).trigger('change');
+
+                                                                                // 2. إغلاق المودال وتفريغ الحقول
+                                                                                $('#addColorModal').modal('hide');
+                                                                                $('#newColorName').val('');
+            
+                                                                                alert('تم إضافة اللون بنجاح واختياره!');
+                                                                            } else {
+                                                                                alert(response.message);
+                                                                            }
+                                                                        });
+                                                                    }
+    </script>
+}

@@ -1,0 +1,241 @@
+﻿@* @model NAKHLA.Models.Brand
+@{
+    ViewBag.Title = "Create Brand";
+    ViewBag.PageTitle = "Add New Brand";
+    ViewBag.Subtitle = "Create a new product brand";
+}
+
+<!-- Debug Information (Remove after testing) -->
+<div class="alert alert-info">
+    <h5>Debug Info:</h5>
+    <p>ModelState.IsValid: @ViewData.ModelState.IsValid</p>
+    <p>ModelState Errors: @ViewData.ModelState.ErrorCount</p>
+    <p>Model: @Model?.Name</p>
+</div>
+
+<!-- Back button -->
+<div class="mb-4">
+    <a href="/admin/brands" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Back to Brands
+    </a>
+</div>
+
+<!-- Form Container -->
+<div class="card">
+    <div class="card-header">
+        <h4>Brand Information</h4>
+    </div>
+    <div class="card-body">
+
+        <form method="post">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <input type="text" placeholder="Name" name="Name" />
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <select name="Status">
+                        <option value="Active">Active</option>
+                        <option value="P">P</option>
+                        <option value="InActive">InActive</option>
+                    </select>
+                </div>
+            </div>
+
+
+            <div class="form-group mb-3">
+                <input type="text" placeholder="Description" name="Description" />
+
+            </div>
+
+            <div class="form-group mb-3">
+                <input type="text" placeholder="Website" name="Website" />
+
+            </div>
+
+            <div class="form-group mb-3">
+                <input type="text" placeholder="Website" name="Website" />
+
+            </div>
+
+            <div class="form-check mb-4">
+                <input type="checkbox" name="IsFeatured" />
+
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Brand
+                </button>
+                <a href="/admin/brands" class="btn btn-secondary">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+ *@
+
+
+
+
+@model NakhlaBelal.Models.Category
+
+@{
+    ViewBag.Title = "Create Category";
+    ViewBag.PageTitle = "Create New Category";
+    ViewBag.Subtitle = "Add a new product category";
+}
+
+<div class="page-header">
+    <div>
+        <h2>Create Category</h2>
+        <p class="page-subtitle">Add a new category to organize products</p>
+    </div>
+    <div class="header-actions">
+        <a asp-action="Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to List
+        </a>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" id="createCategoryForm">
+            @Html.AntiForgeryToken()
+
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-section">
+                        <h4>Category Information</h4>
+
+                        <div class="form-group">
+                            <label asp-for="Name" class="form-label"></label>
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                            <small class="form-text text-muted">Category name should be 3-50 characters</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="Status" class="form-label"></label>
+                                    <select asp-for="Status" class="form-control">
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                        <option value="Archived">Archived</option>
+                                        <option value="Draft">Draft</option>
+                                    </select>
+                                    <span asp-validation-for="Status" class="text-danger"></span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="DisplayOrder" class="form-label"></label>
+                                    <input asp-for="DisplayOrder" class="form-control" type="number" min="0" max="1000" value="0" />
+                                    <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-section">
+                        <h4>SEO & Additional Info</h4>
+
+                        <div class="form-group">
+                            <label asp-for="Slug" class="form-label"></label>
+                            <input asp-for="Slug" class="form-control" />
+                            <span asp-validation-for="Slug" class="text-danger"></span>
+                            <button type="button" class="btn btn-sm btn-outline-secondary mt-2" onclick="generateSlug()">
+                                <i class="fas fa-magic"></i> Generate from Name
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="ImageUrl" class="form-label"></label>
+                            <input asp-for="ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="IconClass" class="form-label"></label>
+                            <input asp-for="IconClass" class="form-control" placeholder="fas fa-tag" />
+                            <span asp-validation-for="IconClass" class="text-danger"></span>
+                            <small class="form-text text-muted">Font Awesome class (optional)</small>
+                        </div>
+                    </div>
+
+                    <div class="form-section mt-4">
+                        <h4>Meta Information</h4>
+
+                        <div class="form-group">
+                            <label asp-for="MetaTitle" class="form-label"></label>
+                            <input asp-for="MetaTitle" class="form-control" />
+                            <span asp-validation-for="MetaTitle" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="MetaDescription" class="form-label"></label>
+                            <textarea asp-for="MetaDescription" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="MetaDescription" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions mt-4">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Create Category
+                </button>
+                <button type="reset" class="btn btn-secondary">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+                function generateSlug() {
+            const name = document.getElementById('Name').value;
+            if (name) {
+                // Proper slug generation in JavaScript
+                const slug = name
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[^\w\s-]/g, '') // Remove special chars
+                    .replace(/[\s_-]+/g, '-') // Replace spaces and underscores with hyphens
+                    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+
+                document.getElementById('Slug').value = slug;
+            }
+        }
+
+        // Auto-generate meta title if empty
+        document.getElementById('Name').addEventListener('blur', function() {
+            const metaTitle = document.getElementById('MetaTitle');
+            if (!metaTitle.value) {
+                metaTitle.value = this.value + ' | Product Category';
+            }
+        });
+
+        // Auto-generate meta description if empty
+        document.getElementById('Description').addEventListener('blur', function() {
+            const metaDesc = document.getElementById('MetaDescription');
+            if (!metaDesc.value && this.value) {
+                const desc = this.value.substring(0, 160) + '...';
+                metaDesc.value = desc;
+            }
+        });
+    </script>
+}

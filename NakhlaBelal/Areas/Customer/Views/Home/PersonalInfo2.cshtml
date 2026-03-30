@@ -1,0 +1,15 @@
+﻿﻿@using NakhlaBelal.ViewModels
+@model PersonalInfoVM
+
+<h1>Name: @Model.Name</h1>
+<h1>Age: @Model.Age</h1>
+<h1>Address: @Model.Address</h1>
+<h1>Gender: @Model.Gender</h1>
+
+<ul>
+    Skills
+    @foreach (var item in Model.Skills)
+    {
+        <li>@item</li>
+    }
+</ul>

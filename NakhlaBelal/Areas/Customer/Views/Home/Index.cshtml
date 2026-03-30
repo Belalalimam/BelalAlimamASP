@@ -1,0 +1,167 @@
+﻿@{
+    ViewBag.Title = "Home";
+}
+
+<section class="hero">
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content container-fluid">
+        <h1>Find High-Quality Textiles<br />In our Online Fabric Store</h1>
+        <p>
+            Design your dreams and make them come true with our online fabrics.
+        </p>
+
+        <a href="@Url.Action("product", "Home")" class="btn-hero">
+            Browse Our Fabrics
+        </a>
+    </div>
+</section>
+
+
+<section class="categories container">
+    <div class="category-grid">
+
+        <a href="@Url.Action("CategroySearch", "Home", new { FabricTypeId = 1 })" class="category-card">
+            <img src="~/images/warm-coating-fabrics.webp" alt="Flash Sale" />
+            <div class="category-overlay">
+                <h3>Flash Sale</h3>
+            </div>
+        </a>
+
+        <a href="@Url.Action("CategroySearch", "Home", new { CompositionId = 4 })" class="category-card">
+            <img src="~/images/Silk-Crepe-Satin-Fabric-033374_02.webp" alt="Solid Fabrics" />
+            <div class="category-overlay">
+                <h3>Solid Fabrics Always in Stock</h3>
+            </div>
+        </a>
+
+        <a href="@Url.Action("CategroySearch", "Home", new { CompositionId = 3 })" class="category-card">
+            <img src="~/images/BROCHIER-online-deadstock-decor-fabrics.webp" alt="Furnishing Fabrics" />
+            <div class="category-overlay">
+                <h3>Furnishing Fabrics</h3>
+            </div>
+        </a>
+
+    </div>
+</section>
+
+
+
+
+
+ 
+<div class="container  ">
+    <!-- Search Section -->
+    <div class="changeColor">
+        <h1 class="text-center">Search for the fabric you desire:</h1>
+    </div>
+
+
+    @* البحث بهي الطريقة سيء جدا وبده تعديل*@
+    <form class="search-box  d-flex justify-content-center" action="@Url.Action("CategroySearch", "Home")" method="get">
+        <input type="text" name="Name" placeholder="Type & hit 'enter'" />
+    </form>
+
+    <!-- Divider -->
+    <div class="changeColor">
+        <h2 class="or-text text-center">Or start from here</h2>
+        <p class="sub-text text-center">
+            What are you making? Choose the fabrics best suited to your project.
+        </p>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<!-- Categories -->
+<div class="categories2">
+    @if (ViewBag.ProjectCategories != null)
+    {
+        @foreach (var project in ViewBag.ProjectCategories)
+        {
+            <a href="@Url.Action("CategroySearch", "Home", new { ProjectCategoryId = project.Id })" class="cat text-decoration-none">
+                <i class="@project.Icon"></i> @project.Name
+            </a>
+        }
+    }
+</div>
+
+
+
+
+
+<!-- COLOR FILTER SECTION -->
+<section class="color-filter container">
+    <div class="color-row">
+        @if (ViewBag.Colors != null)
+        {
+            @foreach (var color in ViewBag.Colors)
+            {
+                <a href="@Url.Action("CategroySearch", "Home", new { ColorId = color.Id })"
+                       class="color-circle"
+                       style="background:@color.HexCode;"
+                       title="@color.Name">
+                </a>
+            }
+        }
+    </div>
+</section>
+
+<!-- FABRIC TYPES -->
+<section class="fabric-types container">
+    <h2>What material do you need? Browse our fabrics by type</h2>
+
+    <div class="fabric-grid">
+        @if (ViewBag.FabricTypes != null)
+        {
+            @foreach (var type in ViewBag.FabricTypes)
+            {
+                <a class="fabric-card" href="@Url.Action("CategroySearch", "Home", new { FabricTypeId = type.Id })">
+                    <img src="~/images/@type.ImageUrl" alt="@type.Name">
+                        <span>@type.Name</span>
+                    </a>
+                }
+            }
+        </div>
+    </section>
+
+
+    <section class="seo-section">
+        <div class="seo-container">
+
+            <h2>Discover Quality Fabrics for Every Project</h2>
+
+            <p>
+                We provide a carefully curated selection of high-quality fabrics designed to
+                meet the needs of designers, tailors, and fashion enthusiasts. Whether you are
+                creating formal wear, casual clothing, or custom pieces, our platform helps
+                you find the right materials with confidence.
+            </p>
+
+            <p>
+                Our fabric collection includes options for dresses, suits, shirts, coats,
+                and lightweight garments, allowing you to choose based on texture, weight,
+                and purpose. Each product is selected with attention to quality, durability,
+                and comfort.
+            </p>
+
+            <p>
+                We believe that a great shopping experience should be simple and enjoyable.
+                That’s why our platform is designed with intuitive search tools, clear
+                categorization, and a smooth browsing experience across all devices.
+            </p>
+
+            <p>
+                From discovering new materials to selecting trusted classics, we aim to
+                support your creative journey by offering reliable products and a seamless
+                online experience.
+            </p>
+
+        </div>
+    </section>

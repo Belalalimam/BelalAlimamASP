@@ -1,0 +1,318 @@
+﻿@model NakhlaBelal.ViewModels.CartVM
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+<div class="cart-page ">
+
+    <div class="container-cart ">
+        <div class="basket-section">
+            <h1>Basket</h1>
+
+            @if (!Model.CartItems.Any())
+            {
+                <div class="empty-cart">
+                    <h3>Your cart is empty</h3>
+                    <p>Add some products to your cart to see them here!</p>
+                    <a href="@Url.Action("Index", "Home", new { area = "Customer" })" class="continue-shopping-btn">
+                        Continue Shopping
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="cart-table">
+                    <div class="cart-header">
+                        <div class="header-product">PRODUCT</div>
+                        <div class="header-price">PRICE</div>
+                        <div class="header-quantity">QUANTITY</div>
+                        <div class="header-subtotal">SUBTOTAL</div>
+                        <div class="header-remove"></div>
+                    </div>
+
+                    @foreach (var item in Model.CartItems)
+                    {
+                        var itemSubtotal = item.Price * item.Count;
+
+                        <div class="cart-item" id="cart-item-@item.ProductId">
+                            <div class="product-info1">
+                                <img src="~/images/@item.Product.MainImage" alt="@item.Product.Name" class="product-image1">
+                                <div class="product-details1">
+                                    <a href="@Url.Action("Details", "Home", new { id = item.ProductId, area = "Customer" })"
+                                       class="product-name1">@item.Product.Name</a>
+                                    @if (!string.IsNullOrEmpty(item.Product.SKU))
+                                    {
+                                        <div class="product-sku1">SKU: @item.Product.SKU</div>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="price-col">
+                                <div class="price-amount">€ @item.Price.ToString("N2")</div>
+                                @if (item.Price < item.Product.Price)
+                                {
+                                    <div class="original-price">€ @item.Product.Price.ToString("N2")</div>
+                                }
+                            </div>
+
+                                
+
+                            <div class="quantity-col">
+                                <div class="quantity-control">
+                                    <a class="qty-btn" asp-action="DecrementProduct" asp-route-productId="@item.ProductId">-</a>
+
+                                    <form method="post" asp-action="UpdateQuantity" class="quantity-form">
+                                        <input type="hidden" name="productId" value="@item.ProductId" />
+                                        <input type="number" name="quantity" value="@item.Count"
+                                               min="1" max="@(item.Product.ManageStock? item.Product.StockQuantity : 999)"
+                                               class="qty-input"
+                                               onchange="this.form.submit()"
+                                               title="@(item.Product.ManageStock ? $"Max available: {item.Product.StockQuantity}" : "")" />
+                                    </form>
+
+                                    <a class="qty-btn" asp-action="IncrementProduct" asp-route-productId="@item.ProductId">+</a>
+                                </div>
+                            </div>
+
+                            <div class="subtotal-col">
+                                <div class="item-subtotal">€ @itemSubtotal.ToString("N2")</div>
+                            </div>
+
+                            <div class="remove-col">
+                                <a class="remove-btn" asp-action="DeleteProduct" asp-route-productId="@item.ProductId"
+                                   onclick="return confirm('Are you sure you want to remove this item from your cart?')">
+                                    ×
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div class="cart-actions">
+                        <div class="coupon-section">
+                            @if (!string.IsNullOrEmpty(Model.PromotionCode))
+                            {
+                                <div class="applied-promotion">
+                                    <span>Applied Promotion: <strong>@Model.PromotionName (@Model.PromotionCode)</strong></span>
+                                    @* التصحيح هنا: جعلنا الپارامتر removePromo ليطابق الكنترولر *@
+                                    <a href="@Url.Action("Index", "Cart", new { removePromo = true })" class="remove-promo">Remove</a>
+                                </div>
+                            }
+                            else
+                            {
+                                <form asp-action="Index" asp-controller="Cart" method="get" class="coupon-form">
+                                    <input type="text" name="code" class="coupon-input" placeholder="Enter coupon code">
+                                    <button type="submit" class="apply-btn">Apply Coupon</button>
+                                </form>
+                            }
+                        </div>
+
+                    <a asp-action="ClearCart" class="clear-cart-btn"
+                       onclick="return confirm('Are you sure you want to clear your entire cart?')">
+                        Clear Cart
+                    </a>
+                </div>
+
+                @if (Model.SuggestedProducts.Any())
+                {
+                    <div class="recommendations">
+                        <h2>You may also be interested in...</h2>
+
+
+                        <swiper-container class="mySwiper" pagination="true" pagination-clickable="true" space-between="30" slides-per-view="3">
+
+
+
+
+                            @* <div class="product-grid"> *@
+                                @foreach (var product in Model.SuggestedProducts.Take(10))
+                                {
+                                    <swiper-slide class="">
+                                        <a href="@Url.Action("Details", "Home", new { id = product.Id, area = "Customer" })" class="col mb-5 ">
+                                            <div class="product-card m-1">
+                                                <img src="~/images/@product.MainImage" alt="@product.Name" />
+
+                                                <div class="product-info">
+                                                    <h3>@product.Name</h3>
+
+                                                    <div class="rowProduct split bottom px-3">
+                                                        <span class="price">€ @product.Price / m</span>
+                                                        <span class="stock">@product.StockQuantity m</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </swiper-slide>
+                                }
+                            @* </div> *@
+                        </swiper-container>
+
+                    </div>
+                }
+            }
+        </div>
+
+        @if (Model.CartItems.Any())
+        {
+            <div class="totals-section">
+                <h2>Basket Totals</h2>
+
+                <div class="total-row subtotal">
+                    <span>SUBTOTAL</span>
+                    <span>€ @Model.FormattedSubtotal</span>
+                </div>
+                @if (Model.Discount > 0)
+                {
+                    <div class="total-row discount">
+                        <span>DISCOUNT</span>
+                        @* فورمات العملة مباشرة لضمان الظهور *@
+                        <span>-€ @Model.Discount.ToString("N2")</span>
+                    </div>
+                }
+                <div class="shipping-info">
+                    <div class="shipping-label">
+                        SHIPPING
+                        <span class="shipping-price">€ @Model.FormattedShipping</span>
+                    </div>
+                    <div class="shipping-address">
+                        Shipping to <strong>Your Address</strong>
+                        <br>
+                        <a href="#" class="change-address">Change address</a>
+                    </div>
+                    <div class="shipping-methods">
+                        <div class="shipping-method">
+                            <input type="radio" id="standard" name="shipping" class="inputCheck" checked value="5.99">
+                            <label for="standard">Standard Shipping: € 5.99</label>
+                        </div>
+                        <div class="shipping-method">
+                                <input type="radio" id="express" name="shipping" class="inputCheck" value="12.99">
+                            <label for="express">Express Shipping: € 12.99</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="total-row">
+                    <span>CUSTOMS DUTIES AND TAXES</span>
+                    <span>€ @Model.FormattedTax</span>
+                </div>
+
+                <div class="total-row final">
+                    <span>TOTAL</span>
+                    <div class="total-amount">
+                        <div class="final-total">€ @Model.FormattedTotal</div>
+                        <div class="usd-estimate">about US $@((Model.Total * 1.08m).ToString("N2"))</div>
+                    </div>
+                </div>
+
+                <div class="checkout-actions">
+                    <a asp-action="Pay" class="checkout-btn">
+                        PROCEED TO CHECKOUT
+                    </a>
+
+                    <div class="alternative-payments">
+                        <p>Or checkout with:</p>
+                        <button type="button" class="paypal-btn" onclick="processPayPal()">PayPal</button>
+                    </div>
+                </div>
+
+                <div class="paypal-info">
+                    Paga in 3 rate da 19,94€ senza interessi con PayPal.<br>
+                    TAEG 0%. <a href="#" style="color: #e91e63;">Scopri di più</a>
+                </div>
+
+                <div class="continue-shopping">
+                    OR<br><br>
+                    <a href="@Url.Action("Index", "Home", new { area = "" })">CONTINUE SHOPPING</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    // Update shipping when method changes
+    document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            if (this.checked) {
+                const shippingCost = parseFloat(this.value);
+                // Update shipping display - you might want to AJAX update
+                console.log('Shipping updated to:', shippingCost);
+
+                // 
+                //  loading state
+                const shippingPrice = document.querySelector('.shipping-price');
+                if (shippingPrice) {
+                    shippingPrice.textContent = '€ ' + shippingCost.toFixed(2);
+                }
+            }
+        });
+    });
+
+    // Validate quantity input
+    document.querySelectorAll('.qty-input').forEach(input => {
+        input.addEventListener('change', function() {
+            let value = parseInt(this.value);
+            const min = parseInt(this.getAttribute('min')) || 1;
+            const max = parseInt(this.getAttribute('max')) || 999;
+
+            if (isNaN(value) || value < min) {
+                value = min;
+                this.value = min;
+            } else if (value > max) {
+                value = max;
+                this.value = max;
+                alert('Cannot add more than available stock: ' + max);
+            }
+        });
+    });
+
+    // Smooth item removal
+    document.querySelectorAll('.remove-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            if (!confirm('Are you sure you want to remove this item from your cart?')) {
+                e.preventDefault();
+            }
+        });
+    });
+
+    // Calculate USD conversion
+    function updateUSDConversion() {
+        const total = @Model.Total;
+        const usdRate = 1.08; // Example conversion rate
+        const usdTotal = (total * usdRate).toFixed(2);
+
+        const usdElement = document.querySelector('.usd-estimate');
+        if (usdElement) {
+            usdElement.textContent = 'about US $' + usdTotal;
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        updateUSDConversion();
+
+        // Add fade-in animation for cart items
+        const cartItems = document.querySelectorAll('.cart-item');
+        cartItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                item.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                item.style.opacity = '1';
+                item.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+
+    // Payment methods
+    function processPayPal() {
+        alert('PayPal checkout would be initiated here');
+        // Implement PayPal integration
+    }
+
+    function processApplePay() {
+        alert('Apple Pay checkout would be initiated here');
+        // Implement Apple Pay integration
+    }
+</script>
