@@ -23,7 +23,7 @@ namespace NakhlaBelal.Models
         public decimal TotalPrice { get; set; }
 
         // Product snapshot (in case product details change later)
-        public string ProductName { get; set; }
+        public string? ProductName { get; set; }
         public string? ProductImage { get; set; }
         public string? ProductSku { get; set; }
 

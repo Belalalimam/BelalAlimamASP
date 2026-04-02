@@ -694,79 +694,81 @@ namespace NakhlaBelal.Areas.Customer.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            // 1. جلب عناصر السلة (مهم جداً لجلب الأسعار الحقيقية من الداتابيز)
+            // 1. جلب السلة مع المنتجات
             var cartItems = (await _cartRepository.GetAsync(
                 e => e.ApplicationUserId == userId,
                 includes: [e => e.Product])).ToList();
 
             if (!cartItems.Any()) return RedirectToAction("Index");
 
-            // 2. إنشاء كائن الـ Order وتعبئة البيانات من الـ ViewModel
+            // 2. إعادة حساب الإجماليات (أمان أكثر من الاعتماد على View)
+            // ملاحظة: يفضل دائماً إعادة الحساب في السيرفر لمنع تلاعب المستخدم بالأسعار في المتصفح
+            decimal subtotal = cartItems.Sum(i => i.Price * i.Count);
+            decimal shipping = 5.99m;
+            decimal tax = cartItems.Where(i => i.Product.Taxable).Sum(i => (i.Price * i.Count) * 0.19m);
+            decimal total = subtotal + tax + shipping;
+
+            // 3. إنشاء كائن الطلب
             var order = new Order
             {
                 ApplicationUserId = userId,
-                OrderNumber = Order.GenerateOrderNumber(), // استخدام ميثود التوليد من المودل
-
-                // بيانات الشحن (Shipping)
+                OrderNumber = "ORD-" + DateTime.Now.Ticks.ToString().Substring(10), // أو الميثود الخاصة بك
                 ShippingFirstName = model.FirstName,
                 ShippingLastName = model.LastName,
                 ShippingAddress = model.Address,
                 ShippingCity = model.City,
-                ShippingState = model.State,
                 ShippingZipCode = model.ZipCode,
                 ShippingCountry = model.Country ?? "Egypt",
                 ShippingPhone = model.Phone,
                 ShippingEmail = model.Email,
 
-                // بيانات الفواتير (Billing) - سنفترض أنها نفس الشحن حالياً
-                BillingFirstName = model.FirstName,
-                BillingLastName = model.LastName,
-                BillingAddress = model.Address,
-                BillingCity = model.City,
-                BillingState = model.State,
-                BillingZipCode = model.ZipCode,
-                BillingCountry = model.Country ?? "Egypt",
+                Subtotal = subtotal,
+                TaxAmount = tax,
+                ShippingCost = shipping,
+                TotalAmount = total,
 
-                // القيم المالية (تأكد من إرسالها مخفية في الفورم أو حسابها هنا)
-                Subtotal = model.CartData.Subtotal,
-                TaxAmount = model.CartData.Tax,
-                DiscountAmount = model.CartData.Discount,
-                ShippingCost = model.CartData.Shipping,
-                TotalAmount = model.CartData.Total,
-
-                // معلومات إضافية
-                PromotionCode = model.CartData.PromotionCode,
-                PaymentMethod = "Bank Transfer", // أو حسب الاختيار في الصورة
+                PaymentMethod = "Cash on Delivery",
                 PaymentStatus = "Pending",
-                OrderStatus = "Pending",
-                CreatedAt = DateTime.Now
+                OrderStatus = "Processing",
+                CreatedAt = DateTime.Now,
+                OrderItems = new List<OrderItem>()
             };
 
-            // 3. تحويل عناصر السلة إلى OrderItems
+            // 4. إضافة المنتجات
             foreach (var item in cartItems)
             {
                 order.OrderItems.Add(new OrderItem
                 {
                     ProductId = item.ProductId,
                     Quantity = item.Count,
-                    UnitPrice = item.Price // السعر الذي تم استخدامه عند إضافة المنتج للسلة
+                    UnitPrice = item.Price,
+                    ProductName = item.Product.Name,
+                    ProductImage = item.Product.MainImage,
+                    TotalPrice = item.Price * item.Count
                 });
             }
 
-            // 4. الحفظ في قاعدة البيانات
-            // ملاحظة: يجب حقن IRepository<Order> في الـ Constructor باسم _orderRepository
-            await _orderRepository.AddAsync(order);
-            await _orderRepository.CommitAsync();
-
-            // 5. مسح السلة بعد نجاح الطلب
-            foreach (var item in cartItems)
+            try
             {
-                _cartRepository.Delete(item);
-            }
-            await _cartRepository.CommitAsync();
+                // 5. الحفظ في قاعدة البيانات
+                await _orderRepository.AddAsync(order);
+                await _orderRepository.CommitAsync();
 
-            // التوجيه لصفحة النجاح
-            return RedirectToAction(nameof(OrderSuccess));
+                // 6. مسح السلة بعد الحفظ الناجح فقط
+                foreach (var item in cartItems)
+                {
+                    _cartRepository.Delete(item);
+                }
+                await _cartRepository.CommitAsync();
+
+                return RedirectToAction(nameof(OrderSuccess));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Database Save Error");
+                TempData["error-notification"] = "Failed to save order. Please check all fields.";
+                return RedirectToAction("Checkout");
+            }
         }
 
         [HttpGet]
