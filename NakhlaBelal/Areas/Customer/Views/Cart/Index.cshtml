@@ -169,27 +169,39 @@
                         <span>-€ @Model.Discount.ToString("N2")</span>
                     </div>
                 }
-                <div class="shipping-info">
-                    <div class="shipping-label">
-                        SHIPPING
-                        <span class="shipping-price">€ @Model.FormattedShipping</span>
-                    </div>
-                    <div class="shipping-address">
-                        Shipping to <strong>Your Address</strong>
-                        <br>
-                        <a href="#" class="change-address">Change address</a>
-                    </div>
-                    <div class="shipping-methods">
-                        <div class="shipping-method">
-                            <input type="radio" id="standard" name="shipping" class="inputCheck" checked value="5.99">
-                            <label for="standard">Standard Shipping: € 5.99</label>
+                    @if (!string.IsNullOrEmpty(Model.ShippingAddress))
+                    {
+                        <div class="shipping-info">
+                            <div class="shipping-label">
+                                SHIPPING
+                                <span class="shipping-price">€ @Model.Shipping</span>
+                            </div>
+                            <div class="shipping-address">
+                                @* عرض العنوان الحقيقي القادم من قاعدة البيانات *@
+                                Shipping to <strong>@Model.ShippingAddress</strong>
+                                <br>
+                                <a href="@Url.Action("index", "Profile", new { area = "Identity" })" class="change-address">Change address</a>
+                            </div>
+                            <div class="shipping-methods">
+                                <div class="shipping-method">
+                                    <input type="radio" id="standard" name="shipping" class="inputCheck" checked value="5.99">
+                                    <label for="standard">Standard Shipping: € 5.99</label>
+                                </div>
+                                <div class="shipping-method">
+                                    <input type="radio" id="express" name="shipping" class="inputCheck" value="12.99">
+                                    <label for="express">Express Shipping: € 12.99</label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="shipping-method">
-                                <input type="radio" id="express" name="shipping" class="inputCheck" value="12.99">
-                            <label for="express">Express Shipping: € 12.99</label>
+                    }
+                    else
+                    {
+                        <div class="DetailsContainer">
+                            
                         </div>
-                    </div>
-                </div>
+                    }
+
+
 
                 <div class="total-row">
                     <span>CUSTOMS DUTIES AND TAXES</span>
@@ -205,7 +217,7 @@
                 </div>
 
                 <div class="checkout-actions">
-                    <a asp-action="Pay" class="checkout-btn">
+                    <a asp-action="Checkout" class="checkout-btn">
                         PROCEED TO CHECKOUT
                     </a>
 

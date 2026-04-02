@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NakhlaBelal.Models;
+using Stripe;
 using Stripe.Checkout;
 using System.Security.Claims;
 
@@ -15,6 +16,7 @@ namespace NakhlaBelal.Areas.Customer.Controllers
         private readonly IRepository<Cart> _cartRepository;
         private readonly IRepository<Promotion> _promotionRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IRepository<Order> _orderRepository;
         private readonly ILogger<CartController> _logger;
 
         public CartController(
@@ -22,12 +24,14 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             IRepository<Cart> cartRepository,
             IRepository<Promotion> promotionRepository,
             IProductRepository productRepository,
+            IRepository<Order> orderRepository,
             ILogger<CartController> logger)
         {
             _userManager = userManager;
             _cartRepository = cartRepository;
             _promotionRepository = promotionRepository;
             _productRepository = productRepository;
+            _orderRepository = orderRepository;
             _logger = logger;
         }
 
@@ -38,7 +42,9 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var cartItems = (await _cartRepository.GetAsync(e => e.ApplicationUserId == userId, includes: [e => e.Product])).ToList();
 
-            // حذف الكوبون وإعادة الأسعار الأصلية
+            // جلب اليوزر الحالي (لأنه يحتوي على بيانات العنوان)
+            var user = await _userManager.FindByIdAsync(userId);
+
             if (removePromo)
             {
                 HttpContext.Session.Remove("AppliedPromotionCode");
@@ -51,7 +57,6 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            // حفظ الكود الجديد في السيشن وعمل Refresh
             if (!string.IsNullOrEmpty(code))
             {
                 HttpContext.Session.SetString("AppliedPromotionCode", code);
@@ -62,42 +67,50 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             Promotion? promotion = null;
             if (!string.IsNullOrEmpty(appliedCode))
             {
-                // تم الحل: استدعاء الحقول الأساسية فقط لتجنب الخطأ الذي ظهر بالصورة
                 promotion = await _promotionRepository.GetOneAsync(e => e.Code.ToLower() == appliedCode.ToLower() && e.IsActive && e.IsValid);
             }
 
             decimal subtotalOriginal = 0;
             decimal totalDiscount = 0;
+            decimal taxTotal = 0;
+            decimal taxRate = 0.19m;
 
             foreach (var item in cartItems)
             {
                 subtotalOriginal += item.Product.Price * item.Count;
+                if (item.Product.Taxable)
+                {
+                    taxTotal += (item.Product.Price * item.Count) * taxRate;
+                }
 
-                // التحقق من الصلاحية يتم هنا في الذاكرة (C#)
                 if (promotion != null && promotion.IsCurrentlyActive && promotion.IsApplicableToProduct(item.Product))
                 {
                     decimal discountPerUnit = promotion.CalculateDiscount(item.Product.Price, 1);
                     item.Price = item.Product.Price - discountPerUnit;
                     totalDiscount += (discountPerUnit * item.Count);
                 }
-                else
-                {
-                    item.Price = item.Product.Price;
-                }
+                else { item.Price = item.Product.Price; }
                 await _cartRepository.UpdateAsync(item);
             }
             await _cartRepository.CommitAsync();
-
-            // تعبئة الموديل بالقيم التي ينتظرها الـ View الخاص بك
+            decimal finalTotal = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m;
             var vm = new CartVM
             {
                 CartItems = cartItems,
-                Subtotal = subtotalOriginal,      // سيظهر في خانة SUBTOTAL
-                Discount = totalDiscount,          // سيظهر في خانة DISCOUNT
+                Subtotal = subtotalOriginal,
+                Discount = totalDiscount,
+                Tax = taxTotal,
                 Shipping = 5.99m,
-                Total = (subtotalOriginal - totalDiscount) + 5.99m, // سيظهر في خانة TOTAL
+                Total = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m,
                 PromotionCode = appliedCode,
-                PromotionName = promotion?.Name
+                PromotionName = promotion?.Name,
+
+                // تعديل مهم: نتحقق إذا كان اليوزر عنده بيانات عنوان مسجلة
+                // بما أن الـ VM يتوقع UserAddress كـ Object، سنقوم بتمرير اليوزر نفسه إذا كان الموديل يدعم ذلك
+                // أو نستخدم خاصية النص التي أنشأناها سابقاً:
+                ShippingAddress = user != null && !string.IsNullOrEmpty(user.Address)
+                                  ? $"{user.Address}, {user.City}, {user.Country}"
+                                  : null
             };
 
             return View(vm);
@@ -458,42 +471,88 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             }
         }
 
-        // GET: /Customer/Cart/Pay
         [HttpGet]
+        public async Task<IActionResult> Checkout()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+
+            // 1. جلب السلة
+            var cartItems = (await _cartRepository.GetAsync(e => e.ApplicationUserId == userId, includes: [e => e.Product])).ToList();
+            if (!cartItems.Any()) return RedirectToAction("Index");
+
+            // 2. جلب الخصم من الـ Session (نفس منطق الـ Index تماماً)
+            var appliedCode = HttpContext.Session.GetString("AppliedPromotionCode");
+            Promotion? promotion = null;
+            if (!string.IsNullOrEmpty(appliedCode))
+            {
+                promotion = await _promotionRepository.GetOneAsync(e => e.Code.ToLower() == appliedCode.ToLower() && e.IsActive && e.IsValid);
+            }
+
+            decimal subtotalOriginal = 0;
+            decimal totalDiscount = 0;
+            decimal taxTotal = 0;
+            decimal taxRate = 0.19m;
+
+            // 3. الحسبة الثلاثية (سعر أصلي + خصم + ضريبة)
+            foreach (var item in cartItems)
+            {
+                subtotalOriginal += item.Product.Price * item.Count;
+
+                // حساب الخصم إذا وجد
+                if (promotion != null && promotion.IsCurrentlyActive && promotion.IsApplicableToProduct(item.Product))
+                {
+                    decimal discountPerUnit = promotion.CalculateDiscount(item.Product.Price, 1);
+                    item.Price = item.Product.Price - discountPerUnit;
+                    totalDiscount += (discountPerUnit * item.Count);
+                }
+                else { item.Price = item.Product.Price; }
+
+                // حساب الضريبة على السعر بعد الخصم (أو قبل حسب قانون بلدك، غالباً بعد الخصم)
+                if (item.Product.Taxable)
+                {
+                    taxTotal += (item.Price * item.Count) * taxRate;
+                }
+            }
+
+            var checkoutVM = new CheckoutVM
+            {
+                CartData = new CartVM
+                {
+                    CartItems = cartItems,
+                    Subtotal = subtotalOriginal,
+                    Discount = totalDiscount,
+                    Tax = taxTotal,
+                    Shipping = 5.99m,
+                    Total = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m,
+                    PromotionCode = appliedCode
+                },
+                // بيانات العميل تلقائياً
+                FirstName = user?.FirstName,
+                LastName = user?.LastName,
+                Email = user?.Email,
+                Address = user?.Address,
+                City = user?.City,
+                Phone = user?.PhoneNumber,
+                ZipCode = user?.ZipCode,
+                Country = user?.Country
+            };
+
+            return View(checkoutVM);
+        }
+
+        // GET: /Customer/Cart/Pay
+        [HttpPost]
         public async Task<IActionResult> Pay()
         {
             try
             {
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                if (string.IsNullOrEmpty(userId))
-                {
-                    TempData["error-notification"] = "Please login to proceed to checkout";
-                    return RedirectToAction("Login", "Account", new { area = "Identity" });
-                }
+                var cartItems = (await _cartRepository.GetAsync(e => e.ApplicationUserId == userId, includes: [e => e.Product])).ToList();
+                var user = await _userManager.FindByIdAsync(userId);
 
-                var cartItems = await _cartRepository.GetAsync(
-                    e => e.ApplicationUserId == userId,
-                    includes: [e => e.Product]);
+                if (!cartItems.Any()) return RedirectToAction("Index");
 
-                if (!cartItems.Any())
-                {
-                    TempData["error-notification"] = "Your cart is empty";
-                    return RedirectToAction("Index");
-                }
-
-                // Validate stock availability
-                var outOfStockItems = cartItems
-                    .Where(e => e.Product.ManageStock && e.Product.StockQuantity < e.Count)
-                    .ToList();
-
-                if (outOfStockItems.Any())
-                {
-                    var productNames = string.Join(", ", outOfStockItems.Select(e => e.Product.Name));
-                    TempData["error-notification"] = $"The following items have insufficient stock: {productNames}";
-                    return RedirectToAction("Index");
-                }
-
-                // Create Stripe checkout session
                 var options = new SessionCreateOptions
                 {
                     PaymentMethodTypes = new List<string> { "card" },
@@ -502,64 +561,81 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                     SuccessUrl = $"{Request.Scheme}://{Request.Host}/Customer/Cart/Success?session_id={{CHECKOUT_SESSION_ID}}",
                     CancelUrl = $"{Request.Scheme}://{Request.Host}/Customer/Cart",
                     CustomerEmail = User.FindFirstValue(ClaimTypes.Email),
-                    Metadata = new Dictionary<string, string>
-                    {
-                        { "userId", userId }
-                    }
+                    Metadata = new Dictionary<string, string> { { "userId", userId } }
                 };
 
+                // إعداد المنتجات والضريبة والشحن (نفس كودك القديم)
+                decimal taxTotal = 0;
                 foreach (var item in cartItems)
                 {
+                    if (item.Product.Taxable)
+                    {
+                        taxTotal += (item.Price * item.Count) * 0.19m; // ضريبة 19% مثلاً
+                    }
+
                     options.LineItems.Add(new SessionLineItemOptions
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            Currency = "usd", // Change to your currency
-                            UnitAmount = (long)(item.Price * 100), // Convert to cents
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = item.Product.Name,
-                                Description = item.Product.ShortDescription,
-                                Images = !string.IsNullOrEmpty(item.Product.MainImage) ?
-                                    new List<string> { item.Product.MainImage } : null
-                            }
+                            Currency = "eur",
+                            UnitAmount = (long)(item.Price * 100),
+                            ProductData = new SessionLineItemPriceDataProductDataOptions { Name = item.Product.Name }
                         },
-                        Quantity = item.Count,
+                        Quantity = item.Count
                     });
                 }
 
-                // Add shipping fee if applicable
-                var shipping = 0m; // Calculate shipping here
-                if (shipping > 0)
+                if (taxTotal > 0)
                 {
                     options.LineItems.Add(new SessionLineItemOptions
                     {
                         PriceData = new SessionLineItemPriceDataOptions
                         {
-                            Currency = "usd",
-                            UnitAmount = (long)(shipping * 100),
-                            ProductData = new SessionLineItemPriceDataProductDataOptions
-                            {
-                                Name = "Shipping Fee",
-                                Description = "Standard shipping"
-                            }
+                            Currency = "eur",
+                            UnitAmount = (long)(taxTotal * 100),
+                            ProductData = new SessionLineItemPriceDataProductDataOptions { Name = "VAT (19%)" }
                         },
-                        Quantity = 1,
+                        Quantity = 1
                     });
+                }
+
+                options.LineItems.Add(new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "eur",
+                        UnitAmount = (long)(5.99m * 100),
+                        ProductData = new SessionLineItemPriceDataProductDataOptions { Name = "Shipping Fee" }
+                    },
+                    Quantity = 1
+                });
+
+                // --- الجزء الذي كان يسبب المشكلة (تم حله بأبسط شكل) ---
+                if (user != null && !string.IsNullOrEmpty(user.Address))
+                {
+                    options.PaymentIntentData = new SessionPaymentIntentDataOptions
+                    {
+                        Shipping = new ChargeShippingOptions // هذا الكلاس هو "الجوكر" في سترايب ويقبل AddressOptions
+                        {
+                            Name = $"{user.FirstName} {user.LastName}",
+                            Address = new AddressOptions
+                            {
+                                Line1 = user.Address,
+                                City = user.City,
+                                PostalCode = user.ZipCode,
+                                Country = user.Country
+                            }
+                        }
+                    };
                 }
 
                 var service = new SessionService();
                 var session = await service.CreateAsync(options);
-
-                // Store session ID temporarily
-                HttpContext.Session.SetString("StripeSessionId", session.Id);
-
                 return Redirect(session.Url);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating payment session");
-                TempData["error-notification"] = "An error occurred while processing payment";
+                _logger.LogError(ex, "Pay Error");
                 return RedirectToAction("Index");
             }
         }
@@ -611,6 +687,93 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             }
         }
 
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PlaceOrder(CheckoutVM model)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // 1. جلب عناصر السلة (مهم جداً لجلب الأسعار الحقيقية من الداتابيز)
+            var cartItems = (await _cartRepository.GetAsync(
+                e => e.ApplicationUserId == userId,
+                includes: [e => e.Product])).ToList();
+
+            if (!cartItems.Any()) return RedirectToAction("Index");
+
+            // 2. إنشاء كائن الـ Order وتعبئة البيانات من الـ ViewModel
+            var order = new Order
+            {
+                ApplicationUserId = userId,
+                OrderNumber = Order.GenerateOrderNumber(), // استخدام ميثود التوليد من المودل
+
+                // بيانات الشحن (Shipping)
+                ShippingFirstName = model.FirstName,
+                ShippingLastName = model.LastName,
+                ShippingAddress = model.Address,
+                ShippingCity = model.City,
+                ShippingState = model.State,
+                ShippingZipCode = model.ZipCode,
+                ShippingCountry = model.Country ?? "Egypt",
+                ShippingPhone = model.Phone,
+                ShippingEmail = model.Email,
+
+                // بيانات الفواتير (Billing) - سنفترض أنها نفس الشحن حالياً
+                BillingFirstName = model.FirstName,
+                BillingLastName = model.LastName,
+                BillingAddress = model.Address,
+                BillingCity = model.City,
+                BillingState = model.State,
+                BillingZipCode = model.ZipCode,
+                BillingCountry = model.Country ?? "Egypt",
+
+                // القيم المالية (تأكد من إرسالها مخفية في الفورم أو حسابها هنا)
+                Subtotal = model.CartData.Subtotal,
+                TaxAmount = model.CartData.Tax,
+                DiscountAmount = model.CartData.Discount,
+                ShippingCost = model.CartData.Shipping,
+                TotalAmount = model.CartData.Total,
+
+                // معلومات إضافية
+                PromotionCode = model.CartData.PromotionCode,
+                PaymentMethod = "Bank Transfer", // أو حسب الاختيار في الصورة
+                PaymentStatus = "Pending",
+                OrderStatus = "Pending",
+                CreatedAt = DateTime.Now
+            };
+
+            // 3. تحويل عناصر السلة إلى OrderItems
+            foreach (var item in cartItems)
+            {
+                order.OrderItems.Add(new OrderItem
+                {
+                    ProductId = item.ProductId,
+                    Quantity = item.Count,
+                    UnitPrice = item.Price // السعر الذي تم استخدامه عند إضافة المنتج للسلة
+                });
+            }
+
+            // 4. الحفظ في قاعدة البيانات
+            // ملاحظة: يجب حقن IRepository<Order> في الـ Constructor باسم _orderRepository
+            await _orderRepository.AddAsync(order);
+            await _orderRepository.CommitAsync();
+
+            // 5. مسح السلة بعد نجاح الطلب
+            foreach (var item in cartItems)
+            {
+                _cartRepository.Delete(item);
+            }
+            await _cartRepository.CommitAsync();
+
+            // التوجيه لصفحة النجاح
+            return RedirectToAction(nameof(OrderSuccess));
+        }
+
+        [HttpGet]
+        public IActionResult OrderSuccess()
+        {
+            return View();
+        }
 
 
         // GET: /Customer/Cart/Cancel

@@ -1,0 +1,117 @@
+﻿@model NakhlaBelal.ViewModels.CheckoutVM
+
+<div class="container py-5">
+    <h2 class="text-center mb-5">CHECKOUT</h2>
+    <form asp-action="PlaceOrder" method="post">
+
+        <input type="hidden" asp-for="CartData.Total" />
+        <input type="hidden" asp-for="CartData.Subtotal" />
+        <input type="hidden" asp-for="CartData.Tax" />
+        <input type="hidden" asp-for="CartData.Discount" />
+        <input type="hidden" asp-for="CartData.PromotionCode" />
+
+        @* لاحظ هنا سنرسل البيانات لـ Pay *@
+        <div class="row">
+            <div class="col-md-7">
+                <div class="card p-4 shadow-sm TableContainerCheck">
+                    <h4>Billing Details</h4>
+                    <hr />
+                    <div class="row">
+                        <div class="form-group col-md-6 mb-3">
+                            <label>First Name *</label>
+                            <input asp-for="FirstName" class="form-control" required />
+                        </div>
+                        <div class="form-group col-md-6 mb-3">
+                            <label>Last Name *</label>
+                            <input asp-for="LastName" class="form-control" required />
+                        </div>
+                        <div class="form-group col-12 mb-3">
+                            <label>Street Address *</label>
+                            <input asp-for="Address" class="form-control" placeholder="House number and street name" required />
+                        </div>
+                        <div class="form-group col-md-6 mb-3">
+                            <label>Town / City *</label>
+                            <input asp-for="City" class="form-control" required />
+                        </div>
+                        <div class="form-group col-md-6 mb-3">
+                            <label>Postcode / ZIP *</label>
+                            <input asp-for="ZipCode" class="form-control" required />
+                        </div>
+                        <div class="form-group col-12 mb-3">
+                            <label>Phone *</label>
+                            <input asp-for="Phone" class="form-control" required />
+                        </div>
+                        <div class="form-group col-12 mb-3">
+                            <label>Email Address *</label>
+                            <input asp-for="Email" class="form-control" required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-5">
+                <div class="card p-4 shadow-sm TableContainerCheck">
+                    <h4>Your Order</h4>
+                    <table class="table mt-3">
+                        <thead>
+                            <tr>
+                                <th class="TableContainerCheck">Product</th>
+                                <th class="text-end TableContainerCheck">Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody class="">
+                            @if (Model.CartData != null && Model.CartData.CartItems.Any())
+                            {
+                                @foreach (var item in Model.CartData.CartItems)
+                                {
+                                    <tr class="">
+                                        <td class="TableContainerCheck">@item.Product.Name × @item.Count</td>
+                                        <td class="text-end TableContainerCheck">€ @((item.Product.Price * item.Count).ToString("N2"))</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="2">Your cart is empty</td></tr>
+                            }
+                        </tbody>
+                        <tfoot class="fw-bold">
+                            <tr class="">
+                                <td class="TableContainerCheck">Subtotal</td>
+                                <td class="text-end TableContainerCheck">€ @Model.CartData.Subtotal.ToString("N2")</td>
+                            </tr>
+                        </tr>
+                        @if (Model.CartData.Discount > 0)
+                        {
+                            <tr class="text-danger ">
+                                <td class="TableContainerCheck">Discount (@Model.CartData.PromotionCode)</td>
+                                <td class="text-end TableContainerCheck">- € @Model.CartData.Discount.ToString("N2")</td>
+                            </tr>
+                        }
+                        @if (Model.CartData.Tax > 0)
+                        {
+                            <tr>
+                                <td class="TableContainerCheck">VAT (19%)</td>
+                                <td class="text-end TableContainerCheck">€ @Model.CartData.Tax.ToString("N2")</td>
+                            </tr>
+                        }
+                        <tr>
+                            <tr>
+                                <td class="TableContainerCheck">Shipping</td>
+                                <td class="text-end TableContainerCheck">€ @Model.CartData.Shipping.ToString("N2")</td>
+                            </tr>
+                            <tr class="text-primary h5 ">
+                                <td class="TableContainerCheck">Total</td>
+                                <td class="text-end TableContainerCheck">€ @Model.CartData.Total.ToString("N2")</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                    <div class="mt-4">
+                        <button type="submit" class="checkout-btn">PLACE ORDER</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form> 
+</div>

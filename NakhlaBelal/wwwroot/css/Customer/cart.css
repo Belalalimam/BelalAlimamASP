@@ -655,6 +655,11 @@ swiper-slide img {
         color: var(--evergreen-color);
     }
 
+
+.TableContainerCheck {
+    background: var(--jade-color) !important;
+    color:var(--evergreen-color) !important;
+}
 /* Responsive Design */
 @media (max-width: 1024px) {
     .container-cart {

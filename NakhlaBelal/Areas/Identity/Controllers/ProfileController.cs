@@ -45,21 +45,23 @@ namespace NakhlaBelal.Areas.Identity.Controllers
         public async Task<IActionResult> UpdateProfile(ApplicationUserVM applicationUserVM)
         {
             var user = await _userManager.GetUserAsync(User);
+            if (user is null) return NotFound();
 
-            if (user is null)
-                return NotFound();
-
-            var names = applicationUserVM.FullName?.Split(" ", StringSplitOptions.RemoveEmptyEntries);
-            
-
+            // تحديث الحقول الجديدة يدوياً لضمان الحفظ
             user.PhoneNumber = applicationUserVM.PhoneNumber;
             user.Address = applicationUserVM.Address;
+            user.City = applicationUserVM.City;       // <--- أضف هذا
+            user.ZipCode = applicationUserVM.ZipCode; // <--- أضف هذا
+            user.Country = applicationUserVM.Country; // <--- أضف هذا
+            user.State = applicationUserVM.State;     // <--- أضف هذا
+
+            // معالجة الاسم كما فعلت سابقاً
+            var names = applicationUserVM.FullName?.Split(" ", StringSplitOptions.RemoveEmptyEntries);
             user.FirstName = names?.Length > 0 ? names[0] : "";
             user.LastName = names?.Length > 1 ? string.Join(" ", names.Skip(1)) : "";
 
             await _userManager.UpdateAsync(user);
-
-            TempData["success-notification"] = "Update Profile";
+            TempData["success-notification"] = "Profile Updated!";
             return RedirectToAction(nameof(Index));
         }
 
