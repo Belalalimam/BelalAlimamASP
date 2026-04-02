@@ -45,6 +45,16 @@ namespace NakhlaBelal.DataAccess
             //modelBuilder.ApplyConfigurationsFromAssembly(typeof(ProductColorEntityTypeConfiguration).Assembly);
             modelBuilder.Entity<Product>().HasQueryFilter(p => !p.IsDeleted);
             base.OnModelCreating(modelBuilder);
+
+            // هذا الكود سيقوم بتعيين الدقة لكل الحقول العشرية في المشروع بضربة واحدة
+            var decimalProperties = modelBuilder.Model.GetEntityTypes()
+                .SelectMany(t => t.GetProperties())
+                .Where(p => p.ClrType == typeof(decimal) || p.ClrType == typeof(decimal?));
+
+            foreach (var property in decimalProperties)
+            {
+                property.SetColumnType("decimal(18,2)");
+            }
         }
 
 
