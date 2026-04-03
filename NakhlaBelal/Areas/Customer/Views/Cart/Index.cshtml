@@ -166,7 +166,7 @@
                     <div class="total-row discount">
                         <span>DISCOUNT</span>
                         @* فورمات العملة مباشرة لضمان الظهور *@
-                        <span>-€ @Model.Discount.ToString("N2")</span>
+                            <span>-€ @Model.FormattedDiscount</span>
                     </div>
                 }
                     @if (!string.IsNullOrEmpty(Model.ShippingAddress))

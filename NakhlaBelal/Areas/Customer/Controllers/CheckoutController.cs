@@ -114,119 +114,125 @@ namespace NAKHLA.Areas.Customer.Controllers
         public async Task<IActionResult> ProcessOrder(CheckoutVM model)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // Get cart items
+            var cartItems = await _context.Carts
+                .Include(c => c.Product)
+                .Where(c => c.ApplicationUserId == userId)
+                .ToListAsync();
 
             if (!ModelState.IsValid)
             {
-                var cartItems = await _context.Carts
-                    .Include(c => c.Product)
-                    .Where(c => c.ApplicationUserId == userId)
-                    .ToListAsync();
-
                 model.CartItems = cartItems;
                 return View("Index", model);
+            }            
+
+            if (!cartItems.Any())
+            {
+                TempData["error-notification"] = "Your cart is empty";
+                return RedirectToAction("Index", "Cart");
             }
+            // Create order
+            var order = new Order
+            {
+                ApplicationUserId = userId, // THIS IS CRITICAL
+                OrderNumber = Order.GenerateOrderNumber(),
+
+                // Shipping info
+                ShippingFirstName = model.ShippingFirstName,
+                ShippingLastName = model.ShippingLastName,
+                ShippingAddress = model.ShippingAddress,
+                ShippingCity = model.ShippingCity,
+                ShippingState = model.ShippingState,
+                ShippingZipCode = model.ShippingZipCode,
+                ShippingCountry = model.ShippingCountry,
+                ShippingPhone = model.ShippingPhone,
+                ShippingEmail = model.ShippingEmail,
+
+                // Billing info
+                BillingFirstName = model.BillingSameAsShipping ? model.ShippingFirstName : model.BillingFirstName,
+                BillingLastName = model.BillingSameAsShipping ? model.ShippingLastName : model.BillingLastName,
+                BillingAddress = model.BillingSameAsShipping ? model.ShippingAddress : model.BillingAddress,
+                BillingCity = model.BillingSameAsShipping ? model.ShippingCity : model.BillingCity,
+                BillingState = model.BillingSameAsShipping ? model.ShippingState : model.BillingState,
+                BillingZipCode = model.BillingSameAsShipping ? model.ShippingZipCode : model.BillingZipCode,
+                BillingCountry = model.BillingSameAsShipping ? model.ShippingCountry : model.BillingCountry,
+
+                // Order amounts
+                Subtotal = cartItems.Sum(c => c.Price * c.Count),
+                ShippingCost = model.ShippingCost,
+                TaxAmount = cartItems.Sum(c => c.Price * c.Count) * 0.08m,
+                DiscountAmount = model.DiscountAmount,
+                TotalAmount = cartItems.Sum(c => c.Price * c.Count) + model.ShippingCost + (cartItems.Sum(c => c.Price * c.Count) * 0.08m) - model.DiscountAmount,
+
+                // Payment info
+                PaymentMethod = model.PaymentMethod,
+                PaymentStatus = "Pending",
+
+                // Order status
+                OrderStatus = "Pending",
+
+                // Customer notes
+                CustomerNotes = model.CustomerNotes,
+
+                CreatedAt = DateTime.Now
+            };
 
             try
             {
-                // Get cart items
-                var cartItems = await _context.Carts
-                    .Include(c => c.Product)
-                    .Where(c => c.ApplicationUserId == userId)
-                    .ToListAsync();
-
-                if (!cartItems.Any())
+                // 1. استخدام Transaction لضمان (يا إضافة وحذف سوا.. يا ولا شي)
+                using (var transaction = await _context.Database.BeginTransactionAsync())
                 {
-                    TempData["error-notification"] = "Your cart is empty";
-                    return RedirectToAction("Index", "Cart");
-                }
-
-                // Create order
-                var order = new Order
-                {
-                    ApplicationUserId = userId, // THIS IS CRITICAL
-                    OrderNumber = Order.GenerateOrderNumber(),
-
-                    // Shipping info
-                    ShippingFirstName = model.ShippingFirstName,
-                    ShippingLastName = model.ShippingLastName,
-                    ShippingAddress = model.ShippingAddress,
-                    ShippingCity = model.ShippingCity,
-                    ShippingState = model.ShippingState,
-                    ShippingZipCode = model.ShippingZipCode,
-                    ShippingCountry = model.ShippingCountry,
-                    ShippingPhone = model.ShippingPhone,
-                    ShippingEmail = model.ShippingEmail,
-
-                    // Billing info
-                    BillingFirstName = model.BillingSameAsShipping ? model.ShippingFirstName : model.BillingFirstName,
-                    BillingLastName = model.BillingSameAsShipping ? model.ShippingLastName : model.BillingLastName,
-                    BillingAddress = model.BillingSameAsShipping ? model.ShippingAddress : model.BillingAddress,
-                    BillingCity = model.BillingSameAsShipping ? model.ShippingCity : model.BillingCity,
-                    BillingState = model.BillingSameAsShipping ? model.ShippingState : model.BillingState,
-                    BillingZipCode = model.BillingSameAsShipping ? model.ShippingZipCode : model.BillingZipCode,
-                    BillingCountry = model.BillingSameAsShipping ? model.ShippingCountry : model.BillingCountry,
-
-                    // Order amounts
-                    Subtotal = cartItems.Sum(c => c.Price * c.Count),
-                    ShippingCost = model.ShippingCost,
-                    TaxAmount = cartItems.Sum(c => c.Price * c.Count) * 0.08m,
-                    DiscountAmount = model.DiscountAmount,
-                    TotalAmount = cartItems.Sum(c => c.Price * c.Count) + model.ShippingCost + (cartItems.Sum(c => c.Price * c.Count) * 0.08m) - model.DiscountAmount,
-
-                    // Payment info
-                    PaymentMethod = model.PaymentMethod,
-                    PaymentStatus = "Pending",
-
-                    // Order status
-                    OrderStatus = "Pending",
-
-                    // Customer notes
-                    CustomerNotes = model.CustomerNotes,
-
-                    CreatedAt = DateTime.Now
-                };
-
-                // Add order items
-                foreach (var cartItem in cartItems)
-                {
-                    var orderItem = new OrderItem
+                    try
                     {
-                        ProductId = cartItem.ProductId,
-                        Quantity = cartItem.Count,
-                        UnitPrice = cartItem.Price,
-                        TotalPrice = cartItem.Price * cartItem.Count,
-                        ProductName = cartItem.Product?.Name ?? "Unknown Product",
-                        ProductImage = cartItem.Product?.MainImage,
-                        ProductSku = cartItem.Product?.SKU
-                    };
+                        // تأكد إن الـ OrderItems مو Null قبل ما تبدأ
+                        order.OrderItems = new List<OrderItem>();
 
-                    order.OrderItems.Add(orderItem);
+                        foreach (var cartItem in cartItems)
+                        {
+                            var item = new OrderItem
+                            {
+                                ProductId = cartItem.ProductId,
+                                Quantity = cartItem.Count,
+                                UnitPrice = cartItem.Price,
+                                TotalPrice = cartItem.Price * cartItem.Count,
+                                // تأكد إن هالقيم مو null إذا الداتابيز بتطلبهم
+                                ProductName = cartItem.Product?.Name ?? "N/A",
+                                ProductImage = cartItem.Product?.MainImage ?? "",
+                                ProductSku = cartItem.Product?.SKU ?? ""
+                            };
+                            order.OrderItems.Add(item);
+                        }
+
+                        // 2. إضافة الأوردر (الـ EF لحاله رح يعرف يربط الـ OrderItems ويعطيهم الـ OrderId الصح)
+                        await _context.Orders.AddAsync(order);
+
+                        // 3. حذف السلة بنفس اللحظة
+                        _context.Carts.RemoveRange(cartItems);
+
+                        // 4. سيف الكل بمرة وحدة فقط!
+                        await _context.SaveChangesAsync();
+
+                        // 5. تثبيت العملية
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.RollbackAsync();
+                        throw; // ابعته للـ catch البرانية لنعرف شو السبب
+                    }
                 }
 
-                // Save order
-                await _context.Orders.AddAsync(order);
-                await _context.SaveChangesAsync();
-
-                // Clear cart
-                _context.Carts.RemoveRange(cartItems);
-                await _context.SaveChangesAsync();
-
-                // Redirect to payment or confirmation
-                if (model.PaymentMethod == "Credit Card")
-                {
-                    return RedirectToAction("ProcessPayment", new { orderId = order.Id });
-                }
-                else
-                {
-                    // For cash on delivery or other methods
-                    TempData["success-notification"] = $"Order #{order.OrderNumber} placed successfully!";
-                    return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
-                }
+                return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error processing order");
-                TempData["error-notification"] = "An error occurred while processing your order";
+                // هون السر.. هي الرسالة رح تقولك شو الحقل اللي عم يمنع الحفظ
+                var errorMessage = ex.InnerException?.Message ?? ex.Message;
+                _logger.LogError("فشل الحفظ: " + errorMessage);
+                TempData["error-notification"] = "خطأ في قاعدة البيانات: " + errorMessage;
+
+                // ارجع جيب السلة للموديل عشان ما تطلع الصفحة فاضية
+                model.CartItems = cartItems;
                 return View("Index", model);
             }
         }
@@ -331,6 +337,11 @@ namespace NAKHLA.Areas.Customer.Controllers
 
             TempData["error-notification"] = "Payment verification failed";
             return RedirectToAction("Index", "Cart");
+        }
+        [HttpGet]
+        public IActionResult OrderSuccess()
+        {
+            return View(); // هذه الصفحة التي عرضت صورتها "Thank You"
         }
 
         [HttpGet]

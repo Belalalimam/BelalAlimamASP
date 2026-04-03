@@ -3,17 +3,7 @@
 <div class="container py-5">
     <h2 class="text-center mb-5">CHECKOUT</h2>
     <form asp-action="ProcessOrder" method="post">
-        <div asp-validation-summary="All" class="text-danger"></div>
-
-        <input type="hidden" name="CartData.Total" value="@Model.CartData.Total.ToString("0.00")" />
-        <input type="hidden" name="CartData.Subtotal" value="@Model.CartData.Subtotal.ToString("0.00")" />
-        <input type="hidden" name="CartData.Tax" value="@Model.CartData.Tax.ToString("0.00")" />
-        <input type="hidden" name="CartData.Shipping" value="@Model.CartData.Shipping.ToString("0.00")" />
-        <input type="hidden" name="CartData.Discount" value="@Model.CartData.Discount.ToString("0.00")" />
-    
-        @* أضف هذه الحقول للتأكد من اكتمال الـ ModelState *@
-        <input type="hidden" asp-for="ShippingEmail" />
-        <input type="hidden" asp-for="ShippingCountry" />
+        
 
         @* لاحظ هنا سنرسل البيانات لـ Pay *@
         <div class="row">
@@ -41,6 +31,11 @@
                             <label asp-for="ShippingCity">Town / City *</label>
                             <input asp-for="ShippingCity" class="form-control" />
                             <span asp-validation-for="ShippingCity" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6 mb-3">
+                            <label asp-for="ShippingState">State *</label>
+                            <input asp-for="ShippingState" class="form-control" />
+                            <span asp-validation-for="ShippingState" class="text-danger"></span>
                         </div>
 
                         <div class="form-group col-md-6 mb-3">
