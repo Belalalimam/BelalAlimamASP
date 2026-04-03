@@ -130,7 +130,7 @@ namespace NAKHLA.Controllers.Admin
         // POST: Admin/Products/Create
         [HttpPost]
         //[ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Product product, int[] SelectedProjectCategoryIds, List<int> SelectedTagIds, List<ProductComposition> ProductCompositions)
+        public async Task<IActionResult> Create(Product product, IFormFile img, List<IFormFile>? subImgs, int[] SelectedProjectCategoryIds, List<int> SelectedTagIds, List<ProductComposition> ProductCompositions)
         {
             // Debug: Check what's coming in
             Console.WriteLine($"Product Name: {product?.Name}");
@@ -146,6 +146,21 @@ namespace NAKHLA.Controllers.Admin
                     product.CreatedAt = DateTime.Now;
                     product.CreatedBy = User.Identity?.Name ?? "System";
                     product.IsDeleted = false;
+
+                    if (img is not null && img.Length > 0)
+                    {
+                        // Save Img in wwwroot
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName); // 30291jsfd4-210klsdf32-4vsfksgs.png
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images", fileName);
+
+                        using (var stream = System.IO.File.Create(filePath))
+                        {
+                            img.CopyTo(stream);
+                        }
+
+                        // Save Img in db
+                        product.MainImage = fileName;
+                    }
 
                     // Generate SKU if empty
                     if (string.IsNullOrEmpty(product.SKU))
