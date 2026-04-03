@@ -472,75 +472,75 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Checkout()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
+        //[HttpGet]
+        //public async Task<IActionResult> Checkout()
+        //{
+        //    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        //    var user = await _userManager.FindByIdAsync(userId);
 
-            // 1. جلب السلة
-            var cartItems = (await _cartRepository.GetAsync(e => e.ApplicationUserId == userId, includes: [e => e.Product])).ToList();
-            if (!cartItems.Any()) return RedirectToAction("Index");
+        //    // 1. جلب السلة
+        //    var cartItems = (await _cartRepository.GetAsync(e => e.ApplicationUserId == userId, includes: [e => e.Product])).ToList();
+        //    if (!cartItems.Any()) return RedirectToAction("Index");
 
-            // 2. جلب الخصم من الـ Session (نفس منطق الـ Index تماماً)
-            var appliedCode = HttpContext.Session.GetString("AppliedPromotionCode");
-            Promotion? promotion = null;
-            if (!string.IsNullOrEmpty(appliedCode))
-            {
-                promotion = await _promotionRepository.GetOneAsync(e => e.Code.ToLower() == appliedCode.ToLower() && e.IsActive && e.IsValid);
-            }
+        //    // 2. جلب الخصم من الـ Session (نفس منطق الـ Index تماماً)
+        //    var appliedCode = HttpContext.Session.GetString("AppliedPromotionCode");
+        //    Promotion? promotion = null;
+        //    if (!string.IsNullOrEmpty(appliedCode))
+        //    {
+        //        promotion = await _promotionRepository.GetOneAsync(e => e.Code.ToLower() == appliedCode.ToLower() && e.IsActive && e.IsValid);
+        //    }
 
-            decimal subtotalOriginal = 0;
-            decimal totalDiscount = 0;
-            decimal taxTotal = 0;
-            decimal taxRate = 0.19m;
+        //    decimal subtotalOriginal = 0;
+        //    decimal totalDiscount = 0;
+        //    decimal taxTotal = 0;
+        //    decimal taxRate = 0.19m;
 
-            // 3. الحسبة الثلاثية (سعر أصلي + خصم + ضريبة)
-            foreach (var item in cartItems)
-            {
-                subtotalOriginal += item.Product.Price * item.Count;
+        //    // 3. الحسبة الثلاثية (سعر أصلي + خصم + ضريبة)
+        //    foreach (var item in cartItems)
+        //    {
+        //        subtotalOriginal += item.Product.Price * item.Count;
 
-                // حساب الخصم إذا وجد
-                if (promotion != null && promotion.IsCurrentlyActive && promotion.IsApplicableToProduct(item.Product))
-                {
-                    decimal discountPerUnit = promotion.CalculateDiscount(item.Product.Price, 1);
-                    item.Price = item.Product.Price - discountPerUnit;
-                    totalDiscount += (discountPerUnit * item.Count);
-                }
-                else { item.Price = item.Product.Price; }
+        //        // حساب الخصم إذا وجد
+        //        if (promotion != null && promotion.IsCurrentlyActive && promotion.IsApplicableToProduct(item.Product))
+        //        {
+        //            decimal discountPerUnit = promotion.CalculateDiscount(item.Product.Price, 1);
+        //            item.Price = item.Product.Price - discountPerUnit;
+        //            totalDiscount += (discountPerUnit * item.Count);
+        //        }
+        //        else { item.Price = item.Product.Price; }
 
-                // حساب الضريبة على السعر بعد الخصم (أو قبل حسب قانون بلدك، غالباً بعد الخصم)
-                if (item.Product.Taxable)
-                {
-                    taxTotal += (item.Price * item.Count) * taxRate;
-                }
-            }
+        //        // حساب الضريبة على السعر بعد الخصم (أو قبل حسب قانون بلدك، غالباً بعد الخصم)
+        //        if (item.Product.Taxable)
+        //        {
+        //            taxTotal += (item.Price * item.Count) * taxRate;
+        //        }
+        //    }
 
-            var checkoutVM = new CheckoutVM
-            {
-                CartData = new CartVM
-                {
-                    CartItems = cartItems,
-                    Subtotal = subtotalOriginal,
-                    Discount = totalDiscount,
-                    Tax = taxTotal,
-                    Shipping = 5.99m,
-                    Total = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m,
-                    PromotionCode = appliedCode
-                },
-                // بيانات العميل تلقائياً
-                FirstName = user?.FirstName,
-                LastName = user?.LastName,
-                Email = user?.Email,
-                Address = user?.Address,
-                City = user?.City,
-                Phone = user?.PhoneNumber,
-                ZipCode = user?.ZipCode,
-                Country = user?.Country
-            };
+        //    var checkoutVM = new CheckoutVM
+        //    {
+        //        CartData = new CartVM
+        //        {
+        //            CartItems = cartItems,
+        //            Subtotal = subtotalOriginal,
+        //            Discount = totalDiscount,
+        //            Tax = taxTotal,
+        //            Shipping = 5.99m,
+        //            Total = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m,
+        //            PromotionCode = appliedCode
+        //        },
+        //        // بيانات العميل تلقائياً
+        //        FirstName = user?.FirstName,
+        //        LastName = user?.LastName,
+        //        Email = user?.Email,
+        //        Address = user?.Address,
+        //        City = user?.City,
+        //        Phone = user?.PhoneNumber,
+        //        ZipCode = user?.ZipCode,
+        //        Country = user?.Country
+        //    };
 
-            return View(checkoutVM);
-        }
+        //    return View(checkoutVM);
+        //}
 
         // GET: /Customer/Cart/Pay
         [HttpPost]
@@ -686,87 +686,7 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                 TempData["error-notification"] = "An error occurred while processing your order";
                 return RedirectToAction("Index");
             }
-        }
-
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> PlaceOrder(CheckoutVM model)
-        {
-            var userId = _userManager.GetUserId(User);
-            var cartItems = await _cartRepository.GetAsync(
-                expression: u => u.ApplicationUserId == userId,
-                includes: new Expression<Func<Cart, object>>[] { c => c.Product }
-            );
-            var cartItemsList = cartItems.ToList();
-
-            if (!cartItemsList.Any()) return RedirectToAction("Index", "Home");
-
-            var order = new Order
-            {
-                ApplicationUserId = userId,
-                CreatedAt = DateTime.Now,
-                OrderNumber = "ORD-" + Guid.NewGuid().ToString().Substring(0, 8).ToUpper(),
-                ShippingFirstName = model.FirstName,
-                ShippingLastName = model.LastName,
-                ShippingAddress = model.Address,
-                ShippingCity = model.City,
-                ShippingZipCode = model.ZipCode,
-                ShippingPhone = model.Phone,
-                ShippingCountry = "Egypt", // تأكد من وجود قيمة هنا
-
-                // مساواة حقول الـ Billing بحقول الـ Shipping لتفادي الـ Null
-                BillingFirstName = model.FirstName,
-                BillingLastName = model.LastName,
-                BillingAddress = model.Address,
-                BillingCity = model.City,
-                BillingZipCode = model.ZipCode,
-                BillingCountry = "Egypt",
-
-                PaymentMethod = "Cash on Delivery",
-                OrderStatus = "Pending",
-                TotalAmount = cartItemsList.Sum(x => x.Price * x.Count),
-                OrderItems = new List<OrderItem>()
-            };
-
-            foreach (var item in cartItemsList)
-            {
-                order.OrderItems.Add(new OrderItem
-                {
-                    ProductId = item.ProductId,
-                    Quantity = item.Count,
-                    UnitPrice = item.Price
-                });
-            }
-
-            try
-            {
-                await _orderRepository.AddAsync(order);
-                await _orderRepository.CommitAsync(); // لو فشل هنا هيروح للـ catch
-
-                // المسح يتم فقط لو الحفظ نجح
-                foreach (var item in cartItemsList)
-                {
-                    _cartRepository.Delete(item);
-                }
-                await _cartRepository.CommitAsync();
-
-                return RedirectToAction(nameof(OrderSuccess));
-            }
-            catch (Exception ex)
-            {
-                // الخطوة دي هي اللي هتقولك ليه ما بيسجلش
-                var error = ex.InnerException?.Message ?? ex.Message;
-                ModelState.AddModelError("", "فشل الحفظ: " + error);
-                return View(model); // هيرجعك لنفس الصفحة ويظهر الخطأ بدل ما يروح لصفحة النجاح كدب
-            }
-        }
-
-        [HttpGet]
-        public IActionResult OrderSuccess()
-        {
-            return View();
-        }
+        }        
 
 
         // GET: /Customer/Cart/Cancel

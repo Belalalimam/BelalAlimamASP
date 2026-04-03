@@ -17,15 +17,18 @@ namespace NAKHLA.Areas.Customer.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly IRepository<Promotion> _promotionRepository;
         private readonly ILogger<CheckoutController> _logger;
 
         public CheckoutController(
             UserManager<ApplicationUser> userManager,
             ApplicationDbContext context,
+            IRepository<Promotion> promotionRepository,
             ILogger<CheckoutController> logger)
         {
             _userManager = userManager;
             _context = context;
+            _promotionRepository = promotionRepository;
             _logger = logger;
         }
 
@@ -45,34 +48,70 @@ namespace NAKHLA.Areas.Customer.Controllers
                 TempData["error-notification"] = "Your cart is empty";
                 return RedirectToAction("Index", "Cart");
             }
-
-            var model = new CheckoutViewModel
+            //2.جلب الخصم من الـ Session(نفس منطق الـ Index تماماً)
+            var appliedCode = HttpContext.Session.GetString("AppliedPromotionCode");
+            Promotion? promotion = null;
+            if (!string.IsNullOrEmpty(appliedCode))
             {
-                CartItems = cartItems,
-                Subtotal = cartItems.Sum(c => c.Price * c.Count),
-                ShippingCost = cartItems.Sum(c => c.Price * c.Count) >= 50 ? 0 : 5.99m,
-                TaxAmount = cartItems.Sum(c => c.Price * c.Count) * 0.08m,
-                // Pre-fill with user info
+                promotion = await _promotionRepository.GetOneAsync(e => e.Code.ToLower() == appliedCode.ToLower() && e.IsActive && e.IsValid);
+            }
+
+            decimal subtotalOriginal = 0;
+            decimal totalDiscount = 0;
+            decimal taxTotal = 0;
+            decimal taxRate = 0.19m;
+
+            //    // 3. الحسبة الثلاثية (سعر أصلي + خصم + ضريبة)
+            foreach (var item in cartItems)
+            {
+                subtotalOriginal += item.Product.Price * item.Count;
+
+                // حساب الخصم إذا وجد
+                if (promotion != null && promotion.IsCurrentlyActive && promotion.IsApplicableToProduct(item.Product))
+                {
+                    decimal discountPerUnit = promotion.CalculateDiscount(item.Product.Price, 1);
+                    item.Price = item.Product.Price - discountPerUnit;
+                    totalDiscount += (discountPerUnit * item.Count);
+                }
+                else { item.Price = item.Product.Price; }
+
+                // حساب الضريبة على السعر بعد الخصم (أو قبل حسب قانون بلدك، غالباً بعد الخصم)
+                if (item.Product.Taxable)
+                {
+                    taxTotal += (item.Price * item.Count) * taxRate;
+                }
+            }
+
+            var checkoutVM = new CheckoutVM
+            {
+                CartData = new CartVM
+                {
+                    CartItems = cartItems,
+                    Subtotal = subtotalOriginal,
+                    Discount = totalDiscount,
+                    Tax = taxTotal,
+                    Shipping = 5.99m,
+                    Total = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m,
+                    PromotionCode = appliedCode
+                },
+                // بيانات العميل تلقائياً
                 ShippingFirstName = user?.FirstName,
                 ShippingLastName = user?.LastName,
                 ShippingEmail = user?.Email,
-                ShippingPhone = user?.PhoneNumber,
                 ShippingAddress = user?.Address,
                 ShippingCity = user?.City,
-                ShippingState = user?.State,
+                ShippingPhone = user?.PhoneNumber,
                 ShippingZipCode = user?.ZipCode,
-                // Default billing same as shipping
-                BillingSameAsShipping = true
+                ShippingState = user?.State,
+                ShippingCountry = user?.Country
             };
 
-            model.TotalAmount = model.Subtotal + model.ShippingCost + model.TaxAmount;
-
-            return View(model);
+            return View(checkoutVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProcessOrder(CheckoutViewModel model)
+        public async Task<IActionResult> ProcessOrder(CheckoutVM model)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -310,88 +349,4 @@ namespace NAKHLA.Areas.Customer.Controllers
         }
     }
 
-    public class CheckoutViewModel
-    {
-        // Cart Items
-        public IEnumerable<Cart>? CartItems { get; set; }
-
-        // Amounts
-        public decimal Subtotal { get; set; }
-        public decimal ShippingCost { get; set; }
-        public decimal TaxAmount { get; set; }
-        public decimal DiscountAmount { get; set; }
-        public decimal TotalAmount { get; set; }
-
-        // Shipping Information
-        [Required]
-        [Display(Name = "First Name")]
-        public string ShippingFirstName { get; set; }
-
-        [Required]
-        [Display(Name = "Last Name")]
-        public string ShippingLastName { get; set; }
-
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Email")]
-        public string ShippingEmail { get; set; }
-
-        [Required]
-        [Phone]
-        [Display(Name = "Phone")]
-        public string ShippingPhone { get; set; }
-
-        [Required]
-        [Display(Name = "Address")]
-        public string ShippingAddress { get; set; }
-
-        [Required]
-        [Display(Name = "City")]
-        public string ShippingCity { get; set; }
-
-        [Required]
-        [Display(Name = "State/Province")]
-        public string ShippingState { get; set; }
-
-        [Required]
-        [Display(Name = "ZIP/Postal Code")]
-        public string ShippingZipCode { get; set; }
-
-        [Required]
-        [Display(Name = "Country")]
-        public string ShippingCountry { get; set; } = "Egypt";
-
-        // Billing Information
-        public bool BillingSameAsShipping { get; set; } = true;
-
-        [Display(Name = "First Name")]
-        public string? BillingFirstName { get; set; }
-
-        [Display(Name = "Last Name")]
-        public string? BillingLastName { get; set; }
-
-        [Display(Name = "Address")]
-        public string? BillingAddress { get; set; }
-
-        [Display(Name = "City")]
-        public string? BillingCity { get; set; }
-
-        [Display(Name = "State/Province")]
-        public string? BillingState { get; set; }
-
-        [Display(Name = "ZIP/Postal Code")]
-        public string? BillingZipCode { get; set; }
-
-        [Display(Name = "Country")]
-        public string? BillingCountry { get; set; }
-
-        // Payment
-        [Required]
-        [Display(Name = "Payment Method")]
-        public string PaymentMethod { get; set; } = "Credit Card"; // Credit Card, Cash on Delivery, etc.
-
-        // Notes
-        [Display(Name = "Order Notes (optional)")]
-        public string? CustomerNotes { get; set; }
-    }
 }

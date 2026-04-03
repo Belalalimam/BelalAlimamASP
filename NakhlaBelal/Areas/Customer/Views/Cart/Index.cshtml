@@ -217,7 +217,7 @@
                 </div>
 
                 <div class="checkout-actions">
-                    <a asp-action="Checkout" class="checkout-btn">
+                        <a href="@Url.Action("Index", "Checkout", new { area = "Customer" })" class="checkout-btn">
                         PROCEED TO CHECKOUT
                     </a>
 
