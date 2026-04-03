@@ -1,107 +1,86 @@
-﻿@{
-    ViewBag.Title = "Orders";
-    ViewBag.PageTitle = "Orders";
-    ViewBag.Subtitle = "Manage and track all orders";
+﻿@model IEnumerable<NakhlaBelal.Models.Order>
+@{
+    ViewBag.Title = "Orders Management";
+    var stats = ViewBag.Stats;
 }
 
-<!-- Mobile Scroll Hint -->
 <div class="mobile-scroll-hint">
-    <i class="fas fa-arrows-left-right"></i> Swipe horizontally to view all columns
+    <i class="fas fa-arrows-left-right"></i> اسحب يميناً أو يساراً لعرض كافة التفاصيل
 </div>
 
-<!-- Page Header -->
 <div class="page-header">
     <div>
         <h2>Orders</h2>
-        <p>Manage and track all customer orders</p>
+        <p>Manage and track all customer orders (@Model.Count() orders in this view)</p>
     </div>
     <div class="header-actions">
-        <button class="btn btn-secondary">
-            <i class="fas fa-filter"></i> 
-            <span class="btn-text">Filters</span>
+        <button class="btn btn-secondary" onclick="location.reload()">
+            <i class="fas fa-sync"></i>
+            <span class="btn-text">Refresh</span>
         </button>
-        <button class="btn btn-primary">
-            <i class="fas fa-plus"></i> 
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i>
             <span class="btn-text">New Order</span>
-        </button>
+        </a>
     </div>
 </div>
 
-<!-- Orders Statistics -->
 <div class="orders-stats-container">
     <div class="orders-stat-card">
         <div class="orders-stat-title">Total Orders</div>
-        <div class="orders-stat-value">1,234</div>
-        <div class="orders-stat-desc">+12% from last month</div>
+        <div class="orders-stat-value">@stats.Total</div>
+        <div class="orders-stat-desc">Active orders in system</div>
     </div>
     <div class="orders-stat-card">
         <div class="orders-stat-title">Revenue</div>
-        <div class="orders-stat-value">$54,230</div>
-        <div class="orders-stat-desc">+8% from last month</div>
-    </div>
-    <div class="orders-stat-card">
-        <div class="orders-stat-title">Avg. Order Value</div>
-        <div class="orders-stat-value">$43.98</div>
-        <div class="orders-stat-desc">+2% from last month</div>
+        <div class="orders-stat-value">@stats.Revenue.ToString("N2") EGP</div>
+        <div class="orders-stat-desc">Excluding cancelled</div>
     </div>
     <div class="orders-stat-card">
         <div class="orders-stat-title">Pending Orders</div>
-        <div class="orders-stat-value">24</div>
-        <div class="orders-stat-desc">Require attention</div>
+        <div class="orders-stat-value">@stats.Pending</div>
+        <div class="orders-stat-desc badge-warning-text">Require attention</div>
+    </div>
+    <div class="orders-stat-card">
+        <div class="orders-stat-title">Shipped</div>
+        <div class="orders-stat-value">@stats.Shipped</div>
+        <div class="orders-stat-desc">On the way to customers</div>
     </div>
 </div>
 
-<!-- Filters -->
 <div class="filters">
     <div class="filter-group">
-        <button class="filter-btn active">
+        <a href="@Url.Action("Index", new { status = "" })"
+               class="filter-btn @(string.IsNullOrEmpty(ViewBag.CurrentStatus) ? "active" : "")">
             <span>All Orders</span>
-            <span class="badge badge-primary">1,234</span>
-        </button>
-        <button class="filter-btn">
-            <span>Shipping</span>
-            <span class="badge badge-primary">842</span>
-        </button>
-        <button class="filter-btn">
-            <span>Pickups</span>
-            <span class="badge badge-warning">392</span>
-        </button>
-        <button class="filter-btn">
-            <span>Paid</span>
-            <span class="badge badge-success">987</span>
-        </button>
-        <button class="filter-btn">
+        </a>
+        <a href="@Url.Action("Index", new { status = "Pending" })"
+               class="filter-btn @(ViewBag.CurrentStatus == "Pending" ? "active" : "")">
             <span>Pending</span>
-            <span class="badge badge-warning">247</span>
-        </button>
+        </a>
+        <a href="@Url.Action("Index", new { status = "Shipped" })"
+               class="filter-btn @(ViewBag.CurrentStatus == "Shipped" ? "active" : "")">
+            <span>Shipped</span>
+        </a>
+        <a href="@Url.Action("Index", new { status = "Delivered" })"
+               class="filter-btn @(ViewBag.CurrentStatus == "Delivered" ? "active" : "")">
+            <span>Delivered</span>
+        </a>
     </div>
     <div class="action-buttons">
-        <button class="btn btn-secondary">
-            <i class="fas fa-calendar"></i> 
-            <span class="btn-text">Date Range</span>
-        </button>
-        <button class="btn btn-secondary">
-            <i class="fas fa-download"></i> 
-            <span class="btn-text">Export</span>
+        <button class="btn btn-secondary" onclick="window.print()">
+            <i class="fas fa-download"></i>
+            <span class="btn-text">Print Report</span>
         </button>
     </div>
 </div>
 
-<!-- Orders Table -->
 <div class="data-table-container">
     <div class="table-header">
         <h2>Recent Orders</h2>
-        <div class="table-actions">
-            <button class="table-action" onclick="clearSelection()">
-                <i class="fas fa-times"></i> 
-                <span class="btn-text">Clear Selection</span>
-            </button>
-            <button class="table-action" onclick="exportSelected()">
-                <i class="fas fa-download"></i> 
-                <span class="btn-text">Export Selected</span>
-            </button>
-            <button class="table-action" onclick="deleteSelected()">
-                <i class="fas fa-trash"></i> 
+        <div class="table-actions" id="bulkActions" style="display:none;">
+            <button class="table-action text-danger" onclick="deleteSelected()">
+                <i class="fas fa-trash"></i>
                 <span class="btn-text">Delete Selected</span>
             </button>
         </div>
@@ -113,289 +92,146 @@
                 <th style="width: 40px;">
                     <input type="checkbox" id="selectAll" onchange="toggleSelectAll(this)">
                 </th>
-                <th>Order ID</th>
+                <th>Order Number</th>
                 <th>Customer</th>
-                <th>Product</th>
-                <th>Type</th>
+                <th>Products</th>
                 <th>Date</th>
-                <th>Amount</th>
+                <th>Total</th>
                 <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Order 1 -->
-            <tr data-order-id="192541" onclick="selectOrderRow(event, this)">
-                <td>
-                    <input type="checkbox" class="order-select" value="192541" onchange="updateSelection(this)">
-                </td>
-                <td>
-                    <div class="order-id">#192541</div>
-                </td>
-                <td>
-                    <div class="customer-name">Esther Howard</div>
-                    <div class="text-muted">brodrigues@gmail.com</div>
-                </td>
-                <td>
-                    <div class="order-product-info">
-                        <div class="order-product-name">Stihl TS 800 cut-off machine incl.</div>
-                        <div class="order-product-desc">5x diamond cutting discs</div>
-                    </div>
-                </td>
-                <td>
-                    <span class="order-type-badge order-type-shipping">Shipping</span>
-                </td>
-                <td>
-                    <div class="order-date">June 12, 2025</div>
-                </td>
-                <td>
-                    <div class="order-total-amount">$1,927.89</div>
-                </td>
-                <td>
-                    <span class="order-status-badge order-status-paid">Paid</span>
-                </td>
-                <td>
-                    <div class="row-actions">
-                        <button class="row-action view" onclick="openOrderModal('192541', event)">
-                            <i class="fas fa-eye"></i> 
-                            <span class="btn-text">View</span>
-                        </button>
-                        <button class="row-action edit">
-                            <i class="fas fa-edit"></i> 
-                            <span class="btn-text">Edit</span>
-                        </button>
-                        <button class="row-action delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Order 2 -->
-            <tr data-order-id="192540" onclick="selectOrderRow(event, this)">
-                <td>
-                    <input type="checkbox" class="order-select" value="192540" onchange="updateSelection(this)">
-                </td>
-                <td>
-                    <div class="order-id">#192540</div>
-                </td>
-                <td>
-                    <div class="customer-name">David Miller</div>
-                    <div class="text-muted">droidrigues@gmail.com</div>
-                </td>
-                <td>
-                    <div class="order-product-info">
-                        <div class="order-product-name">Generic Product</div>
-                        <div class="order-product-desc">Standard item</div>
-                    </div>
-                </td>
-                <td>
-                    <span class="order-type-badge order-type-pickups">Pickup</span>
-                </td>
-                <td>
-                    <div class="order-date">June 11, 2025</div>
-                </td>
-                <td>
-                    <div class="order-total-amount">$1,590.00</div>
-                </td>
-                <td>
-                    <span class="order-status-badge order-status-pending">Pending</span>
-                </td>
-                <td>
-                    <div class="row-actions">
-                        <button class="row-action view" onclick="openOrderModal('192540', event)">
-                            <i class="fas fa-eye"></i> 
-                            <span class="btn-text">View</span>
-                        </button>
-                        <button class="row-action edit">
-                            <i class="fas fa-edit"></i> 
-                            <span class="btn-text">Edit</span>
-                        </button>
-                        <button class="row-action delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Order 3 -->
-            <tr data-order-id="192539" onclick="selectOrderRow(event, this)">
-                <td>
-                    <input type="checkbox" class="order-select" value="192539" onchange="updateSelection(this)">
-                </td>
-                <td>
-                    <div class="order-id">#192539</div>
-                </td>
-                <td>
-                    <div class="customer-name">Sarah Johnson</div>
-                    <div class="text-muted">sjohnson@gmail.com</div>
-                </td>
-                <td>
-                    <div class="order-product-info">
-                        <div class="order-product-name">Wireless Headphones</div>
-                        <div class="order-product-desc">Noise cancelling</div>
-                    </div>
-                </td>
-                <td>
-                    <span class="order-type-badge order-type-shipping">Shipping</span>
-                </td>
-                <td>
-                    <div class="order-date">June 10, 2025</div>
-                </td>
-                <td>
-                    <div class="order-total-amount">$299.99</div>
-                </td>
-                <td>
-                    <span class="order-status-badge order-status-paid">Paid</span>
-                </td>
-                <td>
-                    <div class="row-actions">
-                        <button class="row-action view" onclick="openOrderModal('192539', event)">
-                            <i class="fas fa-eye"></i> 
-                            <span class="btn-text">View</span>
-                        </button>
-                        <button class="row-action edit">
-                            <i class="fas fa-edit"></i> 
-                            <span class="btn-text">Edit</span>
-                        </button>
-                        <button class="row-action delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Order 4 -->
-            <tr data-order-id="192538" onclick="selectOrderRow(event, this)">
-                <td>
-                    <input type="checkbox" class="order-select" value="192538" onchange="updateSelection(this)">
-                </td>
-                <td>
-                    <div class="order-id">#192538</div>
-                </td>
-                <td>
-                    <div class="customer-name">Michael Chen</div>
-                    <div class="text-muted">mchen@gmail.com</div>
-                </td>
-                <td>
-                    <div class="order-product-info">
-                        <div class="order-product-name">Laptop Stand</div>
-                        <div class="order-product-desc">Adjustable aluminum</div>
-                    </div>
-                </td>
-                <td>
-                    <span class="order-type-badge order-type-pickups">Pickup</span>
-                </td>
-                <td>
-                    <div class="order-date">June 9, 2025</div>
-                </td>
-                <td>
-                    <div class="order-total-amount">$89.99</div>
-                </td>
-                <td>
-                    <span class="order-status-badge order-status-cancelled">Cancelled</span>
-                </td>
-                <td>
-                    <div class="row-actions">
-                        <button class="row-action view" onclick="openOrderModal('192538', event)">
-                            <i class="fas fa-eye"></i> 
-                            <span class="btn-text">View</span>
-                        </button>
-                        <button class="row-action edit">
-                            <i class="fas fa-edit"></i> 
-                            <span class="btn-text">Edit</span>
-                        </button>
-                        <button class="row-action delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
-
-            <!-- Order 5 -->
-            <tr data-order-id="192537" onclick="selectOrderRow(event, this)">
-                <td>
-                    <input type="checkbox" class="order-select" value="192537" onchange="updateSelection(this)">
-                </td>
-                <td>
-                    <div class="order-id">#192537</div>
-                </td>
-                <td>
-                    <div class="customer-name">Emily Wilson</div>
-                    <div class="text-muted">ewilson@gmail.com</div>
-                </td>
-                <td>
-                    <div class="order-product-info">
-                        <div class="order-product-name">Smart Watch</div>
-                        <div class="order-product-desc">Fitness tracker</div>
-                    </div>
-                </td>
-                <td>
-                    <span class="order-type-badge order-type-shipping">Shipping</span>
-                </td>
-                <td>
-                    <div class="order-date">June 8, 2025</div>
-                </td>
-                <td>
-                    <div class="order-total-amount">$249.99</div>
-                </td>
-                <td>
-                    <span class="order-status-badge order-status-paid">Paid</span>
-                </td>
-                <td>
-                    <div class="row-actions">
-                        <button class="row-action view" onclick="openOrderModal('192537', event)">
-                            <i class="fas fa-eye"></i> 
-                            <span class="btn-text">View</span>
-                        </button>
-                        <button class="row-action edit">
-                            <i class="fas fa-edit"></i> 
-                            <span class="btn-text">Edit</span>
-                        </button>
-                        <button class="row-action delete">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            </tr>
+            @foreach (var item in Model)
+            {
+                <tr data-order-id="@item.Id">
+                    <td>
+                        <input type="checkbox" class="order-select" value="@item.Id" onchange="updateSelection()">
+                    </td>
+                    <td>
+                        <div class="order-id">#@item.OrderNumber</div>
+                        <small class="text-muted">@item.PaymentMethod</small>
+                    </td>
+                    <td>
+                        <div class="customer-name">@item.FullName</div>
+                        <div class="text-muted" style="font-size: 0.8rem;">@item.ShippingEmail</div>
+                    </td>
+                    <td>
+                        <div class="order-product-info">
+                            @if (item.OrderItems != null && item.OrderItems.Any())
+                            {
+                                <div class="order-product-name">@item.OrderItems.First().Product?.Name</div>
+                                @if (item.OrderItems.Count > 1)
+                                {
+                                    <div class="order-product-desc">+ @(item.OrderItems.Count - 1) other items</div>
+                                }
+                            }
+                            else
+                            {
+                                <div class="text-muted">No items</div>
+                            }
+                        </div>
+                    </td>
+                    <td>
+                        <div class="order-date">@item.CreatedAt.ToString("MMM dd, yyyy")</div>
+                        <small class="text-muted">@item.CreatedAt.ToString("hh:mm tt")</small>
+                    </td>
+                    <td>
+                        <div class="order-total-amount">@item.TotalAmount.ToString("N2") EGP</div>
+                    </td>
+                    <td>
+                        @{
+                            var statusClass = item.OrderStatus.ToLower() switch
+                            {
+                                "pending" => "order-status-pending",
+                                "paid" => "order-status-paid",
+                                "shipped" => "order-status-shipping", // مابينج مع كلاسات الـ CSS تبعك
+                                "delivered" => "order-status-paid",
+                                "cancelled" => "order-status-cancelled",
+                                _ => "order-status-pending"
+                            };
+                        }
+                        <span class="order-status-badge @statusClass">@item.OrderStatus</span>
+                    </td>
+                    <td>
+                        <div class="row-actions">
+                            @* عرض سريع بالـ Modal *@
+                            <button class="row-action view" onclick="openOrderModal('@item.Id')">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            @* انتقال لصفحة التفاصيل الكاملة *@
+                            <a asp-action="Details" asp-route-id="@item.Id" class="row-action edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <button class="row-action delete" onclick="deleteOrder('@item.Id')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            }
         </tbody>
     </table>
 </div>
 
-<!-- Selection Actions Bar -->
-<div class="selection-actions" id="selectionActions">
-    <div class="selected-count">
-        <span id="selectedCount">0</span> orders selected
-    </div>
-    <div class="selection-buttons">
-        <button class="btn btn-secondary btn-sm" onclick="clearSelection()">
-            <i class="fas fa-times"></i> 
-            <span class="btn-text">Clear</span>
-        </button>
-        <button class="btn btn-primary btn-sm" onclick="exportSelected()">
-            <i class="fas fa-download"></i> 
-            <span class="btn-text">Export</span>
-        </button>
-        <button class="btn btn-danger btn-sm" onclick="deleteSelected()">
-            <i class="fas fa-trash"></i> 
-            <span class="btn-text">Delete</span>
-        </button>
-    </div>
-</div>
+@section Scripts {
+    <script>
+        // اختيار الكل
+        function toggleSelectAll(source) {
+            checkboxes = document.getElementsByClassName('order-select');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = source.checked;
+            }
+            updateSelection();
+        }
 
-<!-- Pagination -->
-@* <div class="pagination">
-    <a href="#" class="page-item disabled">
-        <i class="fas fa-chevron-left"></i>
-    </a>
-    <a href="#" class="page-item active">1</a>
-    <a href="#" class="page-item">2</a>
-    <a href="#" class="page-item">3</a>
-    <a href="#" class="page-item">4</a>
-    <a href="#" class="page-item">5</a>
-    <span class="page-item">...</span>
-    <a href="#" class="page-item">10</a>
-    <a href="#" class="page-item">
-        <i class="fas fa-chevron-right"></i>
-    </a>
-</div> *@
+        // تحديث شريط العمليات الجماعية
+        function updateSelection() {
+            var selectedCount = document.querySelectorAll('.order-select:checked').length;
+            var bulkActions = document.getElementById('bulkActions');
+            if (selectedCount > 0) {
+                bulkActions.style.display = 'flex';
+            } else {
+                bulkActions.style.display = 'none';
+            }
+        }
+
+        // حذف طلب واحد
+        function deleteOrder(id) {
+            if (confirm('Are you sure you want to delete this order?')) {
+                $.post('@Url.Action("Delete", "Orders")', { id: id }, function (data) {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message);
+                    }
+                });
+            }
+        }
+
+        // حذف جماعي (نفس منطق البرودكت)
+        function deleteSelected() {
+            var selectedIds = Array.from(document.querySelectorAll('.order-select:checked')).map(cb => parseInt(cb.value));
+            if (selectedIds.length > 0 && confirm('Delete ' + selectedIds.length + ' orders?')) {
+                $.ajax({
+                    url: '@Url.Action("DeleteMultiple", "Orders")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(selectedIds),
+                    success: function (data) {
+                        if (data.success) location.reload();
+                    }
+                });
+            }
+        }
+
+        // فتح الـ Modal (تحتاج لتجهيز ميثود GetDetails في الكنترولر ترجع PartialView)
+        function openOrderModal(id) {
+             $.get('@Url.Action("GetDetails", "Orders")/' + id, function(data) {
+                 // هنا تضع الكود لفتح الـ Modal وعرض الـ data داخله
+                 // مثال: $('#orderModalBody').html(data); $('#orderModal').modal('show');
+                 alert("فتح تفاصيل الطلب رقم: " + id);
+             });
+        }
+    </script>
+}
