@@ -58,6 +58,10 @@
                class="filter-btn @(ViewBag.CurrentStatus == "Pending" ? "active" : "")">
             <span>Pending</span>
         </a>
+        <a href="@Url.Action("Index", new { status = "Processing" })"
+               class="filter-btn @(ViewBag.CurrentStatus == "Processing" ? "active" : "")">
+            <span>Processing</span>
+        </a>
         <a href="@Url.Action("Index", new { status = "Shipped" })"
                class="filter-btn @(ViewBag.CurrentStatus == "Shipped" ? "active" : "")">
             <span>Shipped</span>
@@ -65,6 +69,10 @@
         <a href="@Url.Action("Index", new { status = "Delivered" })"
                class="filter-btn @(ViewBag.CurrentStatus == "Delivered" ? "active" : "")">
             <span>Delivered</span>
+        </a>
+        <a href="@Url.Action("Index", new { status = "Cancelled" })"
+               class="filter-btn @(ViewBag.CurrentStatus == "Cancelled" ? "active" : "")">
+            <span>Cancelled</span>
         </a>
     </div>
     <div class="action-buttons">
@@ -174,64 +182,145 @@
     </table>
 </div>
 
+@* مودل ال التعديل او الفيو *@
+<div id="orderModalContainer" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-loading">Loading order details...</div>
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
 @section Scripts {
     <script>
-        // اختيار الكل
-        function toggleSelectAll(source) {
-            checkboxes = document.getElementsByClassName('order-select');
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].checked = source.checked;
-            }
-            updateSelection();
+        // ==========================================
+        // INITIALIZATION
+        // ==========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            setupModalEvents();
+        });
+
+        // ==========================================
+        // 1. وظيفة حفظ التعديلات من المودال (AJAX)
+        // ==========================================
+        function saveOrderUpdate() {
+            var form = $('#editOrderForm');
+            if (form.length === 0) return;
+
+            var formData = form.serialize();
+            
+            // تغيير النص في زر الحفظ لإظهار حالة التحميل
+            var btn = event.target;
+            var originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            btn.disabled = true;
+
+            $.post('/Admin/Orders/UpdateStatus', formData, function(response) {
+                if (response.success) {
+                    alert("تم التحديث بنجاح!");
+                    location.reload();
+                } else {
+                    alert("خطأ: " + response.message);
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }).fail(function() {
+                alert("حدث خطأ في الاتصال بالسيرفر");
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
         }
 
-        // تحديث شريط العمليات الجماعية
-        function updateSelection() {
-            var selectedCount = document.querySelectorAll('.order-select:checked').length;
-            var bulkActions = document.getElementById('bulkActions');
-            if (selectedCount > 0) {
-                bulkActions.style.display = 'flex';
-            } else {
-                bulkActions.style.display = 'none';
+        // ==========================================
+        // 2. MODAL FUNCTIONS (VIEW/EDIT)
+        // ==========================================
+        function openOrderModal(orderId) {
+            const modalContainer = document.getElementById('orderModalContainer');
+            const modalContent = modalContainer.querySelector('.modal-content');
+        
+            modalContent.innerHTML = '<div class="modal-loading"><i class="fas fa-spinner fa-spin"></i> Loading order info...</div>';
+            modalContainer.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            $.ajax({
+                url: '/Admin/Orders/GetDetails/' + orderId,
+                type: 'GET',
+                success: function(response) {
+                    modalContent.innerHTML = response;
+                    setupModalEvents();
+                },
+                error: function(xhr) {
+                    modalContent.innerHTML = `<div class="modal-error p-4 text-center">
+                        <h4>Error Loading Details</h4>
+                        <button class="btn btn-primary mt-3" onclick="closeModal()">Close</button>
+                    </div>`;
+                }
+            });
+        }
+
+        function closeModal() {
+            const modalContainer = document.getElementById('orderModalContainer');
+            if (modalContainer) {
+                modalContainer.style.display = 'none';
+                document.body.style.overflow = 'auto';
             }
         }
 
-        // حذف طلب واحد
-        function deleteOrder(id) {
-            if (confirm('Are you sure you want to delete this order?')) {
-                $.post('@Url.Action("Delete", "Orders")', { id: id }, function (data) {
-                    if (data.success) {
+        function setupModalEvents() {
+            const modalContainer = document.getElementById('orderModalContainer');
+            if (!modalContainer) return;
+
+            modalContainer.onclick = function(e) {
+                if (e.target === this || e.target.closest('.modal-close')) {
+                    closeModal();
+                }
+            };
+        }
+
+        // ==========================================
+        // 3. DELETE FUNCTION (تصحيح البراميترز)
+        // ==========================================
+        function deleteOrder(orderId) {
+            if (!confirm(`هل أنت متأكد من حذف الطلب رقم ${orderId}؟`)) return;
+
+            const token = $('input[name="__RequestVerificationToken"]').val();
+
+            $.ajax({
+                url: '/Admin/Orders/Delete/' + orderId,
+                type: 'POST',
+                data: { __RequestVerificationToken: token },
+                success: function(response) {
+                    if (response.success) {
                         location.reload();
                     } else {
-                        alert(data.message);
+                        alert(response.message);
                     }
-                });
-            }
+                }
+            });
         }
 
-        // حذف جماعي (نفس منطق البرودكت)
-        function deleteSelected() {
-            var selectedIds = Array.from(document.querySelectorAll('.order-select:checked')).map(cb => parseInt(cb.value));
-            if (selectedIds.length > 0 && confirm('Delete ' + selectedIds.length + ' orders?')) {
-                $.ajax({
-                    url: '@Url.Action("DeleteMultiple", "Orders")',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(selectedIds),
-                    success: function (data) {
-                        if (data.success) location.reload();
-                    }
-                });
-            }
+        // ==========================================
+        // 4. BULK SELECTION
+        // ==========================================
+        function toggleSelectAll(source) {
+            const checkboxes = document.querySelectorAll('.order-select');
+            checkboxes.forEach(cb => {
+                cb.checked = source.checked;
+                cb.closest('tr').classList.toggle('selected', source.checked);
+            });
+            updateSelectionUI();
         }
 
-        // فتح الـ Modal (تحتاج لتجهيز ميثود GetDetails في الكنترولر ترجع PartialView)
-        function openOrderModal(id) {
-             $.get('@Url.Action("GetDetails", "Orders")/' + id, function(data) {
-                 // هنا تضع الكود لفتح الـ Modal وعرض الـ data داخله
-                 // مثال: $('#orderModalBody').html(data); $('#orderModal').modal('show');
-                 alert("فتح تفاصيل الطلب رقم: " + id);
-             });
+        function updateSelection() {
+            updateSelectionUI();
+        }
+
+        function updateSelectionUI() {
+            const selectedCount = document.querySelectorAll('.order-select:checked').length;
+            const actionsBar = document.getElementById('bulkActions');
+            if (actionsBar) {
+                actionsBar.style.display = selectedCount > 0 ? 'flex' : 'none';
+            }
         }
     </script>
 }

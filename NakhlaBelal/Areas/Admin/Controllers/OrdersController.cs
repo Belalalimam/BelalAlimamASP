@@ -95,33 +95,34 @@ namespace NAKHLA.Controllers.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStatus(int orderId, string orderStatus, string paymentStatus, string adminNotes)
         {
-            var orderDb = await _context.Orders.FindAsync(orderId);
-            if (orderDb == null) return NotFound();
+            // ابحث عن الطلب من الداتابيز مباشرة
+            var orderDb = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (orderDb == null) return Json(new { success = false, message = "الطلب غير موجود" });
 
             try
             {
+                // نعدل القيم يدوياً على الكائن الذي يتم تتبعه حالياً
                 orderDb.OrderStatus = orderStatus;
                 orderDb.PaymentStatus = paymentStatus;
                 orderDb.AdminNotes = adminNotes;
                 orderDb.UpdatedAt = DateTime.Now;
 
-                // تحديث التواريخ اللوجستية تلقائياً بناءً على الحالة
-                if (orderStatus == "Processing" && orderDb.ProcessingDate == null) orderDb.ProcessingDate = DateTime.Now;
+                // تحديث التواريخ تلقائياً (منطقك السابق ممتاز)
                 if (orderStatus == "Shipped" && orderDb.ShippedDate == null) orderDb.ShippedDate = DateTime.Now;
                 if (orderStatus == "Delivered" && orderDb.DeliveredDate == null) orderDb.DeliveredDate = DateTime.Now;
-                if (orderStatus == "Cancelled" && orderDb.CancelledDate == null) orderDb.CancelledDate = DateTime.Now;
 
-                _context.Update(orderDb);
+                // لا داعي لمناداة Update(orderDb) لأن EF يتابع التغييرات تلقائياً هنا
                 await _context.SaveChangesAsync();
 
-                TempData["Success"] = "تم تحديث حالة الطلب بنجاح";
+                return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                TempData["Error"] = "حدث خطأ أثناء التحديث: " + ex.Message;
+                // عشان تعرف شو السبب الحقيقي للخطأ، جرب تطبع الـ InnerException
+                var msg = ex.InnerException != null ? ex.InnerException.Message : ex.Message;
+                return Json(new { success = false, message = msg });
             }
-
-            return RedirectToAction(nameof(Details), new { id = orderId });
         }
 
         // POST: Admin/Orders/Delete/5 (Soft Delete)

@@ -1,0 +1,148 @@
+﻿@model NakhlaBelal.Models.Order
+
+<div class="modal-header border-0 pb-0">
+    <h3 class="fw-bold">Order Details: <span class="text-primary">#@Model.OrderNumber</span></h3>
+    <button type="button" class="btn-close" onclick="closeModal()"></button>
+</div>
+
+<form id="editOrderForm" method="post" action="/Admin/Orders/UpdateStatus">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="orderId" value="@Model.Id" />
+    <input type="hidden" name="paymentStatus" value="@Model.PaymentStatus" />
+
+    <div class="modal-body">
+        @* ملخص احترافي *@
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="p-3 border rounded-3 bg-light text-center">
+                    <small class="text-muted d-block uppercase small fw-bold">Customer</small>
+                    <span class="fw-bold text-dark">@Model.FullName</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border rounded-3 bg-light text-center">
+                    <small class="text-muted d-block uppercase small fw-bold">Total Amount</small>
+                    <span class="fw-bold text-primary">@Model.TotalAmount.ToString("N2") EGP</span>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-3 border rounded-3 bg-light text-center">
+                    <small class="text-muted d-block uppercase small fw-bold">Payment</small>
+                    <span class="badge @(Model.IsPaid ? "bg-success" : "bg-warning text-dark")">@Model.PaymentStatus</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold"><i class="fas fa-tasks me-1"></i> Update Order Status</label>
+                    <select name="orderStatus" class="form-select shadow-none">
+                        <option value="Pending" selected="@(Model.OrderStatus == "Pending")">Pending</option>
+                        <option value="Processing" selected="@(Model.OrderStatus == "Processing")">Processing</option>
+                        <option value="Shipped" selected="@(Model.OrderStatus == "Shipped")">Shipped</option>
+                        <option value="Delivered" selected="@(Model.OrderStatus == "Delivered")">Delivered</option>
+                        <option value="Cancelled" selected="@(Model.OrderStatus == "Cancelled")">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+
+            @* قسم الشحن *@
+            <div class="col-md-12" id="shippingFields" style="display: @(Model.OrderStatus == "Shipped" || Model.OrderStatus == "Delivered" ? "block" : "none");">
+                <div class="p-3 border rounded-3" style="background-color: #fff9eb; border-style: dashed !important; border-color: #f59e0b !important;">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-warning-emphasis">Carrier (شركة الشحن)</label>
+                            <input type="text" name="carrier" value="@Model.Carrier" class="form-control form-control-sm shadow-none" placeholder="Aramex, Mylerz..." />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold text-warning-emphasis">Tracking Number</label>
+                            <input type="text" name="trackingNumber" value="@Model.TrackingNumber" class="form-control form-control-sm shadow-none" placeholder="رقم بوليصة الشحن" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group mt-3">
+            <label class="form-label fw-bold"><i class="fas fa-sticky-note me-1"></i> Admin Notes (Internal)</label>
+            <textarea name="adminNotes" class="form-control shadow-none" rows="2" placeholder="Write any internal notes here...">@Model.AdminNotes</textarea>
+        </div>
+
+        @* جدول المنتجات *@
+        <div class="mt-4">
+            <h6 class="fw-bold text-muted mb-2" style="font-size: 0.8rem; text-transform: uppercase;">Order Items Summary</h6>
+            <div class="table-responsive rounded-3 border">
+                <table class="table table-hover table-sm mb-0" style="font-size: 0.85rem;">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="ps-3">Product</th>
+                            <th class="text-center">Qty</th>
+                            <th class="text-end pe-3">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td class="ps-3">@item.Product?.Name</td>
+                                <td class="text-center fw-bold">@item.Quantity</td>
+                                <td class="text-end pe-3">@item.UnitPrice.ToString("N2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer border-0">
+        <button type="button" class="btn btn-light px-4" onclick="closeModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary px-4 shadow-sm" >
+            <i class="fas fa-save me-1"></i> Save Changes
+        </button>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        // نفس المنطق اللي اشتغل عندك بالظبط مع تحسين شكل رسالة الخطأ
+        $('#editOrderForm').off('submit').on('submit', function(e) {
+            e.preventDefault();
+            
+            const form = $(this);
+            const submitBtn = form.find('button[type="submit"]');
+            const originalHtml = submitBtn.html();
+
+            submitBtn.html('<span class="spinner-border spinner-border-sm me-1"></span> Saving...');
+            submitBtn.prop('disabled', true);
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    if (response.success !== false) {
+                        window.location.reload();
+                    } else {
+                        alert("Error: " + response.message);
+                        submitBtn.html(originalHtml).prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    alert('Communication error with server.');
+                    submitBtn.html(originalHtml).prop('disabled', false);
+                }
+            });
+        });
+
+        $('select[name="orderStatus"]').on('change', function() {
+            const status = $(this).val();
+            if (status === 'Shipped' || status === 'Delivered') {
+                $('#shippingFields').slideDown(200);
+            } else {
+                $('#shippingFields').slideUp(200);
+            }
+        });
+    });
+</script>
