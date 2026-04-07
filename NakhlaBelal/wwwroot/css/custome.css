@@ -37,9 +37,8 @@
     }
 
 .page-item.active .page-link {
-    background: #8b7355;
-    border-color: #8b7355;
-    color: white;
+    background: var(--cotton-color);
+    color: var(--evergreen-color);
 }
 
 

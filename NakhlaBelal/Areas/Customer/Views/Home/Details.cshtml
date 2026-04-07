@@ -327,29 +327,8 @@
         </div>
     </div>
 
-    <!-- You May Also Like -->
-    <!-- You may also be interested in... -->
-    @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
-    {
-        <div class="container-md ">
-            <div class="section-header">
-                <h2>You may also be interested in...</h2>
-                <a href="@Url.Action("Product", "Home", new { area = "Customer" })" class="view-all-link">View all</a>
-            </div>
-
-            <div class="product-category-grid">
-                @foreach (var item in Model.RelatedProducts.Take(4))
-                {
-                    <a href="@Url.Action("FlashSale", "Products")" class="product-category-card ">
-                        <img src="~/images/warm-coating-fabrics.webp" alt="Flash Sale" />
-                        <div class="category-overlay">
-                            <h3>Flash Sale</h3>
-                        </div>
-                    </a>
-                }
-            </div>
-        </div>
-    }
+    
+    
 
 
 
@@ -357,31 +336,30 @@
 
     @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
     {
-        <div class="container related-products-section">
+        <div class="container related-products-section ">
             <div class="section-header">
-                <h2>Recently viewed products</h2>
-                <a href="@Url.Action("Category", "Product", new { categoryId = Model.Product.CategoryId })"
+                <h2>Matching products</h2>
+                                    <a href="@Url.Action("CategroySearch", "Home", new { categoryId = Model.Product.CategoryId })"
                    class="view-all-link">View all</a>
             </div>
 
-            <div class="related-products-grid">
+                                <div class="related-products-grid ">
                 @foreach (var item in Model.RelatedProducts.Take(4))
                 {
-                    <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })" class="col">
-                        <div class="product-card m-1">
-                            <img src="~/images/@item.MainImage" alt="@item.Name" />
+                                        <a href="@Url.Action("Details", "Home", new { area = "Customer" })" class=" ">
+                                            <div class="product-card m-1">
+                                                <img src="~/images/@item.MainImage" alt="@item.Name" />
 
-                            <div class="product-info">
-                                <h3>@item.Name</h3>
+                                                <div class="product-info">
+                                                    <h3>@item.Name</h3>
 
-                                <div class="
-                                    split bottom px-3">
-                                    <span class="price">€ @item.Price / m</span>
-                                    <span class="stock">@item.StockQuantity m</span>
-                                </div>
-                            </div>
-                        </div>
-                    </a>
+                                                    <div class="rowProduct split bottom px-3">
+                                                        <span class="price">€ @item.Price / m</span>
+                                                        <span class="stock">@item.StockQuantity m</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
                 }
             </div>
         </div>
@@ -389,7 +367,27 @@
 
 
 
+                        <!-- You May Also Like -->
+                        <!-- You may also be interested in... -->
 
+                        <div class="container-md ">
+                            <div class="section-header">
+                                <h2>You may also be interested in...</h2>
+                                <a href="@Url.Action("Product", "Home", new { area = "Customer" })" class="view-all-link">View all</a>
+                            </div>
+
+                            <div class="product-category-grid">
+                                @foreach (var item in Model.RelatedProducts.Take(4))
+                                {
+                                    <a href="@Url.Action("FlashSale", "Products")" class="product-category-card ">
+                                        <img src="~/images/warm-coating-fabrics.webp" alt="Flash Sale" />
+                                        <div class="category-overlay">
+                                            <h3>Flash Sale</h3>
+                                        </div>
+                                    </a>
+                                }
+                            </div>
+                        </div>
 
 
     <!-- More Inspirations -->

@@ -21,7 +21,7 @@
 
 <div class="card">
     <div class="card-body">
-        <form asp-action="Edit" method="post" id="editProductForm">
+        <form asp-action="Edit" method="post" id="editProductForm" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="CreatedAt" />
@@ -235,13 +235,55 @@ mb-3">
                         <input asp-for="MainImage" class="form-control">
                         <span asp-validation-for="MainImage" class="text-danger"></span>
                     </div>
-
+                                                    <div class="form-group mb-3">
+                                                        <label class="form-label">Main Product Image</label>
+                                                        <div class="mb-2">
+                                                            @if (!string.IsNullOrEmpty(Model.MainImage))
+                                                            {
+                                                                <img src="~/images/@Model.MainImage" id="mainImagePreview" class="img-thumbnail" style="max-height: 150px;" />
+                                                            }
+                                                            else
+                                                            {
+                                                                <img src="~/images/no-image.png" id="mainImagePreview" class="img-thumbnail" style="max-height: 150px;" />
+                                                            }
+                                                        </div>
+                                                        <input type="file" name="img" class="form-control" onchange="previewImage(this, 'mainImagePreview')">
+                                                        <small class="text-muted">Leave empty to keep the current image.</small>
+                                                        <span asp-validation-for="MainImage" class="text-danger"></span>
+                                                    </div>
                     <div class="form-group mb-3">
                         <label asp-for="MetaTitle" class="form-label">Meta Title (SEO)</label>
                         <input asp-for="MetaTitle" class="form-control">
                         <span asp-validation-for="MetaTitle" class="text-danger"></span>
                     </div>
                 </div>
+
+                                                    <div class="card mt-3">
+                                                        <div class="card-header bg-light">
+                                                            <h5 class="mb-0">Product Gallery (Additional Images)</h5>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <div class="row mb-3">
+                                                                <label class="form-label">Upload New Photos</label>
+                                                                <input type="file" name="subImgs" class="form-control" multiple accept="image/*">
+                                                            </div>
+
+                                                            <div class="current-gallery d-flex flex-wrap gap-2">
+                                                                @if (Model.ProductImages != null)
+                                                                {
+                                                                    foreach (var img in Model.ProductImages)
+                                                                    {
+                                                                        <div class="position-relative">
+                                                                            <img src="~/images/product_images/@img.ImageUrl" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" />
+                                                                        </div>
+                                                                    }
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+
+
 
                 <div class="col-md-6">
                     <div class="form-group mb-3">
@@ -391,6 +433,16 @@ mb-3">
                                                                                 alert(response.message);
                                                                             }
                                                                         });
+                                                                    }
+
+                                                                                                                                        function previewImage(input, previewId) {
+                                                                        if (input.files && input.files[0]) {
+                                                                            var reader = new FileReader();
+                                                                            reader.onload = function (e) {
+                                                                                $('#' + previewId).attr('src', e.target.result);
+                                                                            };
+                                                                            reader.readAsDataURL(input.files[0]);
+                                                                        }
                                                                     }
     </script>
 }

@@ -47,7 +47,25 @@ namespace NAKHLA.Controllers.Admin
                 .Take(pageSize)
                 .ToListAsync();
 
-            ViewBag.TotalProducts = await _context.Products.CountAsync(p => !p.IsDeleted);
+            var totalProducts = await _context.Products.CountAsync(p => !p.IsDeleted);
+            var totalPages = (int)Math.Ceiling(totalProducts / (double)pageSize);
+
+            ViewBag.TotalProducts = totalProducts;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.PageSize = pageSize;
+
+            // Calculate stats
+            var stats = new
+            {
+                TotalProducts = totalProducts,
+                InStock = await _context.Products.CountAsync(p => !p.IsDeleted && p.StockQuantity > 0),
+                OutOfStock = await _context.Products.CountAsync(p => !p.IsDeleted && p.StockQuantity == 0),
+                LowStock = await _context.Products.CountAsync(p => !p.IsDeleted && p.StockQuantity <= 10 && p.StockQuantity > 0)
+            };
+
+            ViewBag.Stats = stats;
+
             return View(products);
         }
 
@@ -71,7 +89,23 @@ namespace NAKHLA.Controllers.Admin
 
             return View(product);
         }
+        // GET: Admin/Products/GetDetails/5
+        [HttpGet]
+        public async Task<IActionResult> GetDetails(int id)
+        {
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .Include(p => p.FabricType)
+                .Include(p => p.Color)
+                .Include(p => p.ProjectCategories)
+                .Include(p => p.ProductTags)
+                .FirstOrDefaultAsync(p => p.Id == id && !p.IsDeleted);
 
+            if (product == null) return NotFound();
+
+            return PartialView("_DetailsPartial", product);
+        }
         // ================= CREATE =================
         [HttpGet]
         public async Task<IActionResult> Create()
@@ -253,60 +287,113 @@ namespace NAKHLA.Controllers.Admin
         // ================= EDIT POST =================
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Product product, int[] SelectedProjectCategoryIds, List<int> SelectedTagIds, List<ProductComposition> ProductCompositions)
+        public async Task<IActionResult> Edit(int id, Product product, IFormFile? img, List<IFormFile>? subImgs, int[] SelectedProjectCategoryIds, List<int> SelectedTagIds, List<ProductComposition> ProductCompositions)
         {
             if (id != product.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
-                var productDb = await _context.Products
-                    .Include(p => p.ProductTags)
-                    .Include(p => p.ProductCompositions)
-                    .Include(p => p.ProjectCategories)
-                    .FirstOrDefaultAsync(p => p.Id == id);
-
-                if (productDb == null) return NotFound();
-
-                _context.Entry(productDb).CurrentValues.SetValues(product);
-
-                productDb.UpdatedAt = DateTime.Now;
-
-                // ProjectCategories
-                productDb.ProjectCategories.Clear();
-                if (SelectedProjectCategoryIds != null)
+                try
                 {
-                    var cats = await _context.ProjectCategories
-                        .Where(c => SelectedProjectCategoryIds.Contains(c.Id)).ToListAsync();
-                    foreach (var c in cats) productDb.ProjectCategories.Add(c);
-                }
+                    var productDb = await _context.Products
+                        .Include(p => p.ProductTags)
+                        .Include(p => p.ProductCompositions)
+                        .Include(p => p.ProjectCategories)
+                        .FirstOrDefaultAsync(p => p.Id == id);
 
-                // Tags
-                productDb.ProductTags.Clear();
-                if (SelectedTagIds != null)
-                {
-                    var tags = await _context.ProductTags
-                        .Where(t => SelectedTagIds.Contains(t.Id)).ToListAsync();
-                    foreach (var t in tags) productDb.ProductTags.Add(t);
-                }
+                    if (productDb == null) return NotFound();
 
-                // Compositions
-                _context.ProductCompositions.RemoveRange(productDb.ProductCompositions);
-                if (ProductCompositions != null)
-                {
-                    foreach (var item in ProductCompositions.Where(x => x.CompositionId > 0 && x.Percentage > 0))
+                    // --- 1. التعامل مع الصورة الأساسية ---
+                    if (img != null && img.Length > 0)
                     {
-                        productDb.ProductCompositions.Add(new ProductComposition
+                        // حذف الصورة القديمة من السيرفر إذا وجدت
+                        if (!string.IsNullOrEmpty(productDb.MainImage))
                         {
-                            ProductId = id,
-                            CompositionId = item.CompositionId,
-                            Percentage = item.Percentage
-                        });
+                            var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", productDb.MainImage);
+                            if (System.IO.File.Exists(oldPath)) System.IO.File.Delete(oldPath);
+                        }
+
+                        // رفع الصورة الجديدة
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(img.FileName);
+                        var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images", fileName);
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await img.CopyToAsync(stream);
+                        }
+                        product.MainImage = fileName; // تعيين الاسم الجديد للموديل
                     }
+                    else
+                    {
+                        // إذا لم يرفع صورة جديدة، نحتفظ بالقديمة
+                        product.MainImage = productDb.MainImage;
+                    }
+
+                    // تحديث القيم الأساسية (الاسم، الوصف، السعر، إلخ)
+                    _context.Entry(productDb).CurrentValues.SetValues(product);
+                    productDb.UpdatedAt = DateTime.Now;
+
+                    // --- 2. التعامل مع العلاقات (التاغات والفئات) ---
+                    productDb.ProjectCategories.Clear();
+                    if (SelectedProjectCategoryIds != null)
+                    {
+                        var cats = await _context.ProjectCategories.Where(c => SelectedProjectCategoryIds.Contains(c.Id)).ToListAsync();
+                        foreach (var c in cats) productDb.ProjectCategories.Add(c);
+                    }
+
+                    productDb.ProductTags.Clear();
+                    if (SelectedTagIds != null)
+                    {
+                        var tags = await _context.ProductTags.Where(t => SelectedTagIds.Contains(t.Id)).ToListAsync();
+                        foreach (var t in tags) productDb.ProductTags.Add(t);
+                    }
+
+                    // --- 3. التعامل مع التكوينات (Compositions) ---
+                    _context.ProductCompositions.RemoveRange(productDb.ProductCompositions);
+                    if (ProductCompositions != null)
+                    {
+                        foreach (var item in ProductCompositions.Where(x => x.CompositionId > 0 && x.Percentage > 0))
+                        {
+                            productDb.ProductCompositions.Add(new ProductComposition
+                            {
+                                ProductId = id,
+                                CompositionId = item.CompositionId,
+                                Percentage = item.Percentage
+                            });
+                        }
+                    }
+
+                    // --- 4. إضافة صور فرعية جديدة (Sub Images) ---
+                    if (subImgs != null && subImgs.Count > 0)
+                    {
+                        foreach (var file in subImgs)
+                        {
+                            if (file.Length > 0)
+                            {
+                                var subFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                                var subFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/product_images", subFileName);
+
+                                using (var stream = new FileStream(subFilePath, FileMode.Create))
+                                {
+                                    await file.CopyToAsync(stream);
+                                }
+
+                                _context.productImages.Add(new ProductImage
+                                {
+                                    ImageUrl = subFileName,
+                                    ProductId = product.Id
+                                });
+                            }
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+                    TempData["Success"] = "تم تحديث المنتج بنجاح";
+                    return RedirectToAction(nameof(Index));
                 }
-
-                await _productRepository.CommitAsync();
-
-                return RedirectToAction(nameof(Index));
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "حدث خطأ أثناء التعديل: " + ex.Message);
+                }
             }
 
             await LoadViewBags();

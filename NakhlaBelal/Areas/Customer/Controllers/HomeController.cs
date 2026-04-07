@@ -133,13 +133,14 @@ namespace NakhlaBelal.Areas.Customer.Controllers
 
             // فلترة المكونات (العلاقة عبر جدول وسيط)
             Composition composition = null;
-            if (filterVM.CompositionId.HasValue) { 
+            if (filterVM.CompositionId.HasValue)
+            {
                 products = products.Where(p => p.ProductCompositions.Any(pc => pc.CompositionId == filterVM.CompositionId));
                 composition = _context.Compositions.FirstOrDefault(e => e.Id == filterVM.CompositionId);
-            ViewBag.ProductComposition = filterVM.CompositionId;
-        }
+                ViewBag.ProductComposition = filterVM.CompositionId;
+            }
 
-        ViewBag.SelectedComposition = composition;
+            ViewBag.SelectedComposition = composition;
 
 
 
@@ -243,9 +244,13 @@ namespace NakhlaBelal.Areas.Customer.Controllers
 
             // 2. جلب المنتجات ذات الصلة (نفس القسم)
             var relatedProducts = _context.Products
-                .Include(e => e.Category)
-                .Where(e => e.CategoryId == product.CategoryId && e.Name == product.Name && e.Id != product.Id && !e.IsDeleted)
-                .Take(4).ToList();
+    .Include(e => e.Category)
+    .Where(e => e.CategoryId == product.CategoryId // نفس القسم
+              && e.Id != product.Id                // استبعاد المنتج الحالي
+              && !e.IsDeleted)                     // غير محذوف
+    .OrderBy(r => Guid.NewGuid())                  // اختياري: لجعل النتائج عشوائية ومتجددة
+    .Take(4)
+    .ToList();
 
             // 3. جلب المنتجات الأكثر رواجاً
             var topProducts = _context.Products
@@ -254,9 +259,10 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                 .OrderByDescending(e => e.Traffic).Take(4).ToList();
 
             // 4. جلب المنتجات المتشابهة بالاسم
+            string firstWord = product.Name.Split(' ')[0];
             var similarProducts = _context.Products
                 .Include(e => e.Category)
-                .Where(e => e.Name.Contains(product.Name) && e.Id != product.Id)
+                .Where(e => e.Name.Contains(firstWord) && e.Id != product.Id && !e.IsDeleted)
                 .Take(4)
                 .ToList();
 

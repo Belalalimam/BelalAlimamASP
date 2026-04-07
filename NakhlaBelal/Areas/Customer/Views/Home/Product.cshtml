@@ -6,7 +6,7 @@
     <div class="container py-4">
         <div class="row">
 
-            <aside class="col-3 mb-4 ">
+            <aside class="col-3 mb-4 filter-sidebar border1">
                 <div class="filter-sidebar">
                     <h3 class="filter-title">Filters</h3>
 
@@ -62,9 +62,9 @@
                 </div>
             </aside>
 
-            <div class="col-9">
+            <div class="col-md-12 col-lg-9 border1">
 
-                <div class="quick-filter-bar">
+                <div class="quick-filter-bar border1">
                     <span class="filter-label">Filter by:</span>
                     <select class="quick-filter-select">
                         <option>Color</option>
@@ -145,36 +145,34 @@
 
 
             <div class="row">
-                <div class="col-12 d-flex justify-content-center mt-5">
+                <div class="col-12 d-flex justify-content-center">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             @if (ViewBag.currentPage > 1)
                             {
-                                <li class="page-item"><a class="page-link" href="/Customer/home/product?page=@(ViewBag.currentPage - 1)">Previous</a></li>
+                                <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage - 1)">Previous</a></li>
                             }
 
-                            @* @for (var i = 1; i <= ViewBag.totalNumberOfPages; i++)
+                            @for (var i = 1; i <= ViewBag.TotalPages; i++)
                             {
                                 @if (i == ViewBag.currentPage)
                                 {
-                                    <li class="page-item active"><a class="page-link" href="/Customer/home/product?Name=@ViewBag.ProductName&MinPrice=@ViewBag.MinPrice&MaxPrice=@ViewBag.MaxPrice&CategoryId=@ViewBag.CategoryId&IsHot=@ViewBag.IsHot&page=@i">@i</a></li>
+                                    <li class="page-item active"><a class="page-link" href="/Customer/Home/product?page=@i">@i</a></li>
                                 }
                                 else
                                 {
-                                    <li class="page-item"><a class="page-link" href="/Customer/home/product?Name=@ViewBag.ProductName&MinPrice=@ViewBag.MinPrice&MaxPrice=@ViewBag.MaxPrice&CategoryId=@ViewBag.CategoryId&IsHot=@ViewBag.IsHot&page=@i">@i</a></li>
+                                    <li class="page-item"><a class="page-link" href="/Customer/Home/product?&page=@i">@i</a></li>
                                 }
 
-                            } *@
+                            }
 
-                            @if (ViewBag.currentPage != ViewBag.totalNumberOfPages && Model.Any())
+                            @if (ViewBag.currentPage != ViewBag.TotalPages && Model.Any())
                             {
-                                <li class="page-item"><a class="page-link" href="/Customer/home/product?page=@(ViewBag.currentPage + 1)">Next</a></li>
+                                <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage + 1)">Next</a></li>
                             }
                         </ul>
                     </nav>
                 </div>
-
-
             </div>
         </div>
     </div>

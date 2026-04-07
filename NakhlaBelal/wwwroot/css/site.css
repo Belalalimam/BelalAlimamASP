@@ -32,8 +32,9 @@ a {
 }
 
 
+
 .content-body {
-/*    background-image: url("~/images/nakhlal.png") !important;*/
+    /*    background-image: url("~/images/nakhlal.png") !important;*/
     background-color: var(--cotton-color) !important;
 }
 
