@@ -1,181 +1,250 @@
 ﻿@model List<Product>
 
+<div class="pp-wrap">
 
-@if (Model.Any())
-{
-    <div class="container py-4">
-        <div class="row">
+    @* {{!-- ===== SIDEBAR Desktop ===== --}} *@
+    <aside class="pp-sidebar">
+        <div class="pp-sidebar-inner" id="sidebarInner">
+            <h2 class="pp-sidebar-title">Filters</h2>
 
-            <aside class="col-3 mb-4 filter-sidebar border1">
-                <div class="filter-sidebar">
-                    <h3 class="filter-title">Filters</h3>
-
-                    <div class="filter-section">
-                        <div class="filter-section-title">
-                            <span>Search Products</span>
-                            <a href="#" class="filter-reset">Clear</a>
-                        </div>
-                        <input type="text" class="filter-input" placeholder="Type & hit ENTER">
-                    </div>
-
-                    <div class="filter-section">
-                        <div class="filter-section-title">
-                            <span>Sort by</span>
-                            <a href="#" class="filter-reset">Reset</a>
-                        </div>
-                        <select class="filter-input">
-                            <option>New arrivals</option>
-                            <option>Price: Low to High</option>
-                            <option>Price: High to Low</option>
-                            <option>Most Popular</option>
-                            <option>Customer Rating</option>
-                        </select>
-                    </div>
-
-                    <div class="filter-section">
-                        <div class="filter-section-title">
-                            <span>Height</span>
-                            <a href="#" class="filter-reset">Reset</a>
-                        </div>
-                        <input type="range" class="filter-range" min="100" max="200" value="140">
-                        <div class="filter-range-labels">
-                            <span>129 cm</span>
-                            <span>150 cm</span>
-                        </div>
-                    </div>
-
-                    <div class="filter-section">
-                        <div class="filter-section-title">
-                            <span>Weight</span>
-                            <a href="#" class="filter-reset">Reset</a>
-                        </div>
-                        <input type="range" class="filter-range" min="200" max="700" value="444">
-                        <div class="filter-range-labels">
-                            <span>232 g</span>
-                            <span>656 g</span>
-                        </div>
-                    </div>
-
-                    <a href="/Customer/Home/Product" class="view-all-btn">
-                        View All Products
-                    </a>
+            <div class="pp-filter-block">
+                <div class="pp-filter-head">
+                    <span>Search Products</span>
+                    <button onclick="clearSearch()">Clear</button>
                 </div>
-            </aside>
-
-            <div class="col-md-12 col-lg-9 border1">
-
-                <div class="quick-filter-bar border1">
-                    <span class="filter-label">Filter by:</span>
-                    <select class="quick-filter-select">
-                        <option>Color</option>
-                        <option>Black</option>
-                        <option>White</option>
-                        <option>Red</option>
-                        <option>Blue</option>
-                        <option>Green</option>
-                    </select>
-                    <select class="quick-filter-select">
-                        <option>Type</option>
-                        <option>Tweed</option>
-                        <option>Bouclé</option>
-                        <option>Jacquard</option>
-                        <option>Velvet</option>
-                    </select>
-                    <select class="quick-filter-select">
-                        <option>Quality</option>
-                        <option>Premium</option>
-                        <option>Standard</option>
-                        <option>Economy</option>
-                    </select>
-                    <select class="quick-filter-select">
-                        <option>Composition</option>
-                        <option>100% Wool</option>
-                        <option>Wool Blend</option>
-                        <option>Silk</option>
-                        <option>Cotton</option>
-                    </select>
-                    <select class="quick-filter-select">
-                        <option>Pattern</option>
-                        <option>Solid</option>
-                        <option>Checkered</option>
-                        <option>Striped</option>
-                        <option>Floral</option>
-                    </select>
-                </div>
-                <div class="row">
-                    @foreach (var item in Model)
-                    {
-                        <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })" class="col-md-4 col-lg-3">
-                            <div class="product-card ">
-                                <img src="~/images/@item.MainImage" alt="@item.Name" />
-
-                                <div class="product-info">
-                                    <h3>@item.Name</h3>
-
-                                    <div class="rowProduct d-flex justify-content-center align-items-center">
-                                        @if (item.ProductCompositions != null && item.ProductCompositions.Any())
-                                        {
-                                            @foreach (var comp in item.ProductCompositions.Take(3)) // نأخذ أول 3 فقط للحفاظ على الشكل
-                                            {
-                                                <span class="px-2"
-                                                      title="@comp.Composition?.Name: @comp.Percentage%">
-                                                    @comp.Composition?.Name?.Substring(0, Math.Min(comp.Composition.Name.Length, 2))..
-                                                    <small class="">@comp.Percentage%</small>
-                                                </span>
-                                            }
-                                        }
-                                    </div>
-
-                                    <div class="rowProduct split px-3">
-                                        <span>@item.Width cm</span>
-                                        <span>@item.Weight g / m</span>
-                                    </div>
-
-                                    <div class="rowProduct split bottom px-3">
-                                        <span class="price">€ @item.Price / m</span>
-                                        <span class="stock">@item.StockQuantity m</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    }
+                <div class="pp-search-wrap">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input id="searchInput" type="text" class="pp-input" placeholder="Type & hit ENTER" oninput="applyFilters()" />
                 </div>
             </div>
 
-
-
-            <div class="row">
-                <div class="col-12 d-flex justify-content-center">
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            @if (ViewBag.currentPage > 1)
-                            {
-                                <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage - 1)">Previous</a></li>
-                            }
-
-                            @for (var i = 1; i <= ViewBag.TotalPages; i++)
-                            {
-                                @if (i == ViewBag.currentPage)
-                                {
-                                    <li class="page-item active"><a class="page-link" href="/Customer/Home/product?page=@i">@i</a></li>
-                                }
-                                else
-                                {
-                                    <li class="page-item"><a class="page-link" href="/Customer/Home/product?&page=@i">@i</a></li>
-                                }
-
-                            }
-
-                            @if (ViewBag.currentPage != ViewBag.TotalPages && Model.Any())
-                            {
-                                <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage + 1)">Next</a></li>
-                            }
-                        </ul>
-                    </nav>
+            <div class="pp-filter-block">
+                <div class="pp-filter-head">
+                    <span>Sort by</span>
+                    <button onclick="resetSort()">Reset</button>
                 </div>
+                <select id="sortSelect" class="pp-select" onchange="applyFilters()">
+                    <option value="new">New arrivals</option>
+                    <option value="asc">Price: Low to High</option>
+                    <option value="desc">Price: High to Low</option>
+                    <option value="name">Name A-Z</option>
+                </select>
+            </div>
+
+            <div class="pp-filter-block">
+                <div class="pp-filter-head">
+                    <span>Width (cm)</span>
+                    <button onclick="resetRange('widthRange','200','widthVal','200 cm')">Reset</button>
+                </div>
+                <input type="range" id="widthRange" class="pp-range" min="100" max="200" value="200"
+                       oninput="document.getElementById('widthVal').textContent=this.value+' cm'; applyFilters()" />
+                <div class="pp-range-labels">
+                    <span>100 cm</span><span id="widthVal">200 cm</span>
+                </div>
+            </div>
+
+            <div class="pp-filter-block">
+                <div class="pp-filter-head">
+                    <span>Weight (g/m)</span>
+                    <button onclick="resetRange('weightRange','700','weightVal','700 g')">Reset</button>
+                </div>
+                <input type="range" id="weightRange" class="pp-range" min="200" max="700" value="700"
+                       oninput="document.getElementById('weightVal').textContent=this.value+' g'; applyFilters()" />
+                <div class="pp-range-labels">
+                    <span>200 g</span><span id="weightVal">700 g</span>
+                </div>
+            </div>
+
+            <button class="pp-view-all" onclick="resetAll()">View All Products</button>
+        </div>
+    </aside>
+
+    @* {{!-- ===== MAIN ===== --}} *@
+    <main class="pp-main">
+
+        @* {{!-- Mobile filter button --}} *@
+        <button class="pp-mobile-btn" onclick="toggleMobilePanel()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="8" y1="12" x2="20" y2="12" />
+                <line x1="12" y1="18" x2="20" y2="18" />
+            </svg>
+            Filters
+        </button>
+
+        @* {{!-- Mobile filter panel --}} *@
+        <div class="pp-mobile-panel" id="mobilePanel">
+            <div class="pp-mobile-panel-head">
+                <span>Filters</span>
+                <button onclick="toggleMobilePanel()">×</button>
+            </div>
+            @* {{!-- نفس محتوى الـ sidebar --}} *@  
+            <div class="pp-filter-block">
+                <div class="pp-filter-head"><span>Search</span></div>
+                <input id="mSearchInput" type="text" class="pp-input" placeholder="Type & hit ENTER" oninput="document.getElementById('searchInput').value=this.value; applyFilters()" />
             </div>
         </div>
-    </div>
-}
 
+        @* {{!-- Quick filter bar (tablet) --}} *@
+        <div class="pp-quick-bar">
+            <span class="pp-quick-label">Filter by:</span>
+            <select class="pp-quick-select" id="typeFilter" onchange="applyFilters()">
+                <option value="">Type</option>
+                <option>Denim</option>
+                <option>Tweed</option>
+                <option>Bouclé</option>
+                <option>Jacquard</option>
+                <option>Velvet</option>
+            </select>
+            <select class="pp-quick-select" id="qualityFilter" onchange="applyFilters()">
+                <option value="">Quality</option>
+                <option>Premium</option>
+                <option>Standard</option>
+                <option>Economy</option>
+            </select>
+            <select class="pp-quick-select" id="patternFilter" onchange="applyFilters()">
+                <option value="">Pattern</option>
+                <option>Solid</option>
+                <option>Checkered</option>
+                <option>Striped</option>
+                <option>Floral</option>
+            </select>
+        </div>
 
+        @* {{!-- Results count --}} *@
+        <p class="pp-count" id="resultsCount">@Model.Count() products</p>
+
+        @* {{!-- Product Grid --}} *@
+        <div class="pp-grid" id="productGrid">
+            @foreach (var item in Model)
+            {
+                <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })"
+                       class="pp-card"
+                       data-name="@item.Name.ToLower()"
+                       data-price="@item.Price"
+                       data-width="@item.Width"
+                       data-weight="@item.Weight">
+
+                    <img src="~/images/@item.MainImage" alt="@item.Name" class="pp-card-img" />
+
+                    <div class="pp-card-body">
+                        <h3 class="pp-card-name">@item.Name</h3>
+                        @if (item.ProductCompositions?.Any() == true)
+                        {
+                            <p class="pp-card-comp">
+                                @string.Join(", ", item.ProductCompositions.Take(3)
+                                  .Select(c => $"{c.Composition?.Name?.Substring(0, Math.Min(c.Composition.Name.Length, 2))} {c.Percentage}%"))
+                            </p>
+                        }
+                        <div class="pp-card-specs">
+                            <span>@item.Width cm</span>
+                            <span>@item.Weight g / m</span>
+                        </div>
+                        <div class="pp-card-price-row">
+                            <span class="pp-card-price">€ @item.Price.ToString("N2").Replace(".", ",") / m</span>
+                            <span class="pp-card-stock">@item.StockQuantity m</span>
+                        </div>
+                    </div>
+                </a>
+            }
+        </div>
+
+        @* {{!-- Empty State --}} *@
+        <div class="pp-empty" id="emptyState">
+            <h3>No products found</h3>
+            <p>Try adjusting your filters</p>
+            <button onclick="resetAll()">Reset all filters</button>
+        </div>
+
+        @* {{!-- Pagination --}} *@
+        <div class="pp-pagination" id="paginationWrap"></div>
+
+    </main>
+</div>
+
+<script>
+    const ITEMS_PER_PAGE = 8;
+    let currentPage = 1;
+
+    function applyFilters() {
+      const search  = document.getElementById('searchInput').value.toLowerCase();
+      const maxW    = parseInt(document.getElementById('widthRange').value);
+      const maxWt   = parseInt(document.getElementById('weightRange').value);
+      const sort    = document.getElementById('sortSelect').value;
+
+      let cards = Array.from(document.querySelectorAll('#productGrid .pp-card'));
+
+      // Filter
+      let visible = cards.filter(c => {
+        const nameMatch = c.dataset.name.includes(search);
+        const wOk  = parseInt(c.dataset.width)  <= maxW;
+        const wtOk = parseInt(c.dataset.weight) <= maxWt;
+        return nameMatch && wOk && wtOk;
+      });
+
+      // Sort
+      if (sort === 'asc')  visible.sort((a,b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+      if (sort === 'desc') visible.sort((a,b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+      if (sort === 'name') visible.sort((a,b) => a.dataset.name.localeCompare(b.dataset.name));
+
+      // Hide all, show paged
+      cards.forEach(c => c.style.display = 'none');
+
+      const totalPages = Math.max(1, Math.ceil(visible.length / ITEMS_PER_PAGE));
+      currentPage = Math.min(currentPage, totalPages);
+      const start = (currentPage - 1) * ITEMS_PER_PAGE;
+      visible.slice(start, start + ITEMS_PER_PAGE).forEach(c => c.style.display = '');
+
+      // Results count
+      document.getElementById('resultsCount').textContent = visible.length + ' product' + (visible.length !== 1 ? 's' : '');
+
+      // Empty state
+      document.getElementById('emptyState').classList.toggle('show', visible.length === 0);
+
+      // Pagination
+      renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+      const wrap = document.getElementById('paginationWrap');
+      wrap.innerHTML = '';
+      if (totalPages <= 1) return;
+
+      if (currentPage > 1) {
+        wrap.innerHTML += `<button class="pp-page-btn pp-page-text" onclick="goPage(${currentPage-1})">Previous</button>`;
+      }
+      for (let i = 1; i <= totalPages; i++) {
+        wrap.innerHTML += `<button class="pp-page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+      }
+      if (currentPage < totalPages) {
+        wrap.innerHTML += `<button class="pp-page-btn pp-page-text" onclick="goPage(${currentPage+1})">Next</button>`;
+      }
+    }
+
+    function goPage(n) { currentPage = n; applyFilters(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+    function clearSearch() { document.getElementById('searchInput').value = ''; applyFilters(); }
+    function resetSort()   { document.getElementById('sortSelect').value = 'new'; applyFilters(); }
+    function resetRange(id, val, labelId, label) {
+      document.getElementById(id).value = val;
+      document.getElementById(labelId).textContent = label;
+      applyFilters();
+    }
+    function resetAll() {
+      clearSearch();
+      resetSort();
+      resetRange('widthRange','200','widthVal','200 cm');
+      resetRange('weightRange','700','weightVal','700 g');
+      currentPage = 1;
+      applyFilters();
+    }
+    function toggleMobilePanel() {
+      document.getElementById('mobilePanel').classList.toggle('open');
+    }
+
+    // تشغيل أولي
+    // applyFilters();
+</script>
