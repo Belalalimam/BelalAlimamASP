@@ -17,7 +17,7 @@
                 @if (Model.Any() && fabricType != null)
                 {
                     <div class="category-image-container">
-                        <img src="~/images/@fabricType.ImageUrl" class="category-image" alt="@fabricType.Name">
+                        <img src="https://picsum.photos/200/300" class="category-image" alt="@fabricType.Name">
                         </div>
                         <div class="category-content">
                             <h1 class="category-title">@fabricType.Name</h1>
@@ -200,7 +200,7 @@
                 @if (Model.Any())
                 {
                     <div class="row">
-                        @foreach (var item in Model)
+                        @* @foreach (var item in Model)
                         {
                             <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })" class="col-4">
                                 <div class="product-card m-1">
@@ -237,7 +237,7 @@
                                     </div>
                                 </div>
                             </a>
-                        }
+                        } *@
                     </div>
 
                     <!-- Pagination -->

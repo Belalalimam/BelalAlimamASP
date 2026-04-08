@@ -52,25 +52,7 @@
                 }
             </div>
 
-            <!-- Available Colors -->
-            @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
-            {
-                <div class="pd-colors-section">
-                    <h3 class="pd-section-mini-title">AVAILABLE COLORS</h3>
-                    <div class="pd-color-list">
-                        @foreach (var item in Model.RelatedProducts)
-                        {
-                            <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })"
-                                   class="pd-color-item">
-                                <img src="~/images/@item.MainImage"
-                                     class="pd-color-swatch"
-                                     alt="@item.SKU" />
-                                <span class="pd-color-code">@item.SKU</span>
-                            </a>
-                        }
-                    </div>
-                </div>
-            }
+           
         </div>
 
         <!-- INFO -->
@@ -85,19 +67,7 @@
                 }
             </div>
 
-            <div class="pd-desc">
-                @if (!string.IsNullOrEmpty(Model.Product.Description))
-                {
-                    foreach (var p in Model.Product.Description.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
-                    {
-                        <p style="margin-bottom:8px">@p</p>
-                    }
-                }
-                else
-                {
-                    <p>An elegant fabric, perfect for both classic and modern garments.</p>
-                }
-            </div>
+            
 
             <!-- Price -->
             <div class="pd-price-block">
@@ -189,6 +159,45 @@
                     </div>
                 </div>
             </div>
+
+
+            <div class="pd-desc">
+                @if (!string.IsNullOrEmpty(Model.Product.Description))
+                {
+                    foreach (var p in Model.Product.Description.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        <p style="margin-bottom:8px">@p</p>
+                    }
+                }
+                else
+                {
+                    <p>An elegant fabric, perfect for both classic and modern garments.</p>
+                }
+            </div>
+
+
+
+
+
+            <!-- Available Colors -->
+            @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
+            {
+                <div class="pd-colors-section">
+                    <h3 class="pd-section-mini-title">AVAILABLE COLORS</h3>
+                    <div class="pd-color-list">
+                        @foreach (var item in Model.RelatedProducts)
+                        {
+                            <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })"
+                                   class="pd-color-item">
+                                <img src="~/images/@item.MainImage"
+                                     class="pd-color-swatch"
+                                     alt="@item.SKU" />
+                                <span class="pd-color-code">@item.SKU</span>
+                            </a>
+                        }
+                    </div>
+                </div>
+            }
 
             <!-- Accordion -->
             <div class="pd-acc-item">
