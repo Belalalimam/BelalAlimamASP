@@ -1,0 +1,57 @@
+﻿@model MobilMenuViewModel
+
+<li class="has-child">
+    <a href="#" "><span>By Type</span><i class="ri-arrow-right-line"></i></a>
+    <ul>
+        <li class="back">
+            <a href="#"><span>By Type</span><i class="ri-arrow-left-line"></i></a>
+        </li>
+        @foreach (var type in Model.FabricTypes)
+        {
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-FabricTypeId="@type.Id">@type.Name</a>
+        }
+    </ul>
+</li>
+
+
+<li class="has-child">
+    <a href="#" "><span>By Project</span><i class="ri-arrow-right-line"></i></a>
+    <ul>
+        <li class="back">
+            <a href="#"><span>By Project</span><i class="ri-arrow-left-line"></i></a>
+        </li>
+        @foreach (var project in Model.ProjectCategories)
+        {
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-ProjectCategoryId="@project.Id">@project.Name</a>
+
+        }
+    </ul>
+</li>
+
+
+
+<li class="has-child">
+    <a href="#" "><span>By Color</span><i class="ri-arrow-right-line"></i></a>
+    <ul>
+        <li class="back">
+            <a href="#"><span>By Color</span><i class="ri-arrow-left-line"></i></a>
+        </li>
+        @foreach (var color in Model.Colors)
+        {
+            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-ColorId="@color.Id">@color.Name</a></li>
+        }
+    </ul>
+</li>
+
+<li class="has-child dropdown1">
+    <a href="#" "><span>By Composition</span><i class="ri-arrow-right-line"></i></a>
+    <ul>
+        <li class="back">
+            <a href="#"><span>By Composition</span><i class="ri-arrow-left-line"></i></a>
+        </li>
+        @foreach (var comp in Model.Compositions)
+        {
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-CompositionId="@comp.Id">@comp.Name</a>
+        }
+    </ul>
+</li>
