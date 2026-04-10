@@ -1,7 +1,11 @@
 ﻿@model NavMenuViewModel
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal  @* أضف هذا السطر هنا *@
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
 
 <li class="dropdown1">
-    <a href="#" class="dropdown1-btn">By Type</a>
+    <a href="#" class="dropdown1-btn">@SharedLocalizer["ByType"]</a>
     <div class="dropdown1-menu">
         @foreach (var type in Model.FabricTypes)
         {

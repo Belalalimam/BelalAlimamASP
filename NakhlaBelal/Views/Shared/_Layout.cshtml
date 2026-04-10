@@ -1,5 +1,11 @@
-﻿<!DOCTYPE html>
-<html lang="ar">
+﻿@using Microsoft.AspNetCore.Builder
+@using Microsoft.AspNetCore.Localization
+@using Microsoft.Extensions.Options
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+<!DOCTYPE html>
+<html lang="@(System.Threading.Thread.CurrentThread.CurrentCulture.Name)"
+      dir="@(System.Threading.Thread.CurrentThread.CurrentCulture.Name == "ar" ? "rtl" : "ltr")">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -28,11 +34,21 @@
     var brands = ViewBag.Brands as List<NakhlaBelal.Models.Brand> ?? new List<NakhlaBelal.Models.Brand>();
     var validationErrors = ViewBag.ValidationErrors as List<string> ?? new List<string>();
 }
+@inject IOptions<RequestLocalizationOptions> LocOptions
+
+@{
+    // الحصول على اللغة الحالية
+    var requestCulture = Context.Features.Get<IRequestCultureFeature>();
+    var cultureItems = LocOptions.Value.SupportedUICultures
+        .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName })
+        .ToList();
+    var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+}
 <body>
 
 
     <div class="text-black text-center py-2 small">
-        <u>شحن مجاني</u> للطلبات المحلية بقيمة 1000 جنيه أو أكثر
+        @Localizer["FreeShipping"]</u> للطلبات المحلية بقيمة 1000 جنيه أو أكثر
     </div>
     <div class="site">
         <header class="">
@@ -51,7 +67,7 @@
                     <div class="middle">
                         <nav>
                             <ul>
-                                <li><a href="/Customer/home/product">ِAll Fabrics</a></li>
+                                <li><a href="/Customer/home/product">@Localizer["AllFabrics"]</a></li>
                                 
                                 @await Component.InvokeAsync("NavMenu")
                                 
@@ -89,6 +105,23 @@
                                 </a>
                             </li>
 
+
+
+
+                            <li class="dropdown1 d-flex justify-content-center align-items-center">
+                                <a class="dropdown1-btn" href="#">
+                                    🌐 @(requestCulture.RequestCulture.UICulture.Name == "ar" ? "العربية" : "English")
+                                </a>
+                                <ul class="dropdown1-menu">
+                                    <li style="padding: 5px 0;margin-left: 7px;">
+                                        <form asp-area="Customer" asp-controller="Language" asp-action="SetLanguage"
+                                              asp-route-returnUrl="@returnUrl" method="post">
+                                            <button type="submit" name="culture" value="ar" class="dropdown-item">العربية</button>
+                                            <button type="submit" name="culture" value="en" class="dropdown-item">English</button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </li>
 
                             @* <li class="nav-item">
                                 <a class="nav-link position-relative" href="

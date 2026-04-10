@@ -28,7 +28,27 @@ builder.Services.AddSession(options =>
 builder.Services.RegisterConfig(connectionString);
 builder.Services.RegisterMapsterConfig();
 
+
+
+//اكتر من لغة 
+builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+builder.Services.AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
+
+// تحديد اللغات المدعومة
+var supportedCultures = new[] { "en", "ar" };
+var localizationOptions = new RequestLocalizationOptions()
+    .SetDefaultCulture("en") // اللغة الافتراضية
+    .AddSupportedCultures(supportedCultures)
+    .AddSupportedUICultures(supportedCultures);
+
 var app = builder.Build();
+
+
+app.UseRequestLocalization(localizationOptions);
+
 
 // Initialize the database
 using var scope = app.Services.CreateScope();
