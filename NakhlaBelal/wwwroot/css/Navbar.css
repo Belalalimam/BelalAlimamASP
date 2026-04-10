@@ -1,11 +1,31 @@
-﻿.dropdown1 {
+﻿/* ==========================================
+   VARIABLES (تأكد إنها موجودة في site.css)
+   ========================================== */
+/* --blue-color: #4EADD4; */
+/* --evergreen-color: #1a3a2a; */
+/* --cotton-color: #faf8f5; */
+/* --jade-color: #d4e8d4; */
+/* --gray-color: #888; */
+/* --white-color: #fff; */
+/* --dustyolive-color: #d6d0c4; */
+
+/* ==========================================
+   RESET
+   ========================================== */
+ul {
+    list-style: none;
+}
+
+/* ==========================================
+   DESKTOP DROPDOWN
+   ========================================== */
+.dropdown1 {
     position: relative;
-    
 }
-.dropdown1 a {
-    color: var(--evergreen-color);
-    
-}
+
+    .dropdown1 a {
+        color: var(--evergreen-color);
+    }
 
 .dropdown1-menu {
     position: absolute;
@@ -13,40 +33,26 @@
     left: 50%;
     transform: translateX(-50%) translateY(10px);
     min-width: 200px;
-    background: #ffffff;
     border-radius: 12px;
     padding: 8px 0;
-    margin: 0;
     display: none !important;
     flex-direction: column !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.12);
     background-color: var(--jade-color);
     z-index: 999;
 }
-    .dropdown1-menu a{
-        color: var(--evergreen-color);
 
+    .dropdown1-menu a {
+        color: var(--evergreen-color);
     }
 
     .dropdown1-menu.show {
         display: flex !important;
     }
-    .dropdown1-menu.show a{
-        padding-top:5px;
-        padding-bottom:5px;
-        margin-left:7px;
-    }
 
-    .dropdown1-menu div {
-        list-style: none;
-        font-size: 14px;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: background 0.2s ease;
-    }
-
-        .dropdown1-menu div:hover {
-            background-color: #f4f4f4;
+        .dropdown1-menu.show a {
+            padding: 5px 0;
+            margin-left: 7px;
         }
 
 .dropdown1::after {
@@ -55,9 +61,8 @@
     top: calc(100% + 2px);
     left: 50%;
     transform: translateX(-50%);
-    border-width: 6px;
-    border-style: solid;
-    border-color: transparent transparent #ffffff transparent;
+    border: 6px solid transparent;
+    border-bottom-color: var(--jade-color);
     opacity: 0;
     pointer-events: none;
 }
@@ -65,14 +70,13 @@
 .dropdown1.open::after {
     opacity: 1;
 }
-/*Start Nav*/
-ul {
-    list-style: none;
-}
 
+/* ==========================================
+   HEADER
+   ========================================== */
 header {
     height: 80px;
-    box-shadow: -2px 2px 45px -20px rgba(0 0 0 / 30%);
+    box-shadow: -2px 2px 45px -20px rgba(0,0,0,0.3);
 }
 
     header .content {
@@ -80,7 +84,6 @@ header {
         justify-content: space-between;
         align-items: center;
         height: 80px;
-        /*        box-shadow: 10px 5px 15px rgba(0,0,0,0.1);*/
         border-bottom: 1px solid var(--dustyolive-color);
         background-color: var(--cotton-color);
     }
@@ -89,7 +92,6 @@ header {
             display: flex;
             gap: 25px;
         }
-
 
     header .logo a {
         font-size: 24px;
@@ -107,8 +109,7 @@ header {
         display: flex;
     }
 
-    header .right .num,
-    .mobile-menu .mini ul li a .num {
+    header .right .num {
         position: absolute;
         left: -10px;
         top: 20px;
@@ -136,22 +137,47 @@ header {
         display: none;
     }
 
+    header .trigger {
+        display: block;
+    }
+
+/* ==========================================
+   OVERLAY
+   ========================================== */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0,0,0,0.5);
+    visibility: hidden;
+    opacity: 0;
+    z-index: 999;
+    transition: opacity 0.35s ease, visibility 0.35s;
+}
+
+.showmenu .overlay {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* ==========================================
+   MOBILE MENU CONTAINER
+   ========================================== */
 .mobile-menu {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    max-width: 500px;
-    background-color: var(--white-color);
-    box-shadow: 2px 0 45px -20px rgba(0 0 0 / 30%);
+    max-width: 480px;
+    background-color: var(--jade-color);
+    box-shadow: 4px 0 40px rgba(0,0,0,0.15);
     z-index: 1000;
     display: flex;
     flex-direction: row;
+    overflow: hidden;
     transform: translate3d(-100%, 0, 0);
     visibility: hidden;
-    overflow: hidden;
-    transition: transform 0.3s, visibility 0.3s;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.35s;
 }
 
 .showmenu .mobile-menu {
@@ -159,56 +185,41 @@ header {
     visibility: visible;
 }
 
-.mobile-menu .menu-list ul ul {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateX(360px);
-    transition: transform 0.3s, visibility 0.3s opacity 0.3s;
-}
-
-.mobile-menu .show > ul {
-    transform: translateX(-360px);
-}
-
-.mobile-menu .show .expand ul {
-    opacity: 1;
-    visibility: visible;
-}
-
+/* ==========================================
+   MINI SIDEBAR (الشريط الأزرق)
+   ========================================== */
 .mobile-menu .mini {
+    width: 62px;
+    min-width: 62px;
+    max-width: 62px;
+    flex-shrink: 0;
     display: flex;
     flex-direction: column;
-    padding: 24px 0;
-    height: 100%;
-    background-color: var(--blue-color);
-    z-index: 10;
-
-
-    flex-shrink: 0;
-    width: 65px;
-    min-width: 65px;
-    max-width: 65px;
+    align-items: center;
+    padding: 20px 0;
+    background-color: var(--evergreen-color);
     overflow: hidden;
+    z-index: 10;
 }
 
 .mobile-menu .mini-close {
-    font-size: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 40px;
-    height: 40px;
-    background-color: rgb(255 255 255 / 50%);
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    margin: 0 auto 12px;
-    transition: background-color 0.3s;
+    background-color: rgba(255,255,255,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: var(--white-color);
+    margin-bottom: 20px;
+    transition: background-color 0.25s;
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
     .mobile-menu .mini-close:hover {
-        background-color: var(--white-color);
+        background-color: rgba(255,255,255,0.55);
     }
 
     .mobile-menu .mini-close i {
@@ -216,235 +227,344 @@ header {
     }
 
     .mobile-menu .mini-close:hover i {
-        transform: rotate(180deg);
+        transform: rotate(90deg);
     }
 
 .mobile-menu .menu-head {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
-}
-
-.mobile-menu .logo {
-    transform: rotate(180deg);
-    writing-mode: vertical-lr;
-    font-weight: 600;
-    text-transform: uppercase;
-    display: flex;
     align-items: center;
-
-     font-size: 15px;
+    flex: 1;
+    width: 100%;
     overflow: hidden;
-    white-space: nowrap;
 }
 
-.mobile-menu .mini ul {
+/* أيقونات الـ mini */
+.mobile-menu .mini .top ul {
     display: flex;
     flex-direction: column;
     align-items: center;
+    gap: 10px;
+    padding: 0;
+    margin: 0;
 }
 
-    .mobile-menu .mini ul li a {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        font-size: 24px;
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
-        color: var(--white-color);
-        border-radius: 50%;
-        transition: color 0.3s, background-color 0.3s;
+.mobile-menu .mini ul li a {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    font-size: 21px;
+    color: var(--white-color);
+    border-radius: 50%;
+    transition: background-color 0.25s, color 0.25s;
+    text-decoration: none;
+}
+
+    .mobile-menu .mini ul li a:hover {
+        background-color: rgba(255,255,255,0.2);
     }
 
-        .mobile-menu .mini ul li a .num {
-            top: 0;
-            left: 0;
-        }
+    .mobile-menu .mini ul li a .num {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background-color: rgba(0,0,0,0.35);
+        color: var(--white-color);
+        font-size: 9px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        line-height: 1;
+    }
 
-        .mobile-menu .mini ul li a:hover {
-            background-color: rgb(255 255 255 / 50%);
-            color: var(--primary-color);
-        }
-
-.mobile-menu .socials ul li a {
-    width: 30px;
-    height: 30px;
+/* اللوغو عمودي */
+.mobile-menu .logo {
+    writing-mode: vertical-lr;
+    transform: rotate(180deg);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--cotton-color);
+    white-space: nowrap;
+    overflow: hidden;
+    display: flex;
     align-items: center;
-    color: var(--dark-color);
+    margin: 12px 0;
 }
 
+    .mobile-menu .logo a {
+        color: inherit;
+        text-decoration: none;
+    }
+
+/* السوشيال */
+.mobile-menu .socials ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+}
+
+    .mobile-menu .socials ul li a {
+        width: 32px;
+        height: 32px;
+        font-size: 17px;
+        color: rgba(255,255,255,0.75);
+        transition: color 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+        .mobile-menu .socials ul li a:hover {
+            color: var(--white-color);
+        }
+
+/* ==========================================
+   WIDER (المنطقة البيضاء)
+   ========================================== */
 .mobile-menu .wider {
     position: relative;
-
-
-
     flex: 1;
     min-width: 0;
     overflow: hidden;
-    padding: 30px 24px;
 }
 
 .mobile-menu .main-menu {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
-    height: 100%;
-
-    overflow: hidden;
-    width: 100%;
-}
-
-.mobile-menu .search {
-    position: relative;
-    width: 100%;
-    height: 50px;
-    margin-bottom: 24px;
+    padding: 28px 22px;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
-    .mobile-menu .search input {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        border: 0;
-        outline: 0;
-        padding: 0 0 0 40px;
-        background-color: var(--light-color);
-    }
-
-    .mobile-menu .search i {
-        position: relative;
-        z-index: 1;
-        font-size: 20px;
-        width: 32px;
-        padding-left: 12px;
-        line-height: 50;
-    }
-
-.mobile-menu .menu-list ul {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    transition: transform 0.3s;
-}
-    .mobile-menu .menu-list ul ul {
-        width: 100%;
-        box-sizing: border-box;
-        left: 0;
-        right: 0;
-    }
-    .mobile-menu .menu-list ul li a {
-        display: flex;
-        justify-content: space-between;
-    }
-
-        .mobile-menu .menu-list ul li a span {
-            font-size: 18px;
-            font-weight: 500;
-        }
-
-    .mobile-menu .menu-list ul li i {
-        display: flex;
-        align-items: center;
-        font-size: 18px;
-        color: var(--gray-color);
-    }
-    .mobile-menu .menu-list ul li.has-child > a {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        box-sizing: border-box;
-    }
-.mobile-menu .menu-list li li:not(.back) a {
-    color: var(--gray-color);
-    transition: color 0.3s;
-}
-
-    .mobile-menu .menu-list li li:not(.back) a:hover {
-        color: var(--dark-color);
-    }
-
-.mobile-menu .menu-list li.back {
-    border-bottom: 1px solid var(--gray-color);
-}
-
-.mobile-menu .copyright {
-    font-size: 12px;
-    color: var(--gray-color);
-    line-height: 1.2;
-    margin-top: auto;
-}
-
-.overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    background-color: var(--dark-color);
-    visibility: hidden;
-    z-index: 999;
-}
-
-.showmenu .overlay {
-    visibility: visible;
-    opacity: 0.5;
-    transition: opacity 0.3s ease;
-}
-
-
+/* Side panels */
 .wider > div:not(.main-menu) {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--pink-color);
+    inset: 0;
     z-index: 2;
     display: grid;
     place-content: center;
     text-align: center;
-    font-size: 5em;
-    color: var(--white-color);
-    transform: translateX(-100%);
-    transition: transform 0.3s;
+    font-size: 3.5em;
+    color: var(--evergreen-color);
+    background-color: var(--cotton-color);
+    transform: translateX(-110%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .wider > div.active {
     transform: translateX(0);
 }
 
-.wider > div:nth-child(2) {
-    background-color: var(--blue-color);
+/* ==========================================
+   SEARCH BAR
+   ========================================== */
+.mobile-menu .search {
+    position: relative;
+    width: 100%;
+    height: 48px;
+    margin-bottom: 24px;
+    border-radius: 10px;
+    overflow: hidden;
+    background-color: #f0ede8;
+    flex-shrink: 0;
+    box-sizing: border-box;
 }
 
-.wider > div:nth-child(3) {
-    background-color: var(--pink-color);
+    .mobile-menu .search form {
+        position: absolute;
+        inset: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+        .mobile-menu .search input,
+        .mobile-menu .search form input {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            padding: 0 16px 0 44px;
+            font-size: 14px;
+            color: var(--evergreen-color);
+            box-sizing: border-box;
+        }
+
+            .mobile-menu .search input::placeholder {
+                color: #aaa;
+            }
+
+    .mobile-menu .search > i {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 18px;
+        color: #aaa;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+/* ==========================================
+   MENU LIST
+   ========================================== */
+.mobile-menu .menu-list {
+    flex: 1;
+/*    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;*/
+    position: relative;
+    background-color: var(--jade-color);
 }
 
-.wider > div:nth-child(4) {
-    background-color: var(--blue-color);
+    .mobile-menu .menu-list::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    .mobile-menu .menu-list::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .mobile-menu .menu-list::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.1);
+        border-radius: 2px;
+    }
+
+    /* Main ul */
+    .mobile-menu .menu-list > ul {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        padding: 0;
+        margin: 0;
+        transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Sub ul - مخفي بالأساس */
+    .mobile-menu .menu-list ul ul {
+        position: absolute;
+        top: 0;
+        left: 27px;
+        width: 100%;
+        min-height: 100%;
+        background: var(--jade-color);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(100%);
+        transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease, visibility 0.25s;
+        z-index: 5;
+    }
+
+    /* .show على .menu-list → يسلايد الـ main ul يسار */
+    .mobile-menu .menu-list.show > ul {
+        transform: translateX(-25%);
+    }
+
+    /* .expand على .has-child → يظهر الـ sub-ul */
+    .mobile-menu .menu-list.show .has-child.expand > ul {
+        opacity: 1;
+        visibility: visible;
+        transform: translateX(0);
+    }
+
+    /* كل الـ links */
+    .mobile-menu .menu-list ul li a {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 4px;
+        border-bottom: 1px solid rgba(0,0,0,0.07);
+        text-decoration: none;
+        width: 100%;
+        box-sizing: border-box;
+        color: var(--evergreen-color);
+    }
+
+    /* نص العناصر الرئيسية (has span) */
+    .mobile-menu .menu-list > ul > li > a span,
+    .mobile-menu .menu-list ul li.has-child > a span {
+        font-size: 16px;
+        font-weight: 500;
+        color: var(--evergreen-color);
+    }
+
+    /* سهم has-child */
+    .mobile-menu .menu-list ul li.has-child > a > i {
+        font-size: 20px;
+        color: #bbb;
+        flex-shrink: 0;
+    }
+
+    /* زر Back */
+    .mobile-menu .menu-list ul li.back > a {
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 13px 2px 16px;
+        border-bottom: 2px solid rgba(0,0,0,0.1);
+        margin-bottom: 4px;
+    }
+
+        .mobile-menu .menu-list ul li.back > a > i {
+            font-size: 20px;
+            color: var(--evergreen-color);
+        }
+
+        .mobile-menu .menu-list ul li.back > a > span {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--evergreen-color);
+        }
+
+    /* عناصر الـ foreach (بدون span - نص مباشر) */
+    .mobile-menu .menu-list ul ul li:not(.back) > a {
+        font-size: 15px;
+        font-weight: 400;
+        color: #666;
+        justify-content: flex-start;
+        padding: 13px 6px;
+    }
+
+        .mobile-menu .menu-list ul ul li:not(.back) > a:hover {
+            color: var(--evergreen-color);
+        }
+
+/* Copyright */
+.mobile-menu .copyright {
+    margin-top: auto;
+    padding-top: 16px;
+    flex-shrink: 0;
 }
 
-.wider > div:nth-child(5) {
-    background-color: var(--blue-color);
-}
+    .mobile-menu .copyright p {
+        font-size: 11px;
+        color: #ccc;
+        margin: 0;
+    }
 
-.wider > div:nth-child(6) {
-    background-color: var(--blue-color);
-}
-
-header .trigger {
-    display: block;
-}
-
-
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
 @media only screen and (min-width: 992px) {
     header .trigger {
         display: none;
@@ -455,129 +575,3 @@ header .trigger {
         display: block;
     }
 }
-
-/*End Nav*/
-/* Mobile Dropdown Accordion */
-.mobile-menu .menu-list .mobile-dropdown {
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-}
-
-    .mobile-menu .menu-list .mobile-dropdown:last-of-type {
-        border-bottom: none;
-    }
-
-.mobile-dropdown-toggle {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center;
-    padding: 14px 4px;
-    cursor: pointer;
-    transition: color 0.25s ease;
-}
-
-    .mobile-dropdown-toggle span {
-        font-size: 18px !important;
-        font-weight: 500;
-        letter-spacing: 0.3px;
-    }
-
-    .mobile-dropdown-toggle .mobile-arrow {
-        font-size: 18px;
-        color: var(--gray-color);
-        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        display: flex !important;
-        align-items: center;
-    }
-
-.mobile-dropdown.active .mobile-dropdown-toggle .mobile-arrow {
-    transform: rotate(180deg);
-}
-
-.mobile-dropdown-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.35s cubic-bezier(0.4, 0, 0.2, 1), padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    padding: 0 0 0 16px;
-}
-
-.mobile-dropdown.active .mobile-dropdown-content {
-    max-height: 500px;
-    padding: 0 0 12px 16px;
-}
-
-.mobile-dropdown-content a {
-    display: block;
-    padding: 10px 12px;
-    font-size: 15px;
-    color: var(--gray-color);
-    border-radius: 8px;
-    transition: background-color 0.2s ease, color 0.2s ease;
-    text-decoration: none;
-    margin-bottom: 2px;
-}
-
-    .mobile-dropdown-content a:hover,
-    .mobile-dropdown-content a:active {
-        background-color: rgba(0, 0, 0, 0.04);
-        color: var(--dark-color);
-    }
-
-/* Search bar improvements */
-.mobile-menu .search {
-    border-radius: 10px;
-    overflow: hidden;
-    background-color: var(--light-color);
-}
-
-    .mobile-menu .search input {
-        font-size: 15px;
-        border-radius: 10px;
-    }
-
-/* Contact link style matching */
-.mobile-menu .menu-list > ul > li:not(.mobile-dropdown) > a {
-    padding: 14px 4px;
-    display: block;
-}
-
-    .mobile-menu .menu-list > ul > li:not(.mobile-dropdown) > a span {
-        font-size: 18px;
-        font-weight: 500;
-        letter-spacing: 0.3px;
-    }
-
-/* Wider section padding adjustment */
-.mobile-menu .wider {
-    padding: 30px 28px;
-}
-
-/* Scrollable menu list */
-.mobile-menu .menu-list {
-    flex: 1;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-
-}
-
-    .mobile-menu .menu-list ul {
-        gap: 0;
-    }
-
-        /* Fix has-child link alignment */
-        .mobile-menu .menu-list ul li.has-child > a {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-        }
-
-            .mobile-menu .menu-list ul li.has-child > a span {
-                font-size: 20px;
-                font-weight: 500;
-            }
-
-            .mobile-menu .menu-list ul li.has-child > a i {
-                font-size: 18px;
-                color: var(--gray-color);
-                flex-shrink: 0;
-            }

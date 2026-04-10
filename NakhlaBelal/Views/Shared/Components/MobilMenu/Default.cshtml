@@ -1,40 +1,36 @@
 ﻿@model MobilMenuViewModel
 
 <li class="has-child">
-    <a href="#" "><span>By Type</span><i class="ri-arrow-right-line"></i></a>
+    <a href="#"><span>By Type</span><i class="ri-arrow-right-s-line"></i></a>
     <ul>
         <li class="back">
-            <a href="#"><span>By Type</span><i class="ri-arrow-left-line"></i></a>
+            <a href="#"><i class="ri-arrow-left-s-line"></i><span>By Type</span></a>
         </li>
         @foreach (var type in Model.FabricTypes)
         {
-            <a asp-controller="Home" asp-action="CategroySearch" asp-route-FabricTypeId="@type.Id">@type.Name</a>
+            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-FabricTypeId="@type.Id">@type.Name</a></li>
         }
     </ul>
 </li>
 
-
 <li class="has-child">
-    <a href="#" "><span>By Project</span><i class="ri-arrow-right-line"></i></a>
+    <a href="#"><span>By Project</span><i class="ri-arrow-right-s-line"></i></a>
     <ul>
         <li class="back">
-            <a href="#"><span>By Project</span><i class="ri-arrow-left-line"></i></a>
+            <a href="#"><i class="ri-arrow-left-s-line"></i><span>By Project</span></a>
         </li>
         @foreach (var project in Model.ProjectCategories)
         {
-            <a asp-controller="Home" asp-action="CategroySearch" asp-route-ProjectCategoryId="@project.Id">@project.Name</a>
-
+            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-ProjectCategoryId="@project.Id">@project.Name</a></li>
         }
     </ul>
 </li>
 
-
-
 <li class="has-child">
-    <a href="#" "><span>By Color</span><i class="ri-arrow-right-line"></i></a>
+    <a href="#"><span>By Color</span><i class="ri-arrow-right-s-line"></i></a>
     <ul>
         <li class="back">
-            <a href="#"><span>By Color</span><i class="ri-arrow-left-line"></i></a>
+            <a href="#"><i class="ri-arrow-left-s-line"></i><span>By Color</span></a>
         </li>
         @foreach (var color in Model.Colors)
         {
@@ -43,15 +39,15 @@
     </ul>
 </li>
 
-<li class="has-child dropdown1">
-    <a href="#" "><span>By Composition</span><i class="ri-arrow-right-line"></i></a>
+<li class="has-child">
+    <a href="#"><span>By Composition</span><i class="ri-arrow-right-s-line"></i></a>
     <ul>
         <li class="back">
-            <a href="#"><span>By Composition</span><i class="ri-arrow-left-line"></i></a>
+            <a href="#"><i class="ri-arrow-left-s-line"></i><span>By Composition</span></a>
         </li>
         @foreach (var comp in Model.Compositions)
         {
-            <a asp-controller="Home" asp-action="CategroySearch" asp-route-CompositionId="@comp.Id">@comp.Name</a>
+            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-CompositionId="@comp.Id">@comp.Name</a></li>
         }
     </ul>
 </li>

@@ -1,63 +1,67 @@
-﻿const menuTrigger = document.querySelector('.trigger');
-const closeTrigger = document.querySelector('.mini-close');
-const giveClass = document.querySelector('.site');
+﻿document.addEventListener('DOMContentLoaded', function () {
 
-menuTrigger.addEventListener('click', function () {
-    giveClass.classList.add('showmenu');
-});
+    var trigger = document.querySelector('.trigger');
+    var overlay = document.querySelector('.overlay');
+    var miniClose = document.querySelector('.mini-close');
+    var menuList = document.querySelector('.mobile-menu .menu-list');
 
-closeTrigger.addEventListener('click', function () {
-    giveClass.classList.remove('showmenu');
-});
-
-
-
-//submenu
-const button = document.querySelectorAll('.has-child > a'),
-    modalheight = document.querySelector('.menu-list');
-
-button.forEach((item) => item.parentNode.classList.remove('expand'));
-button.forEach((menu) => menu.addEventListener('click', function () {
-    let modal = document.querySelector('.menu-list');
-    modal.classList.toggle('show');
-
-    if (this.parentNode.classList != 'expand') {
-        this.parentNode.classList.toggle('expand')
-    }
-    if (!modal.classList.contains('show')) {
-        modal.style.height = modalheight + 'px';
-    } else {
-        modal.style.height = (this.parentNode.querySelector('ul').offsetHeight + 45) + 'px';
+    /* فتح المنيو */
+    if (trigger) {
+        trigger.addEventListener('click', function (e) {
+            e.preventDefault();
+            document.body.classList.add('showmenu');
+        });
     }
 
-    //back button
-
-    menu.parentNode.querySelector('.back').addEventListener('click', function () {
-        modal.style.height = 'auto';
-        modal.classList.remove('show');
-        menu.parentNode.classList.remove('expand')
-    })
-}))
-
-const topmenu = document.querySelectorAll('[data-target]');
-const panels = document.querySelectorAll('.wider > div:not(.main-menu)');
-
-topmenu.forEach(item => {
-    item.addEventListener('click', function (e) {
-        e.preventDefault();
-
-        const targetId = this.dataset.target;
-        const targetPanel = document.getElementById(targetId);
-
-        const isActive = targetPanel.classList.contains('active');
-
-        // سكّر الكل
-        panels.forEach(panel => panel.classList.remove('active'));
-
-        // إذا ما كان مفتوح → افتحه
-        if (!isActive) {
-            targetPanel.classList.add('active');
+    /* إغلاق المنيو - دالة مشتركة */
+    function closeMenu() {
+        document.body.classList.remove('showmenu');
+        if (menuList) {
+            menuList.classList.remove('show');
+            menuList.querySelectorAll('.has-child.expand')
+                .forEach(function (el) { el.classList.remove('expand'); });
         }
-    });
-});
+        document.querySelectorAll('.wider > div.active')
+            .forEach(function (d) { d.classList.remove('active'); });
+    }
 
+    if (miniClose) miniClose.addEventListener('click', function (e) { e.preventDefault(); closeMenu(); });
+    if (overlay) overlay.addEventListener('click', closeMenu);
+
+    /* فتح الـ submenu */
+    document.querySelectorAll('.mobile-menu .has-child > a').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            var li = this.closest('.has-child');
+            menuList.querySelectorAll('.has-child.expand').forEach(function (el) {
+                if (el !== li) el.classList.remove('expand');
+            });
+            li.classList.add('expand');
+            menuList.classList.add('show');
+        });
+    });
+
+    /* زر Back */
+    document.querySelectorAll('.mobile-menu .back > a').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            var li = this.closest('.has-child');
+            if (li) li.classList.remove('expand');
+            menuList.classList.remove('show');
+        });
+    });
+
+    /* Side Panels (bag, wishlist…) */
+    document.querySelectorAll('.mobile-menu .mini [data-target]').forEach(function (el) {
+        el.addEventListener('click', function (e) {
+            e.preventDefault();
+            var targetId = this.getAttribute('data-target');
+            var panel = document.querySelector('#' + targetId);
+            document.querySelectorAll('.wider > div:not(.main-menu)').forEach(function (p) {
+                if (p !== panel) p.classList.remove('active');
+            });
+            if (panel) panel.classList.toggle('active');
+        });
+    });
+
+});

@@ -268,7 +268,36 @@
             <button onclick="resetAll()">Reset all filters</button>
         </div>
 
-        <div class="pp-pagination" id="paginationWrap"></div>
+        <div class="pp-pagination" id="paginationWrap">
+            <div class="pp-pagination" id="paginationWrap">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        @if (ViewBag.currentPage > 1)
+                        {
+                            <li class="page-item"><a class="page-link" href="/Customer/Home/categroysearch?page=@(ViewBag.currentPage - 1)">Previous</a></li>
+                        }
+
+                        @for (var i = 1; i <= ViewBag.TotalPages; i++)
+                        {
+                            @if (i == ViewBag.currentPage)
+                            {
+                                <li class="page-item active"><a class="page-link" href="/Customer/Home/categroysearch?page=@i">@i</a></li>
+                            }
+                            else
+                            {
+                                <li class="page-item"><a class="page-link" href="/Customer/Home/categroysearch?&page=@i">@i</a></li>
+                            }
+
+                        }
+
+                        @if (ViewBag.currentPage != ViewBag.TotalPages && Model.Any())
+                        {
+                            <li class="page-item"><a class="page-link" href="/Customer/Home/categroysearch?page=@(ViewBag.currentPage + 1)">Next</a></li>
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
 
     </main>
 </div>

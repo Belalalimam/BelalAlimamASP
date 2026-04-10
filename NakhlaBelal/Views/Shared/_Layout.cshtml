@@ -148,15 +148,16 @@
                 </div>
             </div>
             <div class="wider">
-                <div class="main-menu">
+                <div class="main-menu ">
                     <div class="search">
                         <i class="ri-search-line"></i>
                         <form action="/">
                             <input type="search" placeholder="Search Products" />
                         </form>
                     </div>
-                    <div class="menu-list">
-                        <ul>
+                    <div class="menu-list ">
+                        <ul class="">
+                            <li><a href="/Customer/home/product">ِAll Fabrics</a></li>
                             @await Component.InvokeAsync("MobilMenu")
                             <li><a href="#"><span>contact</span></a></li>
 
@@ -336,6 +337,7 @@
 
     <!-- Custom JS -->
     <script>
+
             // Highlight current page in navigation
             document.addEventListener('DOMContentLoaded', function() {
                 const currentPath = window.location.pathname.toLowerCase();
@@ -360,9 +362,8 @@
             });
 
 
-    </script>
 
-    <script>
+            // للكارت 
             document.addEventListener('DOMContentLoaded', function() {
                 // نتحقق إذا كان المستخدم مسجل دخول
                 if ("@User.Identity.IsAuthenticated" === "True") {
@@ -387,7 +388,12 @@
                         .catch(error => console.error('Error fetching cart count:', error));
                 }
             });
+
+
+
     </script>
+    
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 

@@ -24,7 +24,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\css\Admin\" />
-    <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\js\Admin\" />
   </ItemGroup>
 

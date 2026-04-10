@@ -404,6 +404,36 @@ body {
         padding: 0 12px;
     }
 
+
+
+.page-item {
+    list-style: none;
+}
+
+.page-link {
+    display: block;
+    padding: 10px 16px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    color: var(--cotton-color);
+    background-color: var(--evergreen-color);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .page-link:hover {
+        background: #f8f6f3;
+        border-color: var(--jade-color);
+        color: var(--jade-color);
+    }
+
+.page-item.active .page-link {
+    background: var(--jade-color);
+    border-color: var(--jade-color);
+    color: var(--cotton-color);
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 1023px) {
     .pp-sidebar {
