@@ -1,4 +1,4 @@
-namespace NakhlaBelal
+﻿namespace NakhlaBelal
 {
     public class SharedResource
     {
