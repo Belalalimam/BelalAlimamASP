@@ -1,67 +1,114 @@
-﻿document.addEventListener('DOMContentLoaded', function () {
+﻿/* ==========================================
+   LOGIN PAGE (صفحة التسجيل فقط)
+   ========================================== */
+var container2 = document.getElementById('container2');
+var registerBtn = document.getElementById('register');
+var loginBtn = document.getElementById('login');
 
+if (container2 && registerBtn && loginBtn) {
+    registerBtn.addEventListener('click', function () {
+        container2.classList.add('active');
+    });
+    loginBtn.addEventListener('click', function () {
+        container2.classList.remove('active');
+    });
+}
+
+/* ==========================================
+   MOBILE MENU + DROPDOWNS
+   ========================================== */
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* فتح / إغلاق القائمة */
     var trigger = document.querySelector('.trigger');
     var overlay = document.querySelector('.overlay');
-    var miniClose = document.querySelector('.mini-close');
-    var menuList = document.querySelector('.mobile-menu .menu-list');
+    var miniClose = document.querySelector('.mobile-menu .mini-close');
 
-    /* فتح المنيو */
-    if (trigger) {
-        trigger.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.body.classList.add('showmenu');
-        });
+    function openMenu() {
+        document.body.classList.add('showmenu');
     }
-
-    /* إغلاق المنيو - دالة مشتركة */
     function closeMenu() {
         document.body.classList.remove('showmenu');
-        if (menuList) {
-            menuList.classList.remove('show');
-            menuList.querySelectorAll('.has-child.expand')
-                .forEach(function (el) { el.classList.remove('expand'); });
-        }
-        document.querySelectorAll('.wider > div.active')
-            .forEach(function (d) { d.classList.remove('active'); });
+        document.querySelectorAll('.wider > div').forEach(function (p) {
+            p.classList.remove('active');
+        });
     }
 
-    if (miniClose) miniClose.addEventListener('click', function (e) { e.preventDefault(); closeMenu(); });
+    if (trigger) trigger.addEventListener('click', openMenu);
     if (overlay) overlay.addEventListener('click', closeMenu);
+    if (miniClose) miniClose.addEventListener('click', closeMenu);
 
-    /* فتح الـ submenu */
-    document.querySelectorAll('.mobile-menu .has-child > a').forEach(function (link) {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            var li = this.closest('.has-child');
-            menuList.querySelectorAll('.has-child.expand').forEach(function (el) {
-                if (el !== li) el.classList.remove('expand');
-            });
-            li.classList.add('expand');
-            menuList.classList.add('show');
-        });
-    });
-
-    /* زر Back */
-    document.querySelectorAll('.mobile-menu .back > a').forEach(function (link) {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            var li = this.closest('.has-child');
-            if (li) li.classList.remove('expand');
-            menuList.classList.remove('show');
-        });
-    });
-
-    /* Side Panels (bag, wishlist…) */
-    document.querySelectorAll('.mobile-menu .mini [data-target]').forEach(function (el) {
-        el.addEventListener('click', function (e) {
-            e.preventDefault();
+    /* أيقونات الـ mini sidebar */
+    document.querySelectorAll('.mobile-menu .mini ul li a').forEach(function (btn) {
+        btn.addEventListener('click', function (e) {
             var targetId = this.getAttribute('data-target');
-            var panel = document.querySelector('#' + targetId);
-            document.querySelectorAll('.wider > div:not(.main-menu)').forEach(function (p) {
-                if (p !== panel) p.classList.remove('active');
+            var href = this.getAttribute('href');
+
+            if (!targetId && href && href !== '#') return;
+
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (!targetId) return;
+
+            var panel = document.getElementById(targetId);
+            if (!panel) return;
+
+            var isActive = panel.classList.contains('active');
+
+            document.querySelectorAll('.wider > div').forEach(function (p) {
+                p.classList.remove('active');
             });
-            if (panel) panel.classList.toggle('active');
+
+            if (!isActive) panel.classList.add('active');
         });
+    });
+
+    /* الـ submenu (has-child) */
+    document.querySelectorAll('.mobile-menu .menu-list .has-child > a').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            var li = this.parentElement;
+            var menuList = li.closest('.menu-list');
+            menuList.classList.add('show');
+            li.classList.add('expand');
+        });
+    });
+
+    document.querySelectorAll('.mobile-menu .menu-list .back > a').forEach(function (link) {
+        link.addEventListener('click', function (e) {
+            e.preventDefault();
+            var parentHasChild = this.closest('.has-child');
+            var menuList = this.closest('.menu-list');
+            if (parentHasChild) parentHasChild.classList.remove('expand');
+            if (menuList) menuList.classList.remove('show');
+        });
+    });
+
+    /* Desktop dropdown */
+    document.querySelectorAll('header .dropdown1').forEach(function (dropdown) {
+        var btn = dropdown.querySelector('.dropdown1-btn');
+        var menu = dropdown.querySelector('.dropdown1-menu');
+        if (!btn || !menu) return;
+
+        btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var isOpen = menu.classList.contains('show');
+
+            document.querySelectorAll('header .dropdown1-menu').forEach(function (m) { m.classList.remove('show'); });
+            document.querySelectorAll('header .dropdown1').forEach(function (d) { d.classList.remove('open'); });
+
+            if (!isOpen) {
+                menu.classList.add('show');
+                dropdown.classList.add('open');
+            }
+        });
+    });
+
+    document.addEventListener('click', function () {
+        document.querySelectorAll('header .dropdown1-menu').forEach(function (m) { m.classList.remove('show'); });
+        document.querySelectorAll('header .dropdown1').forEach(function (d) { d.classList.remove('open'); });
     });
 
 });

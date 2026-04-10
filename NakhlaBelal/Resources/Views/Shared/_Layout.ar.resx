@@ -126,4 +126,10 @@
   <data name="ByType" xml:space="preserve">
     <value>النوع</value>
   </data>
+  <data name="ByPattern" xml:space="preserve">
+    <value>النمط</value>
+  </data>
+  <data name="Promo" xml:space="preserve">
+    <value>الترويج</value>
+  </data>
 </root>

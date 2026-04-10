@@ -72,7 +72,7 @@
                                 @await Component.InvokeAsync("NavMenu")
                                 
                                 <li class="dropdown1">
-                                    <a href="/" class="dropdown1-btn">By Pattern</a>
+                                    <a href="/" class="dropdown1-btn">@Localizer["ByPattern"]</a>
                                     <div class="dropdown1-menu">
                                         <a href="https://localhost:7286/customer/home/CategroySearch?categoryId=13">item 1</a>
                                         <a href="https://localhost:7286/customer/home/CategroySearch?categoryId=14">item 2</a>
@@ -80,7 +80,7 @@
                                     </div>
                                 </li>
                                 <li>
-                                    <a href="#">Promo</a>
+                                    <a href="#">@Localizer["Promo"]</a>
                                     
                                 </li>
                             </ul>
@@ -98,21 +98,11 @@
                                 
                             </li> *@
 
-                            <li>
-                                <a href="/Customer/Cart/index">
-                                    <span id="cartBadge" class="num d-none">0</span>
-                                    <i class="ri-shopping-bag-2-line"></i>
-                                </a>
-                            </li>
-
-
-
-
-                            <li class="dropdown1 d-flex justify-content-center align-items-center">
-                                <a class="dropdown1-btn" href="#">
+                            <li class="dropdown1 d-flex justify-content-center align-items-center ">
+                                <a class="dropdown1-btn " href="#">
                                     🌐 @(requestCulture.RequestCulture.UICulture.Name == "ar" ? "العربية" : "English")
                                 </a>
-                                <ul class="dropdown1-menu">
+                                <ul class="dropdown1-menu ">
                                     <li style="padding: 5px 0;margin-left: 7px;">
                                         <form asp-area="Customer" asp-controller="Language" asp-action="SetLanguage"
                                               asp-route-returnUrl="@returnUrl" method="post">
@@ -122,6 +112,18 @@
                                     </li>
                                 </ul>
                             </li>
+
+                            <li>
+                                <a href="/Customer/Cart/index">
+                                    <span id="cartBadge" class="num d-none">0</span>
+                                    <i class="ri-shopping-bag-2-line"></i>
+                                </a>
+                            </li>
+
+
+                            
+
+                            
 
                             @* <li class="nav-item">
                                 <a class="nav-link position-relative" href="
@@ -139,8 +141,9 @@
                                 </a>
                             </li> *@
                             @* <li><a href="#"><span class="num">3</span><i class="ri-heart-line"></i></a></li> *@
-                            <li><a href="/Identity/Account/Logout"><i class="ri-door-line"></i></a></li>
+                            <li><a href="/Identity/Account/Logout"><i class="ri-door-line"></i></a></li>                            
                             <li><a href="/Identity/Profile/index"><i class="ri-user-line"> @User.Identity.Name </i></a></li>
+
                         </ul>
                     </div>
                 </div>
@@ -214,7 +217,18 @@
                     <span>account</span><i class="ri-user-line"></i>
                 </div>
                 <div id="lunguage" data-target="lunguage">
-                    <span>lunguage</span><i class="ri-globe-line"></i>
+                    <div class="lang-panel-inner">
+                        <p class="lang-panel-title">🌐 Choose Language</p>
+                        <form asp-area="Customer" asp-controller="Language" asp-action="SetLanguage"
+                              asp-route-returnUrl="@returnUrl" method="post">
+                            <button type="submit" name="culture" value="ar" class="lang-opt-btn">
+                                🇸🇦 العربية
+                            </button>
+                            <button type="submit" name="culture" value="en" class="lang-opt-btn">
+                                🇺🇸 English
+                            </button>
+                        </form>
+                    </div>
                 </div>
 
 
@@ -436,10 +450,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
 
-    <script src="~/js/site.js"></script>
+
     <script src="~/js/Navbar.js" asp-append-version="true"></script>
     <script src="~/js/newFile.js"></script>
-
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="~/js/site.js" asp-append-version="true"></script>
 </body>
 </html>

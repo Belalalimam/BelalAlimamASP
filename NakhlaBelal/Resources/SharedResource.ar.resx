@@ -117,7 +117,91 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ByColor" xml:space="preserve">
+    <value>الالوان</value>
+  </data>
+  <data name="ByComposition" xml:space="preserve">
+    <value>المكونات</value>
+  </data>
+  <data name="ByProject" xml:space="preserve">
+    <value>المشاريع</value>
+  </data>
   <data name="ByType" xml:space="preserve">
-    <value>النوع</value>
+    <value>الأنواع</value>
+  </data>
+  <data name="Design your dreams and make them come true with our online fabrics." xml:space="preserve">
+    <value>صمم أحلامك وحققها مع أقمشتنا المتوفرة عبر الإنترنت.</value>
+  </data>
+  <data name="Find High-Quality Textiles In our Online Fabric Store" xml:space="preserve">
+    <value>اعثر على منسوجات عالية الجودة في متجر الأقمشة الإلكتروني الخاص بنا</value>
+  </data>
+  <data name="Browse Our Fabrics" xml:space="preserve">
+    <value>تصفح أقمشتنا</value>
+  </data>
+  <data name="Flash Sale" xml:space="preserve">
+    <value>عرض سريع</value>
+  </data>
+  <data name="Solid Fabrics Always in Stock" xml:space="preserve">
+    <value>الأقمشة الصلبة متوفرة دائمًا</value>
+  </data>
+  <data name="Furnishing Fabrics" xml:space="preserve">
+    <value>أقمشة الأثاث</value>
+  </data>
+  <data name="Search for the fabric you desire:" xml:space="preserve">
+    <value>ابحث عن القماش الذي تريده:</value>
+  </data>
+  <data name="Or start from here" xml:space="preserve">
+    <value>أو ابدأ من هنا</value>
+  </data>
+  <data name="What are you making? Choose the fabrics best suited to your project." xml:space="preserve">
+    <value>ماذا تصنع؟ اختر الأقمشة الأنسب لمشروعك.</value>
+  </data>
+  <data name="What material do you need? Browse our fabrics by type" xml:space="preserve">
+    <value>ما هي المواد التي تحتاجها؟ تصفح أقمشتنا حسب النوع</value>
+  </data>
+  <data name="Discover Quality Fabrics for Every Project" xml:space="preserve">
+    <value>اكتشف أقمشة عالية الجودة لكل مشروع</value>
+  </data>
+  <data name="We provide a carefully curated selection of high-quality fabrics designed to meet the needs of designers, tailors, and fashion enthusiasts.Whether you are creating formal wear, casual clothing, or custom pieces, our platform helps you find the right materials with confidence." xml:space="preserve">
+    <value>نقدم مجموعة مختارة بعناية من الأقمشة عالية الجودة المصممة لتلبية احتياجات المصممين والخياطين وعشاق الموضة. وسواء كنت تصمم ملابس رسمية أو ملابس غير رسمية أو قطعاً مصممة خصيصاً، فإن منصتنا تساعدك على العثور على المواد المناسبة بكل ثقة.</value>
+  </data>
+  <data name="Our fabric collection includes options for dresses, suits, shirts, coats, and lightweight garments, allowing you to choose based on texture, weight, and purpose. Each product is selected with attention to quality, durability, and comfort." xml:space="preserve">
+    <value>تضم مجموعة الأقمشة لدينا خيارات متنوعة من الفساتين والبدلات والقمصان والمعاطف والملابس الخفيفة، مما يتيح لك الاختيار بناءً على الملمس والوزن والغرض. ويتم اختيار كل منتج مع إيلاء اهتمام خاص بالجودة والمتانة والراحة.</value>
+  </data>
+  <data name="We believe that a great shopping experience should be simple and enjoyable. That’s why our platform is designed with intuitive search tools, clear categorization, and a smooth browsing experience across all devices." xml:space="preserve">
+    <value>نحن نؤمن بأن تجربة التسوق المثالية يجب أن تكون بسيطة وممتعة. ولهذا السبب صُممت منصتنا لتضم أدوات بحث سهلة الاستخدام، وتصنيفًا واضحًا، وتجربة تصفح سلسة على جميع الأجهزة.</value>
+  </data>
+  <data name="From discovering new materials to selecting trusted classics, we aim to support your creative journey by offering reliable products and a seamless online experience." xml:space="preserve">
+    <value>من اكتشاف مواد جديدة إلى اختيار المنتجات الكلاسيكية الموثوقة، نسعى إلى دعم رحلتك الإبداعية من خلال تقديم منتجات موثوقة وتجربة تسوق سلسة عبر الإنترنت.</value>
+  </data>
+  <data name="Blucke &amp; Tweed" xml:space="preserve">
+    <value>بلوك آند تويد</value>
+  </data>
+  <data name="Lace &amp; Embroidery" xml:space="preserve">
+    <value>الدانتيل والتطريز</value>
+  </data>
+  <data name="Shirting" xml:space="preserve">
+    <value>قماش القمصان</value>
+  </data>
+  <data name="Jacquard" xml:space="preserve">
+    <value>جاكارد</value>
+  </data>
+  <data name="Fine Suiting" xml:space="preserve">
+    <value>بدلات أنيقة</value>
+  </data>
+  <data name="Skirt" xml:space="preserve">
+    <value>تنورة</value>
+  </data>
+  <data name="Coat" xml:space="preserve">
+    <value>معطف</value>
+  </data>
+  <data name="Dress" xml:space="preserve">
+    <value>فستان</value>
+  </data>
+  <data name="Jacket" xml:space="preserve">
+    <value>سترة</value>
+  </data>
+  <data name="Pants" xml:space="preserve">
+    <value>بنطال</value>
   </data>
 </root>

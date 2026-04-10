@@ -1,53 +1,56 @@
 ﻿@model MobilMenuViewModel
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> SharedLocalizer
 
 <li class="has-child">
-    <a href="#"><span>By Type</span><i class="ri-arrow-right-s-line"></i></a>
+    <a href="#"><span>@SharedLocalizer["ByType"]</span><i class="ri-arrow-right-s-line"></i></a>
     <ul>
         <li class="back">
-            <a href="#"><i class="ri-arrow-left-s-line"></i><span>By Type</span></a>
+            <a href="#"><i class="ri-arrow-left-s-line"></i><span>@SharedLocalizer["ByType"]</span></a>
         </li>
         @foreach (var type in Model.FabricTypes)
         {
-            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-FabricTypeId="@type.Id">@type.Name</a></li>
+            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-FabricTypeId="@type.Id">@SharedLocalizer[@type.Name]</a></li>
         }
     </ul>
 </li>
 
 <li class="has-child">
-    <a href="#"><span>By Project</span><i class="ri-arrow-right-s-line"></i></a>
+    <a href="#"><span>@SharedLocalizer["ByProject"]</span><i class="ri-arrow-right-s-line"></i></a>
     <ul>
         <li class="back">
-            <a href="#"><i class="ri-arrow-left-s-line"></i><span>By Project</span></a>
+            <a href="#"><i class="ri-arrow-left-s-line"></i><span>@SharedLocalizer["ByProject"]</span></a>
         </li>
         @foreach (var project in Model.ProjectCategories)
         {
-            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-ProjectCategoryId="@project.Id">@project.Name</a></li>
+            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-ProjectCategoryId="@project.Id">@SharedLocalizer[@project.Name]</a></li>
         }
     </ul>
 </li>
 
 <li class="has-child">
-    <a href="#"><span>By Color</span><i class="ri-arrow-right-s-line"></i></a>
+    <a href="#"><span>@SharedLocalizer["ByColor"]</span><i class="ri-arrow-right-s-line"></i></a>
     <ul>
         <li class="back">
-            <a href="#"><i class="ri-arrow-left-s-line"></i><span>By Color</span></a>
+            <a href="#"><i class="ri-arrow-left-s-line"></i><span>@SharedLocalizer["ByColor"]</span></a>
         </li>
         @foreach (var color in Model.Colors)
         {
-            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-ColorId="@color.Id">@color.Name</a></li>
+            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-ColorId="@color.Id">@SharedLocalizer[@color.Name]</a></li>
         }
     </ul>
 </li>
 
 <li class="has-child">
-    <a href="#"><span>By Composition</span><i class="ri-arrow-right-s-line"></i></a>
+    <a href="#"><span>@SharedLocalizer["ByComposition"]</span><i class="ri-arrow-right-s-line"></i></a>
     <ul>
         <li class="back">
-            <a href="#"><i class="ri-arrow-left-s-line"></i><span>By Composition</span></a>
+            <a href="#"><i class="ri-arrow-left-s-line"></i><span>@SharedLocalizer["ByComposition"]</span></a>
         </li>
         @foreach (var comp in Model.Compositions)
         {
-            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-CompositionId="@comp.Id">@comp.Name</a></li>
+            <li><a asp-controller="Home" asp-action="CategroySearch" asp-route-CompositionId="@comp.Id">@SharedLocalizer[@comp.Name]</a></li>
         }
     </ul>
 </li>

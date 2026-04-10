@@ -9,38 +9,38 @@
     <div class="dropdown1-menu">
         @foreach (var type in Model.FabricTypes)
         {
-            <a asp-controller="Home" asp-action="CategroySearch" asp-route-FabricTypeId="@type.Id">@type.Name</a>
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-FabricTypeId="@type.Id">@SharedLocalizer[@type.Name]</a>
         }
     </div>
 </li>
 
 <li class="dropdown1">
-    <a href="#" class="dropdown1-btn">By Project</a>
+    <a href="#" class="dropdown1-btn">@SharedLocalizer["ByProject"]</a>
     <div class="dropdown1-menu">
         @foreach (var project in Model.ProjectCategories)
         {
-            <a asp-controller="Home" asp-action="CategroySearch" asp-route-ProjectCategoryId="@project.Id">@project.Name</a>
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-ProjectCategoryId="@project.Id">@SharedLocalizer[@project.Name]</a>
 
         }
     </div>
 </li>
 
 <li class="dropdown1">
-    <a href="#" class="dropdown1-btn">By Color</a>
+    <a href="#" class="dropdown1-btn">@SharedLocalizer["ByColor"]</a>
     <div class="dropdown1-menu">
         @foreach (var color in Model.Colors)
         {
-            <a asp-controller="Home" asp-action="CategroySearch" asp-route-ColorId="@color.Id">@color.Name</a>
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-ColorId="@color.Id">@SharedLocalizer[@color.Name]</a>
         }
     </div>
 </li>
 
 <li class="dropdown1">
-    <a href="#" class="dropdown1-btn">By Composition</a>
+    <a href="#" class="dropdown1-btn">@SharedLocalizer["ByComposition"]</a>
     <div class="dropdown1-menu">
         @foreach (var comp in Model.Compositions)
         {
-            <a asp-controller="Home" asp-action="CategroySearch" asp-route-CompositionId="@comp.Id">@comp.Name</a>
+            <a asp-controller="Home" asp-action="CategroySearch" asp-route-CompositionId="@comp.Id">@SharedLocalizer[@comp.Name]</a>
         }
     </div>
 </li>

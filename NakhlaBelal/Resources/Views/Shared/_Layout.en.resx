@@ -126,4 +126,10 @@
   <data name="ByType" xml:space="preserve">
     <value>By Type</value>
   </data>
+  <data name="ByPattern" xml:space="preserve">
+    <value>By Pattern</value>
+  </data>
+  <data name="Promo" xml:space="preserve">
+    <value>Promo</value>
+  </data>
 </root>
