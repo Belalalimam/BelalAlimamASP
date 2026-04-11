@@ -204,4 +204,94 @@
   <data name="Pants" xml:space="preserve">
     <value>Pants</value>
   </data>
+  <data name="Red" xml:space="preserve">
+    <value>Red</value>
+  </data>
+  <data name="Pink" xml:space="preserve">
+    <value>Pink</value>
+  </data>
+  <data name="Maroon" xml:space="preserve">
+    <value>Maroon</value>
+  </data>
+  <data name="Turquoise" xml:space="preserve">
+    <value>Turquoise</value>
+  </data>
+  <data name="Purple" xml:space="preserve">
+    <value>Purple</value>
+  </data>
+  <data name="Crimson" xml:space="preserve">
+    <value>Crimson</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>Blue</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="Search Products" xml:space="preserve">
+    <value>Search Products</value>
+  </data>
+  <data name="Sortby" xml:space="preserve">
+    <value>Sort by</value>
+  </data>
+  <data name="Weight(g/m)" xml:space="preserve">
+    <value>Weight (g/m)</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="No products found" xml:space="preserve">
+    <value>No products found</value>
+  </data>
+  <data name="Width(cm)" xml:space="preserve">
+    <value>Width (cm)</value>
+  </data>
+  <data name="View All Products" xml:space="preserve">
+    <value>View All Products</value>
+  </data>
+  <data name="Reset all filters" xml:space="preserve">
+    <value>Reset all filters</value>
+  </data>
+  <data name="Try adjusting your filters" xml:space="preserve">
+    <value>Try adjusting your filters</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="products" xml:space="preserve">
+    <value>products</value>
+  </data>
+  <data name="Cotton" xml:space="preserve">
+    <value>Cotton</value>
+  </data>
+  <data name="Silk" xml:space="preserve">
+    <value>Silk</value>
+  </data>
+  <data name="Wool" xml:space="preserve">
+    <value>Wool</value>
+  </data>
+  <data name="Linen" xml:space="preserve">
+    <value>Linen</value>
+  </data>
+  <data name="Polyester &amp; Synthetic" xml:space="preserve">
+    <value>Polyester &amp; Synthetic</value>
+  </data>
+  <data name="Choose Language" xml:space="preserve">
+    <value>Choose Language</value>
+  </data>
+  <data name="Read more" xml:space="preserve">
+    <value>Read more</value>
+  </data>
+  <data name="In this section you can find our high quality women’s and men’s suiting fabrics in wool, cotton, linen or silk, perfect for creating fine tailored men's suits, jackets and trousers, but also skirts, blazers or women's dresses." xml:space="preserve">
+    <value>In this section you can find our high quality women’s and men’s suiting fabrics in wool, cotton, linen or silk, perfect for creating fine tailored men's suits, jackets and trousers, but also skirts, blazers or women's dresses.</value>
+  </data>
+  <data name="Understated Sophistication: discover the timeless elegance of Beige Fabrics for dressmaking and high fashion,In this section you can find our wide selection of plain, woven, printed, embroidered, velvet and sequined beige fabrics in silk, cotton, linen, wool, viscose or polyester, perfect for creating exclusive garments." xml:space="preserve">
+    <value>Understated Sophistication: discover the timeless elegance of Beige Fabrics for dressmaking and high fashion,In this section you can find our wide selection of plain, woven, printed, embroidered, velvet and sequined beige fabrics in silk, cotton, linen, wool, viscose or polyester, perfect for creating exclusive garments.</value>
+  </data>
 </root>

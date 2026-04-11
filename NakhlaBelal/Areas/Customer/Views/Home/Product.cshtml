@@ -1,16 +1,20 @@
 ﻿@model List<Product>
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
 
 <div class="pp-wrap">
 
     @* {{!-- ===== SIDEBAR Desktop ===== --}} *@
     <aside class="pp-sidebar">
         <div class="pp-sidebar-inner" id="sidebarInner">
-            <h2 class="pp-sidebar-title">Filters</h2>
+            <h2 class="pp-sidebar-title">@SharedLocalizer["Filters"]</h2>
 
             <div class="pp-filter-block">
                 <div class="pp-filter-head">
-                    <span>Search Products</span>
-                    <button onclick="clearSearch()">Clear</button>
+                    <span>@SharedLocalizer["Search Products"]</span>
+                    <button onclick="clearSearch()">@SharedLocalizer["Clear"]</button>
                 </div>
                 <div class="pp-search-wrap">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -23,8 +27,8 @@
 
             <div class="pp-filter-block">
                 <div class="pp-filter-head">
-                    <span>Sort by</span>
-                    <button onclick="resetSort()">Reset</button>
+                    <span>@SharedLocalizer["Sortby"]</span>
+                    <button onclick="resetSort()">@SharedLocalizer["Reset"]</button>
                 </div>
                 <select id="sortSelect" class="pp-select" onchange="applyFilters()">
                     <option value="new">New arrivals</option>
@@ -36,8 +40,8 @@
 
             <div class="pp-filter-block">
                 <div class="pp-filter-head">
-                    <span>Width (cm)</span>
-                    <button onclick="resetRange('widthRange','200','widthVal','200 cm')">Reset</button>
+                    <span>@SharedLocalizer["Width(cm)"]</span>
+                    <button onclick="resetRange('widthRange','200','widthVal','200 cm')">@SharedLocalizer["Reset"]</button>
                 </div>
                 <input type="range" id="widthRange" class="pp-range" min="100" max="200" value="200"
                        oninput="document.getElementById('widthVal').textContent=this.value+' cm'; applyFilters()" />
@@ -48,8 +52,8 @@
 
             <div class="pp-filter-block">
                 <div class="pp-filter-head">
-                    <span>Weight (g/m)</span>
-                    <button onclick="resetRange('weightRange','700','weightVal','700 g')">Reset</button>
+                    <span>@SharedLocalizer["Weight(g/m)"]</span>
+                    <button onclick="resetRange('weightRange','700','weightVal','700 g')">@SharedLocalizer["Reset"]</button>
                 </div>
                 <input type="range" id="weightRange" class="pp-range" min="200" max="700" value="700"
                        oninput="document.getElementById('weightVal').textContent=this.value+' g'; applyFilters()" />
@@ -58,7 +62,7 @@
                 </div>
             </div>
 
-            <button class="pp-view-all" onclick="resetAll()">View All Products</button>
+            <button class="pp-view-all" onclick="resetAll()">@SharedLocalizer["View All Products"]</button>
         </div>
     </aside>
 
@@ -72,13 +76,13 @@
                 <line x1="8" y1="12" x2="20" y2="12" />
                 <line x1="12" y1="18" x2="20" y2="18" />
             </svg>
-            Filters
+            @SharedLocalizer["Filters"]
         </button>
 
         @* {{!-- Mobile filter panel --}} *@
         <div class="pp-mobile-panel" id="mobilePanel">
             <div class="pp-mobile-panel-head">
-                <span>Filters</span>
+                <span>@SharedLocalizer["Filters"]</span>
                 <button onclick="toggleMobilePanel()">×</button>
             </div>
             @* {{!-- نفس محتوى الـ sidebar --}} *@  
@@ -115,7 +119,7 @@
         </div>
 
         @* {{!-- Results count --}} *@
-        <p class="pp-count" id="resultsCount">@Model.Count() products</p>
+        <p class="pp-count" id="resultsCount">@Model.Count() @SharedLocalizer["products"]</p>
 
         @* {{!-- Product Grid --}} *@
         <div class="pp-grid" id="productGrid">
@@ -154,9 +158,9 @@
 
         @* {{!-- Empty State --}} *@
         <div class="pp-empty" id="emptyState">
-            <h3>No products found</h3>
-            <p>Try adjusting your filters</p>
-            <button onclick="resetAll()">Reset all filters</button>
+            <h3>@SharedLocalizer["No products found"]</h3>
+            <p>@SharedLocalizer["Try adjusting your filters"]</p>
+            <button onclick="resetAll()">@SharedLocalizer["Reset all filters"]</button>
         </div>
 
         @* {{!-- Pagination --}} *@
@@ -165,7 +169,7 @@
                 <ul class="pagination">
                     @if (ViewBag.currentPage > 1)
                     {
-                        <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage - 1)">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage - 1)">@SharedLocalizer["Previous"]</a></li>
                     }
 
                     @for (var i = 1; i <= ViewBag.TotalPages; i++)
@@ -183,7 +187,7 @@
 
                     @if (ViewBag.currentPage != ViewBag.TotalPages && Model.Any())
                     {
-                        <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage + 1)">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage + 1)">@SharedLocalizer["Next"]</a></li>
                     }
                 </ul>
             </nav>

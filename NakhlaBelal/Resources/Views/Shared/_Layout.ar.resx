@@ -132,4 +132,7 @@
   <data name="Promo" xml:space="preserve">
     <value>الترويج</value>
   </data>
+  <data name="Choose Language" xml:space="preserve">
+    <value>اختر اللغة</value>
+  </data>
 </root>

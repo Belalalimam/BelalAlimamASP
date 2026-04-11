@@ -204,4 +204,94 @@
   <data name="Pants" xml:space="preserve">
     <value>بنطال</value>
   </data>
+  <data name="Red" xml:space="preserve">
+    <value>احمر</value>
+  </data>
+  <data name="Pink" xml:space="preserve">
+    <value>زهري</value>
+  </data>
+  <data name="Maroon" xml:space="preserve">
+    <value>بورجوندي</value>
+  </data>
+  <data name="Turquoise" xml:space="preserve">
+    <value>فيروزي</value>
+  </data>
+  <data name="Purple" xml:space="preserve">
+    <value>بنفسجي</value>
+  </data>
+  <data name="Crimson" xml:space="preserve">
+    <value>قرمزي</value>
+  </data>
+  <data name="Blue" xml:space="preserve">
+    <value>أزرق</value>
+  </data>
+  <data name="Filters" xml:space="preserve">
+    <value>البحث</value>
+  </data>
+  <data name="Search Products" xml:space="preserve">
+    <value>البحث عن المنتجات</value>
+  </data>
+  <data name="Sortby" xml:space="preserve">
+    <value>تصفية بواسطة</value>
+  </data>
+  <data name="Weight(g/m)" xml:space="preserve">
+    <value>(الوزن (ج/م</value>
+  </data>
+  <data name="Reset" xml:space="preserve">
+    <value>إعادة الضبط</value>
+  </data>
+  <data name="Clear" xml:space="preserve">
+    <value>مسح</value>
+  </data>
+  <data name="No products found" xml:space="preserve">
+    <value>لم يتم العثور على أي منتجات</value>
+  </data>
+  <data name="Width(cm)" xml:space="preserve">
+    <value>(العرض (سم</value>
+  </data>
+  <data name="View All Products" xml:space="preserve">
+    <value>عرض كل المنتجات</value>
+  </data>
+  <data name="Reset all filters" xml:space="preserve">
+    <value>إعادة تعيين جميع عوامل التصفية</value>
+  </data>
+  <data name="Try adjusting your filters" xml:space="preserve">
+    <value>جرب تعديل معايير البحث</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="products" xml:space="preserve">
+    <value>منتجات</value>
+  </data>
+  <data name="Cotton" xml:space="preserve">
+    <value>القطن</value>
+  </data>
+  <data name="Silk" xml:space="preserve">
+    <value>الحرير</value>
+  </data>
+  <data name="Wool" xml:space="preserve">
+    <value>الصوف</value>
+  </data>
+  <data name="Linen" xml:space="preserve">
+    <value>الكتان</value>
+  </data>
+  <data name="Polyester &amp; Synthetic" xml:space="preserve">
+    <value>البوليستر و الصناعي</value>
+  </data>
+  <data name="Choose Language" xml:space="preserve">
+    <value>اختر اللغة</value>
+  </data>
+  <data name="Read more" xml:space="preserve">
+    <value>أقرا المزيد</value>
+  </data>
+  <data name="In this section you can find our high quality women’s and men’s suiting fabrics in wool, cotton, linen or silk, perfect for creating fine tailored men's suits, jackets and trousers, but also skirts, blazers or women's dresses." xml:space="preserve">
+    <value>في هذا القسم، يمكنك العثور على أقمشة البدلات النسائية والرجالية عالية الجودة المصنوعة من الصوف أو القطن أو الكتان أو الحرير، وهي مثالية لتصميم بدلات رجالية وسترات وسراويل مصممة بعناية، وكذلك التنانير والسترات الرياضية والفساتين النسائية.</value>
+  </data>
+  <data name="Understated Sophistication: discover the timeless elegance of Beige Fabrics for dressmaking and high fashion,In this section you can find our wide selection of plain, woven, printed, embroidered, velvet and sequined beige fabrics in silk, cotton, linen, wool, viscose or polyester, perfect for creating exclusive garments." xml:space="preserve">
+    <value>أناقة رصينة: اكتشف الأناقة الخالدة للأقمشة البيج المخصصة لخياطة الملابس والأزياء الراقية,في هذا القسم، يمكنك العثور على تشكيلة واسعة من الأقمشة البيج السادة والمنسوجة والمطبوعة والمطرزة والمخملية والمزينة بالترتر، والمصنوعة من الحرير أو القطن أو الكتان أو الصوف أو الفسكوز أو البوليستر، وهي مثالية لتصميم ملابس حصرية.</value>
+  </data>
 </root>
