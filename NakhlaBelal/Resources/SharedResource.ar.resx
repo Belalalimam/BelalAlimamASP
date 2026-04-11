@@ -294,4 +294,106 @@
   <data name="Understated Sophistication: discover the timeless elegance of Beige Fabrics for dressmaking and high fashion,In this section you can find our wide selection of plain, woven, printed, embroidered, velvet and sequined beige fabrics in silk, cotton, linen, wool, viscose or polyester, perfect for creating exclusive garments." xml:space="preserve">
     <value>أناقة رصينة: اكتشف الأناقة الخالدة للأقمشة البيج المخصصة لخياطة الملابس والأزياء الراقية,في هذا القسم، يمكنك العثور على تشكيلة واسعة من الأقمشة البيج السادة والمنسوجة والمطبوعة والمطرزة والمخملية والمزينة بالترتر، والمصنوعة من الحرير أو القطن أو الكتان أو الصوف أو الفسكوز أو البوليستر، وهي مثالية لتصميم ملابس حصرية.</value>
   </data>
+  <data name="m in stock" xml:space="preserve">
+    <value>م  متوفر</value>
+  </data>
+  <data name="COMPOSITION" xml:space="preserve">
+    <value>التركيب</value>
+  </data>
+  <data name="HEIGHT" xml:space="preserve">
+    <value>الطول</value>
+  </data>
+  <data name="WEIGHT" xml:space="preserve">
+    <value>الوزن</value>
+  </data>
+  <data name="PROJECT" xml:space="preserve">
+    <value>المشروع</value>
+  </data>
+  <data name="2 business days" xml:space="preserve">
+    <value>يومان عمل</value>
+  </data>
+  <data name="CARE INSTRUCTIONS" xml:space="preserve">
+    <value>تعليمات العناية</value>
+  </data>
+  <data name="An elegant fabric, perfect for both classic and modern garments." xml:space="preserve">
+    <value>نسيج أنيق، مثالي للملابس الكلاسيكية والحديثة على حد سواء.</value>
+  </data>
+  <data name="AVAILABLE COLORS" xml:space="preserve">
+    <value>الالوان  المتاحة</value>
+  </data>
+  <data name="Fabric Details" xml:space="preserve">
+    <value>تفاصيل القماش</value>
+  </data>
+  <data name="Color:" xml:space="preserve">
+    <value>اللون</value>
+  </data>
+  <data name="Width:" xml:space="preserve">
+    <value>العرض</value>
+  </data>
+  <data name="Reviews" xml:space="preserve">
+    <value>التعليقات</value>
+  </data>
+  <data name="No reviews yet. Be the first to review this product." xml:space="preserve">
+    <value>لا توجد تعليقات حتى الآن. كن أول من يكتب تعليقًا عن هذا المنتج.</value>
+  </data>
+  <data name="Matching products" xml:space="preserve">
+    <value>المنتجات المطابقة</value>
+  </data>
+  <data name="View all" xml:space="preserve">
+    <value>عرض الكل</value>
+  </data>
+  <data name="ADD TO BASKET" xml:space="preserve">
+    <value>أضف إلى سلة التسوق</value>
+  </data>
+  <data name="Shipping in" xml:space="preserve">
+    <value>الشحن خلال</value>
+  </data>
+  <data name="Sumptuous double-breasted coat fabric, two-tone, openable, in wool and cashmere, beige and orange. Nothing could be more refined and exclusive to stand out and be remembered. For coat." xml:space="preserve">
+    <value>نسيج فاخر لمعطف مزدوج الصدر، ثنائي اللون، قابل للفتح، مصنوع من الصوف والكشمير، باللونين البيج والبرتقالي. لا شيء يمكن أن يكون أكثر أناقة وتميزًا ليجعلك تبرز وتبقى في الذاكرة. لمعطف.</value>
+  </data>
+  <data name="You may also be interested in..." xml:space="preserve">
+    <value>قد يهمك أيضًا...</value>
+  </data>
+  <data name="Fine Suit Fabrics" xml:space="preserve">
+    <value>أقمشة فاخرة للبدلات</value>
+  </data>
+  <data name="Cashmere Fabrics" xml:space="preserve">
+    <value>أقمشة الكشمير</value>
+  </data>
+  <data name="Cotton Fabrics" xml:space="preserve">
+    <value>الأقمشة القطنية</value>
+  </data>
+  <data name="Wool Fabrics" xml:space="preserve">
+    <value>الأقمشة الصوفية</value>
+  </data>
+  <data name="Green Fabrics" xml:space="preserve">
+    <value>الأقمشة الخضراء</value>
+  </data>
+  <data name="ON SALE FABRICS" xml:space="preserve">
+    <value>أقمشة مخفضة</value>
+  </data>
+  <data name="NEW ARRIVALS" xml:space="preserve">
+    <value>أحدث المنتجات</value>
+  </data>
+  <data name="ORGANIC FABRICS" xml:space="preserve">
+    <value>الأقمشة العضوية</value>
+  </data>
+  <data name="SUBSCRIBE" xml:space="preserve">
+    <value>اشترك</value>
+  </data>
+  <data name="Subscribe to our Newsletter and get a" xml:space="preserve">
+    <value>اشترك في نشرتنا الإخبارية واحصل على </value>
+  </data>
+  <data name="bonus" xml:space="preserve">
+    <value>مكافأة</value>
+  </data>
+  <data name="for your next order" xml:space="preserve">
+    <value> عند طلبك القادم</value>
+  </data>
+  <data name="Your email address" xml:space="preserve">
+    <value>عنوان بريدك الإلكتروني</value>
+  </data>
+  <data name="More inspirations" xml:space="preserve">
+    <value>المزيد من الأفكار الملهمة</value>
+  </data>
 </root>

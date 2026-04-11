@@ -5,6 +5,10 @@
     var priceStr = "€ " + discounted.ToString("N2").Replace(".", ",");
     var bulkStr = "€ " + (discounted * 0.92m).ToString("N2").Replace(".", ",");
 }
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
 
 <div class="pd-root">
 
@@ -58,9 +62,9 @@
         <!-- INFO -->
         <div class="pd-info">
 
-            <h1 class="pd-title">@Model.Product.Name</h1>
+            <h1 class="pd-title">@SharedLocalizer[@Model.Product.Name]</h1>
             <div class="pd-sku-row">
-                <span class="pd-sku">@Model.Product.SKU</span>
+                <span class="pd-sku">@SharedLocalizer[@Model.Product.SKU]</span>
                 @if (Model.Product.Brand != null)
                 {
                     <span class="pd-brand">@Model.Product.Brand.Name.ToUpper()</span>
@@ -84,9 +88,9 @@
             <!-- Stock -->
             @if (Model.Product.StockQuantity != null)
             {
-                <div class="pd-stock">✓ @Model.Product.StockQuantity m in stock</div>
+                <div class="pd-stock">✓ @Model.Product.StockQuantity @SharedLocalizer["m in stock"]</div>
             }
-            <p class="pd-shipping">Shipping in <strong>2 business days</strong>.</p>
+            <p class="pd-shipping">@SharedLocalizer["Shipping in"]  <strong>@SharedLocalizer["2 business days"]</strong>.</p>
 
             <!-- Add to Cart -->
             <form method="post"
@@ -100,20 +104,20 @@
                            class="pd-qty-val" />
                     <button type="button" class="pd-qty-btn" onclick="incQty()">+</button>
                 </div>
-                <button type="submit" class="pd-add-btn">ADD TO BASKET</button>
+                <button type="submit" class="pd-add-btn">@SharedLocalizer["ADD TO BASKET"]</button>
             </form>
 
             <!-- Specs -->
             <div class="pd-specs">
                 <div class="pd-spec-row full">
                     <div class="pd-spec-cell">
-                        <span class="pd-spec-label">COMPOSITION</span>
+                        <span class="pd-spec-label">@SharedLocalizer["COMPOSITION"]</span>
                         <div class="pd-spec-comp">
                             @if (Model.SelectedCompositions != null && Model.SelectedCompositions.Any())
                             {
                                 foreach (var c in Model.SelectedCompositions)
                                 {
-                                    <span>@c.Percentage% @c.CompositionName</span>
+                                    <span>@c.Percentage% @SharedLocalizer[@c.CompositionName]</span>
                                 }
                             }
                         </div>
@@ -122,11 +126,11 @@
 
                 <div class="pd-spec-row halves">
                     <div class="pd-spec-cell">
-                        <span class="pd-spec-label">HEIGHT</span>
+                        <span class="pd-spec-label">@SharedLocalizer["HEIGHT"]</span>
                         <span class="pd-spec-val">@Model.Product.Height cm</span>
                     </div>
                     <div class="pd-spec-cell">
-                        <span class="pd-spec-label">WEIGHT</span>
+                        <span class="pd-spec-label">@SharedLocalizer["WEIGHT"]</span>
                         <span class="pd-spec-val">@Model.Product.Weight g / m</span>
                     </div>
                 </div>
@@ -135,7 +139,7 @@
                 {
                     <div class="pd-spec-row full">
                         <div class="pd-spec-cell">
-                            <span class="pd-spec-label">PROJECT</span>
+                            <span class="pd-spec-label">@SharedLocalizer["PROJECT"]</span>
                             <div class="pd-spec-icons">
                                 @foreach (var cat in Model.Product.ProjectCategories)
                                 {
@@ -148,7 +152,7 @@
 
                 <div class="pd-spec-row full last">
                     <div class="pd-spec-cell">
-                        <span class="pd-spec-label">CARE INSTRUCTIONS</span>
+                        <span class="pd-spec-label">@SharedLocalizer["CARE INSTRUCTIONS"]</span>
                         <div class="pd-spec-icons">
                             <i class="ri-t-shirt-line"></i>
                             <i class="ri-scissors-line"></i>
@@ -166,12 +170,12 @@
                 {
                     foreach (var p in Model.Product.Description.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries))
                     {
-                        <p style="margin-bottom:8px">@p</p>
+                        <p style="margin-bottom:8px">@SharedLocalizer[@p]</p>
                     }
                 }
                 else
                 {
-                    <p>An elegant fabric, perfect for both classic and modern garments.</p>
+                    <p>@SharedLocalizer["An elegant fabric, perfect for both classic and modern garments."]</p>
                 }
             </div>
 
@@ -183,7 +187,7 @@
             @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
             {
                 <div class="pd-colors-section">
-                    <h3 class="pd-section-mini-title">AVAILABLE COLORS</h3>
+                    <h3 class="pd-section-mini-title"> @SharedLocalizer["AVAILABLE COLORS"]</h3>
                     <div class="pd-color-list">
                         @foreach (var item in Model.RelatedProducts)
                         {
@@ -202,26 +206,26 @@
             <!-- Accordion -->
             <div class="pd-acc-item">
                 <button class="pd-acc-btn" type="button" onclick="toggleAcc('accDetails',this)">
-                    Fabric Details <span>&#8964;</span>
+                    @SharedLocalizer["Fabric Details"]<span>&#8964;</span>
                 </button>
                 <div id="accDetails" class="pd-acc-body">
                     @if (Model.Product.Color != null)
                     {
-                        <p><strong>Color:</strong> @Model.Product.Color.Name — @Model.Product.Color.HexCode</p>
+                        <p><strong>@SharedLocalizer["Color:"]</strong> @SharedLocalizer[@Model.Product.Color.Name] — @Model.Product.Color.HexCode</p>
                     }
                     @if (Model.Product.Width.HasValue)
                     {
-                        <p><strong>Width:</strong> @Model.Product.Width cm</p>
+                        <p><strong>@SharedLocalizer["Width:"]</strong> @Model.Product.Width cm</p>
                     }
                 </div>
             </div>
 
             <div class="pd-acc-item">
                 <button class="pd-acc-btn" type="button" onclick="toggleAcc('accReviews',this)">
-                    Reviews <span>&#8964;</span>
+                    @SharedLocalizer["Reviews"] <span>&#8964;</span>
                 </button>
                 <div id="accReviews" class="pd-acc-body">
-                    <p>No reviews yet. Be the first to review this product.</p>
+                    <p>@SharedLocalizer["No reviews yet. Be the first to review this product."]</p>
                 </div>
             </div>
         </div>
@@ -232,9 +236,9 @@
     {
         <div class="pd-section">
             <div class="pd-section-head">
-                <h2>Matching products</h2>
+                <h2>@SharedLocalizer["Matching products"]</h2>
                 <a href="@Url.Action("CategroySearch", "Home", new { categoryId = Model.Product.CategoryId })"
-                   class="pd-view-all">View all</a>
+                   class="pd-view-all">@SharedLocalizer["View all"]</a>
             </div>
             <div class="pd-related-scroll">
                 @foreach (var item in Model.RelatedProducts.Take(8))
@@ -256,34 +260,34 @@
 
     <!-- YOU MAY ALSO BE INTERESTED IN -->
     <div class="pd-section">
-        <h2 class="pd-section-title">You may also be interested in...</h2>
+        <h2 class="pd-section-title">@SharedLocalizer["You may also be interested in..."]</h2>
         <div class="pd-cat-grid-3">
-            <a href="#" class="pd-cat-card" style="background:#2c3e28"><span>Fine Suit Fabrics</span></a>
-            <a href="#" class="pd-cat-card" style="background:#1a2c4a"><span>Cashmere Fabrics</span></a>
-            <a href="#" class="pd-cat-card" style="background:#4a3a28"><span>Cotton Fabrics</span></a>
+            <a href="#" class="pd-cat-card" style="background:#2c3e28"><span>@SharedLocalizer["Fine Suit Fabrics"]</span></a>
+            <a href="#" class="pd-cat-card" style="background:#1a2c4a"><span>@SharedLocalizer["Cashmere Fabrics"]</span></a>
+            <a href="#" class="pd-cat-card" style="background:#4a3a28"><span>@SharedLocalizer["Cotton Fabrics"]</span></a>
         </div>
         <div class="pd-cat-grid-2">
-            <a href="#" class="pd-cat-card" style="background:#3a3a3a"><span>Wool Fabrics</span></a>
-            <a href="#" class="pd-cat-card" style="background:#2e4a2e"><span>Green Fabrics</span></a>
+            <a href="#" class="pd-cat-card" style="background:#3a3a3a"><span>@SharedLocalizer["Wool Fabrics"]</span></a>
+            <a href="#" class="pd-cat-card" style="background:#2e4a2e"><span>@SharedLocalizer["Green Fabrics"]</span></a>
         </div>
     </div>
 
     <!-- MORE INSPIRATIONS -->
     <div class="pd-section">
-        <h2 class="pd-section-title">More inspirations</h2>
+        <h2 class="pd-section-title">@SharedLocalizer["More inspirations"]</h2>
         <div class="pd-insp-row">
-            <a href="#" class="pd-insp-card" style="background:linear-gradient(135deg,#ffd700,#ffed4e)">ON SALE FABRICS</a>
-            <a href="#" class="pd-insp-card" style="background:linear-gradient(135deg,#89CFF0,#B2E5FF)">NEW ARRIVALS</a>
-            <a href="#" class="pd-insp-card" style="background:linear-gradient(135deg,#90EE90,#C1FFC1)">ORGANIC FABRICS</a>
+            <a href="#" class="pd-insp-card" style="background:linear-gradient(135deg,#ffd700,#ffed4e)">@SharedLocalizer["ON SALE FABRICS"]</a>
+            <a href="#" class="pd-insp-card" style="background:linear-gradient(135deg,#89CFF0,#B2E5FF)">@SharedLocalizer["NEW ARRIVALS"]</a>
+            <a href="#" class="pd-insp-card" style="background:linear-gradient(135deg,#90EE90,#C1FFC1)">@SharedLocalizer["ORGANIC FABRICS"]</a>
         </div>
     </div>
 
     <!-- NEWSLETTER -->
     <div class="pd-newsletter">
-        <h3>Subscribe to our Newsletter and get a <strong>bonus</strong> for your next order</h3>
+        <h3>@SharedLocalizer["Subscribe to our Newsletter and get a"] <strong>@SharedLocalizer["bonus"]</strong> @SharedLocalizer["for your next order"]</h3>
         <form class="pd-newsletter-form">
-            <input type="email" placeholder="Your email address" required />
-            <button type="submit">SUBSCRIBE</button>
+            <input type="email" placeholder="@SharedLocalizer["Your email address"]" required />
+            <button type="submit">@SharedLocalizer["SUBSCRIBE"]</button>
         </form>
     </div>
 
