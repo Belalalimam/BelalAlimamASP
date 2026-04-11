@@ -76,7 +76,7 @@
                 <line x1="8" y1="12" x2="20" y2="12" />
                 <line x1="12" y1="18" x2="20" y2="18" />
             </svg>
-            @SharedLocalizer["Filters"]
+            @SharedLocalizer["SHOW FILTERS"]
         </button>
 
         @* {{!-- Mobile filter panel --}} *@
@@ -87,8 +87,60 @@
             </div>
             @* {{!-- نفس محتوى الـ sidebar --}} *@  
             <div class="pp-filter-block">
-                <div class="pp-filter-head"><span>Search</span></div>
+                <div class="pp-filter-head"><span>@SharedLocalizer["Search"]</span></div>
                 <input id="mSearchInput" type="text" class="pp-input" placeholder="Type & hit ENTER" oninput="document.getElementById('searchInput').value=this.value; applyFilters()" />
+                
+            </div>
+
+            <div class="cs-topfilters">
+                <div class="cs-topfilter-item">
+                    <span class="cs-topfilter-label">@SharedLocalizer["Color"]</span>
+                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <option value="">@SharedLocalizer["Any"]</option>
+                    </select>
+                </div>
+                <div class="cs-topfilter-item">
+                    <span class="cs-topfilter-label"> @SharedLocalizer["Type"]</span>
+                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <option value="">@SharedLocalizer["Any"]</option>
+                        <option>Tweed</option>
+                        <option>Bouclé</option>
+                        <option>Jacquard</option>
+                        <option>Velvet</option>
+                        <option>Crêpe</option>
+                    </select>
+                </div>
+                <div class="cs-topfilter-item">
+                    <span class="cs-topfilter-label">@SharedLocalizer["Quality"]</span>
+                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <option value="">@SharedLocalizer["Any"]</option>
+                        <option>Premium</option>
+                        <option>Standard</option>
+                        <option>Economy</option>
+                    </select>
+                </div>
+                <div class="cs-topfilter-item">
+                    <span class="cs-topfilter-label"> @SharedLocalizer["COMPOSITION"]</span>
+                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <option value="">@SharedLocalizer["Any"]</option>
+                    </select>
+                </div>
+                <div class="cs-topfilter-item">
+                    <span class="cs-topfilter-label"> @SharedLocalizer["PROJECT"]</span>
+                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <option value="">@SharedLocalizer["Any"]</option>
+                    </select>
+                </div>
+                <div class="cs-topfilter-item">
+                    <span class="cs-topfilter-label"> @SharedLocalizer["Pattern"]</span>
+                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <option value="">@SharedLocalizer["Any"]</option>
+                        <option>Solid</option>
+                        <option>Checkered</option>
+                        <option>Striped</option>
+                        <option>Floral</option>
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -121,8 +173,61 @@
         @* {{!-- Results count --}} *@
         <p class="pp-count" id="resultsCount">@Model.Count() @SharedLocalizer["products"]</p>
 
+
+        <div class="cs-topfilters">
+            <div class="cs-topfilter-item">
+                <span class="cs-topfilter-label">@SharedLocalizer["Color"]</span>
+                <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <option value="">@SharedLocalizer["Any"]</option>
+                </select>
+            </div>
+            <div class="cs-topfilter-item">
+                <span class="cs-topfilter-label"> @SharedLocalizer["Type"]</span>
+                <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <option value="">@SharedLocalizer["Any"]</option>
+                    <option>Tweed</option>
+                    <option>Bouclé</option>
+                    <option>Jacquard</option>
+                    <option>Velvet</option>
+                    <option>Crêpe</option>
+                </select>
+            </div>
+            <div class="cs-topfilter-item">
+                <span class="cs-topfilter-label">@SharedLocalizer["Quality"]</span>
+                <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <option value="">@SharedLocalizer["Any"]</option>
+                    <option>Premium</option>
+                    <option>Standard</option>
+                    <option>Economy</option>
+                </select>
+            </div>
+            <div class="cs-topfilter-item">
+                <span class="cs-topfilter-label"> @SharedLocalizer["COMPOSITION"]</span>
+                <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <option value="">@SharedLocalizer["Any"]</option>
+                </select>
+            </div>
+            <div class="cs-topfilter-item">
+                <span class="cs-topfilter-label"> @SharedLocalizer["PROJECT"]</span>
+                <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <option value="">@SharedLocalizer["Any"]</option>
+                </select>
+            </div>
+            <div class="cs-topfilter-item">
+                <span class="cs-topfilter-label"> @SharedLocalizer["Pattern"]</span>
+                <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <option value="">@SharedLocalizer["Any"]</option>
+                    <option>Solid</option>
+                    <option>Checkered</option>
+                    <option>Striped</option>
+                    <option>Floral</option>
+                </select>
+            </div>
+        </div>
         @* {{!-- Product Grid --}} *@
         <div class="pp-grid" id="productGrid">
+
+
             @foreach (var item in Model)
             {
                 <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })"

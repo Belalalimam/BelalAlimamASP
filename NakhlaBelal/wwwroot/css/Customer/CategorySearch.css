@@ -85,6 +85,7 @@
     padding: 10px 12px;
     border-right: 1px solid #e0e0e0;
     min-width: 0;
+    background-color: var( --pp-sidebar-bg);
 }
 
     .cs-topfilter-item:last-child {
@@ -104,7 +105,7 @@
 .cs-topfilter-select {
     width: 100%;
     border: none;
-    border-bottom: 1.5px solid transparent;
+/*    border-bottom: 1.5px solid transparent;*/
     background: transparent;
     font-size: 0.85rem;
     color: #333;
@@ -136,6 +137,8 @@
     }
 
     .pp-mobile-btn {
+        background-color: var(--pp-sidebar-bg);
+        color: var(--pp-sidebar-bg);
         display: none !important;
     }
 }
@@ -175,6 +178,8 @@
 
     .pp-mobile-btn {
         display: none !important;
+        background-color: var(--pp-sidebar-bg);
+        color: var(--pp-sidebar-bg);
     }
 }
 
@@ -206,6 +211,11 @@
 
     .pp-mobile-btn {
         display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        background-color: var(--pp-sidebar-bg);
+        color: var(--pp-sidebar-bg);
     }
 
     .pp-quick-bar {
@@ -222,6 +232,7 @@
         flex-wrap: wrap;
         border-radius: 6px;
         overflow: hidden;
+        display: none;
     }
 
     .cs-topfilter-item {
@@ -255,6 +266,10 @@
     .pp-card-price {
         font-size: 12px;
     }
+    .pp-main {
+        width: 100%;
+        min-width: 0;
+    }
 }
 
 /* Very small ≤400px */
@@ -284,4 +299,35 @@
         max-width: 130px;
         text-align: right;
     }
+    .cs-topfilters {
+        display: none;
+    }
 }
+
+
+/* الفلاتر داخل باناl الموبايل تظهر دايماً */
+.pp-mobile-panel .cs-topfilters {
+    display: flex !important;
+    flex-wrap: wrap;
+    border: none;
+    margin-top: 12px;
+    margin-bottom: 0;
+}
+
+.pp-mobile-panel .cs-topfilter-item {
+    flex: 1 1 50%;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+    .pp-mobile-panel .cs-topfilter-item:nth-child(odd) {
+        border-right: 1px solid #e0e0e0;
+    }
+
+    .pp-mobile-panel .cs-topfilter-item:nth-child(even) {
+        border-right: none;
+    }
+
+    .pp-mobile-panel .cs-topfilter-item:last-child {
+        flex: 1 1 100%;
+        border-right: none;
+    }

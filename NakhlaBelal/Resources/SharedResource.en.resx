@@ -327,6 +327,9 @@
   <data name="Color:" xml:space="preserve">
     <value>Color:</value>
   </data>
+  <data name="Color" xml:space="preserve">
+    <value>Color</value>
+  </data>
   <data name="Width:" xml:space="preserve">
     <value>Width:</value>
   </data>
@@ -395,5 +398,50 @@
   </data>
   <data name="More inspirations" xml:space="preserve">
     <value>More inspirations</value>
+  </data>
+  <data name="Sumptuous double coat fabric, two-tone, openable, in wool and cashmere, in classic light and dark camel shades. Nothing more refined and exclusive to stand out and be remembered. For coat." xml:space="preserve">
+    <value>Sumptuous double coat fabric, two-tone, openable, in wool and cashmere, in classic light and dark camel shades. Nothing more refined and exclusive to stand out and be remembered. For coat.</value>
+  </data>
+  <data name="Fabric" xml:space="preserve">
+    <value>Fabric</value>
+  </data>
+  <data name="Tulle" xml:space="preserve">
+    <value>Tulle</value>
+  </data>
+  <data name="Accessories" xml:space="preserve">
+    <value>Accessories</value>
+  </data>
+  <data name="Jubeir" xml:space="preserve">
+    <value>Jubeir</value>
+  </data>
+  <data name="Badges" xml:space="preserve">
+    <value>Badges</value>
+  </data>
+  <data name="Beads" xml:space="preserve">
+    <value>Beads</value>
+  </data>
+  <data name="Sequins" xml:space="preserve">
+    <value>Sequins</value>
+  </data>
+  <data name="Cordon" xml:space="preserve">
+    <value>Cordon</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Quality" xml:space="preserve">
+    <value>Quality</value>
+  </data>
+  <data name="Pattern" xml:space="preserve">
+    <value>Pattern</value>
+  </data>
+  <data name="Any" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="SHOW FILTERS" xml:space="preserve">
+    <value>SHOW FILTERS</value>
+  </data>
+  <data name="Search" xml:space="preserve">
+    <value>Search</value>
   </data>
 </root>
