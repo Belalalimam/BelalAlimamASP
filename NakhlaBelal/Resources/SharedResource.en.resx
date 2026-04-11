@@ -444,4 +444,148 @@
   <data name="Search" xml:space="preserve">
     <value>Search</value>
   </data>
+  <data name="FAQs" xml:space="preserve">
+    <value>FAQs</value>
+  </data>
+  <data name="ContactUs" xml:space="preserve">
+    <value>Contact Us</value>
+  </data>
+  <data name="MyAccount" xml:space="preserve">
+    <value>My Account</value>
+  </data>
+  <data name="TrackOrder" xml:space="preserve">
+    <value>Track Order</value>
+  </data>
+  <data name="RequestFabricsSamples" xml:space="preserve">
+    <value>Request Fabrics Samples</value>
+  </data>
+  <data name="Sitemap" xml:space="preserve">
+    <value>Site map</value>
+  </data>
+  <data name="TextileGlossary" xml:space="preserve">
+    <value>Textile Glossary</value>
+  </data>
+  <data name="WeavesGlossary" xml:space="preserve">
+    <value>Weaves Glossary</value>
+  </data>
+  <data name="FabricDrapeGuide" xml:space="preserve">
+    <value>Fabric Drape Guide</value>
+  </data>
+  <data name="TextileFiberAbbreviations" xml:space="preserve">
+    <value>Textile Fiber Abbreviations</value>
+  </data>
+  <data name="AboutUs" xml:space="preserve">
+    <value>About Us</value>
+  </data>
+  <data name="QualityControl" xml:space="preserve">
+    <value>Quality Control</value>
+  </data>
+  <data name="Sustainability" xml:space="preserve">
+    <value>Sustainability</value>
+  </data>
+  <data name="ShippingRates" xml:space="preserve">
+    <value>Shipping Rates</value>
+  </data>
+  <data name="PaymentMethods" xml:space="preserve">
+    <value>Payment Methods</value>
+  </data>
+  <data name="FOLLOW_US" xml:space="preserve">
+    <value>FOLLOW_US</value>
+  </data>
+  <data name="ABOUT" xml:space="preserve">
+    <value>ABOUT</value>
+  </data>
+  <data name="TEXTILE_GUIDES" xml:space="preserve">
+    <value>TEXTILE_GUIDES</value>
+  </data>
+  <data name="HELP" xml:space="preserve">
+    <value>HELP</value>
+  </data>
+  <data name="LEGAL_INFO" xml:space="preserve">
+    <value>LEGAL INFO</value>
+  </data>
+  <data name="TermsConditions" xml:space="preserve">
+    <value>Terms Conditions</value>
+  </data>
+  <data name="ODR" xml:space="preserve">
+    <value>ODR</value>
+  </data>
+  <data name="LabellingOfPackaging" xml:space="preserve">
+    <value>Labelling Of Packaging</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="CookiePreferences" xml:space="preserve">
+    <value>Cookie Preferences</value>
+  </data>
+  <data name="BROWSE_OUR_FABRICS" xml:space="preserve">
+    <value>BROWSE OUR FABRICS</value>
+  </data>
+  <data name="NewArrivals" xml:space="preserve">
+    <value>New Arrivals</value>
+  </data>
+  <data name="FabricsOnSale" xml:space="preserve">
+    <value>Fabrics On Sale</value>
+  </data>
+  <data name="BridalFabrics" xml:space="preserve">
+    <value>Bridal Fabrics</value>
+  </data>
+  <data name="SpecialOccasionsFabrics" xml:space="preserve">
+    <value>Special Occasions Fabrics</value>
+  </data>
+  <data name="CoatingFabrics" xml:space="preserve">
+    <value>Coating Fabrics</value>
+  </data>
+  <data name="FineSuitingFabrics" xml:space="preserve">
+    <value>Fine Suiting Fabrics</value>
+  </data>
+  <data name="Prints" xml:space="preserve">
+    <value>Prints</value>
+  </data>
+  <data name="Jacquards" xml:space="preserve">
+    <value>Jacquards</value>
+  </data>
+  <data name="LacesAndEmbroidery" xml:space="preserve">
+    <value>Laces And Embroidery</value>
+  </data>
+  <data name="Boucle" xml:space="preserve">
+    <value>Boucle</value>
+  </data>
+  <data name="Velvet" xml:space="preserve">
+    <value>Velvet</value>
+  </data>
+  <data name="CUSTOMER_SUPPORT" xml:space="preserve">
+    <value>CUSTOMER SUPPORT</value>
+  </data>
+  <data name="ContactForm" xml:space="preserve">
+    <value>Contact Form</value>
+  </data>
+  <data name="SendUsAMessage" xml:space="preserve">
+    <value>Send Us A Message</value>
+  </data>
+  <data name="WhatsApp" xml:space="preserve">
+    <value>WhatsApp</value>
+  </data>
+  <data name="SupportTime" xml:space="preserve">
+    <value>Support Time</value>
+  </data>
+  <data name="WarehouseAndOffices" xml:space="preserve">
+    <value>Warehouse And Offices</value>
+  </data>
+  <data name="ViewOnGoogleMaps" xml:space="preserve">
+    <value>View On Google Maps</value>
+  </data>
+  <data name="Terms" xml:space="preserve">
+    <value>Terms</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>Privacy</value>
+  </data>
+  <data name="Cookies" xml:space="preserve">
+    <value>Cookies</value>
+  </data>
+  <data name="Accessibility" xml:space="preserve">
+    <value>Accessibility</value>
+  </data>
 </root>

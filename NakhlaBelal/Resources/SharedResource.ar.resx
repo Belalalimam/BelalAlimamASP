@@ -444,4 +444,148 @@
   <data name="Search" xml:space="preserve">
     <value>البحث</value>
   </data>
+  <data name="FAQs" xml:space="preserve">
+    <value>الأسئلة الشائعة</value>
+  </data>
+  <data name="ContactUs" xml:space="preserve">
+    <value>اتصل بنا</value>
+  </data>
+  <data name="MyAccount" xml:space="preserve">
+    <value>حسابي</value>
+  </data>
+  <data name="TrackOrder" xml:space="preserve">
+    <value>تتبع الطلب</value>
+  </data>
+  <data name="RequestFabricsSamples" xml:space="preserve">
+    <value>طلب عينات من الأقمشة</value>
+  </data>
+  <data name="Sitemap" xml:space="preserve">
+    <value>خريطة الموقع</value>
+  </data>
+  <data name="TextileGlossary" xml:space="preserve">
+    <value>مسرد مصطلحات المنسوجات</value>
+  </data>
+  <data name="WeavesGlossary" xml:space="preserve">
+    <value>مسرد مصطلحات التسريحات</value>
+  </data>
+  <data name="FabricDrapeGuide" xml:space="preserve">
+    <value>دليل تعليق الأقمشة</value>
+  </data>
+  <data name="TextileFiberAbbreviations" xml:space="preserve">
+    <value>اختصارات ألياف النسيج</value>
+  </data>
+  <data name="AboutUs" xml:space="preserve">
+    <value>نبذة عنا</value>
+  </data>
+  <data name="QualityControl" xml:space="preserve">
+    <value>مراقبة الجودة</value>
+  </data>
+  <data name="Sustainability" xml:space="preserve">
+    <value>الاستدامة</value>
+  </data>
+  <data name="ShippingRates" xml:space="preserve">
+    <value>رسوم الشحن</value>
+  </data>
+  <data name="PaymentMethods" xml:space="preserve">
+    <value>طرق الدفع</value>
+  </data>
+  <data name="FOLLOW_US" xml:space="preserve">
+    <value>تابعونا</value>
+  </data>
+  <data name="ABOUT" xml:space="preserve">
+    <value>نبذة </value>
+  </data>
+  <data name="TEXTILE_GUIDES" xml:space="preserve">
+    <value>دليل المنسوجات</value>
+  </data>
+  <data name="HELP" xml:space="preserve">
+    <value>مساعدة</value>
+  </data>
+  <data name="LEGAL_INFO" xml:space="preserve">
+    <value>معلومات قانونية</value>
+  </data>
+  <data name="TermsConditions" xml:space="preserve">
+    <value>الشروط والأحكام</value>
+  </data>
+  <data name="ODR" xml:space="preserve">
+    <value>التسوية عبر الإنترنت</value>
+  </data>
+  <data name="LabellingOfPackaging" xml:space="preserve">
+    <value>وضع العلامات على العبوات</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>سياسة الخصوصية</value>
+  </data>
+  <data name="CookiePreferences" xml:space="preserve">
+    <value>تفضيلات ملفات تعريف الارتباط </value>
+  </data>
+  <data name="BROWSE_OUR_FABRICS" xml:space="preserve">
+    <value>تصفح أقمشتنا</value>
+  </data>
+  <data name="NewArrivals" xml:space="preserve">
+    <value>أحدث المنتجات</value>
+  </data>
+  <data name="FabricsOnSale" xml:space="preserve">
+    <value>أقمشة بأسعار مخفضة </value>
+  </data>
+  <data name="BridalFabrics" xml:space="preserve">
+    <value>أقمشة الزفاف</value>
+  </data>
+  <data name="SpecialOccasionsFabrics" xml:space="preserve">
+    <value>أقمشة المناسبات الخاصة</value>
+  </data>
+  <data name="CoatingFabrics" xml:space="preserve">
+    <value>أقمشة الطلاء</value>
+  </data>
+  <data name="FineSuitingFabrics" xml:space="preserve">
+    <value>أقمشة فاخرة للبدلات</value>
+  </data>
+  <data name="Prints" xml:space="preserve">
+    <value>المطبوعات</value>
+  </data>
+  <data name="Jacquards" xml:space="preserve">
+    <value>الجاكار</value>
+  </data>
+  <data name="LacesAndEmbroidery" xml:space="preserve">
+    <value>الدانتيل والتطريز</value>
+  </data>
+  <data name="Boucle" xml:space="preserve">
+    <value>حلقة</value>
+  </data>
+  <data name="Velvet" xml:space="preserve">
+    <value>فيلفيت</value>
+  </data>
+  <data name="CUSTOMER_SUPPORT" xml:space="preserve">
+    <value>خدمة العملاء</value>
+  </data>
+  <data name="ContactForm" xml:space="preserve">
+    <value>نموذج الاتصال</value>
+  </data>
+  <data name="SendUsAMessage" xml:space="preserve">
+    <value>أرسل لنا رسالة</value>
+  </data>
+  <data name="WhatsApp" xml:space="preserve">
+    <value>واتس اب</value>
+  </data>
+  <data name="SupportTime" xml:space="preserve">
+    <value>وقت الدعم </value>
+  </data>
+  <data name="WarehouseAndOffices" xml:space="preserve">
+    <value>المستودعات والمكاتب</value>
+  </data>
+  <data name="ViewOnGoogleMaps" xml:space="preserve">
+    <value>عرض على خرائط جوجل</value>
+  </data>
+  <data name="Terms" xml:space="preserve">
+    <value>الشروط</value>
+  </data>
+  <data name="Privacy" xml:space="preserve">
+    <value>الخصوصية</value>
+  </data>
+  <data name="Cookies" xml:space="preserve">
+    <value>ملفات تعريف الارتباط</value>
+  </data>
+  <data name="Accessibility" xml:space="preserve">
+    <value>إمكانية الوصول</value>
+  </data>
 </root>

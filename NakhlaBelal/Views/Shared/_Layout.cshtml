@@ -35,7 +35,9 @@
     var validationErrors = ViewBag.ValidationErrors as List<string> ?? new List<string>();
 }
 @inject IOptions<RequestLocalizationOptions> LocOptions
-
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> SharedLocalizer
 @{
     // الحصول على اللغة الحالية
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
@@ -255,37 +257,37 @@
             <div class="row">
                 <!-- HELP Column -->
                 <div class="col-lg-3 col-md-6 nav-column">
-                    <h4 class="nav-title">HELP</h4>
+                    <h4 class="nav-title">@SharedLocalizer["HELP"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("FAQs", "Help")">FAQs</a></li>
-                        <li><a href="@Url.Action("Contact", "Help")">Contact Us</a></li>
-                        <li><a href="@Url.Action("Index", "Account")">My Account</a></li>
-                        <li><a href="@Url.Action("Track", "Order")">Track Order</a></li>
-                        <li><a href="@Url.Action("RequestSample", "Order")">Request Fabrics Samples</a></li>
-                        <li><a href="@Url.Action("Sitemap", "Home")">Sitemap</a></li>
+                        <li><a href="@Url.Action("FAQs", "Help")">@SharedLocalizer["FAQs"]</a></li>
+                        <li><a href="@Url.Action("Contact", "Help")">@SharedLocalizer["ContactUs"]</a></li>
+                        <li><a href="@Url.Action("Index", "Account")">@SharedLocalizer["MyAccount"]</a></li>
+                        <li><a href="@Url.Action("Track", "Order")">@SharedLocalizer["TrackOrder"]</a></li>
+                        <li><a href="@Url.Action("RequestSample", "Order")">@SharedLocalizer["RequestFabricsSamples"]</a></li>
+                        <li><a href="@Url.Action("Sitemap", "Home")">@SharedLocalizer["Sitemap"]</a></li>
                     </ul>
 
-                    <h4 class="nav-title mt-4">TEXTILE GUIDES</h4>
+                    <h4 class="nav-title mt-4">@SharedLocalizer["TEXTILE_GUIDES"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("Glossary", "Guide")">Textile Glossary</a></li>
-                        <li><a href="@Url.Action("Weaves", "Guide")">Weaves Glossary</a></li>
-                        <li><a href="@Url.Action("Drape", "Guide")">A Guide to Fabric Drape</a></li>
-                        <li><a href="@Url.Action("Abbreviations", "Guide")">Textile Fiber Abbreviations</a></li>
+                        <li><a href="@Url.Action("Glossary", "Guide")">@SharedLocalizer["TextileGlossary"]</a></li>
+                        <li><a href="@Url.Action("Weaves", "Guide")">@SharedLocalizer["WeavesGlossary"]</a></li>
+                        <li><a href="@Url.Action("Drape", "Guide")">@SharedLocalizer["FabricDrapeGuide"]</a></li>
+                        <li><a href="@Url.Action("Abbreviations", "Guide")">@SharedLocalizer["TextileFiberAbbreviations"]</a></li>
                     </ul>
                 </div>
 
                 <!-- ABOUT Column -->
                 <div class="col-lg-3 col-md-6 nav-column">
-                    <h4 class="nav-title">ABOUT</h4>
+                    <h4 class="nav-title">@SharedLocalizer["ABOUT"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("About", "Home")">About us</a></li>
-                        <li><a href="@Url.Action("Quality", "Home")">Quality Control</a></li>
-                        <li><a href="@Url.Action("Sustainability", "Home")">Sustainability</a></li>
-                        <li><a href="@Url.Action("Shipping", "Home")">Shipping Rates</a></li>
-                        <li><a href="@Url.Action("Payment", "Home")">Payment Methods</a></li>
+                        <li><a href="@Url.Action("About", "Home")">@SharedLocalizer["AboutUs"]</a></li>
+                        <li><a href="@Url.Action("Quality", "Home")">@SharedLocalizer["QualityControl"]</a></li>
+                        <li><a href="@Url.Action("Sustainability", "Home")">@SharedLocalizer["Sustainability"]</a></li>
+                        <li><a href="@Url.Action("Shipping", "Home")">@SharedLocalizer["ShippingRates"]</a></li>
+                        <li><a href="@Url.Action("Payment", "Home")">@SharedLocalizer["PaymentMethods"]</a></li>
                     </ul>
 
-                    <h4 class="nav-title mt-4">FOLLOW US</h4>
+                    <h4 class="nav-title mt-4">@SharedLocalizer["FOLLOW_US"]</h4>
                     <div class="social-icons">
                         <a href="https://facebook.com" class="social-icon" target="_blank">
                             <i class="fab fa-facebook-f"></i>
@@ -301,65 +303,64 @@
                         </a>
                     </div>
 
-                    <h4 class="nav-title mt-4">LEGAL INFO</h4>
+                    <h4 class="nav-title mt-4">@SharedLocalizer["LEGAL_INFO"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("Terms", "Legal")">Terms & Conditions</a></li>
-                        <li><a href="@Url.Action("ODR", "Legal")">ODR</a></li>
-                        <li><a href="@Url.Action("Labelling", "Legal")">Labelling of packaging</a></li>
-                        <li><a href="@Url.Action("Privacy", "Legal")">Privacy Policy</a></li>
-                        <li><a href="@Url.Action("Cookies", "Legal")">Cookie Preferences</a></li>
+                        <li><a href="@Url.Action("Terms", "Legal")">@SharedLocalizer["TermsConditions"]</a></li>
+                        <li><a href="@Url.Action("ODR", "Legal")">@SharedLocalizer["ODR"]</a></li>
+                        <li><a href="@Url.Action("Labelling", "Legal")">@SharedLocalizer["LabellingOfPackaging"]</a></li>
+                        <li><a href="@Url.Action("Privacy", "Legal")">@SharedLocalizer["PrivacyPolicy"]</a></li>
+                        <li><a href="@Url.Action("Cookies", "Legal")">@SharedLocalizer["CookiePreferences"]</a></li>
                     </ul>
                 </div>
 
                 <!-- BROWSE OUR FABRICS Column -->
                 <div class="col-lg-3 col-md-6 nav-column">
-                    <h4 class="nav-title">BROWSE OUR FABRICS</h4>
+                    <h4 class="nav-title">@SharedLocalizer["BROWSE_OUR_FABRICS"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("NewArrivals", "Fabrics")">New Arrivals</a></li>
-                        <li><a href="@Url.Action("OnSale", "Fabrics")">Fabrics on Sale</a></li>
-                        <li><a href="@Url.Action("Bridal", "Fabrics")">Bridal Fabrics</a></li>
-                        <li><a href="@Url.Action("SpecialOccasions", "Fabrics")">Special Occasions Fabrics</a></li>
-                        <li><a href="@Url.Action("Coating", "Fabrics")">Coating Fabrics</a></li>
-                        <li><a href="@Url.Action("Suiting", "Fabrics")">Fine Suiting Fabrics</a></li>
-                        <li><a href="@Url.Action("Prints", "Fabrics")">Prints</a></li>
-                        <li><a href="@Url.Action("Jacquards", "Fabrics")">Jacquards</a></li>
-                        <li><a href="@Url.Action("Laces", "Fabrics")">Laces and Embroidery</a></li>
-                        <li><a href="@Url.Action("Boucle", "Fabrics")">Bouclé</a></li>
-                        <li><a href="@Url.Action("Velvet", "Fabrics")">Velvet</a></li>
+                        <li><a href="@Url.Action("NewArrivals", "Fabrics")">@SharedLocalizer["NewArrivals"]</a></li>
+                        <li><a href="@Url.Action("OnSale", "Fabrics")">@SharedLocalizer["FabricsOnSale"]</a></li>
+                        <li><a href="@Url.Action("Bridal", "Fabrics")">@SharedLocalizer["BridalFabrics"]</a></li>
+                        <li><a href="@Url.Action("SpecialOccasions", "Fabrics")">@SharedLocalizer["SpecialOccasionsFabrics"]</a></li>
+                        <li><a href="@Url.Action("Coating", "Fabrics")">@SharedLocalizer["CoatingFabrics"]</a></li>
+                        <li><a href="@Url.Action("Suiting", "Fabrics")">@SharedLocalizer["FineSuitingFabrics"]</a></li>
+                        <li><a href="@Url.Action("Prints", "Fabrics")">@SharedLocalizer["Prints"]</a></li>
+                        <li><a href="@Url.Action("Jacquards", "Fabrics")">@SharedLocalizer["Jacquards"]</a></li>
+                        <li><a href="@Url.Action("Laces", "Fabrics")">@SharedLocalizer["LacesAndEmbroidery"]</a></li>
+                        <li><a href="@Url.Action("Boucle", "Fabrics")">@SharedLocalizer["Boucle"]</a></li>
+                        <li><a href="@Url.Action("Velvet", "Fabrics")">@SharedLocalizer["Velvet"]</a></li>
                     </ul>
                 </div>
 
                 <!-- CUSTOMER SUPPORT Column -->
                 <div class="col-lg-3 col-md-6 nav-column">
-                    <h4 class="nav-title">CUSTOMER SUPPORT</h4>
+                    <h4 class="nav-title">@SharedLocalizer["CUSTOMER_SUPPORT"]</h4>
                     <div class="contact-info">
                         <div class="contact-item">
-                            <div class="contact-label">Contact Form</div>
+                            <div class="contact-label">@SharedLocalizer["ContactForm"]</div>
                             <div class="contact-value">
-                                <a href="@Url.Action("Contact", "Support")">Send us a message</a>
+                                <a href="@Url.Action("Contact", "Support")">@SharedLocalizer["SendUsAMessage"]</a>
                             </div>
                         </div>
 
                         <div class="contact-item">
-                            <div class="contact-label">WhatsApp</div>
+                            <div class="contact-label">@SharedLocalizer["WhatsApp"]</div>
                             <div class="contact-value">
                                 <a href="https://wa.me/393316345321" class="whatsapp-link">+39 331 634 5321</a>
                             </div>
                         </div>
 
                         <div class="contact-item">
-                            <div class="contact-label">Support time</div>
+                            <div class="contact-label">@SharedLocalizer["SupportTime"]</div>
                             <div class="contact-value">Mon-Fri 09:00 - 17:00 (UTC+1)</div>
                         </div>
 
                         <div class="contact-item">
-                            <div class="contact-label">Warehouse and Offices</div>
+                            <div class="contact-label">@SharedLocalizer["WarehouseAndOffices"]</div>
                             <div class="contact-value">
-                                Via S. Gottardo, 8<br>
-                                22079 Villa Guardia (CO) Italy<br>
+                                Via S. Gottardo, 8<br>22079 Villa Guardia (CO) Italy<br>
                                 <a href="https://maps.google.com/?q=Via+S.+Gottardo,+8+22079+Villa+Guardia+(CO)+Italy"
                                        target="_blank" class="map-link">
-                                    View on Google Maps <i class="fas fa-arrow-right"></i>
+                                    @SharedLocalizer["ViewOnGoogleMaps"] <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
                         </div>
@@ -381,10 +382,10 @@
                 </div>
                 <div class="col-md-6">
                     <div class="legal-links">
-                        <a href="@Url.Action("Terms", "Legal")">Terms</a>
-                        <a href="@Url.Action("Privacy", "Legal")">Privacy</a>
-                        <a href="@Url.Action("Cookies", "Legal")">Cookies</a>
-                        <a href="@Url.Action("Accessibility", "Legal")">Accessibility</a>
+                        <a href="@Url.Action("Terms", "Legal")">@SharedLocalizer["Terms"]</a>
+                        <a href="@Url.Action("Privacy", "Legal")">@SharedLocalizer["Privacy"]</a>
+                        <a href="@Url.Action("Cookies", "Legal")">@SharedLocalizer["Cookies"]</a>
+                        <a href="@Url.Action("Accessibility", "Legal")">@SharedLocalizer["Accessibility"]</a>
                     </div>
                 </div>
             </div>
