@@ -1,4 +1,8 @@
 ﻿@model NakhlaBelal.ViewModels.LoginVM
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> SharedLocalizer
+
 
 <div class="Samebody">
     <div class="container2">
@@ -7,7 +11,7 @@
             <form asp-action="Login" method="post">
                 @Html.AntiForgeryToken()
 
-                <h1>Login</h1>
+                <h1>@SharedLocalizer["Login"]</h1>
 
                 <div class="social-icons">
                     <a href="#" class="icon"><i class="ri-google-line"></i></a>
@@ -16,28 +20,28 @@
                     <a href="#" class="icon"><i class="ri-linkedin-line"></i></a>
                 </div>
 
-                <span class="LoginSpanEdited">or use your account</span>
+                <span class="LoginSpanEdited">@SharedLocalizer["or use your account"]</span>
 
                 <!-- Validation summary -->
                 <div asp-validation-summary="All" class="text-danger"></div>
 
-                <input asp-for="UserNameOREmail" placeholder="Username or Email" />
+                <input asp-for="UserNameOREmail" placeholder="@SharedLocalizer["Username or Email"]" />
                 <span asp-validation-for="UserNameOREmail" class="text-danger"></span>
 
-                <input asp-for="Password" type="password" placeholder="Password" />
+                <input asp-for="Password" type="password" placeholder="@SharedLocalizer["Password"]" />
                 <span asp-validation-for="Password" class="text-danger"></span>
 
-                <button class="LoginButton" type="submit">Login</button>
+                <button class="LoginButton" type="submit">@SharedLocalizer["Login"]</button>
 
                 <p class="mt-3 LoginSpanEdited">
-                    Don't have an account?
-                    <a asp-action="Register" asp-controller="Account">Sign Up</a>
+                    @SharedLocalizer["Don't have an account?"]
+                    <a asp-action="Register" asp-controller="Account">@SharedLocalizer["Sign Up"]</a>
                 </p>
                 <p class="mt-3 LoginSpanEdited">                    
-                    <a asp-action="ResendEmailConfirmation">Resend Email Confirmation</a>
+                    <a asp-action="ResendEmailConfirmation">@SharedLocalizer["Resend Email Confirmation"]</a>
                 </p>
                 <p class="mt-3 LoginSpanEdited">                    
-                    <a asp-action="ForgetPassword">ForgetPassword</a>
+                    <a asp-action="ForgetPassword">@SharedLocalizer["Forget Password"]</a>
                 </p>
             </form>
 

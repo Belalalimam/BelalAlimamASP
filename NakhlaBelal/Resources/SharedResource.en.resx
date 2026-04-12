@@ -732,4 +732,145 @@
   <data name="PRINT RECEIPT" xml:space="preserve">
     <value>PRINT RECEIPT</value>
   </data>
+  <data name="Forget Password" xml:space="preserve">
+    <value>Forget Password</value>
+  </data>
+  <data name="Resend Email Confirmation" xml:space="preserve">
+    <value>Resend Email Confirmation</value>
+  </data>
+  <data name="Sign Up" xml:space="preserve">
+    <value>Sign Up</value>
+  </data>
+  <data name="Don't have an account?" xml:space="preserve">
+    <value>Don't have an account?</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>Login</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Username or Email" xml:space="preserve">
+    <value>Username or Email</value>
+  </data>
+  <data name="or use your account" xml:space="preserve">
+    <value>or use your account</value>
+  </data>
+  <data name="Back to Login" xml:space="preserve">
+    <value>Back to Login</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Enter Your Username or Email" xml:space="preserve">
+    <value>Enter Your Username or Email</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Confirm Password</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>New Password</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>Create Account</value>
+  </data>
+  <data name="OrUseEmailForRegistration" xml:space="preserve">
+    <value>Or Use Email For Registration</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>UserName</value>
+  </data>
+  <data name="AlreadyHaveAnAccount" xml:space="preserve">
+    <value>Already Have An Account</value>
+  </data>
+  <data name="UserNameOREmail" xml:space="preserve">
+    <value>UserName OR Email</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="ResendEmailConfirmation" xml:space="preserve">
+    <value>Resend Email Confirmation</value>
+  </data>
+  <data name="EnterYourUserNameOREmail" xml:space="preserve">
+    <value>Enter Your User Name OR Email</value>
+  </data>
+  <data name="ValidateOTP" xml:space="preserve">
+    <value>Validate OTP</value>
+  </data>
+  <data name="OTP Number" xml:space="preserve">
+    <value>OTP Number</value>
+  </data>
+  <data name="Enter Your OTP Number" xml:space="preserve">
+    <value>Enter Your OTP Number</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Personal Details" xml:space="preserve">
+    <value>Personal Details</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Country</value>
+  </data>
+  <data name="Enter First Name" xml:space="preserve">
+    <value>Enter First Name</value>
+  </data>
+  <data name="Enter Last Name" xml:space="preserve">
+    <value>Enter Last Name</value>
+  </data>
+  <data name="Enter email ID" xml:space="preserve">
+    <value>Enter email ID</value>
+  </data>
+  <data name="A" xml:space="preserve">
+    <value>Enter phone number</value>
+  </data>
+  <data name="Enter full Street Address" xml:space="preserve">
+    <value>Enter full Street Address</value>
+  </data>
+  <data name="Enter your Town / City" xml:space="preserve">
+    <value>Enter your Town / City</value>
+  </data>
+  <data name="Enter your State" xml:space="preserve">
+    <value>Enter your State</value>
+  </data>
+  <data name="Enter ZipCode" xml:space="preserve">
+    <value>Enter ZipCode</value>
+  </data>
+  <data name="Enter your Country" xml:space="preserve">
+    <value>Enter your Country</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Update</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Update Password" xml:space="preserve">
+    <value>Update Password</value>
+  </data>
+  <data name="Current Password" xml:space="preserve">
+    <value>Current Password</value>
+  </data>
+  <data name="Enter Current Password" xml:space="preserve">
+    <value>Enter Current Password</value>
+  </data>
+  <data name="Enter New Password" xml:space="preserve">
+    <value>Enter New Password</value>
+  </data>
+  <data name="Checkout" xml:space="preserve">
+    <value>Checkout</value>
+  </data>
+  <data name="VAT if applicable" xml:space="preserve">
+    <value>VAT if applicable</value>
+  </data>
+  <data name="m" xml:space="preserve">
+    <value>m</value>
+  </data>
+  <data name="buy 8 m or more at" xml:space="preserve">
+    <value>buy 8 m or more at</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
 </root>

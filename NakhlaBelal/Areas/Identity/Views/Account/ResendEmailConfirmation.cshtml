@@ -1,32 +1,33 @@
 ﻿@model NakhlaBelal.ViewModels.ResendEmailConfirmationVM
-
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> SharedLocalizer
 @{
     ViewData["Title"] = "ResendEmailConfirmation";
 }
 
-<div class="container">
-    <h1>ResendEmailConfirmation</h1>
+<div class="container w-50">
+    <h1>@SharedLocalizer["Resend Email Confirmation"]</h1>
 
-    <h4>ResendEmailConfirmationVM</h4>
     <hr />
     <div class="row">
         <div class="col-md-12">
             <form asp-action="ResendEmailConfirmation">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="form-group">
-                    <label asp-for="UserNameOREmail" class="control-label"></label>
-                    <input asp-for="UserNameOREmail" class="form-control" />
+                    <label asp-for="UserNameOREmail" class="control-label">@SharedLocalizer["UserNameOREmail"]</label>
+                    <input asp-for="UserNameOREmail" class="form-control tetext-muted mt-3" style="background-color: var(--jade-color) !important;" placeholder=@SharedLocalizer["EnterYourUserNameOREmail"] />
                     <span asp-validation-for="UserNameOREmail" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-3">
-                    <input type="submit" value="Send" class="btn btn-primary" />
+                    <input type="submit" value="@SharedLocalizer["Send"]" style="background-color: var(--evergreen-color) !important; border: none; color:var(--cotton-color);" class="btn btn-primary my-3" />
                 </div>
             </form>
         </div>
     </div>
 
     <div>
-        <a asp-action="Login">Back to Login</a>
+        <a asp-action="Login">@SharedLocalizer["Back to Login"]</a>
     </div>
 </div>
 

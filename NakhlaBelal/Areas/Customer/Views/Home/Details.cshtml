@@ -75,13 +75,13 @@
 
             <!-- Price -->
             <div class="pd-price-block">
-                <span class="pd-price">@priceStr / m</span>
-                <span class="pd-price-note"> + VAT if applicable</span>
+                <span class="pd-price">@priceStr / @SharedLocalizer["m"]</span>
+                <span class="pd-price-note"> + @SharedLocalizer["VAT if applicable"]</span>
             </div>
             @if (Model.Product.Discount > 0)
             {
                 <div class="pd-price-discount">
-                    Save @Model.Product.Discount% — buy 8 m or more at @bulkStr / m
+                    @SharedLocalizer["Save"] @Model.Product.Discount% — @SharedLocalizer["buy 8 m or more at"] @bulkStr / @SharedLocalizer["m"]!
                 </div>
             }
 

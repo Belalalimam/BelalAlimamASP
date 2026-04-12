@@ -732,4 +732,145 @@
   <data name="PRINT RECEIPT" xml:space="preserve">
     <value>طباعة الإيصال</value>
   </data>
+  <data name="Forget Password" xml:space="preserve">
+    <value>نسيت كلمة المرور</value>
+  </data>
+  <data name="Resend Email Confirmation" xml:space="preserve">
+    <value>إعادة إرسال رسالة التأكيد عبر البريد الإلكتروني</value>
+  </data>
+  <data name="Sign Up" xml:space="preserve">
+    <value>أنشاء حساب</value>
+  </data>
+  <data name="Don't have an account?" xml:space="preserve">
+    <value>ليس لديك حساب؟</value>
+  </data>
+  <data name="Login" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="Username or Email" xml:space="preserve">
+    <value>اسم المستخدم أو البريد الإلكتروني</value>
+  </data>
+  <data name="or use your account" xml:space="preserve">
+    <value>أو استخدم حسابك</value>
+  </data>
+  <data name="Back to Login" xml:space="preserve">
+    <value>العودة إلى تسجيل الدخول</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="Enter Your Username or Email" xml:space="preserve">
+    <value>أدخل اسم المستخدم أو البريد الإلكتروني</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>تأكيد كلمة المرور</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>كلمة مرور جديدة</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>إنشاء حساب</value>
+  </data>
+  <data name="OrUseEmailForRegistration" xml:space="preserve">
+    <value>أو استخدم البريد الإلكتروني للتسجيل</value>
+  </data>
+  <data name="UserName" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="AlreadyHaveAnAccount" xml:space="preserve">
+    <value>لديك حساب بالفعل</value>
+  </data>
+  <data name="UserNameOREmail" xml:space="preserve">
+    <value>اسم المستخدم أو البريد الإلكتروني</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>إرسال</value>
+  </data>
+  <data name="ResendEmailConfirmation" xml:space="preserve">
+    <value>إعادة إرسال رسالة التأكيد عبر البريد الإلكتروني</value>
+  </data>
+  <data name="EnterYourUserNameOREmail" xml:space="preserve">
+    <value>أدخل اسم المستخدم أو البريد الإلكتروني</value>
+  </data>
+  <data name="ValidateOTP" xml:space="preserve">
+    <value>التحقق من صحة رمز OTP</value>
+  </data>
+  <data name="OTP Number" xml:space="preserve">
+    <value>رقم OTP</value>
+  </data>
+  <data name="Enter Your OTP Number" xml:space="preserve">
+    <value>أدخل رقم كلمة المرور لمرة واحدة (OTP)</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Personal Details" xml:space="preserve">
+    <value>البيانات الشخصية</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>الدولة</value>
+  </data>
+  <data name="Enter First Name" xml:space="preserve">
+    <value>أدخل الاسم الأول</value>
+  </data>
+  <data name="Enter Last Name" xml:space="preserve">
+    <value>أدخل الاسم الأخير</value>
+  </data>
+  <data name="Enter email ID" xml:space="preserve">
+    <value>أدخل عنوان البريد الإلكتروني</value>
+  </data>
+  <data name="A" xml:space="preserve">
+    <value>أدخل رقم الهاتف</value>
+  </data>
+  <data name="Enter full Street Address" xml:space="preserve">
+    <value>أدخل العنوان الكامل</value>
+  </data>
+  <data name="Enter your Town / City" xml:space="preserve">
+    <value>أدخل اسم بلدتك/مدينتك</value>
+  </data>
+  <data name="Enter your State" xml:space="preserve">
+    <value>أدخل ولايتك</value>
+  </data>
+  <data name="Enter ZipCode" xml:space="preserve">
+    <value>أدخل الرمز البريدي</value>
+  </data>
+  <data name="Enter your Country" xml:space="preserve">
+    <value>أدخل دولتك</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>تحديث</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Update Password" xml:space="preserve">
+    <value>تحديث كلمة المرور</value>
+  </data>
+  <data name="Current Password" xml:space="preserve">
+    <value>كلمة المرور الحالية</value>
+  </data>
+  <data name="Enter Current Password" xml:space="preserve">
+    <value>أدخل كلمة المرور الحالية</value>
+  </data>
+  <data name="Enter New Password" xml:space="preserve">
+    <value>أدخل كلمة مرور جديدة</value>
+  </data>
+  <data name="Checkout" xml:space="preserve">
+    <value>الدفع</value>
+  </data>
+  <data name="VAT if applicable" xml:space="preserve">
+    <value>ضريبة القيمة المضافة، إن وجدت</value>
+  </data>
+  <data name="m" xml:space="preserve">
+    <value>للمتر</value>
+  </data>
+  <data name="buy 8 m or more at" xml:space="preserve">
+    <value>اشترِ 8 أمتار أو أكثر بسعر</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>وفر</value>
+  </data>
 </root>
