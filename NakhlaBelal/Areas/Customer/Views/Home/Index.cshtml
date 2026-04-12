@@ -19,7 +19,6 @@
     </div>
 </section>
 
-
 <section class="categories container">
     <div class="category-grid">
 
@@ -88,7 +87,7 @@
         @foreach (var project in ViewBag.ProjectCategories)
         {
             <a href="@Url.Action("CategroySearch", "Home", new { ProjectCategoryId = project.Id })" class="cat text-decoration-none">
-                <i class="@project.Icon"></i> @project.Name
+                <i class="@project.Icon"></i> @SharedLocalizer[project.Name]
             </a>
         }
     }
@@ -126,7 +125,7 @@
             {
                 <a class="fabric-card" href="@Url.Action("CategroySearch", "Home", new { FabricTypeId = type.Id })">
                     <img src="~/images/@type.ImageUrl" alt="@type.Name">
-                        <span>@type.Name</span>
+                        <span>@SharedLocalizer[type.Name]</span>
                     </a>
                 }
             }
