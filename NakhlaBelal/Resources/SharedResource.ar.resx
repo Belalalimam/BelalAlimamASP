@@ -588,4 +588,148 @@
   <data name="Accessibility" xml:space="preserve">
     <value>إمكانية الوصول</value>
   </data>
+  <data name="Basket" xml:space="preserve">
+    <value>سلة التسوق</value>
+  </data>
+  <data name="Your cart is empty" xml:space="preserve">
+    <value>سلة التسوق الخاصة بك فارغة</value>
+  </data>
+  <data name="Add some products to your cart to see them here!" xml:space="preserve">
+    <value>أضف بعض المنتجات إلى سلة التسوق لترى ما تحتويه هنا!</value>
+  </data>
+  <data name="Continue Shopping" xml:space="preserve">
+    <value>متابعة التسوق</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>المنتج</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>السعر</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>العدد</value>
+  </data>
+  <data name="Subtotal" xml:space="preserve">
+    <value>المجموع</value>
+  </data>
+  <data name="Are you sure you want to remove this item from your cart?" xml:space="preserve">
+    <value>هل أنت متأكد من رغبتك في إزالة هذا المنتج من سلة التسوق؟</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>إزلة</value>
+  </data>
+  <data name="Applied Promotion" xml:space="preserve">
+    <value>الترويج التطبيقي</value>
+  </data>
+  <data name="Apply Coupon" xml:space="preserve">
+    <value>استخدم القسيمة</value>
+  </data>
+  <data name="Enter coupon code" xml:space="preserve">
+    <value>أدخل رمز القسيمة</value>
+  </data>
+  <data name="Clear Cart" xml:space="preserve">
+    <value>إفراغ سلة التسوق</value>
+  </data>
+  <data name="Basket Totals" xml:space="preserve">
+    <value>إجمالي سلة التسوق</value>
+  </data>
+  <data name="DISCOUNT" xml:space="preserve">
+    <value>الخصم</value>
+  </data>
+  <data name="SHIPPING" xml:space="preserve">
+    <value>الشحن</value>
+  </data>
+  <data name="Shipping to" xml:space="preserve">
+    <value>الشحن إلى</value>
+  </data>
+  <data name="Change address" xml:space="preserve">
+    <value>تغير العنوان</value>
+  </data>
+  <data name="Standard Shipping" xml:space="preserve">
+    <value>الشحن العادي</value>
+  </data>
+  <data name="Express Shipping" xml:space="preserve">
+    <value>الشحن السريع</value>
+  </data>
+  <data name="CUSTOMS DUTIES AND TAXES" xml:space="preserve">
+    <value>الرسوم الجمركية والضرائب</value>
+  </data>
+  <data name="TOTAL" xml:space="preserve">
+    <value>الأجمالي</value>
+  </data>
+  <data name="PROCEED TO CHECKOUT" xml:space="preserve">
+    <value>انتقل إلى صفحة الدفع</value>
+  </data>
+  <data name="Or checkout with:" xml:space="preserve">
+    <value>أو قم بالدفع باستخدام:</value>
+  </data>
+  <data name="Pay in 3 installments of 19.94€ without interest with PayPal." xml:space="preserve">
+    <value>ادفع على 3 أقساط بقيمة 19.94 يورو بدون فوائد عبر PayPal.</value>
+  </data>
+  <data name="APR 0%" xml:space="preserve">
+    <value>0% معدل الفائدة السنوي</value>
+  </data>
+  <data name="Learn more" xml:space="preserve">
+    <value>اعرف المزيد</value>
+  </data>
+  <data name="OR" xml:space="preserve">
+    <value>أو</value>
+  </data>
+  <data name="Billing Details" xml:space="preserve">
+    <value>تفاصيل الفوترة</value>
+  </data>
+  <data name="First Name" xml:space="preserve">
+    <value>الاسم </value>
+  </data>
+  <data name="Last Name" xml:space="preserve">
+    <value>اللقب</value>
+  </data>
+  <data name="Street Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Town / City" xml:space="preserve">
+    <value>بلدة / مدينة</value>
+  </data>
+  <data name="Postcode / ZIP" xml:space="preserve">
+    <value>الرمز البريدي</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>رقم الهاتف</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>البريد الألكتروني</value>
+  </data>
+  <data name="Your Order" xml:space="preserve">
+    <value>طلبك</value>
+  </data>
+  <data name="VAT" xml:space="preserve">
+    <value>ضريبة القيمة المضافة</value>
+  </data>
+  <data name="Place Order" xml:space="preserve">
+    <value>تقديم الطلب</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>الولاية</value>
+  </data>
+  <data name="THANK YOU!" xml:space="preserve">
+    <value>شكراً!</value>
+  </data>
+  <data name="We have successfully received your order. One of our team members will review your information and get back to you within the next 48 hours." xml:space="preserve">
+    <value>لقد تلقينا طلبك بنجاح. سيقوم أحد أعضاء فريقنا بمراجعة بياناتك والرد عليك في غضون 48 ساعة.</value>
+  </data>
+  <data name="Order Number:" xml:space="preserve">
+    <value>رقم الطلب:</value>
+  </data>
+  <data name="Order Date:" xml:space="preserve">
+    <value>وقت الطلب:</value>
+  </data>
+  <data name="Payment Method:" xml:space="preserve">
+    <value>طريقة الدفع:</value>
+  </data>
+  <data name="Bank Transfer" xml:space="preserve">
+    <value>التحويل المصرفي</value>
+  </data>
+  <data name="PRINT RECEIPT" xml:space="preserve">
+    <value>طباعة الإيصال</value>
+  </data>
 </root>

@@ -1,5 +1,7 @@
 ﻿@model NakhlaBelal.ViewModels.CartVM
-
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> SharedLocalizer
 @{
     ViewData["Title"] = "Shopping Cart";
 }
@@ -7,15 +9,15 @@
 
     <div class="container-cart ">
         <div class="basket-section">
-            <h1>Basket</h1>
+            <h1>@SharedLocalizer["Basket"]</h1>
 
             @if (!Model.CartItems.Any())
             {
                 <div class="empty-cart">
-                    <h3>Your cart is empty</h3>
-                    <p>Add some products to your cart to see them here!</p>
+                    <h3>@SharedLocalizer["Your cart is empty"]</h3>
+                    <p>@SharedLocalizer["Add some products to your cart to see them here!"]</p>
                     <a href="@Url.Action("Index", "Home", new { area = "Customer" })" class="continue-shopping-btn">
-                        Continue Shopping
+                        @SharedLocalizer["Continue Shopping"]
                     </a>
                 </div>
             }
@@ -23,10 +25,10 @@
             {
                 <div class="cart-table">
                     <div class="cart-header">
-                        <div class="header-product">PRODUCT</div>
-                        <div class="header-price">PRICE</div>
-                        <div class="header-quantity">QUANTITY</div>
-                        <div class="header-subtotal">SUBTOTAL</div>
+                        <div class="header-product">@SharedLocalizer["Product"]</div>
+                        <div class="header-price">@SharedLocalizer["Price"]</div>
+                        <div class="header-quantity">@SharedLocalizer["Quantity"]</div>
+                        <div class="header-subtotal">@SharedLocalizer["Subtotal"]</div>
                         <div class="header-remove"></div>
                     </div>
 
@@ -80,7 +82,7 @@
 
                             <div class="remove-col">
                                 <a class="remove-btn" asp-action="DeleteProduct" asp-route-productId="@item.ProductId"
-                                   onclick="return confirm('Are you sure you want to remove this item from your cart?')">
+                                   onclick="return confirm('@SharedLocalizer["Are you sure you want to remove this item from your cart?"]')">
                                     ×
                                 </a>
                             </div>
@@ -93,30 +95,30 @@
                             @if (!string.IsNullOrEmpty(Model.PromotionCode))
                             {
                                 <div class="applied-promotion">
-                                    <span>Applied Promotion: <strong>@Model.PromotionName (@Model.PromotionCode)</strong></span>
+                                    <span>@SharedLocalizer["Applied Promotion"]: <strong>@Model.PromotionName (@Model.PromotionCode)</strong></span>
                                     @* التصحيح هنا: جعلنا الپارامتر removePromo ليطابق الكنترولر *@
-                                    <a href="@Url.Action("Index", "Cart", new { removePromo = true })" class="remove-promo">Remove</a>
+                                    <a href="@Url.Action("Index", "Cart", new { removePromo = true })" class="remove-promo">@SharedLocalizer["Remove"]</a>
                                 </div>
                             }
                             else
                             {
                                 <form asp-action="Index" asp-controller="Cart" method="get" class="coupon-form">
-                                    <input type="text" name="code" class="coupon-input" placeholder="Enter coupon code">
-                                    <button type="submit" class="apply-btn">Apply Coupon</button>
+                                    <input type="text" name="code" class="coupon-input" placeholder="@SharedLocalizer["Enter coupon code"]">
+                                    <button type="submit" class="apply-btn">@SharedLocalizer["Apply Coupon"]</button>
                                 </form>
                             }
                         </div>
 
                     <a asp-action="ClearCart" class="clear-cart-btn"
-                       onclick="return confirm('Are you sure you want to clear your entire cart?')">
-                        Clear Cart
+                       onclick="return confirm('@SharedLocalizer["Are you sure you want to clear your entire cart?"]')">
+                        @SharedLocalizer["Clear Cart"]
                     </a>
                 </div>
 
                 @if (Model.SuggestedProducts.Any())
                 {
                     <div class="recommendations">
-                        <h2>You may also be interested in...</h2>
+                        <h2>@SharedLocalizer["You may also be interested in..."]</h2>
 
 
                         <swiper-container class="mySwiper" pagination="true" pagination-clickable="true" space-between="30" slides-per-view="3">
@@ -155,16 +157,16 @@
         @if (Model.CartItems.Any())
         {
             <div class="totals-section">
-                <h2>Basket Totals</h2>
+                <h2>@SharedLocalizer["Basket Totals"]</h2>
 
                 <div class="total-row subtotal">
-                    <span>SUBTOTAL</span>
+                        <span>@SharedLocalizer["Subtotal"]</span>
                     <span>€ @Model.FormattedSubtotal</span>
                 </div>
                 @if (Model.Discount > 0)
                 {
                     <div class="total-row discount">
-                        <span>DISCOUNT</span>
+                        <span>@SharedLocalizer["DISCOUNT"]</span>
                         @* فورمات العملة مباشرة لضمان الظهور *@
                             <span>-€ @Model.FormattedDiscount</span>
                     </div>
@@ -173,23 +175,23 @@
                     {
                         <div class="shipping-info">
                             <div class="shipping-label">
-                                SHIPPING
+                                @SharedLocalizer["SHIPPING"]
                                 <span class="shipping-price">€ @Model.Shipping</span>
                             </div>
                             <div class="shipping-address">
                                 @* عرض العنوان الحقيقي القادم من قاعدة البيانات *@
-                                Shipping to <strong>@Model.ShippingAddress</strong>
+                                @SharedLocalizer["Shipping to"] <strong>@Model.ShippingAddress</strong>
                                 <br>
-                                <a href="@Url.Action("index", "Profile", new { area = "Identity" })" class="change-address">Change address</a>
+                                <a href="@Url.Action("index", "Profile", new { area = "Identity" })" class="change-address">@SharedLocalizer["Change address"]</a>
                             </div>
                             <div class="shipping-methods">
                                 <div class="shipping-method">
                                     <input type="radio" id="standard" name="shipping" class="inputCheck" checked value="5.99">
-                                    <label for="standard">Standard Shipping: € 5.99</label>
+                                    <label for="standard">@SharedLocalizer["Standard Shipping"]: € 5.99</label>
                                 </div>
                                 <div class="shipping-method">
                                     <input type="radio" id="express" name="shipping" class="inputCheck" value="12.99">
-                                    <label for="express">Express Shipping: € 12.99</label>
+                                    <label for="express">@SharedLocalizer["Express Shipping"]: € 12.99</label>
                                 </div>
                             </div>
                         </div>
@@ -204,12 +206,12 @@
 
 
                 <div class="total-row">
-                    <span>CUSTOMS DUTIES AND TAXES</span>
+                    <span>@SharedLocalizer["CUSTOMS DUTIES AND TAXES"]</span>
                     <span>€ @Model.FormattedTax</span>
                 </div>
 
                 <div class="total-row final">
-                    <span>TOTAL</span>
+                    <span>@SharedLocalizer["TOTAL"]</span>
                     <div class="total-amount">
                         <div class="final-total">€ @Model.FormattedTotal</div>
                         <div class="usd-estimate">about US $@((Model.Total * 1.08m).ToString("N2"))</div>
@@ -218,23 +220,23 @@
 
                 <div class="checkout-actions">
                         <a href="@Url.Action("Index", "Checkout", new { area = "Customer" })" class="checkout-btn">
-                        PROCEED TO CHECKOUT
+                        @SharedLocalizer["PROCEED TO CHECKOUT"]
                     </a>
 
                     <div class="alternative-payments">
-                        <p>Or checkout with:</p>
+                        <p>@SharedLocalizer["Or checkout with:"]</p>
                         <button type="button" class="paypal-btn" onclick="processPayPal()">PayPal</button>
                     </div>
                 </div>
 
                 <div class="paypal-info">
-                    Paga in 3 rate da 19,94€ senza interessi con PayPal.<br>
-                    TAEG 0%. <a href="#" style="color: #e91e63;">Scopri di più</a>
+                    @SharedLocalizer["Pay in 3 installments of 19.94€ without interest with PayPal."]<br>
+                    @SharedLocalizer["APR 0%"]. <a href="#" style="color: #e91e63;">@SharedLocalizer["Learn more"]</a>
                 </div>
 
                 <div class="continue-shopping">
-                    OR<br><br>
-                    <a href="@Url.Action("Index", "Home", new { area = "" })">CONTINUE SHOPPING</a>
+                    @SharedLocalizer["OR"]<br><br>
+                        <a href="@Url.Action("Index", "Home", new { area = "" })">@SharedLocalizer["Continue Shopping"]</a>
                 </div>
             </div>
         }

@@ -1,57 +1,59 @@
 ﻿@model NakhlaBelal.ViewModels.CheckoutVM
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> SharedLocalizer
 
 <div class="container py-5">
-    <h2 class="text-center mb-5">CHECKOUT</h2>
-    <form asp-action="ProcessOrder" method="post">
-        
+    <h2 class="text-center mb-5">@SharedLocalizer["Checkout"]</h2>
+    <form asp-action="ProcessOrder" method="post">       
 
         @* لاحظ هنا سنرسل البيانات لـ Pay *@
         <div class="row">
             <div class="col-md-7">
                 <div class="card p-4 shadow-sm TableContainerCheck">
-                    <h4>Billing Details</h4>
+                    <h4>@SharedLocalizer["Billing Details"]</h4>
                     <hr />
                     <div class="row">
                         <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingFirstName">First Name *</label>
+                            <label asp-for="ShippingFirstName">@SharedLocalizer["First Name"] *</label>
                             <input asp-for="ShippingFirstName" class="form-control" />
                             <span asp-validation-for="ShippingFirstName" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingLastName">Last Name *</label>
+                            <label asp-for="ShippingLastName">@SharedLocalizer["Last Name"] *</label>
                             <input asp-for="ShippingLastName" class="form-control" />
                             <span asp-validation-for="ShippingLastName" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingAddress">Street Address *</label>
+                            <label asp-for="ShippingAddress">@SharedLocalizer["Street Address"] *</label>
                             <input asp-for="ShippingAddress" class="form-control" />
                             <span asp-validation-for="ShippingAddress" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingCity">Town / City *</label>
+                            <label asp-for="ShippingCity">@SharedLocalizer["Town / City"] *</label>
                             <input asp-for="ShippingCity" class="form-control" />
                             <span asp-validation-for="ShippingCity" class="text-danger"></span>
                         </div>
-                        <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingState">State *</label>
-                            <input asp-for="ShippingState" class="form-control" />
-                            <span asp-validation-for="ShippingState" class="text-danger"></span>
-                        </div>
 
                         <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingZipCode">Postcode / ZIP *</label>
+                            <label asp-for="ShippingZipCode">@SharedLocalizer["Postcode / ZIP"] *</label>
                             <input asp-for="ShippingZipCode" class="form-control" />
                             <span asp-validation-for="ShippingZipCode" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingPhone">Phone *</label>
+                            <label asp-for="ShippingPhone">@SharedLocalizer["Phone"] *</label>
                             <input asp-for="ShippingPhone" class="form-control" />
                             <span asp-validation-for="ShippingPhone" class="text-danger"></span>
                         </div>
                         <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingEmail">Email *</label>
+                            <label asp-for="ShippingEmail">@SharedLocalizer["Email"] *</label>
                             <input asp-for="ShippingEmail" class="form-control" />
                             <span asp-validation-for="ShippingEmail" class="text-danger"></span>
+                        </div>
+                        <div class="form-group col-md-6 mb-3">
+                            <label asp-for="ShippingState">@SharedLocalizer["State"] *</label>
+                            <input asp-for="ShippingState" class="form-control" />
+                            <span asp-validation-for="ShippingState" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
@@ -59,12 +61,12 @@
 
             <div class="col-md-5">
                 <div class="card p-4 shadow-sm TableContainerCheck">
-                    <h4>Your Order</h4>
+                    <h4>@SharedLocalizer["Your Order"]</h4>
                     <table class="table mt-3">
                         <thead>
                             <tr>
-                                <th class="TableContainerCheck">Product</th>
-                                <th class="text-end TableContainerCheck">Subtotal</th>
+                                <th class="TableContainerCheck">@SharedLocalizer["Product"]</th>
+                                <th class="text-end TableContainerCheck">@SharedLocalizer["Subtotal"]</th>
                             </tr>
                         </thead>
                         <tbody class="">
@@ -80,12 +82,12 @@
                             }
                             else
                             {
-                                <tr><td colspan="2">Your cart is empty</td></tr>
+                                <tr><td colspan="2">@SharedLocalizer["Your cart is empty"]</td></tr>
                             }
                         </tbody>
                         <tfoot class="fw-bold">
                             <tr class="">
-                                <td class="TableContainerCheck">Subtotal</td>
+                                <td class="TableContainerCheck">@SharedLocalizer["Subtotal"]</td>
                                 <td class="text-end TableContainerCheck">€ @Model.CartData.Subtotal.ToString("N2")</td>
                             </tr>
                         </tr>
@@ -99,24 +101,24 @@
                         @if (Model.CartData.Tax > 0)
                         {
                             <tr>
-                                <td class="TableContainerCheck">VAT (19%)</td>
+                                <td class="TableContainerCheck">@SharedLocalizer["VAT"] (19%)</td>
                                 <td class="text-end TableContainerCheck">€ @Model.CartData.Tax.ToString("N2")</td>
                             </tr>
                         }
                         <tr>
                             <tr>
-                                <td class="TableContainerCheck">Shipping</td>
+                                <td class="TableContainerCheck">@SharedLocalizer["SHIPPING"]</td>
                                 <td class="text-end TableContainerCheck">€ @Model.CartData.Shipping.ToString("N2")</td>
                             </tr>
                             <tr class="text-primary h5 ">
-                                <td class="TableContainerCheck">Total</td>
+                                <td class="TableContainerCheck">@SharedLocalizer["TOTAL"]</td>
                                 <td class="text-end TableContainerCheck">€ @Model.CartData.Total.ToString("N2")</td>
                             </tr>
                         </tfoot>
                     </table>
 
                     <div class="mt-4">
-                        <button type="submit" class="checkout-btn">PLACE ORDER</button>
+                        <button type="submit" class="checkout-btn">@SharedLocalizer["Place Order"]</button>
                     </div>
                 </div>
             </div>

@@ -1,6 +1,9 @@
 ﻿@{
     ViewData["Title"] = "Order Confirmation";
 }
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> SharedLocalizer
 
 <div class="container my-5 py-5">
     <div class="row justify-content-center">
@@ -11,34 +14,34 @@
                 </svg>
             </div>
 
-            <h1 class="display-4 fw-bold mb-3" style="letter-spacing: -1px;">THANK YOU!</h1>
+            <h1 class="display-4 fw-bold mb-3" style="letter-spacing: -1px;">@SharedLocalizer["THANK YOU!"]</h1>
             <p class="lead text-muted mb-5">
-                We have successfully received your order. One of our team members will review your information and get back to you within the next 48 hours.
+                @SharedLocalizer["We have successfully received your order. One of our team members will review your information and get back to you within the next 48 hours."]
             </p>
 
             <div class="card border-0 shadow-sm bg-light p-4 mb-5">
                 <div class="row text-start">
                     <div class="col-sm-4 mb-3 mb-sm-0">
-                        <small class="text-uppercase text-muted d-block fw-bold">Order Number:</small>
+                        <small class="text-uppercase text-muted d-block fw-bold">@SharedLocalizer["Order Number:"]</small>
                         <span class="fw-bold text-dark">#@DateTime.Now.ToString("yyyy")-@Guid.NewGuid().ToString("N").Substring(0, 5).ToUpper()</span>
                     </div>
                     <div class="col-sm-4 mb-3 mb-sm-0">
-                        <small class="text-uppercase text-muted d-block fw-bold">Order Date:</small>
+                        <small class="text-uppercase text-muted d-block fw-bold">@SharedLocalizer["Order Date:"]</small>
                         <span class="fw-bold text-dark">@DateTime.Now.ToString("MMMM dd, yyyy")</span>
                     </div>
                     <div class="col-sm-4">
-                        <small class="text-uppercase text-muted d-block fw-bold">Payment Method:</small>
-                        <span class="fw-bold text-dark">Bank Transfer</span>
+                        <small class="text-uppercase text-muted d-block fw-bold">@SharedLocalizer["Payment Method:"]</small>
+                        <span class="fw-bold text-dark">@SharedLocalizer["Bank Transfer"]</span>
                     </div>
                 </div>
             </div>
 
             <div class="d-grid d-sm-flex justify-content-sm-center gap-3">
-                <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-dark btn-lg px-5 py-3 fw-bold shadow-sm">
-                    CONTINUE SHOPPING
+                <a asp-area="Customer" asp-controller="Home" asp-action="Index" style="text-transform:uppercase;" class="btn btn-dark btn-lg px-5 py-3 fw-bold shadow-sm">
+                    @SharedLocalizer["Continue Shopping"]
                 </a>
                 <button onclick="window.print()" class="btn btn-outline-secondary btn-lg px-4 py-3 fw-bold">
-                    PRINT RECEIPT
+                    @SharedLocalizer["PRINT RECEIPT"]
                 </button>
             </div>
         </div>

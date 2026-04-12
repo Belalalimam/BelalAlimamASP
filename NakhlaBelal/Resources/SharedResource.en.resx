@@ -588,4 +588,148 @@
   <data name="Accessibility" xml:space="preserve">
     <value>Accessibility</value>
   </data>
+  <data name="Basket" xml:space="preserve">
+    <value>Basket</value>
+  </data>
+  <data name="Your cart is empty" xml:space="preserve">
+    <value>Your cart is empty</value>
+  </data>
+  <data name="Add some products to your cart to see them here!" xml:space="preserve">
+    <value>Add some products to your cart to see them here!</value>
+  </data>
+  <data name="Continue Shopping" xml:space="preserve">
+    <value>Continue Shopping</value>
+  </data>
+  <data name="Product" xml:space="preserve">
+    <value>Product</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Price</value>
+  </data>
+  <data name="Quantity" xml:space="preserve">
+    <value>Quantity</value>
+  </data>
+  <data name="Subtotal" xml:space="preserve">
+    <value>Subtotal</value>
+  </data>
+  <data name="Are you sure you want to remove this item from your cart?" xml:space="preserve">
+    <value>Are you sure you want to remove this item from your cart?</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Applied Promotion" xml:space="preserve">
+    <value>Applied Promotion</value>
+  </data>
+  <data name="Apply Coupon" xml:space="preserve">
+    <value>Apply Coupon</value>
+  </data>
+  <data name="Enter coupon code" xml:space="preserve">
+    <value>Enter coupon code</value>
+  </data>
+  <data name="Clear Cart" xml:space="preserve">
+    <value>Clear Cart</value>
+  </data>
+  <data name="Basket Totals" xml:space="preserve">
+    <value>Basket Totals</value>
+  </data>
+  <data name="DISCOUNT" xml:space="preserve">
+    <value>DISCOUNT</value>
+  </data>
+  <data name="SHIPPING" xml:space="preserve">
+    <value>SHIPPING</value>
+  </data>
+  <data name="Shipping to" xml:space="preserve">
+    <value>Shipping to</value>
+  </data>
+  <data name="Change address" xml:space="preserve">
+    <value>Change address</value>
+  </data>
+  <data name="Standard Shipping" xml:space="preserve">
+    <value>Standard Shipping</value>
+  </data>
+  <data name="Express Shipping" xml:space="preserve">
+    <value>الشحن السريع</value>
+  </data>
+  <data name="CUSTOMS DUTIES AND TAXES" xml:space="preserve">
+    <value>CUSTOMS DUTIES AND TAXES</value>
+  </data>
+  <data name="TOTAL" xml:space="preserve">
+    <value>TOTAL</value>
+  </data>
+  <data name="PROCEED TO CHECKOUT" xml:space="preserve">
+    <value>PROCEED TO CHECKOUT</value>
+  </data>
+  <data name="Or checkout with:" xml:space="preserve">
+    <value>Or checkout with:</value>
+  </data>
+  <data name="Pay in 3 installments of 19.94€ without interest with PayPal." xml:space="preserve">
+    <value>Pay in 3 installments of 19.94€ without interest with PayPal.</value>
+  </data>
+  <data name="APR 0%" xml:space="preserve">
+    <value>APR 0%</value>
+  </data>
+  <data name="Learn more" xml:space="preserve">
+    <value>Learn more</value>
+  </data>
+  <data name="OR" xml:space="preserve">
+    <value>OR</value>
+  </data>
+  <data name="Billing Details" xml:space="preserve">
+    <value>Billing Details</value>
+  </data>
+  <data name="First Name" xml:space="preserve">
+    <value>First Name</value>
+  </data>
+  <data name="Last Name" xml:space="preserve">
+    <value>Last Name</value>
+  </data>
+  <data name="Street Address" xml:space="preserve">
+    <value>Street Address</value>
+  </data>
+  <data name="Town / City" xml:space="preserve">
+    <value>Town / City</value>
+  </data>
+  <data name="Postcode / ZIP" xml:space="preserve">
+    <value>Postcode / ZIP</value>
+  </data>
+  <data name="Phone" xml:space="preserve">
+    <value>Phone</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Your Order" xml:space="preserve">
+    <value>Your Order</value>
+  </data>
+  <data name="VAT" xml:space="preserve">
+    <value>VAT</value>
+  </data>
+  <data name="Place Order" xml:space="preserve">
+    <value>Place Order</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>ShippingState</value>
+  </data>
+  <data name="THANK YOU!" xml:space="preserve">
+    <value>THANK YOU!</value>
+  </data>
+  <data name="We have successfully received your order. One of our team members will review your information and get back to you within the next 48 hours." xml:space="preserve">
+    <value>We have successfully received your order. One of our team members will review your information and get back to you within the next 48 hours.</value>
+  </data>
+  <data name="Order Number:" xml:space="preserve">
+    <value>Order Number:</value>
+  </data>
+  <data name="Order Date:" xml:space="preserve">
+    <value>Order Date:</value>
+  </data>
+  <data name="Payment Method:" xml:space="preserve">
+    <value>Payment Method:</value>
+  </data>
+  <data name="Bank Transfer" xml:space="preserve">
+    <value>Bank Transfer</value>
+  </data>
+  <data name="PRINT RECEIPT" xml:space="preserve">
+    <value>PRINT RECEIPT</value>
+  </data>
 </root>
