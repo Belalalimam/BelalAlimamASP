@@ -873,4 +873,7 @@
   <data name="Save" xml:space="preserve">
     <value>وفر</value>
   </data>
+  <data name="Type &amp; hit ENTER" xml:space="preserve">
+    <value>اكتب واضغط على مفتاح ENTER</value>
+  </data>
 </root>

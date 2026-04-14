@@ -873,4 +873,7 @@
   <data name="Save" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="Type &amp; hit ENTER" xml:space="preserve">
+    <value>Type &amp; hit ENTER</value>
+  </data>
 </root>
