@@ -236,7 +236,7 @@
     }
 
     .cs-topfilter-item {
-        flex: 1 1 50%;
+        flex: 1 1 100%;
         border-bottom: 1px solid #e0e0e0;
     }
 
@@ -315,7 +315,7 @@
 }
 
 .pp-mobile-panel .cs-topfilter-item {
-    flex: 1 1 50%;
+    flex: 1 1 100%;
     border-bottom: 1px solid #e0e0e0;
 }
 

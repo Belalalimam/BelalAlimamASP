@@ -129,24 +129,33 @@
                 <div class="cs-topfilters">
                     <div class="cs-topfilter-item">
                         <span class="cs-topfilter-label">@SharedLocalizer["Color"]</span>
-                        <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <select id="colorFilter" class="cs-topfilter-select" onchange="applyFilters()">
                             <option value="">@SharedLocalizer["Any"]</option>
+                            @if (ViewBag.Colors != null)
+                            {
+                                @foreach (var c in ViewBag.Colors)
+                                {
+                                    <option value="@c.Id">@SharedLocalizer[@c.Name]</option>
+                                }
+                            }
                         </select>
                     </div>
                     <div class="cs-topfilter-item">
                         <span class="cs-topfilter-label"> @SharedLocalizer["Type"]</span>
-                        <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <select id="typeFilter" class="cs-topfilter-select" onchange="applyFilters()">
                             <option value="">@SharedLocalizer["Any"]</option>
-                            <option>Tweed</option>
-                            <option>Bouclé</option>
-                            <option>Jacquard</option>
-                            <option>Velvet</option>
-                            <option>Crêpe</option>
+                            @if (ViewBag.FabricTypes != null)
+                            {
+                                @foreach (var ft in ViewBag.FabricTypes)
+                                {
+                                    <option value="@ft.Id">@SharedLocalizer[@ft.Name]</option>
+                                }
+                            }
                         </select>
                     </div>
                     <div class="cs-topfilter-item">
                         <span class="cs-topfilter-label">@SharedLocalizer["Quality"]</span>
-                        <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <select class="cs-topfilter-select">
                             <option value="">@SharedLocalizer["Any"]</option>
                             <option>Premium</option>
                             <option>Standard</option>
@@ -155,19 +164,33 @@
                     </div>
                     <div class="cs-topfilter-item">
                         <span class="cs-topfilter-label"> @SharedLocalizer["COMPOSITION"]</span>
-                        <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <select id="compositionFilter" class="cs-topfilter-select" onchange="applyFilters()">
                             <option value="">@SharedLocalizer["Any"]</option>
+                            @if (ViewBag.Compositions != null)
+                            {
+                                @foreach (var comp in ViewBag.Compositions)
+                                {
+                                    <option value="@comp.Id">@SharedLocalizer[@comp.Name]</option>
+                                }
+                            }
                         </select>
                     </div>
                     <div class="cs-topfilter-item">
                         <span class="cs-topfilter-label"> @SharedLocalizer["PROJECT"]</span>
-                        <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <select id="projectFilter" class="cs-topfilter-select" onchange="applyFilters()">
                             <option value="">@SharedLocalizer["Any"]</option>
+                            @if (ViewBag.ProjectCategory != null)
+                            {
+                                @foreach (var project in ViewBag.ProjectCategory)
+                                {
+                                    <option value="@project.Id">@SharedLocalizer[@project.Name]</option>
+                                }
+                            }
                         </select>
                     </div>
                     <div class="cs-topfilter-item">
                         <span class="cs-topfilter-label"> @SharedLocalizer["Pattern"]</span>
-                        <select class="cs-topfilter-select" onchange="applyFilters()">
+                        <select class="cs-topfilter-select">
                             <option value="">@SharedLocalizer["Any"]</option>
                             <option>Solid</option>
                             <option>Checkered</option>
@@ -185,24 +208,33 @@
             <div class="cs-topfilters">
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label">@SharedLocalizer["Color"]</span>
-                    <select class="cs-topfilter-select" onchange="applyFilters()">
-                        <option value="">@SharedLocalizer["Any"]</option>                        
+                    <select id="colorFilter" class="cs-topfilter-select" onchange="applyFilters()">
+                        <option value="">@SharedLocalizer["Any"]</option>
+                        @if (ViewBag.Colors != null)
+                        {
+                            @foreach (var c in ViewBag.Colors)
+                            {
+                                <option value="@c.Id">@SharedLocalizer[@c.Name]</option>
+                            }
+                        }
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label"> @SharedLocalizer["Type"]</span>
-                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <select id="typeFilter" class="cs-topfilter-select" onchange="applyFilters()">
                         <option value="">@SharedLocalizer["Any"]</option>
-                        <option>Tweed</option>
-                        <option>Bouclé</option>
-                        <option>Jacquard</option>
-                        <option>Velvet</option>
-                        <option>Crêpe</option>
+                        @if (ViewBag.FabricTypes != null)
+                        {
+                            @foreach (var ft in ViewBag.FabricTypes)
+                            {
+                                <option value="@ft.Id">@SharedLocalizer[@ft.Name]</option>
+                            }
+                        }
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label">@SharedLocalizer["Quality"]</span>
-                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <select class="cs-topfilter-select">
                         <option value="">@SharedLocalizer["Any"]</option>
                         <option>Premium</option>
                         <option>Standard</option>
@@ -211,19 +243,33 @@
                 </div>
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label"> @SharedLocalizer["COMPOSITION"]</span>
-                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <select id="compositionFilter" class="cs-topfilter-select" onchange="applyFilters()">
                         <option value="">@SharedLocalizer["Any"]</option>
+                        @if (ViewBag.Compositions != null)
+                        {
+                            @foreach (var comp in ViewBag.Compositions)
+                            {
+                                <option value="@comp.Id">@SharedLocalizer[@comp.Name]</option>
+                            }
+                        }
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label"> @SharedLocalizer["PROJECT"]</span>
-                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <select id="projectFilter" class="cs-topfilter-select" onchange="applyFilters()">
                         <option value="">@SharedLocalizer["Any"]</option>
+                        @if (ViewBag.ProjectCategory != null)
+                        {
+                            @foreach (var project in ViewBag.ProjectCategory)
+                            {
+                                <option value="@project.Id">@SharedLocalizer[@project.Name]</option>
+                            }
+                        }
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label"> @SharedLocalizer["Pattern"]</span>
-                    <select class="cs-topfilter-select" onchange="applyFilters()">
+                    <select class="cs-topfilter-select">
                         <option value="">@SharedLocalizer["Any"]</option>
                         <option>Solid</option>
                         <option>Checkered</option>
@@ -356,74 +402,100 @@
     </main>
 </div>
 
-@section Scripts {
-    <script>
-        const ITEMS_PER_PAGE = 12;
-        let currentPage = 1;
+<script>
+    const ITEMS_PER_PAGE = 8;
+    let currentPage = 1;
 
-        function applyFilters() {
-            const search = document.getElementById('searchInput').value.toLowerCase().trim();
-            const maxW = parseInt(document.getElementById('widthRange').value);
-            const maxWt = parseInt(document.getElementById('weightRange').value);
-            const sort = document.getElementById('sortSelect').value;
+    function syncToMain(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.value = val;
+    }
 
-            let cards = Array.from(document.querySelectorAll('#productGrid .pp-card'));
+    function applyFilters() {
+        const search  = document.getElementById('searchInput').value.toLowerCase();
+        const maxW    = parseInt(document.getElementById('widthRange').value);
+        const maxWt   = parseInt(document.getElementById('weightRange').value);
+        const sort    = document.getElementById('sortSelect').value;
 
-            let visible = cards.filter(c => {
-                const nameOk = c.dataset.name.includes(search);
-                const wOk = !c.dataset.width || parseInt(c.dataset.width) <= maxW;
-                const wtOk = !c.dataset.weight || parseInt(c.dataset.weight) <= maxWt;
-                return nameOk && wOk && wtOk;
-            });
+        const colorVal       = (document.getElementById('colorFilter')?.value       || '');
+        const typeVal        = (document.getElementById('typeFilter')?.value        || '');
+        const compositionVal = (document.getElementById('compositionFilter')?.value || '');
+        const projectVal     = (document.getElementById('projectFilter')?.value     || '');
 
-            if (sort === 'asc') visible.sort((a, b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
-            if (sort === 'desc') visible.sort((a, b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
-            if (sort === 'name') visible.sort((a, b) => a.dataset.name.localeCompare(b.dataset.name));
+        let cards = Array.from(document.querySelectorAll('#productGrid .pp-card'));
 
-            cards.forEach(c => c.style.display = 'none');
+        let visible = cards.filter(c => {
+            const nameMatch = c.dataset.name.includes(search);
+            const w   = parseInt(c.dataset.width);
+            const wt  = parseInt(c.dataset.weight);
+            const wOk  = isNaN(w)  || w  <= maxW;
+            const wtOk = isNaN(wt) || wt <= maxWt;
 
-            const total = Math.max(1, Math.ceil(visible.length / ITEMS_PER_PAGE));
-            currentPage = Math.min(currentPage, total);
-            const start = (currentPage - 1) * ITEMS_PER_PAGE;
-            visible.slice(start, start + ITEMS_PER_PAGE).forEach(c => c.style.display = '');
+            const colorOk   = !colorVal       || (c.dataset.color       || '') === colorVal;
+            const typeOk    = !typeVal        || (c.dataset.type        || '') === typeVal;
+            const compOk    = !compositionVal || (c.dataset.composition || '').split(',').includes(compositionVal);
+            const projectOk = !projectVal     || (c.dataset.project     || '') === projectVal;
 
-            document.getElementById('resultsCount').textContent =
-                visible.length + ' product' + (visible.length !== 1 ? 's' : '');
-            document.getElementById('emptyState').classList.toggle('show', visible.length === 0);
-            renderPagination(total);
+            return nameMatch && wOk && wtOk && colorOk && typeOk && compOk && projectOk;
+        });
+
+        if (sort === 'asc')  visible.sort((a,b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
+        if (sort === 'desc') visible.sort((a,b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
+        if (sort === 'name') visible.sort((a,b) => a.dataset.name.localeCompare(b.dataset.name));
+
+        cards.forEach(c => c.style.display = 'none');
+
+        const totalPages = Math.max(1, Math.ceil(visible.length / ITEMS_PER_PAGE));
+        currentPage = Math.min(currentPage, totalPages);
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        visible.slice(start, start + ITEMS_PER_PAGE).forEach(c => c.style.display = '');
+
+        document.getElementById('resultsCount').textContent = visible.length + ' product' + (visible.length !== 1 ? 's' : '');
+        document.getElementById('emptyState').classList.toggle('show', visible.length === 0);
+        renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+        const wrap = document.getElementById('paginationWrap');
+        wrap.innerHTML = '';
+        if (totalPages <= 1) return;
+
+        if (currentPage > 1) {
+            wrap.innerHTML += `<button class="pp-page-btn pp-page-text" onclick="goPage(${currentPage-1})">Previous</button>`;
         }
-
-        function renderPagination(total) {
-            const wrap = document.getElementById('paginationWrap');
-            wrap.innerHTML = '';
-            if (total <= 1) return;
-
-            const btn = (label, page, active) =>
-                `<button class="pp-page-btn${active ? ' active' : ''}${typeof label === 'string' ? ' pp-page-text' : ''}"
-                        onclick="goPage(${page})">${label}</button>`;
-
-            if (currentPage > 1) wrap.innerHTML += btn('Previous', currentPage - 1, false);
-            for (let i = 1; i <= total; i++) wrap.innerHTML += btn(i, i, i === currentPage);
-            if (currentPage < total) wrap.innerHTML += btn('Next', currentPage + 1, false);
+        for (let i = 1; i <= totalPages; i++) {
+            wrap.innerHTML += `<button class="pp-page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
         }
+        if (currentPage < totalPages) {
+            wrap.innerHTML += `<button class="pp-page-btn pp-page-text" onclick="goPage(${currentPage+1})">Next</button>`;
+        }
+    }
 
-        function goPage(n) { currentPage = n; applyFilters(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-        function clearSearch() { document.getElementById('searchInput').value = ''; applyFilters(); }
-        function resetSort() { document.getElementById('sortSelect').value = 'new'; applyFilters(); }
-        function resetRange(id, val, labelId, label) {
-            document.getElementById(id).value = val;
-            document.getElementById(labelId).textContent = label;
-            // applyFilters();
-        }
-        function resetAll() {
-            clearSearch(); resetSort();
-            resetRange('widthRange', '200', 'widthVal', '200 cm');
-            resetRange('weightRange', '700', 'weightVal', '700 g');
-            currentPage = 1;
-            applyFilters();
-        }
-        function toggleMobilePanel() {
-            document.getElementById('mobilePanel').classList.toggle('open');
-        }
-    </script>
-}
+    function goPage(n) { currentPage = n; applyFilters(); window.scrollTo({top:0,behavior:'smooth'}); }
+
+    function clearSearch() { document.getElementById('searchInput').value = ''; applyFilters(); }
+    function resetSort()   { document.getElementById('sortSelect').value = 'new'; applyFilters(); }
+    function resetRange(id, val, labelId, label) {
+        document.getElementById(id).value = val;
+        document.getElementById(labelId).textContent = label;
+        applyFilters();
+    }
+    function resetAll() {
+        clearSearch();
+        resetSort();
+        resetRange('widthRange','200','widthVal','200 cm');
+        resetRange('weightRange','700','weightVal','700 g');
+        // إعادة تعيين كل الـ cs-topfilter selects
+        ['colorFilter','typeFilter','compositionFilter','projectFilter'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        // إعادة تعيين كل الـ selects بدون ID (Quality, Pattern)
+        document.querySelectorAll('.cs-topfilter-select').forEach(s => s.value = '');
+        currentPage = 1;
+        applyFilters();
+    }
+    function toggleMobilePanel() {
+        document.getElementById('mobilePanel').classList.toggle('open');
+    }
+</script>

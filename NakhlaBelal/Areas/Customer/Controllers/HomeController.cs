@@ -161,7 +161,11 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             ViewBag.TotalPages = totalPages;
             ViewBag.CurrentPage = page;
             ViewBag.Filter = filterVM; // عشان الـ View تعرف شو الفلتر الحالي
+
             ViewBag.Colors = _context.Colors.ToList();
+            ViewBag.FabricTypes = _context.FabricTypes.ToList();
+            ViewBag.ProjectCategory = _context.ProjectCategories.ToList();
+            ViewBag.Compositions = _context.Compositions.ToList();
 
 
 
