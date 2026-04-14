@@ -145,30 +145,7 @@
         </div>
 
         @* {{!-- Quick filter bar (tablet) --}} *@
-        <div class="pp-quick-bar">
-            <span class="pp-quick-label">Filter by:</span>
-            <select class="pp-quick-select" id="typeFilter" onchange="applyFilters()">
-                <option value="">Type</option>
-                <option>Denim</option>
-                <option>Tweed</option>
-                <option>Bouclé</option>
-                <option>Jacquard</option>
-                <option>Velvet</option>
-            </select>
-            <select class="pp-quick-select" id="qualityFilter" onchange="applyFilters()">
-                <option value="">Quality</option>
-                <option>Premium</option>
-                <option>Standard</option>
-                <option>Economy</option>
-            </select>
-            <select class="pp-quick-select" id="patternFilter" onchange="applyFilters()">
-                <option value="">Pattern</option>
-                <option>Solid</option>
-                <option>Checkered</option>
-                <option>Striped</option>
-                <option>Floral</option>
-            </select>
-        </div>
+        
 
         @* {{!-- Results count --}} *@
         <p class="pp-count" id="resultsCount">@Model.Count() @SharedLocalizer["products"]</p>
@@ -179,17 +156,26 @@
                 <span class="cs-topfilter-label">@SharedLocalizer["Color"]</span>
                 <select class="cs-topfilter-select" onchange="applyFilters()">
                     <option value="">@SharedLocalizer["Any"]</option>
+                    @if (ViewBag.Colors != null)
+                    {
+                        @foreach (var color in ViewBag.Colors)
+                        {
+                            <option value="@color.Id">@SharedLocalizer[@color.Name]</option>
+                        }
+                    }
                 </select>
             </div>
             <div class="cs-topfilter-item">
                 <span class="cs-topfilter-label"> @SharedLocalizer["Type"]</span>
                 <select class="cs-topfilter-select" onchange="applyFilters()">
                     <option value="">@SharedLocalizer["Any"]</option>
-                    <option>Tweed</option>
-                    <option>Bouclé</option>
-                    <option>Jacquard</option>
-                    <option>Velvet</option>
-                    <option>Crêpe</option>
+                    @if (ViewBag.FabricTypes != null)
+                    {
+                        @foreach (var fabricType in ViewBag.FabricTypes)
+                        {
+                            <option value="@fabricType.Id">@SharedLocalizer[@fabricType.Name]</option>
+                        }
+                    }
                 </select>
             </div>
             <div class="cs-topfilter-item">
@@ -205,12 +191,26 @@
                 <span class="cs-topfilter-label"> @SharedLocalizer["COMPOSITION"]</span>
                 <select class="cs-topfilter-select" onchange="applyFilters()">
                     <option value="">@SharedLocalizer["Any"]</option>
+                    @if (ViewBag.Compositions != null)
+                    {
+                        @foreach (var composition in ViewBag.Compositions)
+                        {
+                            <option value="@composition.Id">@SharedLocalizer[@composition.Name]</option>
+                        }
+                    }
                 </select>
             </div>
             <div class="cs-topfilter-item">
                 <span class="cs-topfilter-label"> @SharedLocalizer["PROJECT"]</span>
                 <select class="cs-topfilter-select" onchange="applyFilters()">
                     <option value="">@SharedLocalizer["Any"]</option>
+                    @if (ViewBag.ProjectCategory != null)
+                    {
+                        @foreach (var project in ViewBag.ProjectCategory)
+                        {
+                            <option value="@project.Id">@SharedLocalizer[@project.Name]</option>
+                        }
+                    }
                 </select>
             </div>
             <div class="cs-topfilter-item">
