@@ -3,10 +3,15 @@
 @using NakhlaBelal
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 
+@{
+    var currentColor       = ViewBag.Filter?.ColorId?.ToString()       ?? "";
+    var currentType        = ViewBag.Filter?.FabricTypeId?.ToString()   ?? "";
+    var currentComposition = ViewBag.Filter?.CompositionId?.ToString()  ?? "";
+    var currentProject     = ViewBag.Filter?.ProjectCategoryId?.ToString() ?? "";
+}
 
 <div class="pp-wrap">
 
-    @* {{!-- ===== SIDEBAR Desktop ===== --}} *@
     <aside class="pp-sidebar">
         <div class="pp-sidebar-inner" id="sidebarInner">
             <h2 class="pp-sidebar-title">@SharedLocalizer["Filters"]</h2>
@@ -21,7 +26,7 @@
                         <circle cx="11" cy="11" r="8" />
                         <line x1="21" y1="21" x2="16.65" y2="16.65" />
                     </svg>
-                    <input id="searchInput" type="text" class="pp-input" placeholder="Type & hit ENTER" oninput="applyFilters()" />
+                    <input id="searchInput" type="text" class="pp-input" placeholder="@SharedLocalizer["Type & hit ENTER"]" oninput="applyFilters()" />
                 </div>
             </div>
 
@@ -66,10 +71,8 @@
         </div>
     </aside>
 
-    @* {{!-- ===== MAIN ===== --}} *@
     <main class="pp-main">
 
-        @* {{!-- Mobile filter button --}} *@
         <button class="pp-mobile-btn" onclick="toggleMobilePanel()">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <line x1="4" y1="6" x2="20" y2="6" />
@@ -79,7 +82,6 @@
             @SharedLocalizer["SHOW FILTERS"]
         </button>
 
-        @* {{!-- Mobile filter panel --}} *@
         <div class="pp-mobile-panel" id="mobilePanel">
             <div class="pp-mobile-panel-head">
                 <span>@SharedLocalizer["Filters"]</span>
@@ -87,32 +89,34 @@
             </div>
             <div class="pp-filter-block">
                 <div class="pp-filter-head"><span>@SharedLocalizer["Search"]</span></div>
-                <input id="mSearchInput" type="text" class="pp-input" placeholder=@SharedLocalizer["Type & hit ENTER"] oninput="document.getElementById('searchInput').value=this.value; applyFilters()" />
+                <input id="mSearchInput" type="text" class="pp-input" placeholder="Type & hit ENTER"
+                       oninput="document.getElementById('searchInput').value=this.value; applyFilters()" />
             </div>
 
+            {{-- نفس الـ cs-topfilters للموبايل - تحويل server-side --}}
             <div class="cs-topfilters">
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label">@SharedLocalizer["Color"]</span>
-                    <select class="cs-topfilter-select" onchange="syncToMain('colorFilter', this.value); applyFilters()">
+                    <select class="cs-topfilter-select" onchange="navigateFilter('ColorId', this.value)">
                         <option value="">@SharedLocalizer["Any"]</option>
                         @if (ViewBag.Colors != null)
                         {
                             @foreach (var color in ViewBag.Colors)
                             {
-                                <option value="@color.Id">@SharedLocalizer[@color.Name]</option>
+                                <option value="@color.Id" selected="@(currentColor == color.Id.ToString() ? "selected" : null)">@SharedLocalizer[@color.Name]</option>
                             }
                         }
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label"> @SharedLocalizer["Type"]</span>
-                    <select class="cs-topfilter-select" onchange="syncToMain('typeFilter', this.value); applyFilters()">
+                    <select class="cs-topfilter-select" onchange="navigateFilter('FabricTypeId', this.value)">
                         <option value="">@SharedLocalizer["Any"]</option>
                         @if (ViewBag.FabricTypes != null)
                         {
                             @foreach (var fabricType in ViewBag.FabricTypes)
                             {
-                                <option value="@fabricType.Id">@SharedLocalizer[@fabricType.Name]</option>
+                                <option value="@fabricType.Id" selected="@(currentType == fabricType.Id.ToString() ? "selected" : null)">@SharedLocalizer[@fabricType.Name]</option>
                             }
                         }
                     </select>
@@ -128,26 +132,26 @@
                 </div>
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label"> @SharedLocalizer["COMPOSITION"]</span>
-                    <select class="cs-topfilter-select" onchange="syncToMain('compositionFilter', this.value); applyFilters()">
+                    <select class="cs-topfilter-select" onchange="navigateFilter('CompositionId', this.value)">
                         <option value="">@SharedLocalizer["Any"]</option>
                         @if (ViewBag.Compositions != null)
                         {
                             @foreach (var composition in ViewBag.Compositions)
                             {
-                                <option value="@composition.Id">@SharedLocalizer[@composition.Name]</option>
+                                <option value="@composition.Id" selected="@(currentComposition == composition.Id.ToString() ? "selected" : null)">@SharedLocalizer[@composition.Name]</option>
                             }
                         }
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label"> @SharedLocalizer["PROJECT"]</span>
-                    <select class="cs-topfilter-select" onchange="syncToMain('projectFilter', this.value); applyFilters()">
+                    <select class="cs-topfilter-select" onchange="navigateFilter('ProjectCategoryId', this.value)">
                         <option value="">@SharedLocalizer["Any"]</option>
                         @if (ViewBag.ProjectCategory != null)
                         {
                             @foreach (var project in ViewBag.ProjectCategory)
                             {
-                                <option value="@project.Id">@SharedLocalizer[@project.Name]</option>
+                                <option value="@project.Id" selected="@(currentProject == project.Id.ToString() ? "selected" : null)">@SharedLocalizer[@project.Name]</option>
                             }
                         }
                     </select>
@@ -165,32 +169,32 @@
             </div>
         </div>
 
-        @* {{!-- Results count --}} *@
         <p class="pp-count" id="resultsCount">@Model.Count() @SharedLocalizer["products"]</p>
 
+        @* {{-- cs-topfilters الرئيسي - server-side --}} *@
         <div class="cs-topfilters">
             <div class="cs-topfilter-item">
                 <span class="cs-topfilter-label">@SharedLocalizer["Color"]</span>
-                <select id="colorFilter" class="cs-topfilter-select" onchange="applyFilters()">
+                <select class="cs-topfilter-select" onchange="navigateFilter('ColorId', this.value)">
                     <option value="">@SharedLocalizer["Any"]</option>
                     @if (ViewBag.Colors != null)
                     {
                         @foreach (var color in ViewBag.Colors)
                         {
-                            <option value="@color.Id">@SharedLocalizer[@color.Name]</option>
+                            <option value="@color.Id" selected="@(currentColor == color.Id.ToString() ? "selected" : null)">@SharedLocalizer[@color.Name]</option>
                         }
                     }
                 </select>
             </div>
             <div class="cs-topfilter-item">
                 <span class="cs-topfilter-label"> @SharedLocalizer["Type"]</span>
-                <select id="typeFilter" class="cs-topfilter-select" onchange="applyFilters()">
+                <select class="cs-topfilter-select" onchange="navigateFilter('FabricTypeId', this.value)">
                     <option value="">@SharedLocalizer["Any"]</option>
                     @if (ViewBag.FabricTypes != null)
                     {
                         @foreach (var fabricType in ViewBag.FabricTypes)
                         {
-                            <option value="@fabricType.Id">@SharedLocalizer[@fabricType.Name]</option>
+                            <option value="@fabricType.Id" selected="@(currentType == fabricType.Id.ToString() ? "selected" : null)">@SharedLocalizer[@fabricType.Name]</option>
                         }
                     }
                 </select>
@@ -206,26 +210,26 @@
             </div>
             <div class="cs-topfilter-item">
                 <span class="cs-topfilter-label"> @SharedLocalizer["COMPOSITION"]</span>
-                <select id="compositionFilter" class="cs-topfilter-select" onchange="applyFilters()">
+                <select class="cs-topfilter-select" onchange="navigateFilter('CompositionId', this.value)">
                     <option value="">@SharedLocalizer["Any"]</option>
                     @if (ViewBag.Compositions != null)
                     {
                         @foreach (var composition in ViewBag.Compositions)
                         {
-                            <option value="@composition.Id">@SharedLocalizer[@composition.Name]</option>
+                            <option value="@composition.Id" selected="@(currentComposition == composition.Id.ToString() ? "selected" : null)">@SharedLocalizer[@composition.Name]</option>
                         }
                     }
                 </select>
             </div>
             <div class="cs-topfilter-item">
                 <span class="cs-topfilter-label"> @SharedLocalizer["PROJECT"]</span>
-                <select id="projectFilter" class="cs-topfilter-select" onchange="applyFilters()">
+                <select class="cs-topfilter-select" onchange="navigateFilter('ProjectCategoryId', this.value)">
                     <option value="">@SharedLocalizer["Any"]</option>
                     @if (ViewBag.ProjectCategory != null)
                     {
                         @foreach (var project in ViewBag.ProjectCategory)
                         {
-                            <option value="@project.Id">@SharedLocalizer[@project.Name]</option>
+                            <option value="@project.Id" selected="@(currentProject == project.Id.ToString() ? "selected" : null)">@SharedLocalizer[@project.Name]</option>
                         }
                     }
                 </select>
@@ -242,7 +246,6 @@
             </div>
         </div>
 
-        @* {{!-- Product Grid --}} *@
         <div class="pp-grid" id="productGrid">
             @foreach (var item in Model)
             {
@@ -251,11 +254,7 @@
                        data-name="@item.Name.ToLower()"
                        data-price="@item.Price"
                        data-width="@item.Width"
-                       data-weight="@item.Weight"
-                       data-color="@item.ColorId"
-                       data-type="@item.FabricTypeId"
-                       data-composition="@string.Join(",", item.ProductCompositions?.Select(c => c.CompositionId) ?? Enumerable.Empty<int>())"
-                       data-project="@string.Join(",", item.ProjectCategories?.Select(pc => pc.Id) ?? Enumerable.Empty<int>())">
+                       data-weight="@item.Weight">
 
                     <img src="~/images/@item.MainImage" alt="@item.Name" class="pp-card-img" />
 
@@ -281,35 +280,32 @@
             }
         </div>
 
-        @* {{!-- Empty State --}} *@
         <div class="pp-empty" id="emptyState">
             <h3>@SharedLocalizer["No products found"]</h3>
             <p>@SharedLocalizer["Try adjusting your filters"]</p>
             <button onclick="resetAll()">@SharedLocalizer["Reset all filters"]</button>
         </div>
 
-        @* {{!-- Pagination --}} *@
         <div class="pp-pagination" id="paginationWrap">
             <nav aria-label="Page navigation example">
                 <ul class="pagination">
-                    @if (ViewBag.currentPage > 1)
+                    @if (ViewBag.CurrentPage > 1)
                     {
-                        <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage - 1)">@SharedLocalizer["Previous"]</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="/Customer/Home/product?page=@(ViewBag.CurrentPage - 1)&ColorId=@currentColor&FabricTypeId=@currentType&CompositionId=@currentComposition&ProjectCategoryId=@currentProject">@SharedLocalizer["Previous"]</a>
+                        </li>
                     }
                     @for (var i = 1; i <= ViewBag.TotalPages; i++)
                     {
-                        @if (i == ViewBag.currentPage)
-                        {
-                            <li class="page-item active"><a class="page-link" href="/Customer/Home/product?page=@i">@i</a></li>
-                        }
-                        else
-                        {
-                            <li class="page-item"><a class="page-link" href="/Customer/Home/product?&page=@i">@i</a></li>
-                        }
+                        <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                            <a class="page-link" href="/Customer/Home/product?page=@i&ColorId=@currentColor&FabricTypeId=@currentType&CompositionId=@currentComposition&ProjectCategoryId=@currentProject">@i</a>
+                        </li>
                     }
-                    @if (ViewBag.currentPage != ViewBag.TotalPages && Model.Any())
+                    @if (ViewBag.CurrentPage != ViewBag.TotalPages && Model.Any())
                     {
-                        <li class="page-item"><a class="page-link" href="/Customer/Home/product?page=@(ViewBag.currentPage + 1)">@SharedLocalizer["Next"]</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="/Customer/Home/product?page=@(ViewBag.CurrentPage + 1)&ColorId=@currentColor&FabricTypeId=@currentType&CompositionId=@currentComposition&ProjectCategoryId=@currentProject">@SharedLocalizer["Next"]</a>
+                        </li>
                     }
                 </ul>
             </nav>
@@ -322,37 +318,34 @@
     const ITEMS_PER_PAGE = 8;
     let currentPage = 1;
 
-    function syncToMain(id, val) {
-        const el = document.getElementById(id);
-        if (el) el.value = val;
+    // cs-topfilters → server-side: تبني URL جديد وتنتقل له
+    function navigateFilter(paramName, value) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', '1');
+        if (value === '') {
+            url.searchParams.delete(paramName);
+        } else {
+            url.searchParams.set(paramName, value);
+        }
+        window.location.href = url.toString();
     }
 
+    // sidebar filters → client-side فقط على الكاردات الحالية
     function applyFilters() {
-        const search  = document.getElementById('searchInput').value.toLowerCase();
-        const maxW    = parseInt(document.getElementById('widthRange').value);
-        const maxWt   = parseInt(document.getElementById('weightRange').value);
-        const sort    = document.getElementById('sortSelect').value;
-
-        const colorVal       = (document.getElementById('colorFilter')?.value       || '');
-        const typeVal        = (document.getElementById('typeFilter')?.value        || '');
-        const compositionVal = (document.getElementById('compositionFilter')?.value || '');
-        const projectVal     = (document.getElementById('projectFilter')?.value     || '');
+        const search = document.getElementById('searchInput').value.toLowerCase();
+        const maxW   = parseInt(document.getElementById('widthRange').value);
+        const maxWt  = parseInt(document.getElementById('weightRange').value);
+        const sort   = document.getElementById('sortSelect').value;
 
         let cards = Array.from(document.querySelectorAll('#productGrid .pp-card'));
 
         let visible = cards.filter(c => {
             const nameMatch = c.dataset.name.includes(search);
-            const w   = parseInt(c.dataset.width);
-            const wt  = parseInt(c.dataset.weight);
+            const w  = parseInt(c.dataset.width);
+            const wt = parseInt(c.dataset.weight);
             const wOk  = isNaN(w)  || w  <= maxW;
             const wtOk = isNaN(wt) || wt <= maxWt;
-
-            const colorOk   = !colorVal       || (c.dataset.color       || '') === colorVal;
-            const typeOk    = !typeVal        || (c.dataset.type        || '') === typeVal;
-            const compOk    = !compositionVal || (c.dataset.composition || '').split(',').includes(compositionVal);
-            const projectOk = !projectVal     || (c.dataset.project     || '') === projectVal;
-
-            return nameMatch && wOk && wtOk && colorOk && typeOk && compOk && projectOk;
+            return nameMatch && wOk && wtOk;
         });
 
         if (sort === 'asc')  visible.sort((a,b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
@@ -375,20 +368,15 @@
         const wrap = document.getElementById('paginationWrap');
         wrap.innerHTML = '';
         if (totalPages <= 1) return;
-
-        if (currentPage > 1) {
+        if (currentPage > 1)
             wrap.innerHTML += `<button class="pp-page-btn pp-page-text" onclick="goPage(${currentPage-1})">Previous</button>`;
-        }
-        for (let i = 1; i <= totalPages; i++) {
+        for (let i = 1; i <= totalPages; i++)
             wrap.innerHTML += `<button class="pp-page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
-        }
-        if (currentPage < totalPages) {
+        if (currentPage < totalPages)
             wrap.innerHTML += `<button class="pp-page-btn pp-page-text" onclick="goPage(${currentPage+1})">Next</button>`;
-        }
     }
 
     function goPage(n) { currentPage = n; applyFilters(); window.scrollTo({top:0,behavior:'smooth'}); }
-
     function clearSearch() { document.getElementById('searchInput').value = ''; applyFilters(); }
     function resetSort()   { document.getElementById('sortSelect').value = 'new'; applyFilters(); }
     function resetRange(id, val, labelId, label) {
@@ -397,19 +385,8 @@
         applyFilters();
     }
     function resetAll() {
-        clearSearch();
-        resetSort();
-        resetRange('widthRange','200','widthVal','200 cm');
-        resetRange('weightRange','700','weightVal','700 g');
-        // إعادة تعيين كل الـ cs-topfilter selects
-        ['colorFilter','typeFilter','compositionFilter','projectFilter'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.value = '';
-        });
-        // إعادة تعيين كل الـ selects بدون ID (Quality, Pattern)
-        document.querySelectorAll('.cs-topfilter-select').forEach(s => s.value = '');
-        currentPage = 1;
-        applyFilters();
+        // إعادة تعيين server-side filters → انتقل للصفحة بدون فلاتر
+        window.location.href = '/Customer/Home/product';
     }
     function toggleMobilePanel() {
         document.getElementById('mobilePanel').classList.toggle('open');
