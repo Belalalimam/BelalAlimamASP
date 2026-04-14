@@ -135,4 +135,10 @@
   <data name="Choose Language" xml:space="preserve">
     <value>اختر اللغة</value>
   </data>
+  <data name="on local orders of 1,000 EGP or more" xml:space="preserve">
+    <value>للطلبات المحلية بقيمة 1000 جنيه أو أكثر</value>
+  </data>
+  <data name="FUTIAN" xml:space="preserve">
+    <value>فوتيان</value>
+  </data>
 </root>

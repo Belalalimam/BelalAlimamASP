@@ -135,4 +135,10 @@
   <data name="Choose Language" xml:space="preserve">
     <value>Choose Language</value>
   </data>
+  <data name="on local orders of 1,000 EGP or more" xml:space="preserve">
+    <value>on local orders of 1,000 EGP or more</value>
+  </data>
+  <data name="FUTIAN" xml:space="preserve">
+    <value>FUTIAN</value>
+  </data>
 </root>
