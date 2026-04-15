@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Localization;
+using NakhlaBelal;
 using NakhlaBelal.ViewModels;
+using System.Threading.Tasks;
 //using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
-
 
 namespace NAKHLA.Areas.Identity.Controllers
 {
@@ -16,13 +17,15 @@ namespace NAKHLA.Areas.Identity.Controllers
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
         private readonly IRepository<UserOTP> _UserOTPRepository;
+        private readonly IStringLocalizer<SharedResource> _localizer;
 
-        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, IRepository<UserOTP> UserOTPRepository)
+        public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, IRepository<UserOTP> UserOTPRepository, IStringLocalizer<SharedResource> localizer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _UserOTPRepository = UserOTPRepository;
+            _localizer = localizer;
         }
 
         
