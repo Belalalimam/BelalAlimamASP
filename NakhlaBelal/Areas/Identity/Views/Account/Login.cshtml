@@ -50,15 +50,13 @@
 </div>
 @if (TempData["LoginSuccess"] != null)
 {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         Swal.fire({
-            title: '@TempData["SuccessTitle"]',
-            text: '@TempData["LoginSuccess"]',
-            icon: 'success',
-            confirmButtonColor: '#013220',
-            confirmButtonText: '@TempData["GreatText"]',
-            customClass: { popup: 'swal-rtl' }
+        title: "Good job!",
+        text: "@TempData["LoginSuccess"]",
+        icon: "success",
+        confirmButtonColor: "#013220"
         });
     </script>
-     TempData.Remove("LoginSuccess"); 
 }

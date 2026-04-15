@@ -64,7 +64,18 @@
         // هاد السطر السحري عشان تضمن إنها تنمسح وما تطلعش مع الـ Refresh
         TempData["RegistrationSuccess"] = null;
     }
-
+    @if (TempData["LoginSuccess"] != null)
+    {
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            Swal.fire({
+            title: "Login Successful",
+            text: "@TempData["LoginSuccess"]",
+            icon: "success",
+            confirmButtonColor: "#013220"
+            });
+        </script>
+    }
     <div class="text-black text-center py-2 small">
         @Localizer["FreeShipping"]</u> @Localizer["on local orders of 1,000 EGP or more"]
     </div>

@@ -32,7 +32,6 @@ namespace NAKHLA.Areas.Identity.Controllers
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            TempData.Clear(); 
             return RedirectToAction("Login", "Account");
         }
         [HttpGet]
@@ -160,7 +159,10 @@ namespace NAKHLA.Areas.Identity.Controllers
             }
 
             var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, loginVM.RememberMe, lockoutOnFailure: true);
-                        
+
+            if (result.Succeeded)
+                TempData["LoginSuccess"] = "Welcome To Futian";
+
             if (!result.Succeeded)
             {
                 if (result.IsLockedOut)
@@ -170,19 +172,13 @@ namespace NAKHLA.Areas.Identity.Controllers
                 else
                     ModelState.AddModelError(string.Empty, "Invalid User Name / Email OR Password");
 
+                return View(loginVM);
             }
 
-            if (result.Succeeded)
-            {
-                // نصوص مباشرة بدون وجع راس الترجمة
-                TempData["LoginSuccess"] = "أهلاً بك في فوتيان";
-                TempData["SuccessTitle"] = "تم تسجيل الدخول";
-                TempData["GreatText"] = "ممتاز";
+            
 
-                return RedirectToAction("Index", "Home", new { area = "Customer" });
-            }
+            return RedirectToAction("Index", "Home", new { area = "Customer" });
 
-            return View(loginVM);
         }
 
 
