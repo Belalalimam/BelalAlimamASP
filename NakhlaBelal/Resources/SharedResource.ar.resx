@@ -876,4 +876,13 @@
   <data name="Type &amp; hit ENTER" xml:space="preserve">
     <value>اكتب واضغط على مفتاح ENTER</value>
   </data>
+  <data name="RegistrationSuccessKey" xml:space="preserve">
+    <value>مرحبًا بك في فوتيان! يرجى التحقق من بريدك الإلكتروني لتأكيد حسابك.</value>
+  </data>
+  <data name="Great" xml:space="preserve">
+    <value>رائع</value>
+  </data>
+  <data name="SuccessTitle" xml:space="preserve">
+    <value>تم إنشاء الحساب!</value>
+  </data>
 </root>

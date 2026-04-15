@@ -25,7 +25,8 @@
     <link rel="stylesheet" href="~/css/Customer/DetailsProduct.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Navbar.css" asp-append-version="true" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-
+    <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@4.8.0/fonts/remixicon.css" rel="stylesheet" />
 </head>
 
@@ -47,7 +48,22 @@
     var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
 }
 <body>
-
+    
+    @if (TempData["RegistrationSuccess"] != null)
+    {
+        <script>
+            Swal.fire({
+            title: 'Account Created!',
+            text: '@TempData["RegistrationSuccess"]',
+            icon: 'success',
+            confirmButtonColor: '#013220', // استخدمت لون الـ Dark Green اللي بالكود تبعك
+            confirmButtonText: 'Great!'
+            });
+        </script>
+    
+        // هاد السطر السحري عشان تضمن إنها تنمسح وما تطلعش مع الـ Refresh
+        TempData["RegistrationSuccess"] = null;
+    }
 
     <div class="text-black text-center py-2 small">
         @Localizer["FreeShipping"]</u> @Localizer["on local orders of 1,000 EGP or more"]
@@ -461,10 +477,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js" crossorigin="anonymous"></script>
 
-
     @* <script src="~/js/Navbar.js" asp-append-version="true"></script>
     <script src="~/js/newFile.js"></script> *@
     @await RenderSectionAsync("Scripts", required: false)
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </body>
 </html>

@@ -54,3 +54,20 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if (TempData["RegistrationSuccess"] != null)
+{
+    <script>
+        Swal.fire({
+        title: 'Account Created!',
+        text: '@SharedLocalizer[TempData["RegistrationSuccess"].ToString()]',
+        icon: 'success',
+        confirmButtonText: '@SharedLocalizer["Great"]!',
+        showClass: {
+        popup: 'animate__animated animate__fadeInDown'
+        }
+        });
+    </script>
+}

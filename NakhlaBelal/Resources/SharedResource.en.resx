@@ -877,4 +877,13 @@ In this section you can find our wide selection of plain, woven, printed, embroi
   <data name="Type &amp; hit ENTER" xml:space="preserve">
     <value>Type &amp; hit ENTER</value>
   </data>
+  <data name="RegistrationSuccessKey" xml:space="preserve">
+    <value>Welcome to Futian! Please check your email to verify your account.</value>
+  </data>
+  <data name="Great" xml:space="preserve">
+    <value>Great</value>
+  </data>
+  <data name="SuccessTitle" xml:space="preserve">
+    <value>Account Created!</value>
+  </data>
 </root>

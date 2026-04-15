@@ -95,7 +95,11 @@ input {
 select {
     background-color: var(--cotton-color) !important;
 }
-
+/* تنسيق بسيط عشان SweetAlert يدعم العربي */
+.swal-rtl {
+    direction: rtl !important;
+    text-align: right !important;
+}
 
 
 

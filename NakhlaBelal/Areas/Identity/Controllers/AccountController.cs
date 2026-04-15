@@ -40,9 +40,16 @@ namespace NAKHLA.Areas.Identity.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(RegisterVM registerVM)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid) {
+                //Swal.fire({
+                //    icon: "error",
+                //    title: "Oops...",
+                //    text: "Something went wrong!",
+                //    footer: "<a href=\"#\">Why do I have this issue?</a>"
+                //});
                 return View(registerVM);
 
+            }
             var user = new ApplicationUser()
             {
                 FirstName = registerVM.FirstName,
@@ -63,13 +70,63 @@ namespace NAKHLA.Areas.Identity.Controllers
                 return View(registerVM);
             }
 
-            // Send Confirmation Mail
+            if (result.Succeeded)
+                TempData["RegistrationSuccess"] = "Welcome to Futian! Please check your email to verify your account.";
+
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             var link = Url.Action(nameof(ConfirmEmail), "Account", new { area = "Identity", token, userId = user.Id }, Request.Scheme);
 
-            await _emailSender.SendEmailAsync(registerVM.Email, "Ecommerce 519 - Confirm Your Email!"
-                , $"<h1>Confirm Your Email By Clicking <a href='{link}'>Here</a></h1>");
 
+            var emailBody = $@"
+<div dir='ltr' style='background-color: #f4f4f4; padding: 20px; font-family: ""Segoe UI"", Tahoma, sans-serif;'>
+    <table align='center' border='0' cellpadding='0' cellspacing='0' width='100%' style='max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.1);'>
+        <tr>
+            <td style='padding: 40px 0; text-align: center; background-color: #013220;'>
+                <h1 style='color: #EDEAE1; margin: 0; font-size: 32px; letter-spacing: 4px;'>FUTIAN</h1>
+            </td>
+        </tr>
+        
+        <tr>
+            <td style='padding: 40px 30px;'>
+                <h2 style='color: #333333; font-size: 24px; margin-bottom: 20px;'>Welcome aboard!</h2>
+                <p style='color: #555555; font-size: 16px; line-height: 1.6;'>
+                    Hi <strong>{registerVM.Email.Split('@')[0]}</strong>,<br><br>
+                    Thanks for creating an account on <strong>Futian</strong>. We're excited to have you! 
+                    To finalize your registration and secure your account, please click the button below.
+                </p>
+                
+                <div style='text-align: center; margin: 35px 0;'>
+                    <a href='{link}' style='background-color: #013220; color: #EDEAE1; padding: 18px 30px; text-decoration: none; border-radius: 4px; font-weight: bold; font-size: 16px; display: inline-block; transition: background 0.3s;'>
+                        ACTIVATE ACCOUNT
+                    </a>
+                </div>
+
+                <p style='color: #777777; font-size: 14px; border-top: 1px dotted #ddd; padding-top: 20px;'>
+                    Once activated, you can view orders, manage your wishlist, and update your password directly from your dashboard.
+                </p>
+            </td>
+        </tr>
+        
+        <tr>
+            <td style='padding: 30px; background-color: #f9f9f9; text-align: center;'>
+                <p style='margin: 0; color: #999999; font-size: 12px;'>
+                    Questions? Visit <a href='#' style='color: #111111; text-decoration: none;'>shop.futian.com</a>
+                </p>
+                <p style='margin: 10px 0 0 0; color: #bbbbbb; font-size: 12px;'>
+                    &copy; {DateTime.Now.Year} Futian. All rights reserved.
+                </p>
+            </td>
+        </tr>
+    </table>
+</div>";
+
+            await _emailSender.SendEmailAsync(registerVM.Email, "Welcome to Futian - Please Confirm Your Email", emailBody);
+
+            //Swal.fire({
+            //    title: "Good job!",
+            //      text: "You clicked the button!",
+            //      icon: "success"
+            //});
             //await _userManager.AddToRoleAsync(user, SD.CUSTOMER_ROLE);
 
             return RedirectToAction("Login");

@@ -14,11 +14,11 @@ namespace NakhlaBelal.Utitlies
             {
                 EnableSsl = true,
                 UseDefaultCredentials = false,
-                Credentials = new NetworkCredential("bb550334@gmail.com", "vyba lkpi plxl gfoy")
+                Credentials = new NetworkCredential("MohamedFutian@gmail.com", "lddv fjzw xqyt pbsq")
             };
 
             return client.SendMailAsync(
-            new MailMessage(from: "bb550334@gmail.com",
+            new MailMessage(from: "MohamedFutian@gmail.com",
                             to: email,
                             subject,
                             htmlMessage
