@@ -28,11 +28,12 @@ namespace NAKHLA.Areas.Identity.Controllers
             _localizer = localizer;
         }
 
-        
+
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Login");
+            TempData.Clear(); 
+            return RedirectToAction("Login", "Account");
         }
         [HttpGet]
         public ViewResult Register()
@@ -159,7 +160,7 @@ namespace NAKHLA.Areas.Identity.Controllers
             }
 
             var result = await _signInManager.PasswordSignInAsync(user, loginVM.Password, loginVM.RememberMe, lockoutOnFailure: true);
-
+                        
             if (!result.Succeeded)
             {
                 if (result.IsLockedOut)
@@ -169,10 +170,19 @@ namespace NAKHLA.Areas.Identity.Controllers
                 else
                     ModelState.AddModelError(string.Empty, "Invalid User Name / Email OR Password");
 
-                return View(loginVM);
             }
 
-            return RedirectToAction("Index", "Home", new { area = "Customer" });
+            if (result.Succeeded)
+            {
+                // نصوص مباشرة بدون وجع راس الترجمة
+                TempData["LoginSuccess"] = "أهلاً بك في فوتيان";
+                TempData["SuccessTitle"] = "تم تسجيل الدخول";
+                TempData["GreatText"] = "ممتاز";
+
+                return RedirectToAction("Index", "Home", new { area = "Customer" });
+            }
+
+            return View(loginVM);
         }
 
 

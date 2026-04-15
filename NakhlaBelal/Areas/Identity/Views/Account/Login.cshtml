@@ -48,3 +48,17 @@
         </div>
     </div>
 </div>
+@if (TempData["LoginSuccess"] != null)
+{
+    <script>
+        Swal.fire({
+            title: '@TempData["SuccessTitle"]',
+            text: '@TempData["LoginSuccess"]',
+            icon: 'success',
+            confirmButtonColor: '#013220',
+            confirmButtonText: '@TempData["GreatText"]',
+            customClass: { popup: 'swal-rtl' }
+        });
+    </script>
+     TempData.Remove("LoginSuccess"); 
+}
