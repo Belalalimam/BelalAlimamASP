@@ -7,308 +7,723 @@
 <div class="page-header">
     <div>
         <h2>@Model.Name</h2>
-        <p class="page-subtitle">Product Details</p>
+        <p class="page-subtitle">
+            <code>@Model.SKU</code>
+            &nbsp;|&nbsp;
+            <span class="badge @(Model.Status ? "bg-success" : "bg-secondary")">
+                @(Model.Status ? "Active" : "Inactive")
+            </span>
+            @if (Model.IsFeatured)
+            {
+                <span class="badge bg-warning text-dark ms-1">
+                    <i class="fas fa-star"></i> Featured
+                </span>
+            }
+            @if (Model.IsBestSeller)
+            {
+                <span class="badge bg-danger ms-1">
+                    <i class="fas fa-fire"></i> Best Seller
+                </span>
+            }
+            @if (Model.IsNew)
+            {
+                <span class="badge bg-info ms-1">
+                    <i class="fas fa-certificate"></i> New
+                </span>
+            }
+        </p>
     </div>
     <div class="header-actions">
         <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
             <i class="fas fa-edit"></i> Edit
         </a>
         <a asp-action="Index" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to List
+            <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>
 </div>
 
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
 <div class="row">
+
+    @* ======= LEFT col-lg-8 ======= *@
     <div class="col-lg-8">
-        <div class="card">
+
+        @* BASIC INFO *@
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-tag me-2"></i>Product Information
+                </h5>
+                <a asp-action="Edit" asp-route-id="@Model.Id"
+                       class="btn btn-sm btn-outline-primary">
+                    <i class="fas fa-edit"></i> Edit
+                </a>
+            </div>
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-6">
-                        <div class="detail-item mb-3">
-                            <strong>SKU:</strong>
-                            <span>@Model.SKU</span>
-                        </div>
-
-                        <div class="detail-item mb-3">
-                            <strong>Category:</strong>
-                            <span class="badge bg-primary">@Model.Category?.Name</span>
-                        </div>
-
-
-                        <!-- New Section -->
-
-                        <div class="detail-item mb-3">
-                            <strong>Fabric Type:</strong>
-                            @if (Model.FabricType != null)
+                        <table class="table table-borderless table-sm">
+                            <tr>
+                                <td class="text-muted fw-bold" style="width:40%;">SKU</td>
+                                <td><code>@Model.SKU</code></td>
+                            </tr>
+                            @if (!string.IsNullOrEmpty(Model.Barcode))
                             {
-                                <span class="badge bg-info">@Model.FabricType.Name</span>
+                                <tr>
+                                    <td class="text-muted fw-bold">Barcode</td>
+                                    <td><code>@Model.Barcode</code></td>
+                                </tr>
                             }
-                            else
-                            {
-                                <span class="text-muted">Not set</span>
-                            }
-                        </div>
-
-
-
-                      @*   <div class="detail-item mb-3">
-                            <strong>Colors:</strong>
-                            @if (Model.Color != null && Model.Color.Any())
-                            {
-                                @foreach (var color in Model.Color)
-                                {
-                                    <span class="badge bg-secondary me-1">
-                                        @color.Name
+                            <tr>
+                                <td class="text-muted fw-bold">Category</td>
+                                <td>
+                                    <span class="badge bg-primary">
+                                        @(Model.Category?.Name ?? "—")
                                     </span>
-                                }
-                            }
-                            else
-                            {
-                                <span class="text-muted">No colors</span>
-                            }
-                        </div> *@
-
-
-
-
-
-                        <div class="detail-item mb-3">
-                            <strong>Project Categories:</strong>
-                            @if (Model.ProjectCategories != null && Model.ProjectCategories.Any())
-                            {
-                                @foreach (var pc in Model.ProjectCategories)
-                                {
-                                    <span class="badge bg-dark me-1">@pc.Name</span>
-                                }
-                            }
-                            else
-                            {
-                                <span class="text-muted">Not assigned</span>
-                            }
-                        </div>
-
-
-
-
-                        <div class="detail-item mb-3">
-                            <strong>Composition:</strong>
-                            @* <span>@(string.IsNullOrEmpty(Model.) ? "Not set" : Model.ProductCompositions)</span> *@
-                        </div>
-
-
-
-
-
-                        <div class="detail-item mb-3">
-                            <strong>Tags:</strong>
-                            @if (Model.ProductTags != null && Model.ProductTags.Any())
-                            {
-                                @foreach (var tag in Model.ProductTags)
-                                {
-                                    <span class="badge bg-warning text-dark me-1">
-                                        @tag.Name
-                                    </span>
-                                }
-                            }
-                            else
-                            {
-                                <span class="text-muted">No tags</span>
-                            }
-                        </div>
-
-
-                        <!-- New Section -->
-
-
-
-
-
-
-
-                        <div class="detail-item mb-3">
-                            <strong>Brand:</strong>
-                            <span>@Model.Brand?.Name</span>
-                        </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-bold">Brand</td>
+                                <td>@(Model.Brand?.Name ?? "—")</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-bold">Fabric Type</td>
+                                <td>
+                                    @if (Model.FabricType != null)
+                                    {
+                                        <span class="badge bg-info text-dark">
+                                            @Model.FabricType.Name
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Not set</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-bold">Color</td>
+                                <td>@(Model.Color?.Name ?? "—")</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-bold">Slug</td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(Model.Slug))
+                                    {
+                                        <code>/product/@Model.Slug</code>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted fw-bold">Display Order</td>
+                                <td>@Model.DisplayOrder</td>
+                            </tr>
+                        </table>
                     </div>
-
                     <div class="col-md-6">
-                        <div class="detail-item mb-3">
-                            <strong>Price:</strong>
-                            <span>$@Model.Price.ToString("N2")</span>
+                        <div class="mb-3">
+                            <small class="text-muted fw-bold text-uppercase">Tags</small>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                @if (Model.ProductTags != null && Model.ProductTags.Any())
+                                {
+                                    @foreach (var tag in Model.ProductTags)
+                                    {
+                                        <span class="badge bg-warning text-dark">@tag.Name</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No tags</span>
+                                }
+                            </div>
                         </div>
-
-                        <div class="detail-item mb-3">
-                            <strong>Cost Price:</strong>
-                            <span>$@Model.CostPrice.ToString("N2")</span>
+                        <div class="mb-3">
+                            <small class="text-muted fw-bold text-uppercase">
+                                Project Categories
+                            </small>
+                            <div class="d-flex flex-wrap gap-1 mt-1">
+                                @if (Model.ProjectCategories != null && Model.ProjectCategories.Any())
+                                {
+                                    @foreach (var pc in Model.ProjectCategories)
+                                    {
+                                        <span class="badge bg-dark">@pc.Name</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Not assigned</span>
+                                }
+                            </div>
                         </div>
-
-                        <div class="detail-item mb-3">
-                            <strong>Stock:</strong>
-                            @if (Model.StockQuantity > 0)
-                            {
-                                <span class="badge @(Model.StockQuantity <= Model.LowStockThreshold ? "bg-warning" : "bg-success")">
-                                    @Model.StockQuantity in stock
+                        <div class="mb-3">
+                            <small class="text-muted fw-bold text-uppercase">Rating</small>
+                            <div class="mt-1">
+                                @{
+                                    int stars = (int)Math.Round((double)Model.AverageRating);
+                                }
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <i class="fas fa-star @(i <= stars ? "text-warning" : "text-muted")"></i>
+                                }
+                                <span class="text-muted ms-1">
+                                    (@Model.AverageRating.ToString("N1"))
                                 </span>
-                            }
-                            else
-                            {
-                                <span class="badge bg-danger">Out of stock</span>
-                            }
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="detail-item mb-3">
-                    <strong>Status:</strong>
-                    <span class="badge @(Model.Status ? "bg-success" : "bg-secondary")">
-                        @(Model.Status ? "Active" : "Inactive")
-                    </span>
-                </div>
-
-                @if (Model.IsFeatured)
+                @if (!string.IsNullOrEmpty(Model.Description))
                 {
-                    <div class="detail-item mb-3">
-                        <strong>Featured:</strong>
-                        <span class="badge bg-info">Yes</span>
+                    <div class="border-top pt-3 mt-2">
+                        <small class="text-muted fw-bold text-uppercase">Description</small>
+                        <div class="p-3 bg-light rounded mt-1">@Model.Description</div>
                     </div>
                 }
-
-                <div class="detail-section mt-4">
-                    <h5>Description</h5>
-                    <p>@(string.IsNullOrEmpty(Model.Description) ? "No description provided" : Model.Description)</p>
-                </div>
-
                 @if (!string.IsNullOrEmpty(Model.ShortDescription))
                 {
-                    <div class="detail-section mt-3">
-                        <h5>Short Description</h5>
-                        <p>@Model.ShortDescription</p>
+                    <div class="mt-3">
+                        <small class="text-muted fw-bold text-uppercase">Short Description</small>
+                        <div class="p-2 bg-light rounded mt-1">@Model.ShortDescription</div>
                     </div>
                 }
             </div>
         </div>
 
-        @if (!string.IsNullOrEmpty(Model.MainImage))
+        @* PRICING *@
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Pricing</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-6 col-md-3">
+                        <div class="border rounded p-3 text-center">
+                            <small class="text-muted d-block">Selling Price</small>
+                            <div class="h4 text-primary mb-0">
+                                $@Model.Price.ToString("N2")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="border rounded p-3 text-center">
+                            <small class="text-muted d-block">Cost Price</small>
+                            <div class="h5 mb-0">$@Model.CostPrice.ToString("N2")</div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="border rounded p-3 text-center">
+                            <small class="text-muted d-block">Unit Price</small>
+                            <div class="h5 mb-0">
+                                @Model.UnitPrice
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="border rounded p-3 text-center">
+                            <small class="text-muted d-block">Discount</small>
+                            <div class="h5 mb-0">
+                                @if (Model.Discount > 0)
+                                {
+                                    <span class="badge bg-danger fs-6">@Model.Discount%</span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">None</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.SpecialPrice.HasValue)
+                {
+                    <div class="border border-warning rounded p-3">
+                        <h6 class="text-warning mb-3">
+                            <i class="fas fa-tag me-1"></i>Special Price
+                        </h6>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Price</small>
+                                <div class="h5 text-danger">
+                                    $@Model.SpecialPrice.Value.ToString("N2")
+                                </div>
+                            </div>
+                            @if (Model.SpecialPriceStart.HasValue)
+                            {
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">From</small>
+                                    <div>
+                                        @Model.SpecialPriceStart.Value.ToString("dd MMM yyyy")
+                                    </div>
+                                </div>
+                            }
+                            @if (Model.SpecialPriceEnd.HasValue)
+                            {
+                                <div class="col-md-4">
+                                    <small class="text-muted d-block">Until</small>
+                                    <div>
+                                        @Model.SpecialPriceEnd.Value.ToString("dd MMM yyyy")
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* FABRIC SPECS *@
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-ruler-combined me-2"></i>Fabric Specifications
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 mb-3">
+                    <div class="col-4">
+                        <div class="border rounded p-3 text-center">
+                            <small class="text-muted d-block">Weight</small>
+                            <div class="h5 mb-0">
+                                @(Model.Weight > 0 ? Model.Weight?.ToString("N0") + " g/m²" : "—")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border rounded p-3 text-center">
+                            <small class="text-muted d-block">Width</small>
+                            <div class="h5 mb-0">
+                                @(Model.Width > 0 ? Model.Width?.ToString("N0") + " cm" : "—")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="border rounded p-3 text-center">
+                            <small class="text-muted d-block">Roll Length</small>
+                            <div class="h5 mb-0">
+                                @(Model.Length > 0 ? Model.Length?.ToString("N0") + " m" : "—")
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <div class="border rounded p-3">
+                            <small class="text-muted d-block">Height / Alert Threshold</small>
+                            <div class="h6 mb-0">
+                                @(Model.Height > 0 ? Model.Height?.ToString("N0") + " m" : "—")
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="border rounded p-3">
+                            <small class="text-muted d-block">Fabric Type</small>
+                            <div class="h6 mb-0">
+                                @if (Model.FabricType != null)
+                                {
+                                    <span class="badge bg-info text-dark">
+                                        @Model.FabricType.Name
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Not set</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.ProductCompositions != null && Model.ProductCompositions.Any())
+                {
+                    <h6 class="text-muted mt-2">Fabric Composition</h6>
+                    @foreach (var pc in Model.ProductCompositions)
+                    {
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>@(pc.Composition?.Name ?? "Material")</span>
+                                <strong>@pc.Percentage%</strong>
+                            </div>
+                            <div class="progress" style="height:10px;">
+                                <div class="progress-bar bg-info"
+                                     style="width:@pc.Percentage%"
+                                     title="@pc.Percentage%"></div>
+                            </div>
+                        </div>
+                    }
+                    <small class="text-muted">
+                        Total: @Model.ProductCompositions.Sum(c => c.Percentage)%
+                    </small>
+                }
+            </div>
+        </div>
+
+        @* GALLERY *@
+        @if (Model.ProductImages != null && Model.ProductImages.Any())
         {
-            <div class="card mt-3">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="fas fa-images me-2"></i>
+                        Gallery (@Model.ProductImages.Count images)
+                    </h5>
+                </div>
                 <div class="card-body">
-                    <h5>Main Image</h5>
-                    <img src="~/images/@Model.MainImage" alt="@Model.Name" class="img-fluid rounded" style="max-height: 300px;" />
+                    <div class="row g-2">
+                        @foreach (var img in Model.ProductImages.OrderBy(i => i.DisplayOrder))
+                        {
+                            <div class="col-6 col-md-3">
+                                <img src="~/images/product_images/@img.ImageUrl"
+                                     alt="@img.AltText"
+                                     class="img-thumbnail w-100"
+                                     style="height:120px; object-fit:cover;"
+                                     role="button"
+                                     data-bs-toggle="modal"
+                                     data-bs-target="#imgModal"
+                                     data-bs-src="/images/product_images/@img.ImageUrl" />
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         }
-    </div>
 
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-body">
-                <h5>Product Information</h5>
-
-                <div class="detail-item mb-2">
-                    <strong>Created:</strong>
-                    <span>@Model.CreatedAt.ToString("dd MMM yyyy HH:mm")</span>
-                </div>
-
-                <div class="detail-item mb-2">
-                    <strong>Created By:</strong>
-                    <span>@Model.CreatedBy</span>
-                </div>
-
-                @if (Model.UpdatedAt.HasValue)
-                {
-                    <div class="detail-item mb-2">
-                        <strong>Last Updated:</strong>
-                        <span>@Model.UpdatedAt.Value.ToString("dd MMM yyyy HH:mm")</span>
-                    </div>
-
-                    @if (!string.IsNullOrEmpty(Model.UpdatedBy))
-                    {
-                        <div class="detail-item mb-2">
-                            <strong>Updated By:</strong>
-                            <span>@Model.UpdatedBy</span>
-                        </div>
-                    }
-                }
-
-                <div class="detail-item mb-2">
-                    <strong>URL Slug:</strong>
-                    <code>@Model.Slug</code>
-                </div>
-
-                @if (Model.IsBestSeller)
-                {
-                    <div class="detail-item mb-2">
-                        <strong>Best Seller:</strong>
-                        <span class="badge bg-warning">Yes</span>
-                    </div>
-                }
+        @* SEO *@
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-search me-2"></i>SEO</h5>
             </div>
-        </div>
-
-        <div class="card mt-3">
             <div class="card-body">
-                <h5>SEO Information</h5>
-
-                <div class="detail-item mb-2">
-                    <strong>Meta Title:</strong>
-                    <span>@(string.IsNullOrEmpty(Model.MetaTitle) ? "Not set" : Model.MetaTitle)</span>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted fw-bold text-uppercase">Meta Title</small>
+                        <div class="p-2 bg-light rounded mt-1">
+                            @(string.IsNullOrEmpty(Model.MetaTitle) ? "Not set" : Model.MetaTitle)
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <small class="text-muted fw-bold text-uppercase">Meta Description</small>
+                        <div class="p-2 bg-light rounded mt-1">
+                            @(string.IsNullOrEmpty(Model.MetaDescription)
+                                ? "Not set"
+                                : Model.MetaDescription)
+                        </div>
+                    </div>
                 </div>
-
-                <div class="detail-item mb-2">
-                    <strong>Meta Description:</strong>
-                    <span>@(string.IsNullOrEmpty(Model.MetaDescription) ? "Not set" : Model.MetaDescription)</span>
-                </div>
-
                 @if (!string.IsNullOrEmpty(Model.MetaKeywords))
                 {
-                    <div class="detail-item">
-                        <strong>Meta Keywords:</strong>
-                        <span>@Model.MetaKeywords</span>
+                    <div class="mb-3">
+                        <small class="text-muted fw-bold text-uppercase">Keywords</small>
+                        <div class="d-flex flex-wrap gap-1 mt-1">
+                            @foreach (var kw in Model.MetaKeywords.Split(
+                                                            ',', StringSplitOptions.RemoveEmptyEntries))
+                            {
+                                <span class="badge bg-secondary">@kw.Trim()</span>
+                            }
+                        </div>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.VideoUrl))
+                {
+                    <div>
+                        <small class="text-muted fw-bold text-uppercase">Video</small>
+                        <div class="mt-1">
+                            <a href="@Model.VideoUrl" target="_blank"
+                                   class="btn btn-sm btn-outline-danger">
+                                <i class="fab fa-youtube me-1"></i> Watch Video
+                            </a>
+                        </div>
                     </div>
                 }
             </div>
         </div>
 
-        <div class="card mt-3">
+    </div>@* end col-lg-8 *@
+
+    @* ======= RIGHT col-lg-4 ======= *@
+    <div class="col-lg-4">
+
+        @* MAIN IMAGE *@
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-image me-2"></i>Main Image</h5>
+            </div>
+            <div class="card-body text-center p-2">
+                @if (!string.IsNullOrEmpty(Model.MainImage))
+                {
+                    <img src="~/images/@Model.MainImage"
+                         alt="@Model.Name"
+                         class="img-fluid rounded"
+                         style="max-height:250px; object-fit:cover; width:100%;" />
+                }
+                else
+                {
+                    <div class="border rounded d-flex align-items-center
+                        justify-content-center bg-light"
+                         style="height:200px;">
+                        <div class="text-muted text-center">
+                            <i class="fas fa-image fa-3x mb-2 d-block"></i>
+                            No image
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @* STOCK *@
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-warehouse me-2"></i>Stock</h5>
+            </div>
             <div class="card-body">
-                <h5>Quick Actions</h5>
-                <div class="d-grid gap-2">
-                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
-                        <i class="fas fa-edit"></i> Edit Product
-                    </a>
-                    <button class="btn btn-danger" onclick="confirmDelete(@Model.Id, '@Model.Name.Replace("'", "\\'")')">
-                        <i class="fas fa-trash"></i> Delete Product
-                    </button>
+                <div class="text-center mb-3">
+                    @if (Model.StockQuantity > 0)
+                    {
+                        <div class="display-6 @(Model.StockQuantity <= Model.LowStockThreshold
+                                                                                     ? "text-warning" : "text-success")">
+                            @Model.StockQuantity
+                        </div>
+                        <small class="text-muted">units in stock</small>
+                        @if (Model.StockQuantity <= Model.LowStockThreshold)
+                        {
+                            <div class="alert alert-warning mt-2 py-1 mb-0">
+                                <i class="fas fa-exclamation-triangle"></i> Low stock!
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="display-6 text-danger">0</div>
+                        <span class="badge bg-danger">Out of stock</span>
+                    }
                 </div>
+                <table class="table table-sm table-borderless mb-0">
+                    <tr>
+                        <td class="text-muted">Low Stock Alert</td>
+                        <td class="text-end">
+                            <strong>@Model.LowStockThreshold</strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Manage Stock</td>
+                        <td class="text-end">
+                            <span class="badge @(Model.ManageStock
+                                                                                                  ? "bg-success" : "bg-secondary")">
+                                @(Model.ManageStock ? "Yes" : "No")
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Backorders</td>
+                        <td class="text-end">
+                            <span class="badge @(Model.BackordersAllowed
+                                                                                                  ? "bg-success" : "bg-secondary")">
+                                @(Model.BackordersAllowed ? "Allowed" : "No")
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">Has Variations</td>
+                        <td class="text-end">
+                            <span class="badge @(Model.HasVariations
+                                                                                                  ? "bg-primary" : "bg-secondary")">
+                                @(Model.HasVariations ? "Yes" : "No")
+                            </span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        @* FLAGS *@
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Settings</h5>
+            </div>
+            <div class="card-body p-0">
+                @{
+                    var flags = new (bool Val, string Label, string Icon, string Color)[]
+                    {
+                        (Model.Status,           "Active",            "check-circle", "success"),
+                        (Model.IsFeatured,       "Featured",          "star",         "warning"),
+                        (Model.IsBestSeller,     "Best Seller",       "fire",         "danger"),
+                        (Model.IsNew,            "New Arrival",       "certificate",  "info"),
+                        (Model.IsInStock,        "In Stock",          "box",          "success"),
+                        (Model.RequiresShipping, "Requires Shipping", "truck",        "secondary"),
+                        (Model.Taxable,          "Taxable",           "receipt",      "secondary"),
+                        (Model.IsVirtual,        "Virtual",           "cloud",        "secondary"),
+                        (Model.IsDownloadable,   "Downloadable",      "download",     "secondary"),
+                    };
+                }
+                <ul class="list-group list-group-flush">
+                    @foreach (var f in flags)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="fas fa-@f.Icon text-@f.Color me-2"></i>@f.Label
+                            </span>
+                            <span class="badge @(f.Val ? "bg-" + f.Color : "bg-light text-dark")">
+                                @(f.Val ? "Yes" : "No")
+                            </span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+
+        @* AUDIT *@
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Record Info</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-sm table-borderless mb-0">
+                    <tr>
+                        <td class="text-muted">Created</td>
+                        <td>@Model.CreatedAt.ToString("dd MMM yyyy")</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted">By</td>
+                        <td>@Model.CreatedBy</td>
+                    </tr>
+                    @if (Model.UpdatedAt.HasValue)
+                    {
+                        <tr>
+                            <td class="text-muted">Updated</td>
+                            <td>@Model.UpdatedAt.Value.ToString("dd MMM yyyy")</td>
+                        </tr>
+                        @if (!string.IsNullOrEmpty(Model.UpdatedBy))
+                        {
+                            <tr>
+                                <td class="text-muted">By</td>
+                                <td>@Model.UpdatedBy</td>
+                            </tr>
+                        }
+                    }
+                </table>
+            </div>
+        </div>
+
+        @* QUICK ACTIONS *@
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-bolt me-2"></i>Quick Actions</h5>
+            </div>
+            <div class="card-body d-grid gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> Edit Product
+                </a>
+                <button type="button" class="btn btn-outline-secondary"
+                        onclick="detailsToggleStatus(@Model.Id)">
+                    <i class="fas fa-toggle-@(Model.Status ? "on text-success" : "off")"></i>
+                    @(Model.Status ? "Deactivate" : "Activate")
+                </button>
+                <button type="button" class="btn btn-outline-warning"
+                        onclick="detailsToggleFeatured(@Model.Id)">
+                    <i class="fas fa-star @(Model.IsFeatured ? "text-warning" : "")"></i>
+                    @(Model.IsFeatured ? "Remove Featured" : "Mark as Featured")
+                </button>
+                <button type="button" class="btn btn-outline-danger"
+                        onclick="detailsDelete(@Model.Id,
+                    '@Html.Raw(Model.Name.Replace("'", "\\'"))')">
+                    <i class="fas fa-trash"></i> Delete Product
+                </button>
+            </div>
+        </div>
+
+    </div>@* end col-lg-4 *@
+</div>
+
+@* IMAGE LIGHTBOX MODAL *@
+<div class="modal fade" id="imgModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-body p-0 text-center">
+                <img id="imgModalSrc" src="" class="img-fluid rounded"
+                     style="max-height:80vh;" />
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-light"
+                        data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i> Close
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 @section Scripts {
+    @Html.AntiForgeryToken()
     <script>
-        function confirmDelete(id, name) {
-            if (confirm(`Are you sure you want to delete "${name}"?`)) {
-                $.ajax({
-                    url: '/Admin/Products/Delete/' + id,
-                    type: 'POST',
-                    headers: {
-                        'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
-                    },
-                    success: function(response) {
-                        if (response.success) {
-                            alert('Product deleted successfully!');
-                            window.location.href = '/admin/products';
-                        } else {
-                            alert('Error: ' + response.message);
-                        }
-                    },
-                    error: function() {
-                        alert('Error deleting product');
-                    }
-                });
-            }
+        // ===== LIGHTBOX =====
+        document.getElementById('imgModal').addEventListener('show.bs.modal', function (e) {
+            document.getElementById('imgModalSrc').src =
+                e.relatedTarget.getAttribute('data-bs-src');
+        });
+
+        // ===== TOGGLE STATUS =====
+        function detailsToggleStatus(id) {
+            const token = document.querySelector(
+                'input[name="__RequestVerificationToken"]').value;
+            fetch('/Admin/Products/ToggleStatus/' + id, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `__RequestVerificationToken=${encodeURIComponent(token)}`
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) location.reload();
+                else alert(res.message || 'Error');
+            })
+            .catch(() => alert('Server error'));
+        }
+
+        // ===== TOGGLE FEATURED =====
+        function detailsToggleFeatured(id) {
+            const token = document.querySelector(
+                'input[name="__RequestVerificationToken"]').value;
+            fetch('/Admin/Products/ToggleFeatured/' + id, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `__RequestVerificationToken=${encodeURIComponent(token)}`
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) location.reload();
+                else alert(res.message || 'Error');
+            })
+            .catch(() => alert('Server error'));
+        }
+
+        // ===== DELETE =====
+        function detailsDelete(id, name) {
+            if (!confirm(`Delete "${name}"?\nThis action cannot be undone.`)) return;
+            const token = document.querySelector(
+                'input[name="__RequestVerificationToken"]').value;
+            fetch('/Admin/Products/Delete/' + id, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: `__RequestVerificationToken=${encodeURIComponent(token)}`
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) window.location.href = '/admin/products';
+                else alert(res.message || 'Error deleting product');
+            })
+            .catch(() => alert('Server error'));
         }
     </script>
 }

@@ -1,523 +1,731 @@
 ﻿@model NakhlaBelal.Models.Product
 @{
-    var categories = ViewBag.Categories as List<NakhlaBelal.Models.Category> ?? new List<NakhlaBelal.Models.Category>();
-    var brands = ViewBag.Brands as List<NakhlaBelal.Models.Brand> ?? new List<NakhlaBelal.Models.Brand>();
+    var categories  = ViewBag.Categories      as List<NakhlaBelal.Models.Category>         ?? new List<NakhlaBelal.Models.Category>();
+    var brands      = ViewBag.Brands          as List<NakhlaBelal.Models.Brand>            ?? new List<NakhlaBelal.Models.Brand>();
+    var fabricTypes = ViewBag.FabricTypes     as List<NakhlaBelal.Models.FabricType>       ?? new List<NakhlaBelal.Models.FabricType>();
+    var colors      = ViewBag.Colors          as List<NakhlaBelal.Models.Color>            ?? new List<NakhlaBelal.Models.Color>();
+    var allTags     = ViewBag.ProductTags     as List<NakhlaBelal.Models.ProductTag>       ?? new List<NakhlaBelal.Models.ProductTag>();
+    var allComps    = ViewBag.Compositions    as List<NakhlaBelal.Models.Composition>      ?? new List<NakhlaBelal.Models.Composition>();
+    var allProjCats = ViewBag.ProjectCategories as List<NakhlaBelal.Models.ProjectCategory> ?? new List<NakhlaBelal.Models.ProjectCategory>();
+    int compIndex   = 0;
 }
 
-<div class="modal-header">
-    <h3>Edit Product: @Model.Name</h3>
-    <button type="button" class="modal-close" onclick="closeModal()">
-        <i class="fas fa-times"></i>
-    </button>
+<div class="modal-header bg-primary text-white">
+    <h5 class="modal-title">
+        <i class="fas fa-edit me-2"></i>Edit: @Model.Name
+    </h5>
+    <button type="button" class="btn-close btn-close-white" onclick="closeModal()"></button>
 </div>
 
-<form id="editProductForm" method="post" action="/Admin/Products/Edit/@Model.Id">
+<form id="editProductForm" method="post"
+      action="/Admin/Products/Edit/@Model.Id"
+      enctype="multipart/form-data">
     @Html.AntiForgeryToken()
-    <input type="hidden" name="Id" value="@Model.Id" />
-    <input type="hidden" name="CreatedAt" value="@Model.CreatedAt" />
-    <input type="hidden" name="CreatedBy" value="@Model.CreatedBy" />
+    <input type="hidden" name="Id"            value="@Model.Id" />
+    <input type="hidden" name="CreatedAt"     value="@Model.CreatedAt" />
+    <input type="hidden" name="CreatedBy"     value="@Model.CreatedBy" />
+    <input type="hidden" name="AverageRating" value="@Model.AverageRating" />
 
-    <div class="modal-body">
-        <div class="validation-summary">
-            @Html.ValidationSummary(true, "", new { @class = "alert alert-danger", style = "display: none;" })
-        </div>
+    <div class="modal-body" style="max-height: 72vh; overflow-y: auto;">
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.Name, "Product Name", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.Name, new {
-                    @class = "form-control",
-                                        placeholder = "Enter product name",
-                                        required = "required"
-                                        })
-                    @Html.ValidationMessageFor(model => model.Name, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.SKU, "SKU", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.SKU, new {
-                                        @class = "form-control",
-                                        placeholder = "PROD-001",
-                                        required = "required"
-                                        })
-                    @Html.ValidationMessageFor(model => model.SKU, null, new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
+        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.CategoryId, "Category", new { @class = "form-label" })
-                    @{
-                        var categoryList = new SelectList(categories, "Id", "Name", Model.CategoryId);
-                    }
-                    @Html.DropDownListFor(model => model.CategoryId, categoryList, "Select Category", new { @class = "form-control", required = "required" })
-                    @Html.ValidationMessageFor(model => model.CategoryId, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.BrandId, "Brand", new { @class = "form-label" })
-                    @{
-                        var brandList = new SelectList(brands, "Id", "Name", Model.BrandId);
-                    }
-                    @Html.DropDownListFor(model => model.BrandId, brandList, "Select Brand", new { @class = "form-control" })
-                    @Html.ValidationMessageFor(model => model.BrandId, null, new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
+        @* ===== TABS ===== *@
+        <ul class="nav nav-tabs mb-3" id="editModalTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#etab-basic" type="button">
+                    <i class="fas fa-tag"></i> Basic
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#etab-pricing" type="button">
+                    <i class="fas fa-dollar-sign"></i> Pricing
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#etab-fabric" type="button">
+                    <i class="fas fa-ruler-combined"></i> Fabric
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#etab-media" type="button">
+                    <i class="fas fa-images"></i> Media
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-toggle="tab" data-bs-target="#etab-settings" type="button">
+                    <i class="fas fa-cog"></i> Settings
+                </button>
+            </li>
+        </ul>
 
-        <div class="form-group mb-3">
-            @Html.LabelFor(model => model.ShortDescription, "Short Description", new { @class = "form-label" })
-            @Html.TextAreaFor(model => model.ShortDescription, new {
-            @class = "form-control",
-                        rows = "2",
-                        placeholder = "Brief description for product listings"
+        <div class="tab-content">
+
+            @* ===== TAB: BASIC ===== *@
+            <div class="tab-pane fade show active" id="etab-basic" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-8 mb-3">
+                        <label class="form-label fw-bold">
+                            Product Name <span class="text-danger">*</span>
+                        </label>
+                        @Html.TextBoxFor(m => m.Name, new {
+                            @class = "form-control",
+                            required = "required",
+                            placeholder = "Product name"
                         })
-            @Html.ValidationMessageFor(model => model.ShortDescription, null, new { @class = "text-danger" })
-        </div>
+                        @Html.ValidationMessageFor(m => m.Name, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">SKU</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.SKU, new { @class = "form-control", placeholder = "PROD-001" })
+                            <button type="button" class="btn btn-outline-secondary" onclick="peditGenSKU()">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </div>
+                        @Html.ValidationMessageFor(m => m.SKU, null, new { @class = "text-danger" })
+                    </div>
+                </div>
 
-        <div class="form-group mb-3">
-            @Html.LabelFor(model => model.Description, "Full Description", new { @class = "form-label" })
-            @Html.TextAreaFor(model => model.Description, new {
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            Category <span class="text-danger">*</span>
+                        </label>
+                        <select name="CategoryId" class="form-select" required>
+                            <option value="">-- Select Category --</option>
+                            @foreach (var cat in categories)
+                            {
+                                <option value="@cat.Id" selected="@(cat.Id == Model.CategoryId ? "selected" : "")">
+                                    @cat.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Brand</label>
+                        <select name="BrandId" class="form-select">
+                            <option value="">-- Select Brand --</option>
+                            @foreach (var brand in brands)
+                            {
+                                <option value="@brand.Id" selected="@(brand.Id == Model.BrandId ? "selected" : "")">
+                                    @brand.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Short Description</label>
+                    @Html.TextAreaFor(m => m.ShortDescription, new {
+                        @class = "form-control",
+                        rows = "2",
+                        placeholder = "Brief summary for product listings"
+                    })
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Full Description</label>
+                    @Html.TextAreaFor(m => m.Description, new {
                         @class = "form-control",
                         rows = "3",
                         placeholder = "Detailed product description"
+                    })
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Tags</label>
+                        <select name="SelectedTagIds" multiple class="form-select" style="height: 100px;">
+                            @foreach (var tag in allTags)
+                            {
+                                bool sel = Model.ProductTags != null && Model.ProductTags.Any(t => t.Id == tag.Id);
+                                <option value="@tag.Id" selected="@(sel ? "selected" : "")">@tag.Name</option>
+                            }
+                        </select>
+                        <small class="text-muted">Hold Ctrl to select multiple</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Project Categories</label>
+                        <div class="border rounded p-2" style="max-height: 100px; overflow-y: auto;">
+                            @foreach (var pc in allProjCats)
+                            {
+                                bool sel = Model.ProjectCategories != null && Model.ProjectCategories.Any(p => p.Id == pc.Id);
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="SelectedProjectCategoryIds"
+                                           value="@pc.Id"
+                                           id="epcat_@pc.Id"
+                                           @(sel ? "checked" : "") />
+                                    <label class="form-check-label" for="epcat_@pc.Id">@pc.Name</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">Barcode</label>
+                        @Html.TextBoxFor(m => m.Barcode, new {
+                            @class = "form-control",
+                            placeholder = "6281234567890"
                         })
-            @Html.ValidationMessageFor(model => model.Description, null, new { @class = "text-danger" })
-        </div>
-
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.Price, "Price ($)", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.Price, new {
-                                        @class = "form-control",
-                                        type = "number",
-                                        step = "0.01",
-                                        min = "0",
-                                        placeholder = "0.00",
-                                        required = "required"
-                                        })
-                    @Html.ValidationMessageFor(model => model.Price, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.CostPrice, "Cost Price ($)", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.CostPrice, new {
-                                        @class = "form-control",
-                                        type = "number",
-                                        step = "0.01",
-                                        min = "0",
-                                        placeholder = "0.00"
-                                        })
-                    @Html.ValidationMessageFor(model => model.CostPrice, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.SpecialPrice, "Special Price ($)", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.SpecialPrice, new {
-                                        @class = "form-control",
-                                        type = "number",
-                                        step = "0.01",
-                                        min = "0",
-                                        placeholder = "0.00"
-                                        })
-                    @Html.ValidationMessageFor(model => model.SpecialPrice, null, new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.StockQuantity, "Stock Quantity", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.StockQuantity, new {
-                                        @class = "form-control",
-                                        type = "number",
-                                        min = "0",
-                                        placeholder = "0",
-                                        required = "required"
-                                        })
-                    @Html.ValidationMessageFor(model => model.StockQuantity, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.LowStockThreshold, "Low Stock Threshold", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.LowStockThreshold, new {
-                                        @class = "form-control",
-                                        type = "number",
-                                        min = "0",
-                                        placeholder = "10"
-                                        })
-                    @Html.ValidationMessageFor(model => model.LowStockThreshold, null, new { @class = "text-danger" })
-                    <small class="text-muted">Alert when stock falls below this number</small>
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-        @* Height and width *@
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.Width, "Width", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.Width, new {
-                                        @class = "form-control",
-                                        type = "number",
-                                        min = "0",
-                                        placeholder = "10 cm",
-                                        
-                                        })
-                    @Html.ValidationMessageFor(model => model.Width, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.Height, "Height", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.Height, new {
-                                        @class = "form-control",
-                                        type = "number",
-                                        min = "0",
-                                        placeholder = "100 cm"
-                                        })
-                    @Html.ValidationMessageFor(model => model.Height, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.Length, "Length", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.Length, new {
-                                        @class = "form-control",
-                                        type = "number",
-                                        min = "0",
-                                        placeholder = "100 cm"
-                                        })
-                    @Html.ValidationMessageFor(model => model.Length, null, new { @class = "text-danger" })
-                </div>
-            </div>
-        </div>
-
-
-
-
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.MainImage, "Main Image URL", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.MainImage, new {
-                                        @class = "form-control",
-                                        placeholder = "https://example.com/image.jpg"
-                                        })
-                    @Html.ValidationMessageFor(model => model.MainImage, null, new { @class = "text-danger" })
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.Slug, "URL Slug", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.Slug, new {
-                                        @class = "form-control",
-                                        placeholder = "product-name"
-                                        })
-                    @Html.ValidationMessageFor(model => model.Slug, null, new { @class = "text-danger" })
-                    <div class="mt-2">
-                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="generateProductSlug()">
-                            <i class="fas fa-magic"></i> Regenerate Slug
-                        </button>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">URL Slug</label>
+                        <div class="input-group">
+                            <span class="input-group-text">/product/</span>
+                            @Html.TextBoxFor(m => m.Slug, new { @class = "form-control", placeholder = "product-slug" })
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.MetaTitle, "Meta Title", new { @class = "form-label" })
-                    @Html.TextBoxFor(model => model.MetaTitle, new {
-                                        @class = "form-control",
-                                        placeholder = "SEO title for search engines"
-                                        })
-                    @Html.ValidationMessageFor(model => model.MetaTitle, null, new { @class = "text-danger" })
-                    <small class="text-muted">Appears in browser tab and search results</small>
+            @* ===== TAB: PRICING ===== *@
+            <div class="tab-pane fade" id="etab-pricing" role="tabpanel">
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <label class="form-label fw-bold">
+                            Selling Price <span class="text-danger">*</span>
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            @Html.TextBoxFor(m => m.Price, new {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.01",
+                                min = "0",
+                                required = "required"
+                            })
+                        </div>
+                        @Html.ValidationMessageFor(m => m.Price, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="form-label fw-bold">Cost Price</label>
+                        <div class="input-group">
+                            <span class="input-group-text">$</span>
+                            @Html.TextBoxFor(m => m.CostPrice, new {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.01",
+                                min = "0"
+                            })
+                        </div>
+                    </div>           
+
+                    <div class="col-md-3">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Unit Price</label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(m => m.UnitPrice, new
+                                {
+                                    @class = "form-control",
+                                    type = "text"
+                                })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6 mb-3">
+                        <label class="form-label fw-bold">Discount %</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.Discount, new {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.01",
+                                min = "0",
+                                max = "100"
+                            })
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border rounded p-3 bg-light mb-3">
+                    <h6 class="text-muted mb-3">
+                        <i class="fas fa-tag me-1"></i> Special Price (Optional)
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Special Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                @Html.TextBoxFor(m => m.SpecialPrice, new {
+                                    @class = "form-control",
+                                    type = "number",
+                                    step = "0.01",
+                                    min = "0"
+                                })
+                            </div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Start Date</label>
+                            @Html.TextBoxFor(m => m.SpecialPriceStart, new {
+                                @class = "form-control",
+                                type = "date"
+                            })
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">End Date</label>
+                            @Html.TextBoxFor(m => m.SpecialPriceEnd, new {
+                                @class = "form-control",
+                                type = "date"
+                            })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6 mb-3">
+                        <label class="form-label fw-bold">
+                            Stock Quantity <span class="text-danger">*</span>
+                        </label>
+                        @Html.TextBoxFor(m => m.StockQuantity, new {
+                            @class = "form-control",
+                            type = "number",
+                            min = "0",
+                            required = "required"
+                        })
+                        @Html.ValidationMessageFor(m => m.StockQuantity, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col-6 mb-3">
+                        <label class="form-label fw-bold">Low Stock Alert</label>
+                        @Html.TextBoxFor(m => m.LowStockThreshold, new {
+                            @class = "form-control",
+                            type = "number",
+                            min = "0",
+                            placeholder = "10"
+                        })
+                        <small class="text-muted">Alert when stock falls below this</small>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    @Html.LabelFor(model => model.MetaDescription, "Meta Description", new { @class = "form-label" })
-                    @Html.TextAreaFor(model => model.MetaDescription, new {
-                                        @class = "form-control",
-                                        rows = "2",
-                                        placeholder = "SEO description for search engines"
-                                        })
-                    @Html.ValidationMessageFor(model => model.MetaDescription, null, new { @class = "text-danger" })
-                    <small class="text-muted">Appears in search results (max 160 characters)</small>
+
+            @* ===== TAB: FABRIC ===== *@
+            <div class="tab-pane fade" id="etab-fabric" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Weight (g/m²)</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.Weight, new {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.01",
+                                min = "0",
+                                placeholder = "e.g. 180"
+                            })
+                            <span class="input-group-text">g/m²</span>
+                        </div>
+                        <small class="text-muted">Fabric weight per square meter</small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Width (cm)</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.Width, new {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.01",
+                                min = "0",
+                                placeholder = "e.g. 150"
+                            })
+                            <span class="input-group-text">cm</span>
+                        </div>
+                        <small class="text-muted">Fabric roll width</small>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Height / Alert (m)</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.Height, new {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.01",
+                                min = "0",
+                                placeholder = "e.g. 50"
+                            })
+                            <span class="input-group-text">m</span>
+                        </div>
+                        <small class="text-muted">Min roll length threshold</small>
+                    </div>
                 </div>
-            </div>
-        </div>
 
-
-
-
-
-
-
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="form-label">Product Tags</label>
-                    <select name="SelectedTagIds" multiple class="form-control">
-                        @if (ViewBag.ProductTags != null)
-                        {
-                            foreach (var tag in ViewBag.ProductTags)
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Roll Length (m)</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(m => m.Length, new {
+                                @class = "form-control",
+                                type = "number",
+                                step = "0.01",
+                                min = "0",
+                                placeholder = "e.g. 100"
+                            })
+                            <span class="input-group-text">m</span>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Fabric Type</label>
+                        <select name="FabricTypeId" class="form-select">
+                            <option value="">-- Select --</option>
+                            @foreach (var ft in fabricTypes)
                             {
-                                bool isSelected = Model.ProductTags != null && Model.ProductTags.Any(t => t.Id == tag.Id);
-                                <option value="@tag.Id" selected="@(isSelected ? "selected" : null)">
-                                    @tag.Name
+                                <option value="@ft.Id" selected="@(ft.Id == Model.FabricTypeId ? "selected" : "")">
+                                    @ft.Name
                                 </option>
                             }
-                        }
-                    </select>
-                </div>
-            </div>
-           
-
-
-
-
-            <div class="col-md-6">
-                <div class="form-group mb-3">
-                    <label class="form-label font-weight-bold">Fabric Composition (%)</label>
-                    <div id="composition-container">
-                        @{
-                            int compIndex = 0;
-                        }
-                        @if (Model.ProductCompositions != null && Model.ProductCompositions.Any())
-                        {
-                            @foreach (var pc in Model.ProductCompositions)
+                        </select>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label class="form-label fw-bold">Color</label>
+                        <select name="ColorId" class="form-select">
+                            <option value="">-- Select Color --</option>
+                            @foreach (var c in colors)
                             {
-                                <div class="composition-row row mb-2 g-2 align-items-center">
-                                    <div class="col-7">
-                                        <select name="ProductCompositions[@compIndex].CompositionId" class="form-select form-control" required>
-                                            @foreach (var comp in ViewBag.Compositions)
-                                            {
-                                                <option value="@comp.Id" selected="@(pc.CompositionId == comp.Id)">@comp.Name</option>
-                                            }
-                                        </select>
-                                    </div>
-                                    <div class="col-3">
-                                        <input type="number" name="ProductCompositions[@compIndex].Percentage" class="form-control" value="@pc.Percentage" min="1" max="100" required>
-                                    </div>
-                                    <div class="col-2">
-                                        <button type="button" class="btn btn-outline-danger btn-sm remove-composition">×</button>
+                                <option value="@c.Id" selected="@(c.Id == Model.ColorId ? "selected" : "")">
+                                    @c.Name
+                                </option>
+                            }
+                        </select>
+                    </div>
+                </div>
+
+                @* COMPOSITION *@
+                <div class="border-top pt-3 mt-2">
+                    <label class="form-label fw-bold">
+                        <i class="fas fa-percentage me-1"></i>Fabric Composition
+                    </label>
+                    <div id="pedit-comp-container">
+                        @foreach (var pc in (Model.ProductCompositions ?? new List<NakhlaBelal.Models.ProductComposition>()))
+                        {
+                            <div class="composition-row row mb-2 g-2 align-items-center">
+                                <div class="col-7">
+                                    <select name="ProductCompositions[@compIndex].CompositionId"
+                                            class="form-select" required>
+                                        <option value="">Select Material</option>
+                                        @foreach (var comp in allComps)
+                                        {
+                                            <option value="@comp.Id" selected="@(pc.CompositionId == comp.Id ? "selected" : "")">
+                                                @comp.Name
+                                            </option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="col-3">
+                                    <div class="input-group">
+                                        <input type="number"
+                                               name="ProductCompositions[@compIndex].Percentage"
+                                               class="form-control"
+                                               value="@pc.Percentage"
+                                               min="1" max="100" required />
+                                        <span class="input-group-text">%</span>
                                     </div>
                                 </div>
-                                compIndex++;
-                            }
+                                <div class="col-2">
+                                    <button type="button"
+                                            class="btn btn-outline-danger btn-sm w-100 remove-comp-btn">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            compIndex++;
                         }
                     </div>
-                    <button type="button" id="add-composition" class="btn btn-sm btn-outline-primary mt-2">
+                    <button type="button" id="pedit-add-comp"
+                            class="btn btn-sm btn-outline-primary mt-2">
                         <i class="fas fa-plus"></i> Add Material
                     </button>
                 </div>
             </div>
 
-        </div>
+            @* ===== TAB: MEDIA ===== *@
+            <div class="tab-pane fade" id="etab-media" role="tabpanel">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Main Image</label>
+                    <div class="text-center mb-2">
+                        <img id="peditMainPreview"
+                             src="@(string.IsNullOrEmpty(Model.MainImage) ? "/images/no-image.png" : "/images/" + Model.MainImage)"
+                             class="img-thumbnail"
+                             style="max-height: 150px; object-fit: cover;" />
+                    </div>
+                    <input type="file" name="img" class="form-control" accept="image/*"
+                           onchange="peditPreviewImg(this, 'peditMainPreview')" />
+                    <small class="text-muted">Leave empty to keep current image</small>
+                </div>
 
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Add Gallery Images</label>
+                    <input type="file" name="galleryImages" class="form-control"
+                           multiple accept="image/*" />
+                    <small class="text-muted">Select multiple images at once</small>
+                </div>
 
+                @if (Model.ProductImages != null && Model.ProductImages.Any())
+                {
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Current Gallery</label>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var img in Model.ProductImages.OrderBy(i => i.DisplayOrder))
+                            {
+                                <div id="pedit-gimg-@img.Id" class="text-center">
+                                    <img src="~/images/product_images/@img.ImageUrl"
+                                         class="img-thumbnail"
+                                         style="width: 80px; height: 80px; object-fit: cover;" />
+                                    <div>
+                                        <button type="button"
+                                                class="btn btn-danger btn-sm mt-1"
+                                                onclick="peditDeleteGallery(@img.Id)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
 
-        <div class="row">
-
-
-            
-
-            <div class="col-md-6">
-                <div class="
-                    
-
-
-
-
-mb-3">
-                    <label asp-for="ColorId" class="control-label">Product Color</label>
-                    <select asp-for="ColorId" class="form-select select2" asp-items="@(new SelectList(ViewBag.Colors, "Id", "Name"))">
-                        <option value="">--Select Color--</option>
-                    </select>
-                    <span asp-validation-for="ColorId" class="text-danger"></span>
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Video URL</label>
+                    @Html.TextBoxFor(m => m.VideoUrl, new {
+                        @class = "form-control",
+                        placeholder = "https://youtube.com/..."
+                    })
                 </div>
             </div>
 
-        </div>
+            @* ===== TAB: SETTINGS ===== *@
+            <div class="tab-pane fade" id="etab-settings" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-muted border-bottom pb-2 mb-3">
+                            <i class="fas fa-eye me-1"></i>Display
+                        </h6>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.Status, new { @class = "form-check-input", role = "switch" })
+                            @Html.LabelFor(m => m.Status, "Active (Visible on site)", new { @class = "form-check-label" })
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.IsFeatured, new { @class = "form-check-input", role = "switch" })
+                            <label class="form-check-label">
+                                <i class="fas fa-star text-warning"></i> Featured
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.IsBestSeller, new { @class = "form-check-input", role = "switch" })
+                            <label class="form-check-label">
+                                <i class="fas fa-fire text-danger"></i> Best Seller
+                            </label>
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.IsNew, new { @class = "form-check-input", role = "switch" })
+                            <label class="form-check-label">
+                                <i class="fas fa-certificate text-success"></i> New Arrival
+                            </label>
+                        </div>
 
+                        <h6 class="text-muted border-bottom pb-2 mb-3 mt-4">
+                            <i class="fas fa-search me-1"></i>SEO
+                        </h6>
+                        <div class="mb-3">
+                            <label class="form-label">Meta Title</label>
+                            @Html.TextBoxFor(m => m.MetaTitle, new {
+                                @class = "form-control",
+                                placeholder = "SEO title (max 60 chars)"
+                            })
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Meta Description</label>
+                            @Html.TextAreaFor(m => m.MetaDescription, new {
+                                @class = "form-control",
+                                rows = "2",
+                                placeholder = "SEO description (max 160 chars)"
+                            })
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Meta Keywords</label>
+                            @Html.TextBoxFor(m => m.MetaKeywords, new {
+                                @class = "form-control",
+                                placeholder = "keyword1, keyword2, ..."
+                            })
+                        </div>
+                    </div>
 
+                    <div class="col-md-6">
+                        <h6 class="text-muted border-bottom pb-2 mb-3">
+                            <i class="fas fa-warehouse me-1"></i>Stock
+                        </h6>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.ManageStock, new { @class = "form-check-input", role = "switch" })
+                            @Html.LabelFor(m => m.ManageStock, "Manage Stock", new { @class = "form-check-label" })
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.IsInStock, new { @class = "form-check-input", role = "switch" })
+                            @Html.LabelFor(m => m.IsInStock, "In Stock", new { @class = "form-check-label" })
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.BackordersAllowed, new { @class = "form-check-input", role = "switch" })
+                            @Html.LabelFor(m => m.BackordersAllowed, "Allow Backorders", new { @class = "form-check-label" })
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.HasVariations, new { @class = "form-check-input", role = "switch" })
+                            @Html.LabelFor(m => m.HasVariations, "Has Variations", new { @class = "form-check-label" })
+                        </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-        <div class="row">
-            <div class="col-md-4">
-                <div class="form-check mb-3">
-                    @Html.CheckBoxFor(model => model.Status, new { @class = "form-check-input" })
-                    @Html.LabelFor(model => model.Status, "Active", new { @class = "form-check-label" })
-                    <small class="text-muted d-block">Visible to customers</small>
+                        <h6 class="text-muted border-bottom pb-2 mb-3 mt-4">
+                            <i class="fas fa-truck me-1"></i>Shipping & Tax
+                        </h6>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.RequiresShipping, new { @class = "form-check-input", role = "switch" })
+                            @Html.LabelFor(m => m.RequiresShipping, "Requires Shipping", new { @class = "form-check-label" })
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.Taxable, new { @class = "form-check-input", role = "switch" })
+                            @Html.LabelFor(m => m.Taxable, "Taxable", new { @class = "form-check-label" })
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.IsVirtual, new { @class = "form-check-input", role = "switch" })
+                            @Html.LabelFor(m => m.IsVirtual, "Virtual Product", new { @class = "form-check-label" })
+                        </div>
+                        <div class="form-check form-switch mb-3">
+                            @Html.CheckBoxFor(m => m.IsDownloadable, new { @class = "form-check-input", role = "switch" })
+                            @Html.LabelFor(m => m.IsDownloadable, "Downloadable", new { @class = "form-check-label" })
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="form-check mb-3">
-                    @Html.CheckBoxFor(model => model.IsFeatured, new { @class = "form-check-input" })
-                    @Html.LabelFor(model => model.IsFeatured, "Featured", new { @class = "form-check-label" })
-                    <small class="text-muted d-block">Highlighted on homepage</small>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-check mb-3">
-                    @Html.CheckBoxFor(model => model.IsBestSeller, new { @class = "form-check-input" })
-                    @Html.LabelFor(model => model.IsBestSeller, "Best Seller", new { @class = "form-check-label" })
-                </div>
-            </div>
-        </div>
-    </div>
+
+        </div>@* end tab-content *@
+    </div>@* end modal-body *@
 
     <div class="modal-footer">
-        
-        <a href="@Url.Action("Edit", "Products", new { id = Model.Id, area = "Admin" })" class="btn btn-outline-primary">Go To Item Page</a>
-        <button type="button" class="btn btn-outline-secondary" onclick="closeModal()">Cancel</button>
-        <button type="submit" class="btn btn-outline-primary">
+        <small class="text-muted me-auto">
+            <a href="/Admin/Products/Edit/@Model.Id" target="_blank">
+                <i class="fas fa-external-link-alt"></i> Open full edit page
+            </a>
+        </small>
+        <button type="button" class="btn btn-secondary" onclick="closeModal()">
+            <i class="fas fa-times"></i> Cancel
+        </button>
+        <button type="submit" class="btn btn-primary" id="peditSubmitBtn">
             <i class="fas fa-save"></i> Save Changes
         </button>
     </div>
 </form>
 
-
-
 <script>
-    $(document).ready(function() {
-        // 1. عداد العناصر الحالية
-        let compIndex = $('.composition-row').length;
+(function () {
+    let peditCompIndex = @compIndex;
 
-        // 2. إضافة مادة جديدة
-        $('#add-composition').on('click', function (e) {
-            e.preventDefault();
-            const container = $('#composition-container');
-            const html = `
-                <div class="composition-row row mb-2 g-2 align-items-center">
-                    <div class="col-7">
-                        <select name="ProductCompositions[${compIndex}].CompositionId" class="form-select form-control" required>
-                            <option value="">Select Material</option>
-                            @if (ViewBag.Compositions != null) {
-                                @foreach (var comp in ViewBag.Compositions) {
-                                    <option value="@comp.Id">@comp.Name</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                    <div class="col-3">
-                        <input type="number" name="ProductCompositions[${compIndex}].Percentage" class="form-control" placeholder="%" min="1" max="100" required>
-                    </div>
-                    <div class="col-2">
-                        <button type="button" class="btn btn-outline-danger btn-sm remove-composition">×</button>
-                    </div>
-                </div>`;
-            
-            container.append(html);
-            compIndex++; // زيادة العداد لضمان تسلسل الأسماء في المصفوفة
-        });
+    // ===== COMPOSITION: ADD =====
+    document.getElementById('pedit-add-comp').addEventListener('click', function () {
+        let options = '<option value="">Select Material</option>';
+        @foreach (var comp in allComps)
+        {
+            <text>options += '<option value="@comp.Id">@comp.Name</option>';</text>
+        }
 
-        // 3. حذف مادة
-        $(document).on('click', '.remove-composition', function() {
-            $(this).closest('.composition-row').remove();
-            // ملاحظة: الـ Index المكسور بعد الحذف غالباً تعالجه ASP.NET Core تلقائياً 
-            // إذا كانت المصفوفة تستخدم مؤشرات صحيحة.
-        });
+        const row = document.createElement('div');
+        row.className = 'composition-row row mb-2 g-2 align-items-center';
+        row.innerHTML = `
+            <div class="col-7">
+                <select name="ProductCompositions[${peditCompIndex}].CompositionId"
+                        class="form-select" required>
+                    ${options}
+                </select>
+            </div>
+            <div class="col-3">
+                <div class="input-group">
+                    <input type="number"
+                           name="ProductCompositions[${peditCompIndex}].Percentage"
+                           class="form-control" placeholder="%" min="1" max="100" required />
+                    <span class="input-group-text">%</span>
+                </div>
+            </div>
+            <div class="col-2">
+                <button type="button"
+                        class="btn btn-outline-danger btn-sm w-100 remove-comp-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>`;
+        document.getElementById('pedit-comp-container').appendChild(row);
+        peditCompIndex++;
+    });
 
-        // 4. إعدادات الـ Validation
-        const validator = $('#editProductForm').validate({
-            rules: {
-                Name: { required: true, minlength: 3 },
-                SKU: { required: true },
-                CategoryId: { required: true },
-                Price: { required: true, min: 0.01 },
-                StockQuantity: { required: true, min: 0 }
-            },
-            errorElement: 'span',
-            errorClass: 'text-danger',
-            highlight: function(element) { $(element).addClass('is-invalid'); },
-            unhighlight: function(element) { $(element).removeClass('is-invalid'); }
-        });
+    // ===== COMPOSITION: REMOVE =====
+    document.getElementById('pedit-comp-container').addEventListener('click', function (e) {
+        const btn = e.target.closest('.remove-comp-btn');
+        if (btn) btn.closest('.composition-row').remove();
+    });
 
-        // 5. إرسال النموذج عبر AJAX (مرة واحدة فقط)
-        $('#editProductForm').on('submit', function(e) {
-            e.preventDefault();
+    // ===== AJAX SUBMIT with FormData (supports file uploads) =====
+    document.getElementById('editProductForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const btn = document.getElementById('peditSubmitBtn');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+        btn.disabled = true;
 
-            if (!$(this).valid()) return false;
-
-            const form = $(this);
-            const submitBtn = form.find('button[type="submit"]');
-            const originalHtml = submitBtn.html();
-
-            submitBtn.html('<i class="fas fa-spinner fa-spin"></i> Saving...').prop('disabled', true);
-
-            $.ajax({
-                url: form.attr('action'),
-                type: 'POST',
-                data: form.serialize(),
-                success: function(response) {
-                    if (response.success) {
-                        alert(response.message || 'Product updated successfully!');
-                        if (typeof closeModal === "function") closeModal();
-                        window.location.reload();
-                    } else {
-                        alert(response.error || 'Error updating product');
-                        submitBtn.html(originalHtml).prop('disabled', false);
-                    }
-                },
-                error: function() {
-                    alert('Server error. Please try again.');
-                    submitBtn.html(originalHtml).prop('disabled', false);
-                }
-            });
-        });
-
-        // 6. توليد الـ Slug تلقائياً
-        $('#Name').on('blur', function() {
-            const name = $(this).val();
-            if (name && !$('#Slug').val()) {
-                generateProductSlugFromName(name);
+        fetch(this.action, {
+            method: 'POST',
+            body: new FormData(this)
+        })
+        .then(r => r.json())
+        .then(function (res) {
+            if (res.success) {
+                if (typeof closeModal === 'function') closeModal();
+                location.reload();
+            } else {
+                alert(res.error || 'Error saving product');
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                btn.disabled = false;
             }
+        })
+        .catch(function () {
+            alert('Server error. Please try again.');
+            btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            btn.disabled = false;
         });
     });
 
-    // وظائف خارج الـ ready
-    function generateProductSlug() {
-        const name = $('#Name').val();
-        if (name) generateProductSlugFromName(name);
-        else alert('Please enter a product name first');
-    }
+    // ===== DELETE GALLERY IMAGE =====
+    window.peditDeleteGallery = function (imageId) {
+        if (!confirm('Delete this image permanently?')) return;
+        const token = document.querySelector('input[name="__RequestVerificationToken"]').value;
+        fetch('/Admin/Products/DeleteImage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `imageId=${imageId}&__RequestVerificationToken=${encodeURIComponent(token)}`
+        })
+        .then(r => r.json())
+        .then(function (res) {
+            if (res.success) {
+                const el = document.getElementById('pedit-gimg-' + imageId);
+                if (el) el.remove();
+            } else {
+                alert(res.message || 'Error deleting image');
+            }
+        })
+        .catch(() => alert('Server error'));
+    };
 
-    function generateProductSlugFromName(name) {
-        const slug = name.toLowerCase().trim()
-            .replace(/[^\w\s-]/g, '')
-            .replace(/[\s_-]+/g, '-')
-            .replace(/^-+|-+$/g, '');
-        $('#Slug').val(slug);
-    }
+    // ===== IMAGE PREVIEW =====
+    window.peditPreviewImg = function (input, previewId) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById(previewId).src = e.target.result;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    };
+
+    // ===== SKU GENERATOR =====
+    window.peditGenSKU = function () {
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let sku = 'PROD-';
+        for (let i = 0; i < 8; i++) {
+            sku += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        document.getElementById('SKU').value = sku;
+    };
+})();
 </script>

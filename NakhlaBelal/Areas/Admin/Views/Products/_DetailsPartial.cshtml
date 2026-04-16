@@ -1,43 +1,558 @@
 ﻿@model NakhlaBelal.Models.Product
 
-<div class="modal-header">
-    <h3>@Model.Name - Product Details</h3>
-    <button type="button" class="modal-close" onclick="closeModal()">
-        <i class="fas fa-times"></i>
-    </button>
+<div class="modal-header bg-dark text-white">
+    <h5 class="modal-title">
+        <i class="fas fa-box me-2"></i>@Model.Name
+    </h5>
+    <button type="button" class="btn-close btn-close-white" onclick="closeModal()"></button>
 </div>
 
-<div class="modal-body">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label"><strong>Status:</strong></label>
-                <div>
-                    <span class="badge @(Model.Status ? "badge-success" : "badge-secondary")">
-                        @(Model.Status ? "Active" : "Inactive")
-                    </span>
-                </div>
-            </div>
+<div class="modal-body" style="max-height: 72vh; overflow-y: auto;">
 
-            <div class="mb-3">
-                <label class="form-label"><strong>SKU:</strong></label>
-                <div>
-                    <code>@Model.SKU</code>
-                </div>
-            </div>
+    @* ===== STATUS BADGES ROW ===== *@
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <span class="badge @(Model.Status ? "bg-success" : "bg-secondary") fs-6">
+            <i class="fas fa-circle me-1"></i>
+            @(Model.Status ? "Active" : "Inactive")
+        </span>
+        @if (Model.IsFeatured)
+        {
+            <span class="badge bg-warning text-dark fs-6">
+                <i class="fas fa-star me-1"></i> Featured
+            </span>
+        }
+        @if (Model.IsBestSeller)
+        {
+            <span class="badge bg-danger fs-6">
+                <i class="fas fa-fire me-1"></i> Best Seller
+            </span>
+        }
+        @if (Model.IsNew)
+        {
+            <span class="badge bg-info fs-6">
+                <i class="fas fa-certificate me-1"></i> New
+            </span>
+        }
+        @if (!Model.IsInStock || Model.StockQuantity == 0)
+        {
+            <span class="badge bg-dark fs-6">
+                <i class="fas fa-times-circle me-1"></i> Out of Stock
+            </span>
+        }
+    </div>
 
-            <div class="mb-3">
-                <label class="form-label"><strong>Category:</strong></label>
-                <div>
-                    <span class="">@Model.Category?.Name</span>
-                </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Fabric Type:</strong></label>
-                <div>
-                    @if (Model.FabricType != null)
+    @* ===== TABS ===== *@
+    <ul class="nav nav-tabs mb-3" id="detailsModalTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" data-bs-toggle="tab"
+                    data-bs-target="#dtab-info" type="button">
+                <i class="fas fa-info-circle"></i> Info
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab"
+                    data-bs-target="#dtab-pricing" type="button">
+                <i class="fas fa-dollar-sign"></i> Pricing
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab"
+                    data-bs-target="#dtab-fabric" type="button">
+                <i class="fas fa-ruler-combined"></i> Fabric
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab"
+                    data-bs-target="#dtab-media" type="button">
+                <i class="fas fa-images"></i> Media
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" data-bs-toggle="tab"
+                    data-bs-target="#dtab-seo" type="button">
+                <i class="fas fa-search"></i> SEO
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content">
+
+        @* ===== TAB: INFO ===== *@
+        <div class="tab-pane fade show active" id="dtab-info" role="tabpanel">
+            <div class="row">
+                <div class="col-md-6">
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">SKU</small>
+                        <div><code class="fs-6">@Model.SKU</code></div>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.Barcode))
                     {
-                        <span class=" badge-info">@Model.FabricType.Name</span>
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold">Barcode</small>
+                            <div><code>@Model.Barcode</code></div>
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">Category</small>
+                        <div>
+                            <span class="badge bg-primary">@(Model.Category?.Name ?? "—")</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">Brand</small>
+                        <div>@(Model.Brand?.Name ?? "—")</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">Fabric Type</small>
+                        <div>
+                            @if (Model.FabricType != null)
+                            {
+                                <span class="badge bg-info text-dark">@Model.FabricType.Name</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not set</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">Tags</small>
+                        <div class="d-flex flex-wrap gap-1 mt-1">
+                            @if (Model.ProductTags != null && Model.ProductTags.Any())
+                            {
+                                @foreach (var tag in Model.ProductTags)
+                                {
+                                    <span class="badge bg-warning text-dark">@tag.Name</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">No tags</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">Project Categories</small>
+                        <div class="d-flex flex-wrap gap-1 mt-1">
+                            @if (Model.ProjectCategories != null && Model.ProjectCategories.Any())
+                            {
+                                @foreach (var pc in Model.ProjectCategories)
+                                {
+                                    <span class="badge bg-dark">@pc.Name</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not assigned</span>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+
+                    @* MAIN IMAGE *@
+                    @if (!string.IsNullOrEmpty(Model.MainImage))
+                    {
+                        <img src="~/images/@Model.MainImage"
+                             alt="@Model.Name"
+                             class="img-thumbnail w-100 mb-3"
+                             style="max-height: 180px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <div class="border rounded d-flex align-items-center justify-content-center mb-3 bg-light"
+                             style="height: 180px;">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-image fa-3x mb-2"></i>
+                                <p class="mb-0">No image</p>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">Stock</small>
+                        <div>
+                            @if (Model.StockQuantity > 0)
+                            {
+                                <span class="badge @(Model.StockQuantity <= Model.LowStockThreshold ? "bg-warning text-dark" : "bg-success")">
+                                    @Model.StockQuantity in stock
+                                </span>
+                                @if (Model.StockQuantity <= Model.LowStockThreshold)
+                                {
+                                    <span class="badge bg-danger ms-1">
+                                        <i class="fas fa-exclamation-triangle"></i> Low Stock
+                                    </span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Out of stock</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">Composition</small>
+                        <div>
+                            @if (Model.ProductCompositions != null && Model.ProductCompositions.Any())
+                            {
+                                <ul class="list-unstyled mb-0 mt-1">
+                                    @foreach (var pc in Model.ProductCompositions)
+                                    {
+                                        <li>
+                                            <span class="badge bg-secondary me-1">@pc.Percentage%</span>
+                                            @pc.Composition?.Name
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not set</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">Slug</small>
+                        <div>
+                            @if (!string.IsNullOrEmpty(Model.Slug))
+                            {
+                                <code>/product/@Model.Slug</code>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted text-uppercase fw-bold">Created</small>
+                        <div>@Model.CreatedAt.ToString("dd MMM yyyy HH:mm")</div>
+                        <small class="text-muted">by @Model.CreatedBy</small>
+                    </div>
+
+                    @if (Model.UpdatedAt.HasValue)
+                    {
+                        <div class="mb-3">
+                            <small class="text-muted text-uppercase fw-bold">Last Updated</small>
+                            <div>@Model.UpdatedAt.Value.ToString("dd MMM yyyy HH:mm")</div>
+                            @if (!string.IsNullOrEmpty(Model.UpdatedBy))
+                            {
+                                <small class="text-muted">by @Model.UpdatedBy</small>
+                            }
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            @* DESCRIPTION *@
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div class="border-top pt-3 mt-2">
+                    <small class="text-muted text-uppercase fw-bold">Description</small>
+                    <div class="p-2 bg-light rounded mt-1">@Model.Description</div>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.ShortDescription))
+            {
+                <div class="mt-3">
+                    <small class="text-muted text-uppercase fw-bold">Short Description</small>
+                    <div class="p-2 bg-light rounded mt-1">@Model.ShortDescription</div>
+                </div>
+            }
+        </div>
+
+        @* ===== TAB: PRICING ===== *@
+        <div class="tab-pane fade" id="dtab-pricing" role="tabpanel">
+            <div class="row g-3">
+                <div class="col-6 col-md-3">
+                    <div class="border rounded p-3 text-center h-100">
+                        <small class="text-muted d-block">Selling Price</small>
+                        <div class="h4 text-primary mb-0">$@Model.Price.ToString("N2")</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="border rounded p-3 text-center h-100">
+                        <small class="text-muted d-block">Cost Price</small>
+                        <div class="h5 mb-0">$@Model.CostPrice.ToString("N2")</div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="border rounded p-3 text-center h-100">
+                        <small class="text-muted d-block">Unit Price</small>
+                        <div class="h5 mb-0">
+                            @(Model.UnitPrice.Length > 0 ? "$" + Model.UnitPrice.ToString() : "—")
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="border rounded p-3 text-center h-100">
+                        <small class="text-muted d-block">Discount</small>
+                        <div class="h5 mb-0">
+                            @if (Model.Discount > 0)
+                            {
+                                <span class="badge bg-danger fs-6">@Model.Discount%</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">None</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.SpecialPrice.HasValue)
+            {
+                <div class="border border-warning rounded p-3 mt-3">
+                    <h6 class="text-warning mb-3">
+                        <i class="fas fa-tag me-1"></i> Special Price
+                    </h6>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <small class="text-muted d-block">Special Price</small>
+                            <div class="h5 text-danger">$@Model.SpecialPrice.Value.ToString("N2")</div>
+                        </div>
+                        @if (Model.SpecialPriceStart.HasValue)
+                        {
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">Start Date</small>
+                                <div>@Model.SpecialPriceStart.Value.ToString("dd MMM yyyy")</div>
+                            </div>
+                        }
+                        @if (Model.SpecialPriceEnd.HasValue)
+                        {
+                            <div class="col-md-4">
+                                <small class="text-muted d-block">End Date</small>
+                                <div>@Model.SpecialPriceEnd.Value.ToString("dd MMM yyyy")</div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="row mt-3 g-2">
+                <div class="col-md-6">
+                    <div class="border rounded p-3">
+                        <h6 class="text-muted">Stock Info</h6>
+                        <div class="d-flex justify-content-between">
+                            <span>Quantity</span>
+                            <strong>@Model.StockQuantity</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>Low Stock Alert</span>
+                            <strong>@Model.LowStockThreshold</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>Display Order</span>
+                            <strong>@Model.DisplayOrder</strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="border rounded p-3">
+                        <h6 class="text-muted">Stock Settings</h6>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>Manage Stock</span>
+                            <span class="badge @(Model.ManageStock ? "bg-success" : "bg-secondary")">
+                                @(Model.ManageStock ? "Yes" : "No")
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>In Stock</span>
+                            <span class="badge @(Model.IsInStock ? "bg-success" : "bg-danger")">
+                                @(Model.IsInStock ? "Yes" : "No")
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>Backorders</span>
+                            <span class="badge @(Model.BackordersAllowed ? "bg-success" : "bg-secondary")">
+                                @(Model.BackordersAllowed ? "Allowed" : "No")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* ===== TAB: FABRIC ===== *@
+        <div class="tab-pane fade" id="dtab-fabric" role="tabpanel">
+            <div class="row g-3 mb-3">
+                <div class="col-4">
+                    <div class="border rounded p-3 text-center">
+                        <small class="text-muted d-block">Weight</small>
+                        <div class="h5 mb-0">
+                            @(Model.Weight > 0 ? Model.Weight + " " : "—")
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="border rounded p-3 text-center">
+                        <small class="text-muted d-block">Width</small>
+                        <div class="h5 mb-0">
+                            @(Model.Width > 0 ? Model.Width + " " : "—")
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="border rounded p-3 text-center">
+                        <small class="text-muted d-block">Roll Length</small>
+                        <div class="h5 mb-0">
+                            @(Model.Length > 0 ? Model.Length + " " : "—")
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="border rounded p-3">
+                        <small class="text-muted d-block">Height / Alert Threshold</small>
+                        <div class="h6 mb-0">
+                            @(Model.Height > 0 ? Model.Height + " " : "—")
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="border rounded p-3">
+                        <small class="text-muted d-block">Fabric Type</small>
+                        <div class="h6 mb-0">
+                            @if (Model.FabricType != null)
+                            {
+                                <span class="badge bg-info text-dark">@Model.FabricType.Name</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Not set</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @if (Model.ProductCompositions != null && Model.ProductCompositions.Any())
+            {
+                <div class="mt-3">
+                    <h6 class="text-muted">Fabric Composition</h6>
+                    @{
+                        decimal total = Model.ProductCompositions.Sum(c => c.Percentage);
+                    }
+                    @foreach (var pc in Model.ProductCompositions)
+                    {
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span>@(pc.Composition?.Name ?? "Material")</span>
+                                <strong>@pc.Percentage%</strong>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar bg-info"
+                                     style="width: @pc.Percentage%"></div>
+                            </div>
+                        </div>
+                    }
+                    <small class="text-muted">
+                        Total: @total%
+                        @if (total != 100)
+                        {
+                            <span class="text-warning ms-1">
+                                <i class="fas fa-exclamation-triangle"></i> Should be 100%
+                            </span>
+                        }
+                    </small>
+                </div>
+            }
+        </div>
+
+        @* ===== TAB: MEDIA ===== *@
+        <div class="tab-pane fade" id="dtab-media" role="tabpanel">
+            @if (!string.IsNullOrEmpty(Model.MainImage))
+            {
+                <div class="mb-4">
+                    <h6 class="text-muted">Main Image</h6>
+                    <img src="~/images/@Model.MainImage"
+                         alt="@Model.Name"
+                         class="img-fluid rounded"
+                         style="max-height: 200px; object-fit: cover;" />
+                </div>
+            }
+
+            @if (Model.ProductImages != null && Model.ProductImages.Any())
+            {
+                <h6 class="text-muted">Gallery (@Model.ProductImages.Count images)</h6>
+                <div class="row g-2">
+                    @foreach (var img in Model.ProductImages.OrderBy(i => i.DisplayOrder))
+                    {
+                        <div class="col-4 col-md-3">
+                            <img src="~/images/product_images/@img.ImageUrl"
+                                 alt="@img.AltText"
+                                 class="img-thumbnail w-100"
+                                 style="height: 90px; object-fit: cover;" />
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center text-muted py-4">
+                    <i class="fas fa-images fa-3x mb-2"></i>
+                    <p>No gallery images</p>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.VideoUrl))
+            {
+                <div class="mt-3">
+                    <h6 class="text-muted">Video URL</h6>
+                    <a href="@Model.VideoUrl" target="_blank" class="btn btn-outline-danger btn-sm">
+                        <i class="fab fa-youtube me-1"></i> View Video
+                    </a>
+                </div>
+            }
+        </div>
+
+        @* ===== TAB: SEO ===== *@
+        <div class="tab-pane fade" id="dtab-seo" role="tabpanel">
+            <div class="mb-3">
+                <small class="text-muted text-uppercase fw-bold">Meta Title</small>
+                <div class="p-2 bg-light rounded mt-1">
+                    @(string.IsNullOrEmpty(Model.MetaTitle) ? "Not set" : Model.MetaTitle)
+                </div>
+            </div>
+            <div class="mb-3">
+                <small class="text-muted text-uppercase fw-bold">Meta Description</small>
+                <div class="p-2 bg-light rounded mt-1">
+                    @(string.IsNullOrEmpty(Model.MetaDescription) ? "Not set" : Model.MetaDescription)
+                </div>
+            </div>
+            @if (!string.IsNullOrEmpty(Model.MetaKeywords))
+            {
+                <div class="mb-3">
+                    <small class="text-muted text-uppercase fw-bold">Meta Keywords</small>
+                    <div class="d-flex flex-wrap gap-1 mt-1">
+                        @foreach (var kw in Model.MetaKeywords.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                        {
+                            <span class="badge bg-secondary">@kw.Trim()</span>
+                        }
+                    </div>
+                </div>
+            }
+            <div class="mb-3">
+                <small class="text-muted text-uppercase fw-bold">URL Slug</small>
+                <div class="mt-1">
+                    @if (!string.IsNullOrEmpty(Model.Slug))
+                    {
+                        <code>/product/@Model.Slug</code>
                     }
                     else
                     {
@@ -45,292 +560,44 @@
                     }
                 </div>
             </div>
-            
 
-            <div class="mb-3">
-                <label class="form-label"><strong>Composition:</strong></label>
-                <div>
-                    @* @if (Model.SelectedCompositions != null && Model.SelectedCompositions.Any())
-                    {
-                        foreach (var item in Model.SelectedCompositions)
-                        {
-                            <li>
-                                <strong>@item.CompositionName:</strong>
-                                <span class="text-dark">@item.Percentage %</span>
-                            </li>
-                        }
+            <div class="border rounded p-3 mt-3">
+                <h6 class="text-muted mb-3">Product Flags</h6>
+                <div class="row g-2">
+                    @{
+                        var flags = new[] {
+                            (Model.RequiresShipping, "Requires Shipping", "truck"),
+                            (Model.Taxable,          "Taxable",           "receipt"),
+                            (Model.HasVariations,    "Has Variations",    "layer-group"),
+                            (Model.IsVirtual,        "Virtual",           "cloud"),
+                            (Model.IsDownloadable,   "Downloadable",      "download")
+                        };
                     }
-                    else
+                    @foreach (var (val, label, icon) in flags)
                     {
-                        <li class="text-muted">No composition details available</li>
-                    } *@
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><strong>Product Tags:</strong></label>
-                <div>
-                    @if (Model.ProductTags != null && Model.ProductTags.Any())
-                    {
-                        @foreach (var tag in Model.ProductTags)
-                        {
-                            <span class=" badge-warning me-1">
-                                @tag.Name
+                        <div class="col-6 col-md-4">
+                            <span class="badge @(val ? "bg-success" : "bg-secondary") w-100 py-2">
+                                <i class="fas fa-@icon me-1"></i>
+                                @label: @(val ? "Yes" : "No")
                             </span>
-                        }
-                    }
-                    else
-                    {
-                        <span class="text-muted">No tags</span>
-                    }
-                </div>
-            </div>
-
-
-        </div>
-
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label"><strong>Brand:</strong></label>
-                <div>
-                    @if (Model.Brand != null)
-                    {
-                        <span class="">@Model.Brand?.Name</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">No brand</span>
-                    }
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><strong>Created:</strong></label>
-                <div>@Model.CreatedAt.ToString("dd MMM yyyy HH:mm")</div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Colors:</strong></label>
-                <div>
-                    @* @if (Model.ProductColors != null && Model.ProductColors.Any())
-                    {
-                        @foreach (var color in Model.ProductColors)
-                        {
-                            <span class="badge badge-secondary me-1">
-                                @color.Name
-                            </span>
-                        }
-                    }
-                    else
-                    {
-                        <span class="text-muted">No colors</span>
-                    } *@
-                </div>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label"><strong>Project Categories:</strong></label>
-                <div>
-                    @if (Model.ProjectCategories != null && Model.ProjectCategories.Any())
-                    {
-                        @foreach (var pc in Model.ProjectCategories)
-                        {
-                            <span class="badge badge-dark me-1">@pc.Name</span>
-                        }
-                    }
-                    else
-                    {
-                        <span class="text-muted">Not assigned</span>
-                    }
-                </div>
-            </div>
-            <div class="mb-3">
-                <label class="form-label"><strong>Stock Quantity:</strong></label>
-                <div>
-                    @if (Model.StockQuantity > 0)
-                    {
-                        <span class=" @(Model.StockQuantity <= Model.LowStockThreshold ? "badge-warning" : "badge-success")">
-                            @Model.StockQuantity in stock
-                        </span>
-                    }
-                    else
-                    {
-                        <span class="badge badge-danger">Out of stock</span>
+                        </div>
                     }
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="mb-3">
-        <label class="form-label"><strong>Description:</strong></label>
-        <div class="p-3 bg-light rounded">
-            @if (string.IsNullOrEmpty(Model.Description))
-            {
-                <span class="text-muted">No description provided</span>
-            }
-            else
-            {
-                @Model.Description
-            }
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label"><strong>Short Description:</strong></label>
-        <div class="p-2 bg-light rounded">
-            @if (string.IsNullOrEmpty(Model.ShortDescription))
-            {
-                <span class="text-muted">No short description</span>
-            }
-            else
-            {
-                @Model.ShortDescription
-            }
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-4">
-            <div class="mb-3">
-                <label class="form-label"><strong>Price:</strong></label>
-                <div class="h5 text-primary">$@Model.Price.ToString("N2")</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="mb-3">
-                <label class="form-label"><strong>Cost Price:</strong></label>
-                <div>$@Model.CostPrice.ToString("N2")</div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="mb-3">
-                <label class="form-label"><strong>Discount:</strong></label>
-                <div>
-                    @if (Model.Discount > 0)
-                    {
-                        <span class="badge badge-danger">@Model.Discount% OFF</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">No discount</span>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @if (Model.SpecialPrice.HasValue)
-    {
-        <div class="mb-3">
-            <label class="form-label"><strong>Special Price:</strong></label>
-            <div class="h5 text-danger">$@Model.SpecialPrice.Value.ToString("N2")</div>
-            @if (Model.SpecialPriceStart.HasValue && Model.SpecialPriceEnd.HasValue)
-            {
-                <small class="text-muted">
-                    Valid from @Model.SpecialPriceStart.Value.ToString("dd MMM yyyy")
-                    to @Model.SpecialPriceEnd.Value.ToString("dd MMM yyyy")
-                </small>
-            }
-        </div>
-    }
-
-    @if (!string.IsNullOrEmpty(Model.MainImage))
-    {
-        <div class="mb-3">
-            <label class="form-label"><strong>Product Image:</strong></label>
-            <div>
-                <img src="~/images/@Model.MainImage" alt="@Model.Name" class="img-thumbnail" style="max-width: 200px;" />
-            </div>
-        </div>
-    }
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label"><strong>Featured Product:</strong></label>
-                <div>
-                    @if (Model.IsFeatured)
-                    {
-                        <span class="badge badge-info"><i class="fas fa-star"></i> Featured</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">No</span>
-                    }
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label"><strong>Best Seller:</strong></label>
-                <div>
-                    @if (Model.IsBestSeller)
-                    {
-                        <span class="badge badge-warning"><i class="fas fa-fire"></i> Best Seller</span>
-                    }
-                    else
-                    {
-                        <span class="text-muted">No</span>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label"><strong>Meta Title:</strong></label>
-                <div class="text-truncate">
-                    @(string.IsNullOrEmpty(Model.MetaTitle) ? "Not set" : Model.MetaTitle)
-                </div>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <div class="mb-3">
-                <label class="form-label"><strong>Meta Description:</strong></label>
-                <div class="text-truncate" title="@Model.MetaDescription">
-                    @(string.IsNullOrEmpty(Model.MetaDescription) ? "Not set" : Model.MetaDescription)
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label"><strong>URL Slug:</strong></label>
-        <div>
-            @if (!string.IsNullOrEmpty(Model.Slug))
-            {
-                <code>/product/@Model.Slug</code>
-            }
-            else
-            {
-                <span class="text-muted">Not set</span>
-            }
-        </div>
-    </div>
-
-    @if (Model.UpdatedAt.HasValue)
-    {
-        <div class="mb-3">
-            <label class="form-label"><strong>Last Updated:</strong></label>
-            <div>@Model.UpdatedAt.Value.ToString("dd MMM yyyy HH:mm")</div>
-        </div>
-    }
-</div>
+    </div>@* end tab-content *@
+</div>@* end modal-body *@
 
 <div class="modal-footer">
     <button type="button" class="btn btn-secondary" onclick="closeModal()">
         <i class="fas fa-times"></i> Close
     </button>
-    <button type="button" class="btn btn-primary" onclick="loadEditModal(@Model.Id, event)">
-        <i class="fas fa-edit"></i> Edit Product
+    <a href="/Admin/Products/Details/@Model.Id" target="_blank" class="btn btn-outline-info">
+        <i class="fas fa-external-link-alt"></i> Full Details
+    </a>
+    <button type="button" class="btn btn-primary"
+            onclick="loadEditModal(@Model.Id, event)">
+        <i class="fas fa-edit"></i> Edit
     </button>
 </div>
-
-<script>
-    function loadEditModal(productId, event) {
-        if (event) event.stopPropagation();
-        editProduct(productId, event);
-    }
-</script>

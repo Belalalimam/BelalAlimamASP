@@ -3,144 +3,280 @@
     ViewBag.Title = "Edit Product";
     ViewBag.PageTitle = "Edit Product";
 
-    var categories = ViewBag.Categories as List<NakhlaBelal.Models.Category> ?? new List<NakhlaBelal.Models.Category>();
-    var brands = ViewBag.Brands as List<NakhlaBelal.Models.Brand> ?? new List<NakhlaBelal.Models.Brand>();
+    var categories = ViewBag.Categories as List<NakhlaBelal.Models.Category> ?? new();
+    var brands = ViewBag.Brands as List<NakhlaBelal.Models.Brand> ?? new();
+    var fabricTypes = ViewBag.FabricTypes as List<NakhlaBelal.Models.FabricType> ?? new();
+    var colors = ViewBag.Colors as List<NakhlaBelal.Models.Color> ?? new();
+    var allTags = ViewBag.ProductTags as List<NakhlaBelal.Models.ProductTag> ?? new();
+    var allComps = ViewBag.Compositions as List<NakhlaBelal.Models.Composition> ?? new();
+    var allProjCats = ViewBag.ProjectCategories as List<NakhlaBelal.Models.ProjectCategory> ?? new();
+    int compIndex = 0;
 }
 
 <div class="page-header">
     <div>
-        <h2>Edit Product: @Model.Name</h2>
+        <h2>Edit: @Model.Name</h2>
         <p class="page-subtitle">Update product information</p>
     </div>
     <div class="header-actions">
+        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-info">
+            <i class="fas fa-eye"></i> View
+        </a>
         <a asp-action="Index" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Back to List
+            <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <form asp-action="Edit" method="post" id="editProductForm" enctype="multipart/form-data">
-            @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="CreatedAt" />
-            <input type="hidden" asp-for="CreatedBy" />
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label asp-for="Name" class="form-label">Product Name *</label>
-                        <input asp-for="Name" class="form-control" required>
-                        <span asp-validation-for="Name" class="text-danger"></span>
+<form asp-action="Edit" method="post" enctype="multipart/form-data" id="editProductForm">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="CreatedAt" />
+    <input type="hidden" asp-for="CreatedBy" />
+    <input type="hidden" asp-for="AverageRating" />
+
+    <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display:none;"></div>
+
+    <div class="row">
+
+        @* {{!-- =============================== LEFT COLUMN =============================== --}} *@
+        <div class="col-lg-8">
+
+            @* {{!-- BASIC INFO --}} *@
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-tag me-2"></i>Basic Information</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label asp-for="Name" class="form-label fw-bold">Product Name <span class="text-danger">*</span></label>
+                            <input asp-for="Name" class="form-control" placeholder="Enter product name" required />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="SKU" class="form-label fw-bold">SKU</label>
+                            <div class="input-group">
+                                <input asp-for="SKU" class="form-control" placeholder="PROD-001" />
+                                <button type="button" class="btn btn-outline-secondary" onclick="generateSKU()">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="SKU" class="text-danger"></span>
+                        </div>
                     </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="SKU" class="form-label">SKU *</label>
-                        <input asp-for="SKU" class="form-control" required>
-                        <span asp-validation-for="SKU" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Slug" class="form-label fw-bold">URL Slug</label>
+                            <div class="input-group">
+                                <span class="input-group-text">/product/</span>
+                                <input asp-for="Slug" class="form-control" placeholder="product-name" />
+                                <button type="button" class="btn btn-outline-secondary" onclick="generateSlug()">
+                                    <i class="fas fa-magic"></i>
+                                </button>
+                            </div>
+                            <span asp-validation-for="Slug" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Barcode" class="form-label fw-bold">Barcode</label>
+                            <input asp-for="Barcode" class="form-control" placeholder="e.g. 6281234567890" />
+                            <span asp-validation-for="Barcode" class="text-danger"></span>
+                        </div>
                     </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="Slug" class="form-label">URL Slug</label>
-                        <input asp-for="Slug" class="form-control">
-                        <span asp-validation-for="Slug" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="ShortDescription" class="form-label">Short Description</label>
-                        <textarea asp-for="ShortDescription" class="form-control" rows="2"></textarea>
+                    <div class="mb-3">
+                        <label asp-for="ShortDescription" class="form-label fw-bold">Short Description</label>
+                        <textarea asp-for="ShortDescription" class="form-control" rows="2" placeholder="Brief summary shown in product listings"></textarea>
                         <span asp-validation-for="ShortDescription" class="text-danger"></span>
                     </div>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label fw-bold">Full Description</label>
+                        <textarea asp-for="Description" class="form-control" rows="5" placeholder="Detailed product description"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
                 </div>
+            </div>
 
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label asp-for="CategoryId" class="form-label">Category *</label>
-                        <select asp-for="CategoryId" class="form-control" required>
-                            <option value="">Select Category</option>
-                            @foreach (var category in categories)
-                            {
-                                <option value="@category.Id" selected="@(category.Id == Model.CategoryId)">@category.Name</option>
-                            }
-                        </select>
-                        <span asp-validation-for="CategoryId" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="BrandId" class="form-label">Brand</label>
-                        <select asp-for="BrandId" class="form-control">
-                            <option value="">Select Brand</option>
-                            @foreach (var brand in brands)
-                            {
-                                <option value="@brand.Id" selected="@(brand.Id == Model.BrandId)">@brand.Name</option>
-                            }
-                        </select>
-                        <span asp-validation-for="BrandId" class="text-danger"></span>
-                    </div>
-
+            @* {{!-- PRICING --}} *@
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-dollar-sign me-2"></i>Pricing</h5>
+                </div>
+                <div class="card-body">
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label asp-for="Price" class="form-label">Price ($) *</label>
-                                <input asp-for="Price" type="number" step="0.01" class="form-control" required>
-                                <span asp-validation-for="Price" class="text-danger"></span>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Price" class="form-label fw-bold">Selling Price <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="Price" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" required />
                             </div>
+                            <span asp-validation-for="Price" class="text-danger"></span>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label asp-for="CostPrice" class="form-label">Cost Price ($)</label>
-                                <input asp-for="CostPrice" type="number" step="0.01" class="form-control">
-                                <span asp-validation-for="CostPrice" class="text-danger"></span>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="CostPrice" class="form-label fw-bold">Cost Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="CostPrice" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" />
                             </div>
+                            <span asp-validation-for="CostPrice" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="UnitPrice" class="form-label">وحدة السعر *</label>
+                            <select asp-for="UnitPrice" class="form-control" required>
+                                <option value="">اختر الوحدة</option>
+                                <option value="متر">متر</option>
+                                <option value="قطعة">قطعة</option>
+                                <option value="كيلو">كيلو</option>
+                                <option value="ياردة">ياردة</option>
+                            </select>
+                            <span asp-validation-for="UnitPrice" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Discount" class="form-label fw-bold">Discount %</label>
+                            <div class="input-group">
+                                <input asp-for="Discount" type="number" step="0.01" min="0" max="100" class="form-control" placeholder="0" />
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <span asp-validation-for="Discount" class="text-danger"></span>
                         </div>
                     </div>
-
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label asp-for="StockQuantity" class="form-label">Stock Quantity *</label>
-                                <input asp-for="StockQuantity" type="number" class="form-control" required>
-                                <span asp-validation-for="StockQuantity" class="text-danger"></span>
-                            </div>
+                    <div class="row border-top pt-3 mt-2">
+                        <div class="col-12 mb-2">
+                            <h6 class="text-muted">Special Price (Optional)</h6>
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group mb-3">
-                                <label asp-for="LowStockThreshold" class="form-label">Low Stock Alert</label>
-                                <input asp-for="LowStockThreshold" type="number" class="form-control">
-                                <span asp-validation-for="LowStockThreshold" class="text-danger"></span>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="SpecialPrice" class="form-label fw-bold">Special Price</label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="SpecialPrice" type="number" step="0.01" min="0" class="form-control" placeholder="0.00" />
                             </div>
+                            <span asp-validation-for="SpecialPrice" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="SpecialPriceStart" class="form-label fw-bold">Start Date</label>
+                            <input asp-for="SpecialPriceStart" type="date" class="form-control" />
+                            <span asp-validation-for="SpecialPriceStart" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="SpecialPriceEnd" class="form-label fw-bold">End Date</label>
+                            <input asp-for="SpecialPriceEnd" type="date" class="form-control" />
+                            <span asp-validation-for="SpecialPriceEnd" class="text-danger"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label class="form-label font-weight-bold">Fabric Composition (%)</label>
+            @* {{!-- FABRIC SPECS --}} *@
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-ruler-combined me-2"></i>Fabric Specifications</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Weight" class="form-label fw-bold">Weight (g/m²)</label>
+                            <div class="input-group">
+                                <input asp-for="Weight" type="number" step="0.01" min="0" class="form-control" placeholder="e.g. 180" />
+                                <span class="input-group-text">g/m²</span>
+                            </div>
+                            <span asp-validation-for="Weight" class="text-danger"></span>
+                            <small class="text-muted">Fabric weight per square meter</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Width" class="form-label fw-bold">Width (cm)</label>
+                            <div class="input-group">
+                                <input asp-for="Width" type="number" step="0.01" min="0" class="form-control" placeholder="e.g. 150" />
+                                <span class="input-group-text">cm</span>
+                            </div>
+                            <span asp-validation-for="Width" class="text-danger"></span>
+                            <small class="text-muted">Fabric roll width</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Height" class="form-label fw-bold">Height / Length Alert (m)</label>
+                            <div class="input-group">
+                                <input asp-for="Height" type="number" step="0.01" min="0" class="form-control" placeholder="e.g. 50" />
+                                <span class="input-group-text">m</span>
+                            </div>
+                            <span asp-validation-for="Height" class="text-danger"></span>
+                            <small class="text-muted">Minimum roll length threshold</small>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Length" class="form-label fw-bold">Roll Length (m)</label>
+                            <div class="input-group">
+                                <input asp-for="Length" type="number" step="0.01" min="0" class="form-control" placeholder="e.g. 100" />
+                                <span class="input-group-text">m</span>
+                            </div>
+                            <span asp-validation-for="Length" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="FabricTypeId" class="form-label fw-bold">Fabric Type</label>
+                            <select asp-for="FabricTypeId" class="form-select">
+                                <option value="">-- Select Fabric Type --</option>
+                                @foreach (var ft in fabricTypes)
+                                {
+                                    <option value="@ft.Id" selected="@(ft.Id == Model.FabricTypeId)">@ft.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="FabricTypeId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="ColorId" class="form-label fw-bold">Color</label>
+                            <select asp-for="ColorId" class="form-select">
+                                <option value="">-- Select Color --</option>
+                                @foreach (var c in colors)
+                                {
+                                    <option value="@c.Id" selected="@(c.Id == Model.ColorId)">@c.Name</option>
+                                }
+                            </select>
+                            <span asp-validation-for="ColorId" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    @* {{!-- COMPOSITION --}} *@
+                    <div class="border-top pt-3 mt-2">
+                        <label class="form-label fw-bold">Fabric Composition (%)</label>
                         <div id="composition-container">
-                            @{
-                                int compIndex = 0;
-                            }
                             @if (Model.ProductCompositions != null && Model.ProductCompositions.Any())
                             {
                                 @foreach (var pc in Model.ProductCompositions)
                                 {
                                     <div class="composition-row row mb-2 g-2 align-items-center">
                                         <div class="col-7">
-                                            <select name="ProductCompositions[@compIndex].CompositionId" class="form-select form-control" required>
-                                                @foreach (var comp in ViewBag.Compositions)
+                                            <select name="ProductCompositions[@compIndex].CompositionId" class="form-select" required>
+                                                <option value="">Select Material</option>
+                                                @foreach (var comp in allComps)
                                                 {
-                                                    <option value="@comp.Id" selected="@(pc.CompositionId == comp.Id)">@comp.Name</option>
+                                                    <option value="@comp.Id" selected="@(pc.CompositionId == comp.Id ? "selected" : null)">@comp.Name</option>
                                                 }
                                             </select>
                                         </div>
                                         <div class="col-3">
-                                            <input type="number" name="ProductCompositions[@compIndex].Percentage" class="form-control" value="@pc.Percentage" min="1" max="100" required>
+                                            <div class="input-group">
+                                                <input type="number" name="ProductCompositions[@compIndex].Percentage"
+                                                       class="form-control" value="@pc.Percentage" min="1" max="100" placeholder="%" required />
+                                                <span class="input-group-text">%</span>
+                                            </div>
                                         </div>
                                         <div class="col-2">
-                                            <button type="button" class="btn btn-outline-danger btn-sm remove-composition">×</button>
+                                            <button type="button" class="btn btn-outline-danger btn-sm w-100 remove-composition">
+                                                <i class="fas fa-times"></i>
+                                            </button>
                                         </div>
                                     </div>
                                     compIndex++;
@@ -150,299 +286,430 @@
                         <button type="button" id="add-composition" class="btn btn-sm btn-outline-primary mt-2">
                             <i class="fas fa-plus"></i> Add Material
                         </button>
+                        <div id="composition-warning" class="text-danger mt-1" style="display:none;">
+                            Total composition must equal 100%
+                        </div>
                     </div>
                 </div>
-
-
-                                            <div class="col-md-6">
-                                                <div class="form-group mb-3">
-                                                    <label asp-for="ColorId" class="control-label">Product Color</label>
-                                                    <select asp-for="ColorId" class="form-select select2" asp-items="@(new SelectList(ViewBag.Colors, "Id", "Name"))">
-                                                        <option value="">--Select Color--</option>
-                                                    </select>
-                                                    <span asp-validation-for="ColorId" class="text-danger"></span>
-                                                </div>
-                                                <button type="button" class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addColorModal">
-                                                    + إضافة لون جديد
-                                                </button>
-
-                                                <div class="modal fade" id="addColorModal" tabindex="-1">
-                                                    <div class="modal-dialog modal-sm">
-                                                        <div class="modal-content">
-                                                            <div class="modal-header">
-                                                                <h5 class="modal-title">إضافة لون جديد</h5>
-                                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                            </div>
-                                                            <div class="modal-body">
-                                                                <div class="mb-3">
-                                                                    <label>اسم اللون</label>
-                                                                    <input type="text" id="newColorName" class="form-control" placeholder="مثلاً: أحمر ملكي" />
-                                                                </div>
-                                                                <div class="mb-3">
-                                                                    <label>اختر اللون</label>
-                                                                    <input type="color" id="newColorHex" class="form-control form-control-color" value="#563d7c" style="width:100%" />
-                                                                </div>
-                                                            </div>
-                                                            <div class="modal-footer">
-                                                                <button type="button" class="btn btn-primary w-100" onclick="saveNewColor()">حفظ اللون</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             </div>
 
-            <div class="
-
-
-
-mb-3">
-                <label asp-for="Description" class="form-label">Full Description</label>
-                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label asp-for="MainImage" class="form-label">Main Image URL</label>
-                        <input asp-for="MainImage" class="form-control">
-                        <span asp-validation-for="MainImage" class="text-danger"></span>
+            @* {{!-- INVENTORY --}} *@
+            <div class="card mb-4">
+                <div class="card-header bg-warning">
+                    <h5 class="mb-0"><i class="fas fa-warehouse me-2"></i>Inventory</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="StockQuantity" class="form-label fw-bold">Stock Quantity <span class="text-danger">*</span></label>
+                            <input asp-for="StockQuantity" type="number" min="0" class="form-control" placeholder="0" required />
+                            <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="LowStockThreshold" class="form-label fw-bold">Low Stock Alert</label>
+                            <input asp-for="LowStockThreshold" type="number" min="0" class="form-control" placeholder="10" />
+                            <span asp-validation-for="LowStockThreshold" class="text-danger"></span>
+                            <small class="text-muted">Alert when stock falls below this</small>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="DisplayOrder" class="form-label fw-bold">Display Order</label>
+                            <input asp-for="DisplayOrder" type="number" min="0" class="form-control" placeholder="0" />
+                            <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                        </div>
                     </div>
-                                                    <div class="form-group mb-3">
-                                                        <label class="form-label">Main Product Image</label>
-                                                        <div class="mb-2">
-                                                            @if (!string.IsNullOrEmpty(Model.MainImage))
-                                                            {
-                                                                <img src="~/images/@Model.MainImage" id="mainImagePreview" class="img-thumbnail" style="max-height: 150px;" />
-                                                            }
-                                                            else
-                                                            {
-                                                                <img src="~/images/no-image.png" id="mainImagePreview" class="img-thumbnail" style="max-height: 150px;" />
-                                                            }
-                                                        </div>
-                                                        <input type="file" name="img" class="form-control" onchange="previewImage(this, 'mainImagePreview')">
-                                                        <small class="text-muted">Leave empty to keep the current image.</small>
-                                                        <span asp-validation-for="MainImage" class="text-danger"></span>
-                                                    </div>
-                    <div class="form-group mb-3">
-                        <label asp-for="MetaTitle" class="form-label">Meta Title (SEO)</label>
-                        <input asp-for="MetaTitle" class="form-control">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-check form-switch mb-2">
+                                <input asp-for="ManageStock" class="form-check-input" role="switch" />
+                                <label asp-for="ManageStock" class="form-check-label">Manage Stock</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-switch mb-2">
+                                <input asp-for="IsInStock" class="form-check-input" role="switch" />
+                                <label asp-for="IsInStock" class="form-check-label">In Stock</label>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-check form-switch mb-2">
+                                <input asp-for="BackordersAllowed" class="form-check-input" role="switch" />
+                                <label asp-for="BackordersAllowed" class="form-check-label">Allow Backorders</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* {{!-- SEO --}} *@
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="fas fa-search me-2"></i>SEO</h5>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="MetaTitle" class="form-label fw-bold">Meta Title</label>
+                        <input asp-for="MetaTitle" class="form-control" placeholder="SEO title (max 60 chars)" />
                         <span asp-validation-for="MetaTitle" class="text-danger"></span>
                     </div>
-                </div>
-
-                                                    <div class="card mt-3">
-                                                        <div class="card-header bg-light">
-                                                            <h5 class="mb-0">Product Gallery (Additional Images)</h5>
-                                                        </div>
-                                                        <div class="card-body">
-                                                            <div class="row mb-3">
-                                                                <label class="form-label">Upload New Photos</label>
-                                                                <input type="file" name="subImgs" class="form-control" multiple accept="image/*">
-                                                            </div>
-
-                                                            <div class="current-gallery d-flex flex-wrap gap-2">
-                                                                @if (Model.ProductImages != null)
-                                                                {
-                                                                    foreach (var img in Model.ProductImages)
-                                                                    {
-                                                                        <div class="position-relative">
-                                                                            <img src="~/images/product_images/@img.ImageUrl" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" />
-                                                                        </div>
-                                                                    }
-                                                                }
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-
-
-
-                <div class="col-md-6">
-                    <div class="form-group mb-3">
-                        <label asp-for="MetaDescription" class="form-label">Meta Description (SEO)</label>
-                        <textarea asp-for="MetaDescription" class="form-control" rows="2"></textarea>
+                    <div class="mb-3">
+                        <label asp-for="MetaDescription" class="form-label fw-bold">Meta Description</label>
+                        <textarea asp-for="MetaDescription" class="form-control" rows="2" placeholder="SEO description (max 160 chars)"></textarea>
                         <span asp-validation-for="MetaDescription" class="text-danger"></span>
                     </div>
-
-                    <div class="form-group mb-3">
-                        <label asp-for="MetaKeywords" class="form-label">Meta Keywords (SEO)</label>
-                        <input asp-for="MetaKeywords" class="form-control">
+                    <div class="mb-3">
+                        <label asp-for="MetaKeywords" class="form-label fw-bold">Meta Keywords</label>
+                        <input asp-for="MetaKeywords" class="form-control" placeholder="keyword1, keyword2, ..." />
                         <span asp-validation-for="MetaKeywords" class="text-danger"></span>
                     </div>
-                </div>
-            </div>
-
-
-
-
-            <div class="row">  
-                <div class="col-md-12">
-                    <div class="form-group mb-6">
-                        <label asp-for="Width" class="form-label">Width</label>
-                        <textarea asp-for="Width" class="form-control" rows="2"></textarea>
-                        <span asp-validation-for="Width" class="text-danger"></span>
-                    </div>
-
-                    <div class="form-group mb-6">
-                        <label asp-for="Height" class="form-label">Height</label>
-                        <input asp-for="Height" class="form-control">
-                            <span asp-validation-for="Height" class="text-danger"></span>
-                    </div>
-                    <div class="form-group mb-6">
-                        <label asp-for="Length" class="form-label">Length</label>
-                        <input asp-for="Length" class="form-control">
-                            <span asp-validation-for="Length" class="text-danger"></span>
+                    <div class="mb-3">
+                        <label asp-for="VideoUrl" class="form-label fw-bold">Video URL</label>
+                        <input asp-for="VideoUrl" class="form-control" placeholder="https://youtube.com/..." />
+                        <span asp-validation-for="VideoUrl" class="text-danger"></span>
                     </div>
                 </div>
             </div>
 
+        </div>
+        @* {{!-- end col-lg-8 --}} *@
 
+        @* {{!-- =============================== RIGHT COLUMN =============================== --}} *@
+        <div class="col-lg-4">
 
-
-
-
-
-
-
-
-
-
-
-
-
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-check mb-3">
-                        <input asp-for="Status" class="form-check-input">
-                        <label asp-for="Status" class="form-check-label">Active</label>
-                    </div>
+            @* {{!-- CLASSIFICATION --}} *@
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-sitemap me-2"></i>Classification</h5>
                 </div>
-                <div class="col-md-4">
-                    <div class="form-check mb-3">
-                        <input asp-for="IsFeatured" class="form-check-input">
-                        <label asp-for="IsFeatured" class="form-check-label">Featured Product</label>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="CategoryId" class="form-label fw-bold">Category <span class="text-danger">*</span></label>
+                        <select asp-for="CategoryId" class="form-select" required>
+                            <option value="">-- Select Category --</option>
+                            @foreach (var cat in categories)
+                            {
+                                <option value="@cat.Id" selected="@(cat.Id == Model.CategoryId)">@cat.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
                     </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="form-check mb-3">
-                        <input asp-for="IsBestSeller" class="form-check-input">
-                        <label asp-for="IsBestSeller" class="form-check-label">Best Seller</label>
+                    <div class="mb-3">
+                        <label asp-for="BrandId" class="form-label fw-bold">Brand</label>
+                        <select asp-for="BrandId" class="form-select">
+                            <option value="">-- Select Brand --</option>
+                            @foreach (var brand in brands)
+                            {
+                                <option value="@brand.Id" selected="@(brand.Id == Model.BrandId)">@brand.Name</option>
+                            }
+                        </select>
+                        <span asp-validation-for="BrandId" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Product Tags</label>
+                        <select name="SelectedTagIds" multiple class="form-select" style="height: 120px;">
+                            @foreach (var tag in allTags)
+                            {
+                                bool sel = Model.ProductTags != null && Model.ProductTags.Any(t => t.Id == tag.Id);
+                                <option value="@tag.Id" selected="@(sel ? "selected" : null)">@tag.Name</option>
+                            }
+                        </select>
+                        <small class="text-muted">Hold Ctrl to select multiple</small>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Project Categories</label>
+                        <div class="border rounded p-2" style="max-height:150px; overflow-y:auto;">
+                            @foreach (var pc in allProjCats)
+                            {
+                                bool sel = Model.ProjectCategories != null && Model.ProjectCategories.Any(p => p.Id == pc.Id);
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="SelectedProjectCategoryIds" value="@pc.Id"
+                                           id="pcat_@pc.Id" @(sel ? "checked" : "") />
+                                    <label class="form-check-label" for="pcat_@pc.Id">@pc.Name</label>
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="form-actions mt-4 pt-4 border-top">
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save"></i> Update Product
-                </button>
-                <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+            @* {{!-- STATUS --}} *@
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-toggle-on me-2"></i>Status & Display</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="Status" class="form-check-input" role="switch" />
+                        <label asp-for="Status" class="form-check-label fw-bold">Active (Visible on site)</label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="IsFeatured" class="form-check-input" role="switch" />
+                        <label asp-for="IsFeatured" class="form-check-label fw-bold">
+                            <i class="fas fa-star text-warning"></i> Featured
+                        </label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="IsBestSeller" class="form-check-input" role="switch" />
+                        <label asp-for="IsBestSeller" class="form-check-label fw-bold">
+                            <i class="fas fa-fire text-danger"></i> Best Seller
+                        </label>
+                    </div>
+                    <div class="form-check form-switch mb-3">
+                        <input asp-for="IsNew" class="form-check-input" role="switch" />
+                        <label asp-for="IsNew" class="form-check-label fw-bold">
+                            <i class="fas fa-certificate text-success"></i> New Arrival
+                        </label>
+                    </div>
+                    <hr />
+                    <div class="form-check form-switch mb-2">
+                        <input asp-for="RequiresShipping" class="form-check-input" role="switch" />
+                        <label asp-for="RequiresShipping" class="form-check-label">Requires Shipping</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input asp-for="Taxable" class="form-check-input" role="switch" />
+                        <label asp-for="Taxable" class="form-check-label">Taxable</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input asp-for="HasVariations" class="form-check-input" role="switch" />
+                        <label asp-for="HasVariations" class="form-check-label">Has Variations</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input asp-for="IsVirtual" class="form-check-input" role="switch" />
+                        <label asp-for="IsVirtual" class="form-check-label">Virtual Product</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input asp-for="IsDownloadable" class="form-check-input" role="switch" />
+                        <label asp-for="IsDownloadable" class="form-check-label">Downloadable</label>
+                    </div>
+                </div>
             </div>
-        </form>
+
+            @* {{!-- MAIN IMAGE --}} *@
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-image me-2"></i>Main Image</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img id="mainImagePreview"
+                         src="@(string.IsNullOrEmpty(Model.MainImage) ? "/images/no-image.png" : "/images/" + Model.MainImage)"
+                         class="img-thumbnail mb-3"
+                         style="max-height: 180px; object-fit: cover; width: 100%;" />
+                    <input type="file" name="img" class="form-control mb-2" accept="image/*"
+                           onchange="previewImage(this, 'mainImagePreview')" />
+                    <small class="text-muted">Leave empty to keep current image</small>
+                </div>
+            </div>
+
+            @* {{!-- AUDIT --}} *@
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>Record Info</h5>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted d-block mb-1">
+                        <strong>Created:</strong> @Model.CreatedAt.ToString("dd MMM yyyy HH:mm")
+                    </small>
+                    <small class="text-muted d-block mb-1">
+                        <strong>By:</strong> @Model.CreatedBy
+                    </small>
+                    @if (Model.UpdatedAt.HasValue)
+                    {
+                        <small class="text-muted d-block mb-1">
+                            <strong>Updated:</strong> @Model.UpdatedAt.Value.ToString("dd MMM yyyy HH:mm")
+                        </small>
+                        <small class="text-muted d-block">
+                            <strong>By:</strong> @Model.UpdatedBy
+                        </small>
+                    }
+                </div>
+            </div>
+
+        </div>
+        @* {{!-- end col-lg-4 --}} *@
+    </div>
+
+    @* {{!-- GALLERY --}} *@
+    <div class="card mb-4">
+        <div class="card-header">
+            <h5 class="mb-0"><i class="fas fa-images me-2"></i>Product Gallery</h5>
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Upload New Images</label>
+                <input type="file" name="galleryImages" class="form-control" multiple accept="image/*" />
+                <small class="text-muted">Select multiple images at once</small>
+            </div>
+            @if (Model.ProductImages != null && Model.ProductImages.Any())
+            {
+                <label class="form-label fw-bold">Current Gallery</label>
+                <div class="row g-2">
+                    @foreach (var img in Model.ProductImages.OrderBy(i => i.DisplayOrder))
+                    {
+                        <div class="col-6 col-md-3 col-lg-2 text-center" id="gallery-item-@img.Id">
+                            <div class="border rounded p-1">
+                                <img src="~/images/product_images/@img.ImageUrl"
+                                     class="img-fluid rounded mb-1"
+                                     style="height: 100px; object-fit: cover; width: 100%;"
+                                     alt="@img.AltText" />
+                                <small class="text-muted d-block">#@img.DisplayOrder</small>
+                                <button type="button" class="btn btn-danger btn-sm mt-1 w-100"
+                                        onclick="deleteGalleryImage(@img.Id)">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center text-muted py-4 border rounded">
+                    <i class="fas fa-images fa-2x mb-2"></i>
+                    <p>No gallery images yet. Upload some above.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    @* {{!-- SUBMIT --}} *@
+    <div class="card mb-4">
+        <div class="card-body d-flex gap-2 justify-content-end">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Cancel
+            </a>
+            <button type="submit" class="btn btn-primary px-5">
+                <i class="fas fa-save"></i> Save Changes
+            </button>
+        </div>
+    </div>
+
+</form>
+
+@* {{!-- Add Color Modal --}} *@
+<div class="modal fade" id="addColorModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add New Color</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Color Name</label>
+                    <input type="text" id="newColorName" class="form-control" placeholder="e.g. Royal Blue" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Pick Color</label>
+                    <input type="color" id="newColorHex" class="form-control form-control-color w-100" value="#563d7c" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary w-100" onclick="saveNewColor()">Save Color</button>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
-            // حساب الـ Index بناءً على عدد الأسطر الموجودة فعلياً عند تحميل الصفحة
-            let compIndex = $('.composition-row').length;
+        let compIndex = @compIndex;
 
-            $('#add-composition').off('click').on('click', function () {
-                const container = $('#composition-container');
-                
-                // نجهز خيارات الـ Select من ViewBag
-                let options = '<option value="">Select Material</option>';
-                @foreach (var comp in ViewBag.Compositions)
-                {
-                        <text>options += '<option value="@comp.Id">@comp.Name</option>';</text>
-                }
-
-                const html = `
-                    <div class="composition-row row mb-2 g-2 align-items-center">
-                        <div class="col-7">
-                            <select name="ProductCompositions[${compIndex}].CompositionId" class="form-select form-control" required>
-                                ${options}
-                            </select>
-                        </div>
-                        <div class="col-3">
+        // ===== COMPOSITION =====
+        $('#add-composition').on('click', function () {
+            let options = '<option value="">Select Material</option>';
+            @foreach (var comp in allComps)
+            {
+                    <text>options += '<option value="@comp.Id">@comp.Name</option>';</text>
+            }
+            const html = `
+                <div class="composition-row row mb-2 g-2 align-items-center">
+                    <div class="col-7">
+                        <select name="ProductCompositions[${compIndex}].CompositionId" class="form-select" required>
+                            ${options}
+                        </select>
+                    </div>
+                    <div class="col-3">
+                        <div class="input-group">
                             <input type="number" name="ProductCompositions[${compIndex}].Percentage"
-                                    class="form-control" placeholder="%" min="1" max="100" required>
+                                   class="form-control" placeholder="%" min="1" max="100" required />
+                            <span class="input-group-text">%</span>
                         </div>
-                        <div class="col-2">
-                            <button type="button" class="btn btn-outline-danger btn-sm remove-composition">×</button>
-                        </div>
-                    </div>`;
-                
-                container.append(html);
-                compIndex++; // زيادة العداد للسطر القادم
-            });
-
-            // حذف السطر
-            $(document).on('click', '.remove-composition', function() {
-                $(this).closest('.composition-row').remove();
-            });
-            
-            // باقي كود الـ Validation والـ Ajax الخاص بك يبقى كما هو...
+                    </div>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-outline-danger btn-sm w-100 remove-composition">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>`;
+            $('#composition-container').append(html);
+            compIndex++;
         });
 
+        $(document).on('click', '.remove-composition', function () {
+            $(this).closest('.composition-row').remove();
+        });
 
-                                                                            function saveNewColor() {
-                                                                        var name = $('#newColorName').val();
-                                                                        var hex = $('#newColorHex').val();
+        // ===== IMAGE PREVIEW =====
+        function previewImage(input, previewId) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = e => document.getElementById(previewId).src = e.target.result;
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
 
-                                                                        $.post('/Admin/Products/AddNewColor', { name: name, hexCode: hex }, function(response) {
-                                                                            if (response.success) {
-                                                                                // 1. إضافة اللون الجديد لجميع قوائم الـ Select الخاصة بالألوان في الصفحة
-                                                                                var newOption = new Option(response.name, response.id, true, true);
-                                                                                $('select[name="ColorId"]').append(newOption).trigger('change');
+        // ===== SLUG =====
+        function generateSlug() {
+            const name = document.getElementById('Name').value;
+            if (!name) { alert('Enter product name first'); return; }
+            document.getElementById('Slug').value = name.toLowerCase().trim()
+                .replace(/[^\w\s-]/g, '').replace(/[\s_-]+/g, '-').replace(/^-+|-+$/g, '');
+        }
+        $('#Name').on('blur', function () {
+            if (!$('#Slug').val()) generateSlug();
+        });
 
-                                                                                // 2. إغلاق المودال وتفريغ الحقول
-                                                                                $('#addColorModal').modal('hide');
-                                                                                $('#newColorName').val('');
-            
-                                                                                alert('تم إضافة اللون بنجاح واختياره!');
-                                                                            } else {
-                                                                                alert(response.message);
-                                                                            }
-                                                                        });
-                                                                    }
+        // ===== SKU =====
+        function generateSKU() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let sku = 'PROD-';
+            for (let i = 0; i < 8; i++) sku += chars.charAt(Math.floor(Math.random() * chars.length));
+            document.getElementById('SKU').value = sku;
+        }
 
-                                                                                                                                        function previewImage(input, previewId) {
-                                                                        if (input.files && input.files[0]) {
-                                                                            var reader = new FileReader();
-                                                                            reader.onload = function (e) {
-                                                                                $('#' + previewId).attr('src', e.target.result);
-                                                                            };
-                                                                            reader.readAsDataURL(input.files[0]);
-                                                                        }
-                                                                    }
+        // ===== DELETE GALLERY IMAGE =====
+        function deleteGalleryImage(imageId) {
+            if (!confirm('Delete this image?')) return;
+            $.ajax({
+                url: '/Admin/Products/DeleteImage',
+                type: 'POST',
+                data: { imageId: imageId, __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val() },
+                success: function (res) {
+                    if (res.success) {
+                        $('#gallery-item-' + imageId).fadeOut(300, function () { $(this).remove(); });
+                    } else {
+                        alert(res.message || 'Error deleting image');
+                    }
+                },
+                error: () => alert('Server error')
+            });
+        }
+
+        // ===== ADD COLOR =====
+        function saveNewColor() {
+            const name = $('#newColorName').val();
+            const hex = $('#newColorHex').val();
+            if (!name) { alert('Enter color name'); return; }
+            $.post('/Admin/Products/AddNewColor', { name, hexCode: hex }, function (res) {
+                if (res.success) {
+                    $('select[name="ColorId"]').append(new Option(res.name, res.id, true, true));
+                    $('#addColorModal').modal('hide');
+                    $('#newColorName').val('');
+                    alert('Color added and selected!');
+                } else {
+                    alert(res.message);
+                }
+            });
+        }
     </script>
 }

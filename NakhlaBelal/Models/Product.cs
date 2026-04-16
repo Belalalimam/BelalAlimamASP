@@ -11,13 +11,14 @@ namespace NakhlaBelal.Models
         public string Name { get; set; }
         public string? ShortDescription { get; set; }
         public string? Description { get; set; }
-        public string SKU { get; set; } = GenerateSKU();
+        public string SKU { get; set; } = GenerateSKU(); 
         public string? Barcode { get; set; }
         public string? ModelNumber { get; set; }
 
         // Pricing - FIXED: All decimal
         public decimal CostPrice { get; set; }
         public decimal Price { get; set; }
+        public string UnitPrice { get; set; }
         public decimal? SpecialPrice { get; set; }
         public DateTime? SpecialPriceStart { get; set; }
         public DateTime? SpecialPriceEnd { get; set; }
