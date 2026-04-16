@@ -1,0 +1,88 @@
+@{
+    ViewData["Title"] = "تتبع الطلب";
+    var prefilled = ViewBag.PrefilledOrderNumber as string;
+}
+
+<div class="container my-5 py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            <div class="text-center mb-5">
+                <div class="mb-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" fill="#002211" viewBox="0 0 16 16">
+                        <path d="M0 3.5A1.5 1.5 0 0 1 1.5 2h9A1.5 1.5 0 0 1 12 3.5V5h1.02a1.5 1.5 0 0 1 1.17.563l1.481 1.85a1.5 1.5 0 0 1 .329.938V10.5a1.5 1.5 0 0 1-1.5 1.5H14a2 2 0 1 1-4 0H5a2 2 0 1 1-3.998-.085A1.5 1.5 0 0 1 0 10.5v-7zm1.294 7.456A1.999 1.999 0 0 1 4.732 11h5.536a2.01 2.01 0 0 1 .732-.732V3.5a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v7a.5.5 0 0 0 .294.456zM12 10a2 2 0 0 1 1.732 1h.768a.5.5 0 0 0 .5-.5V8.35a.5.5 0 0 0-.11-.312l-1.48-1.85A.5.5 0 0 0 13.02 6H12v4zm-9 1a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm9 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/>
+                    </svg>
+                </div>
+                <h1 class="display-5 fw-bold mb-2" style="color:#002211;">تتبع طلبك</h1>
+                <p class="text-muted">أدخل رقم الطلب والبريد الإلكتروني للاطلاع على حالة الشحن</p>
+            </div>
+
+            @if (TempData["error-notification"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show shadow-sm" role="alert">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    @TempData["error-notification"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            }
+
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Track" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-4">
+                            <label for="orderNumber" class="form-label fw-bold">
+                                <i class="fas fa-hashtag me-1 text-muted"></i> رقم الطلب
+                            </label>
+                            <input type="text"
+                                   id="orderNumber"
+                                   name="orderNumber"
+                                   value="@prefilled"
+                                   class="form-control form-control-lg"
+                                   placeholder="ORD-20260417-XXXXXX"
+                                   required />
+                            <small class="text-muted">ستجده في رسالة تأكيد الطلب المُرسلة إليك</small>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="email" class="form-label fw-bold">
+                                <i class="fas fa-envelope me-1 text-muted"></i> البريد الإلكتروني
+                            </label>
+                            <input type="email"
+                                   id="email"
+                                   name="email"
+                                   class="form-control form-control-lg"
+                                   placeholder="you@example.com"
+                                   required />
+                            <small class="text-muted">نفس البريد الذي استخدمته عند إتمام الطلب</small>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-lg fw-bold py-3 text-white" style="background-color:#002211;">
+                                <i class="fas fa-search me-2"></i> تتبع الطلب
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    تحتاج مساعدة؟
+                    <a href="/" class="text-decoration-none fw-bold" style="color:#002211;">تواصل معنا</a>
+                </small>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    body { background-color: #f8f9fa; }
+    .form-control:focus {
+        border-color: #002211;
+        box-shadow: 0 0 0 0.2rem rgba(0, 34, 17, 0.15);
+    }
+    .btn:hover { transform: translateY(-1px); transition: all 0.2s; }
+</style>

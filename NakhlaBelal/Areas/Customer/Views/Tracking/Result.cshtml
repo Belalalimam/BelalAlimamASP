@@ -1,0 +1,336 @@
+@model NakhlaBelal.Models.Order
+@{
+    ViewData["Title"] = "نتيجة التتبع - " + Model.OrderNumber;
+
+    // بناء خطوات الـ Timeline حسب حالة الطلب الحالية
+    var steps = new[]
+    {
+        new { Key = "Pending",    Label = "تم استلام الطلب",  Icon = "fa-file-invoice", Date = (DateTime?)Model.CreatedAt },
+        new { Key = "Processing", Label = "قيد التجهيز",      Icon = "fa-box-open",     Date = Model.ProcessingDate },
+        new { Key = "Shipped",    Label = "تم الشحن",         Icon = "fa-truck",        Date = Model.ShippedDate },
+        new { Key = "Delivered",  Label = "تم التوصيل",       Icon = "fa-check-circle", Date = Model.DeliveredDate }
+    };
+
+    // ترتيب الحالات — كل حالة سابقة للحالة الحالية تعتبر "منجزة"
+    var order = new Dictionary<string, int> {
+        { "Pending", 0 }, { "Processing", 1 }, { "Shipped", 2 }, { "Delivered", 3 }, { "Cancelled", -1 }
+    };
+    int currentIdx = order.ContainsKey(Model.OrderStatus) ? order[Model.OrderStatus] : 0;
+    bool isCancelled = Model.OrderStatus == "Cancelled";
+
+    string StatusBadgeClass(string s) => s switch
+    {
+        "Pending" => "bg-secondary",
+        "Processing" => "bg-info text-dark",
+        "Shipped" => "bg-primary",
+        "Delivered" => "bg-success",
+        "Cancelled" => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    string StatusLabel(string s) => s switch
+    {
+        "Pending" => "قيد الانتظار",
+        "Processing" => "قيد التجهيز",
+        "Shipped" => "تم الشحن",
+        "Delivered" => "تم التوصيل",
+        "Cancelled" => "ملغي",
+        _ => s
+    };
+}
+
+<div class="container my-5">
+
+    @* ===== HEADER ===== *@
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1" style="color:#002211;">
+                <i class="fas fa-receipt me-2"></i>طلب #@Model.OrderNumber
+            </h2>
+            <p class="text-muted mb-0">
+                تاريخ الطلب: @Model.CreatedAt.ToString("dd MMMM yyyy - HH:mm")
+            </p>
+        </div>
+        <div class="mt-3 mt-md-0">
+            <span class="badge @StatusBadgeClass(Model.OrderStatus) fs-6 px-3 py-2">
+                @StatusLabel(Model.OrderStatus)
+            </span>
+        </div>
+    </div>
+
+    @* ===== CANCELLED ALERT ===== *@
+    @if (isCancelled)
+    {
+        <div class="alert alert-danger shadow-sm mb-4">
+            <h5 class="alert-heading">
+                <i class="fas fa-times-circle me-2"></i>تم إلغاء هذا الطلب
+            </h5>
+            @if (!string.IsNullOrEmpty(Model.CancellationReason))
+            {
+                <p class="mb-1"><strong>السبب:</strong> @Model.CancellationReason</p>
+            }
+            @if (Model.CancelledDate.HasValue)
+            {
+                <small class="text-muted">بتاريخ @Model.CancelledDate.Value.ToString("dd MMM yyyy - HH:mm")</small>
+            }
+        </div>
+    }
+    else
+    {
+        @* ===== TIMELINE ===== *@
+        <div class="card border-0 shadow-sm mb-4">
+            <div class="card-body p-4 p-md-5">
+                <h5 class="fw-bold mb-4" style="color:#002211;">
+                    <i class="fas fa-route me-2"></i>مسار الطلب
+                </h5>
+
+                <div class="tracking-timeline">
+                    @for (int i = 0; i < steps.Length; i++)
+                    {
+                        var step = steps[i];
+                        bool isDone = i <= currentIdx;
+                        bool isActive = i == currentIdx;
+                        bool isLast = i == steps.Length - 1;
+
+                        <div class="timeline-step @(isDone ? "done" : "") @(isActive ? "active" : "")">
+                            <div class="timeline-icon">
+                                <i class="fas @step.Icon"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h6 class="mb-1 fw-bold">@step.Label</h6>
+                                @if (isDone && step.Date.HasValue)
+                                {
+                                    <small class="text-muted">@step.Date.Value.ToString("dd MMM yyyy - HH:mm")</small>
+                                }
+                                else if (isActive)
+                                {
+                                    <small class="text-primary fw-bold">قيد التنفيذ حالياً</small>
+                                }
+                                else
+                                {
+                                    <small class="text-muted">قادم</small>
+                                }
+                            </div>
+                            @if (!isLast)
+                            {
+                                <div class="timeline-line @(i < currentIdx ? "done" : "")"></div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="row g-4">
+
+        @* ===== SHIPPING INFO ===== *@
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3" style="color:#002211;">
+                        <i class="fas fa-shipping-fast me-2"></i>عنوان الشحن
+                    </h6>
+                    <p class="mb-1 fw-bold">@Model.FullName</p>
+                    <p class="mb-1 text-muted small">@Model.FormattedAddress</p>
+                    <hr class="my-3" />
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span class="text-muted">الهاتف</span>
+                        <span class="fw-bold">@Model.ShippingPhone</span>
+                    </div>
+                    <div class="d-flex justify-content-between small">
+                        <span class="text-muted">البريد الإلكتروني</span>
+                        <span class="fw-bold">@Model.ShippingEmail</span>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Model.TrackingNumber))
+                    {
+                        <hr class="my-3" />
+                        <div class="d-flex justify-content-between small mb-1">
+                            <span class="text-muted">شركة الشحن</span>
+                            <span class="fw-bold">@Model.Carrier</span>
+                        </div>
+                        <div class="d-flex justify-content-between small">
+                            <span class="text-muted">رقم التتبع لدى الناقل</span>
+                            <code class="fw-bold">@Model.TrackingNumber</code>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        @* ===== PAYMENT INFO ===== *@
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold mb-3" style="color:#002211;">
+                        <i class="fas fa-credit-card me-2"></i>الدفع والإجمالي
+                    </h6>
+                    <div class="d-flex justify-content-between small mb-2">
+                        <span class="text-muted">طريقة الدفع</span>
+                        <span class="fw-bold">@Model.PaymentMethod</span>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-3">
+                        <span class="text-muted">حالة الدفع</span>
+                        <span class="badge @(Model.IsPaid ? "bg-success" : "bg-warning text-dark")">
+                            @(Model.IsPaid ? "مدفوع" : "قيد الانتظار")
+                        </span>
+                    </div>
+                    <hr class="my-3" />
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span class="text-muted">المجموع الفرعي</span>
+                        <span>$@Model.Subtotal.ToString("N2")</span>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span class="text-muted">الشحن</span>
+                        <span>$@Model.ShippingCost.ToString("N2")</span>
+                    </div>
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span class="text-muted">الضريبة</span>
+                        <span>$@Model.TaxAmount.ToString("N2")</span>
+                    </div>
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <div class="d-flex justify-content-between small mb-1 text-danger">
+                            <span>الخصم</span>
+                            <span>- $@Model.DiscountAmount.ToString("N2")</span>
+                        </div>
+                    }
+                    <hr class="my-2" />
+                    <div class="d-flex justify-content-between fw-bold">
+                        <span>الإجمالي</span>
+                        <span style="color:#002211;">$@Model.TotalAmount.ToString("N2")</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* ===== ORDER ITEMS ===== *@
+    <div class="card border-0 shadow-sm mt-4">
+        <div class="card-body p-4">
+            <h6 class="fw-bold mb-3" style="color:#002211;">
+                <i class="fas fa-box me-2"></i>المنتجات (@Model.OrderItems.Count)
+            </h6>
+            <div class="table-responsive">
+                <table class="table table-borderless align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>المنتج</th>
+                            <th class="text-center">الكمية</th>
+                            <th class="text-end">السعر</th>
+                            <th class="text-end">الإجمالي</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.OrderItems)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        @if (!string.IsNullOrEmpty(item.ProductImage))
+                                        {
+                                            <img src="~/images/@item.ProductImage" alt="@item.ProductName"
+                                                 class="rounded me-3" style="width:50px;height:50px;object-fit:cover;" />
+                                        }
+                                        <div>
+                                            <div class="fw-bold">@item.ProductName</div>
+                                            <small class="text-muted">SKU: @item.ProductSku</small>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-center">@item.Quantity</td>
+                                <td class="text-end">$@item.UnitPrice.ToString("N2")</td>
+                                <td class="text-end fw-bold">$@item.TotalPrice.ToString("N2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a asp-action="Index" class="btn btn-outline-secondary me-2">
+            <i class="fas fa-arrow-right me-1"></i> تتبع طلب آخر
+        </a>
+        <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn text-white" style="background-color:#002211;">
+            <i class="fas fa-home me-1"></i> العودة للرئيسية
+        </a>
+    </div>
+
+</div>
+
+<style>
+    body { background-color: #f8f9fa; }
+
+    /* ===== TIMELINE ===== */
+    .tracking-timeline {
+        position: relative;
+        padding: 10px 0;
+    }
+
+    .timeline-step {
+        position: relative;
+        display: flex;
+        align-items: flex-start;
+        padding: 15px 0;
+        gap: 20px;
+    }
+
+    .timeline-icon {
+        flex-shrink: 0;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        color: #adb5bd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+
+    .timeline-step.done .timeline-icon {
+        background-color: #002211;
+        color: #fff;
+    }
+
+    .timeline-step.active .timeline-icon {
+        background-color: #ffc107;
+        color: #002211;
+        animation: pulse 2s infinite;
+    }
+
+    .timeline-content {
+        flex-grow: 1;
+        padding-top: 8px;
+    }
+
+    .timeline-line {
+        position: absolute;
+        right: 24px;
+        top: 65px;
+        bottom: -15px;
+        width: 2px;
+        background-color: #e9ecef;
+        z-index: 1;
+    }
+
+    .timeline-line.done {
+        background-color: #002211;
+    }
+
+    @@keyframes pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(255, 193, 7, 0.7); }
+        50% { box-shadow: 0 0 0 12px rgba(255, 193, 7, 0); }
+    }
+
+    /* RTL support */
+    [dir="ltr"] .timeline-line {
+        right: auto;
+        left: 24px;
+    }
+</style>
