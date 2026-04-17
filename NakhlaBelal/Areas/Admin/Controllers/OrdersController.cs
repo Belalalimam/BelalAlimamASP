@@ -15,11 +15,71 @@ namespace NAKHLA.Controllers.Admin
     public class OrdersController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWhatsAppService _whatsAppService;
+        private readonly ILogger<OrdersController> _logger;
 
-        public OrdersController(ApplicationDbContext context)
+        public OrdersController(
+            ApplicationDbContext context,
+            IWhatsAppService whatsAppService,
+            ILogger<OrdersController> logger)
         {
             _context = context;
+            _whatsAppService = whatsAppService;
+            _logger = logger;
         }
+
+        // =========================================================
+        // GET: Admin/Orders/TestWhatsApp?phone=201xxxxxxxxx
+        // صفحة اختبار سريعة لإرسال رسالة قالب تجريبية
+        // =========================================================
+        [HttpGet]
+        public async Task<IActionResult> TestWhatsApp(string phone)
+        {
+            if (string.IsNullOrWhiteSpace(phone))
+            {
+                return Content(
+                    "أضف رقم الهاتف على الرابط هكذا:\n" +
+                    "/Admin/Orders/TestWhatsApp?phone=201XXXXXXXXX\n" +
+                    "(ابدأ بكود الدولة بدون + ولا 00)",
+                    "text/plain; charset=utf-8");
+            }
+
+            // طلب وهمي لاختبار قالب order_confirmation
+            var fakeOrder = new Order
+            {
+                OrderNumber = "TEST-" + DateTime.Now.ToString("HHmmss"),
+                ShippingPhone = phone,
+                FullName = "عميل اختبار",
+                TotalAmount = 100m,
+                ShippingFirstName = "عميل",
+                ShippingLastName = "اختبار"
+            };
+
+            var trackingUrl = Url.Action("Index", "Tracking",
+                new { area = "Customer", orderNumber = fakeOrder.OrderNumber },
+                Request.Scheme) ?? "https://example.com";
+
+            var (success, message) = await _whatsAppService
+                .SendOrderConfirmationAsync(fakeOrder, trackingUrl);
+
+            var result = $"Success: {success}\n\nResponse:\n{message}\n\n" +
+                         $"Phone sent to (after normalization): based on input '{phone}'\n" +
+                         $"Template: order_confirmation\n" +
+                         $"OrderNumber: {fakeOrder.OrderNumber}";
+
+            return Content(result, "text/plain; charset=utf-8");
+        }
+
+        // تحويل حالة الطلب الإنجليزية إلى نص عربي لرسائل واتساب
+        private static string GetArabicStatus(string status) => status switch
+        {
+            "Pending" => "قيد الانتظار",
+            "Processing" => "قيد التجهيز",
+            "Shipped" => "تم الشحن",
+            "Delivered" => "تم التوصيل",
+            "Cancelled" => "ملغي",
+            _ => status
+        };
 
         // GET: Admin/Orders
         public async Task<IActionResult> Index(string status = null, int page = 1, int pageSize = 10)
@@ -102,6 +162,9 @@ namespace NAKHLA.Controllers.Admin
 
             try
             {
+                // احفظ الحالة القديمة لمعرفة هل فعلاً تغيّرت
+                var previousStatus = orderDb.OrderStatus;
+
                 // نعدل القيم يدوياً على الكائن الذي يتم تتبعه حالياً
                 orderDb.OrderStatus = orderStatus;
                 orderDb.PaymentStatus = paymentStatus;
@@ -109,11 +172,39 @@ namespace NAKHLA.Controllers.Admin
                 orderDb.UpdatedAt = DateTime.Now;
 
                 // تحديث التواريخ تلقائياً (منطقك السابق ممتاز)
+                if (orderStatus == "Processing" && orderDb.ProcessingDate == null) orderDb.ProcessingDate = DateTime.Now;
                 if (orderStatus == "Shipped" && orderDb.ShippedDate == null) orderDb.ShippedDate = DateTime.Now;
                 if (orderStatus == "Delivered" && orderDb.DeliveredDate == null) orderDb.DeliveredDate = DateTime.Now;
 
                 // لا داعي لمناداة Update(orderDb) لأن EF يتابع التغييرات تلقائياً هنا
                 await _context.SaveChangesAsync();
+
+                // إرسال إشعار واتساب فقط إذا تغيّرت حالة الطلب فعلياً
+                if (!string.Equals(previousStatus, orderStatus, StringComparison.OrdinalIgnoreCase))
+                {
+                    try
+                    {
+                        var trackingUrl = Url.Action(
+                            "Index",
+                            "Tracking",
+                            new { area = "Customer", orderNumber = orderDb.OrderNumber },
+                            Request.Scheme) ?? string.Empty;
+
+                        var (success, message) = await _whatsAppService.SendOrderStatusUpdateAsync(
+                            orderDb, GetArabicStatus(orderStatus), trackingUrl);
+
+                        if (!success)
+                        {
+                            _logger.LogWarning("WhatsApp status update not sent for order {OrderNumber}: {Message}",
+                                orderDb.OrderNumber, message);
+                        }
+                    }
+                    catch (Exception whatsEx)
+                    {
+                        _logger.LogError(whatsEx, "Unexpected error sending WhatsApp status update for order {OrderNumber}",
+                            orderDb.OrderNumber);
+                    }
+                }
 
                 return RedirectToAction("Index");
             }

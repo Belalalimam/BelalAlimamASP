@@ -19,17 +19,20 @@ namespace NAKHLA.Areas.Customer.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IRepository<Promotion> _promotionRepository;
         private readonly ILogger<CheckoutController> _logger;
+        private readonly IWhatsAppService _whatsAppService;
 
         public CheckoutController(
             UserManager<ApplicationUser> userManager,
             ApplicationDbContext context,
             IRepository<Promotion> promotionRepository,
-            ILogger<CheckoutController> logger)
+            ILogger<CheckoutController> logger,
+            IWhatsAppService whatsAppService)
         {
             _userManager = userManager;
             _context = context;
             _promotionRepository = promotionRepository;
             _logger = logger;
+            _whatsAppService = whatsAppService;
         }
 
         [HttpGet]
@@ -220,6 +223,29 @@ namespace NAKHLA.Areas.Customer.Controllers
                         await transaction.RollbackAsync();
                         throw; // ابعته للـ catch البرانية لنعرف شو السبب
                     }
+                }
+
+                // 6. إرسال رسالة واتساب بتأكيد الطلب (لا تؤثر على تدفق الطلب إذا فشلت)
+                try
+                {
+                    var trackingUrl = Url.Action(
+                        "Index",
+                        "Tracking",
+                        new { area = "Customer", orderNumber = order.OrderNumber },
+                        Request.Scheme) ?? string.Empty;
+
+                    var (success, message) = await _whatsAppService.SendOrderConfirmationAsync(order, trackingUrl);
+                    if (!success)
+                    {
+                        _logger.LogWarning("WhatsApp confirmation not sent for order {OrderNumber}: {Message}",
+                            order.OrderNumber, message);
+                    }
+                }
+                catch (Exception whatsEx)
+                {
+                    // سجّل الخطأ فقط؛ لا تكسر عملية الطلب
+                    _logger.LogError(whatsEx, "Unexpected error sending WhatsApp confirmation for order {OrderNumber}",
+                        order.OrderNumber);
                 }
 
                 return RedirectToAction("OrderConfirmation", new { orderId = order.Id });

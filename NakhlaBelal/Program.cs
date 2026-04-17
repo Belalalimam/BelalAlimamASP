@@ -25,7 +25,7 @@ builder.Services.AddSession(options =>
 // ==========================================================
 
 // Register your custom configurations
-builder.Services.RegisterConfig(connectionString);
+builder.Services.RegisterConfig(connectionString, builder.Configuration);
 builder.Services.RegisterMapsterConfig();
 
 

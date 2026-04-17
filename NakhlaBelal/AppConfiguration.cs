@@ -12,7 +12,7 @@ namespace NakhlaBelal
 {
     public static class AppConfiguration
     {
-        public static void RegisterConfig(this IServiceCollection services, string connection)
+        public static void RegisterConfig(this IServiceCollection services, string connection, IConfiguration configuration)
         {
             services.AddDbContext<ApplicationDbContext>(option =>
             {
@@ -20,6 +20,11 @@ namespace NakhlaBelal
                 //option.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]);
                 option.UseSqlServer(connection);
             });
+
+            // ========== WhatsApp Business Cloud API ==========
+            services.Configure<WhatsAppSettings>(configuration.GetSection("WhatsApp"));
+            services.AddHttpClient<IWhatsAppService, WhatsAppService>();
+            // ==================================================
 
             services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
