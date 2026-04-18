@@ -41,62 +41,20 @@ namespace NAKHLA.Areas.Customer.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
 
-            var cartItems = await _context.Carts
-                .Include(c => c.Product)
-                .Where(c => c.ApplicationUserId == userId)
-                .ToListAsync();
+            var cartItems = await LoadCartItemsAsync(userId);
 
             if (!cartItems.Any())
             {
                 TempData["error-notification"] = "Your cart is empty";
                 return RedirectToAction("Index", "Cart");
             }
-            //2.جلب الخصم من الـ Session(نفس منطق الـ Index تماماً)
-            var appliedCode = HttpContext.Session.GetString("AppliedPromotionCode");
-            Promotion? promotion = null;
-            if (!string.IsNullOrEmpty(appliedCode))
-            {
-                promotion = await _promotionRepository.GetOneAsync(e => e.Code.ToLower() == appliedCode.ToLower() && e.IsActive && e.IsValid);
-            }
 
-            decimal subtotalOriginal = 0;
-            decimal totalDiscount = 0;
-            decimal taxTotal = 0;
-            decimal taxRate = 0.19m;
-
-            //    // 3. الحسبة الثلاثية (سعر أصلي + خصم + ضريبة)
-            foreach (var item in cartItems)
-            {
-                subtotalOriginal += item.Product.Price * item.Count;
-
-                // حساب الخصم إذا وجد
-                if (promotion != null && promotion.IsCurrentlyActive && promotion.IsApplicableToProduct(item.Product))
-                {
-                    decimal discountPerUnit = promotion.CalculateDiscount(item.Product.Price, 1);
-                    item.Price = item.Product.Price - discountPerUnit;
-                    totalDiscount += (discountPerUnit * item.Count);
-                }
-                else { item.Price = item.Product.Price; }
-
-                // حساب الضريبة على السعر بعد الخصم (أو قبل حسب قانون بلدك، غالباً بعد الخصم)
-                if (item.Product.Taxable)
-                {
-                    taxTotal += (item.Price * item.Count) * taxRate;
-                }
-            }
+            var cartData = await BuildCartDataAsync(cartItems);
 
             var checkoutVM = new CheckoutVM
             {
-                CartData = new CartVM
-                {
-                    CartItems = cartItems,
-                    Subtotal = subtotalOriginal,
-                    Discount = totalDiscount,
-                    Tax = taxTotal,
-                    Shipping = 5.99m,
-                    Total = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m,
-                    PromotionCode = appliedCode
-                },
+                CartData = cartData,
+                CartItems = cartItems,
                 // بيانات العميل تلقائياً
                 ShippingFirstName = user?.FirstName,
                 ShippingLastName = user?.LastName,
@@ -112,27 +70,77 @@ namespace NAKHLA.Areas.Customer.Controllers
             return View(checkoutVM);
         }
 
+        private async Task<List<Cart>> LoadCartItemsAsync(string userId)
+        {
+            return await _context.Carts
+                .Include(c => c.Product)
+                .Where(c => c.ApplicationUserId == userId)
+                .ToListAsync();
+        }
+
+        private async Task<CartVM> BuildCartDataAsync(List<Cart> cartItems)
+        {
+            var appliedCode = HttpContext.Session.GetString("AppliedPromotionCode");
+            Promotion? promotion = null;
+            if (!string.IsNullOrEmpty(appliedCode))
+            {
+                promotion = await _promotionRepository.GetOneAsync(e => e.Code.ToLower() == appliedCode.ToLower() && e.IsActive && e.IsValid);
+            }
+
+            decimal subtotalOriginal = 0;
+            decimal totalDiscount = 0;
+            decimal taxTotal = 0;
+            const decimal taxRate = 0.19m;
+
+            foreach (var item in cartItems)
+            {
+                subtotalOriginal += item.Product.Price * item.Count;
+
+                if (promotion != null && promotion.IsCurrentlyActive && promotion.IsApplicableToProduct(item.Product))
+                {
+                    decimal discountPerUnit = promotion.CalculateDiscount(item.Product.Price, 1);
+                    item.Price = item.Product.Price - discountPerUnit;
+                    totalDiscount += (discountPerUnit * item.Count);
+                }
+                else { item.Price = item.Product.Price; }
+
+                if (item.Product.Taxable)
+                {
+                    taxTotal += (item.Price * item.Count) * taxRate;
+                }
+            }
+
+            return new CartVM
+            {
+                CartItems = cartItems,
+                Subtotal = subtotalOriginal,
+                Discount = totalDiscount,
+                Tax = taxTotal,
+                Shipping = 5.99m,
+                Total = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m,
+                PromotionCode = appliedCode
+            };
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProcessOrder(CheckoutVM model)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             // Get cart items
-            var cartItems = await _context.Carts
-                .Include(c => c.Product)
-                .Where(c => c.ApplicationUserId == userId)
-                .ToListAsync();
-
-            if (!ModelState.IsValid)
-            {
-                model.CartItems = cartItems;
-                return View("Index", model);
-            }            
+            var cartItems = await LoadCartItemsAsync(userId);
 
             if (!cartItems.Any())
             {
                 TempData["error-notification"] = "Your cart is empty";
                 return RedirectToAction("Index", "Cart");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.CartData = await BuildCartDataAsync(cartItems);
+                model.CartItems = cartItems;
+                return View("Index", model);
             }
             // Create order
             var order = new Order
@@ -212,7 +220,22 @@ namespace NAKHLA.Areas.Customer.Controllers
                         // 3. حذف السلة بنفس اللحظة
                         _context.Carts.RemoveRange(cartItems);
 
-                        // 4. سيف الكل بمرة وحدة فقط!
+                        // 4. تحديث بيانات عنوان اليوزر ليسترجعها بالطلبات القادمة
+                        var user = await _userManager.FindByIdAsync(userId);
+                        if (user != null)
+                        {
+                            user.FirstName = model.ShippingFirstName ?? user.FirstName;
+                            user.LastName = model.ShippingLastName ?? user.LastName;
+                            user.Address = model.ShippingAddress ?? user.Address;
+                            user.City = model.ShippingCity ?? user.City;
+                            user.State = model.ShippingState ?? user.State;
+                            user.ZipCode = model.ShippingZipCode ?? user.ZipCode;
+                            user.Country = model.ShippingCountry ?? user.Country;
+                            if (string.IsNullOrEmpty(user.PhoneNumber))
+                                user.PhoneNumber = model.ShippingPhone;
+                        }
+
+                        // 5. سيف الكل بمرة وحدة فقط!
                         await _context.SaveChangesAsync();
 
                         // 5. تثبيت العملية

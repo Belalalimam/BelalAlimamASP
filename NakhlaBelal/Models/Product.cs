@@ -31,6 +31,11 @@ namespace NakhlaBelal.Models
         public bool IsInStock { get; set; } = true;
         public bool BackordersAllowed { get; set; } = false;
 
+        // Sales Unit (Piece/Meter/Kilogram/Yard) + minimum order quantity + step
+        public ProductUnit Unit { get; set; } = ProductUnit.Piece;
+        public int MinimumQuantity { get; set; } = 1;
+        public int QuantityStep { get; set; } = 1;
+
 
         // Properties
         

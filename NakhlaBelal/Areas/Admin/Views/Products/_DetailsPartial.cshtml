@@ -348,11 +348,23 @@
                         <h6 class="text-muted">Stock Info</h6>
                         <div class="d-flex justify-content-between">
                             <span>Quantity</span>
-                            <strong>@Model.StockQuantity</strong>
+                            <strong>@Model.StockQuantity @Model.Unit.ShortLabel()</strong>
                         </div>
                         <div class="d-flex justify-content-between mt-1">
                             <span>Low Stock Alert</span>
                             <strong>@Model.LowStockThreshold</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>Sales Unit</span>
+                            <strong>@Model.Unit (@Model.Unit.ShortLabel())</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>Minimum Quantity</span>
+                            <strong>@Model.MinimumQuantity @Model.Unit.ShortLabel()</strong>
+                        </div>
+                        <div class="d-flex justify-content-between mt-1">
+                            <span>Quantity Step</span>
+                            <strong>@Model.QuantityStep @Model.Unit.ShortLabel()</strong>
                         </div>
                         <div class="d-flex justify-content-between mt-1">
                             <span>Display Order</span>

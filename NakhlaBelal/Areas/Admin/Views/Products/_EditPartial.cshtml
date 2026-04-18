@@ -301,6 +301,24 @@
                         <small class="text-muted">Alert when stock falls below this</small>
                     </div>
                 </div>
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Unit" class="form-label fw-bold">Sales Unit</label>
+                        <select asp-for="Unit" class="form-select"
+                                asp-items="Html.GetEnumSelectList<NakhlaBelal.Models.ProductUnit>()"></select>
+                        @Html.ValidationMessageFor(m => m.Unit, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="MinimumQuantity" class="form-label fw-bold">Minimum Quantity</label>
+                        @Html.TextBoxFor(m => m.MinimumQuantity, new { @class = "form-control", type = "number", min = "1" })
+                        @Html.ValidationMessageFor(m => m.MinimumQuantity, null, new { @class = "text-danger" })
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="QuantityStep" class="form-label fw-bold">Quantity Step</label>
+                        @Html.TextBoxFor(m => m.QuantityStep, new { @class = "form-control", type = "number", min = "1" })
+                        @Html.ValidationMessageFor(m => m.QuantityStep, null, new { @class = "text-danger" })
+                    </div>
+                </div>
             </div>
 
             @* ===== TAB: FABRIC ===== *@
