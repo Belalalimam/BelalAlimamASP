@@ -106,6 +106,37 @@
                 </div>
             </div>
 
+            @{
+                var minP = (int)(ViewBag.MinPriceBound ?? 0);
+                var maxP = (int)(ViewBag.MaxPriceBound ?? 1000);
+                if (maxP <= minP) maxP = minP + 100;
+            }
+            <div class="pp-filter-block">
+                <div class="pp-filter-head">
+                    <span>@SharedLocalizer["Price"] (€)</span>
+                    <button onclick="resetRange('priceRange','@maxP','priceVal','€ @maxP')">@SharedLocalizer["Reset"]</button>
+                </div>
+                <input type="range" id="priceRange" class="pp-range" min="@minP" max="@maxP" value="@maxP"
+                       oninput="document.getElementById('priceVal').textContent='€ '+this.value; applyFilters()" />
+                <div class="pp-range-labels">
+                    <span>€ @minP</span><span id="priceVal">€ @maxP</span>
+                </div>
+            </div>
+
+            <div class="pp-filter-block">
+                <div class="pp-filter-head">
+                    <span>@SharedLocalizer["Unit"]</span>
+                    <button onclick="document.getElementById('unitSelect').value=''; applyFilters()">@SharedLocalizer["Reset"]</button>
+                </div>
+                <select id="unitSelect" class="pp-select" onchange="applyFilters()">
+                    <option value="">@SharedLocalizer["Any"]</option>
+                    <option value="@UnitHelper.Meter">@SharedLocalizer["Meter"]</option>
+                    <option value="@UnitHelper.Piece">@SharedLocalizer["Piece"]</option>
+                    <option value="@UnitHelper.Kilo">@SharedLocalizer["Kilo"]</option>
+                    <option value="@UnitHelper.Yard">@SharedLocalizer["Yard"]</option>
+                </select>
+            </div>
+
             <button class="pp-view-all" onclick="resetAll()">@SharedLocalizer["View All Products"]</button>
         </div>
     </aside>
@@ -159,12 +190,13 @@
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
-                    <span class="cs-topfilter-label">@SharedLocalizer["Quality"]</span>
-                    <select class="cs-topfilter-select">
+                    <span class="cs-topfilter-label">@SharedLocalizer["Unit"]</span>
+                    <select class="cs-topfilter-select" onchange="navigateFilter('Unit', this.value)">
                         <option value="">@SharedLocalizer["Any"]</option>
-                        <option>Premium</option>
-                        <option>Standard</option>
-                        <option>Economy</option>
+                        <option value="@UnitHelper.Meter" selected="@(ViewBag.Filter?.Unit == UnitHelper.Meter ? "selected" : null)">@SharedLocalizer["Meter"]</option>
+                        <option value="@UnitHelper.Piece" selected="@(ViewBag.Filter?.Unit == UnitHelper.Piece ? "selected" : null)">@SharedLocalizer["Piece"]</option>
+                        <option value="@UnitHelper.Kilo"  selected="@(ViewBag.Filter?.Unit == UnitHelper.Kilo  ? "selected" : null)">@SharedLocalizer["Kilo"]</option>
+                        <option value="@UnitHelper.Yard"  selected="@(ViewBag.Filter?.Unit == UnitHelper.Yard  ? "selected" : null)">@SharedLocalizer["Yard"]</option>
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
@@ -237,12 +269,13 @@
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
-                    <span class="cs-topfilter-label">@SharedLocalizer["Quality"]</span>
-                    <select class="cs-topfilter-select">
+                    <span class="cs-topfilter-label">@SharedLocalizer["Unit"]</span>
+                    <select class="cs-topfilter-select" onchange="navigateFilter('Unit', this.value)">
                         <option value="">@SharedLocalizer["Any"]</option>
-                        <option>Premium</option>
-                        <option>Standard</option>
-                        <option>Economy</option>
+                        <option value="@UnitHelper.Meter" selected="@(ViewBag.Filter?.Unit == UnitHelper.Meter ? "selected" : null)">@SharedLocalizer["Meter"]</option>
+                        <option value="@UnitHelper.Piece" selected="@(ViewBag.Filter?.Unit == UnitHelper.Piece ? "selected" : null)">@SharedLocalizer["Piece"]</option>
+                        <option value="@UnitHelper.Kilo"  selected="@(ViewBag.Filter?.Unit == UnitHelper.Kilo  ? "selected" : null)">@SharedLocalizer["Kilo"]</option>
+                        <option value="@UnitHelper.Yard"  selected="@(ViewBag.Filter?.Unit == UnitHelper.Yard  ? "selected" : null)">@SharedLocalizer["Yard"]</option>
                     </select>
                 </div>
                 <div class="cs-topfilter-item">
@@ -315,13 +348,18 @@
             @foreach (var item in Model)
             {
                 var itemPrice = item.Price - item.Price * (item.Discount / 100);
+                var itemUnitKey = UnitHelper.Normalize(item.UnitPrice);
+                var itemCompStr = item.ProductCompositions == null ? "" :
+                    string.Join(" ", item.ProductCompositions.Select(c => c.Composition?.Name ?? "")).ToLower();
 
                 <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })"
                        class="pp-card"
                        data-name="@item.Name.ToLower()"
+                       data-comp="@itemCompStr"
                        data-price="@itemPrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
                        data-width="@(item.Height ?? 0)"
-                       data-weight="@(item.Weight ?? 0)">
+                       data-weight="@(item.Weight ?? 0)"
+                       data-unit="@itemUnitKey">
 
                     <div class="pp-card-img-wrap">
                         <img src="~/images/@item.MainImage" alt="@item.Name" class="pp-card-img" />
@@ -345,11 +383,14 @@
                             @if (item.Height.HasValue) { <span>@item.Height cm</span> }
                             @if (item.Weight.HasValue) { <span>@item.Weight g/m</span> }
                         </div>
+                        @{
+                            var catItemUnit = UnitHelper.GetEnglishShort(item.UnitPrice);
+                        }
                         <div class="pp-card-price-row">
-                            <span class="pp-card-price">€ @itemPrice.ToString("N2").Replace(".", ",") / m</span>
+                            <span class="pp-card-price">€ @itemPrice.ToString("N2").Replace(".", ",") / @catItemUnit</span>
                             @if (item.StockQuantity != null)
                             {
-                                <span class="pp-card-stock">@item.StockQuantity m</span>
+                                <span class="pp-card-stock">@item.StockQuantity @catItemUnit</span>
                             }
                         </div>
                     </div>
@@ -392,78 +433,89 @@
 </div>
 
 <script>
-    const ITEMS_PER_PAGE = 8;
-    let currentPage = 1;
+    /* =========================================================
+       Category search — sidebar JS (same behavior as Product.cshtml)
+       ========================================================= */
+    const $ = (id) => document.getElementById(id);
+    let searchTimer = null;
 
-    // cs-topfilters → server-side: يحافظ على كل الـ params الموجودة ويغير الـ param المطلوب فقط
     function navigateFilter(paramName, value) {
         const url = new URL(window.location.href);
         url.searchParams.set('page', '1');
-        if (value === '') {
-            url.searchParams.delete(paramName);
-        } else {
-            url.searchParams.set(paramName, value);
-        }
+        if (value === '' || value == null) url.searchParams.delete(paramName);
+        else                                url.searchParams.set(paramName, value);
         window.location.href = url.toString();
     }
 
-    // sidebar → client-side على الكاردات الحالية فقط
+    function onSearchInput() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(applyFilters, 150);
+    }
+
     function applyFilters() {
-        const search = document.getElementById('searchInput').value.toLowerCase();
-        const maxW   = parseInt(document.getElementById('widthRange').value);
-        const maxWt  = parseInt(document.getElementById('weightRange').value);
-        const sort   = document.getElementById('sortSelect').value;
+        const search  = ($('searchInput')?.value || '').trim().toLowerCase();
+        const maxW    = parseInt($('widthRange')?.value  || '9999');
+        const maxWt   = parseInt($('weightRange')?.value || '9999');
+        const maxPr   = parseFloat($('priceRange')?.value || '9e9');
+        const unitVal = $('unitSelect')?.value || '';
+        const sort    = $('sortSelect')?.value || 'new';
 
-        let cards = Array.from(document.querySelectorAll('#productGrid .pp-card'));
+        const cards = Array.from(document.querySelectorAll('#productGrid .pp-card'));
 
-        let visible = cards.filter(c => {
-            const nameMatch = c.dataset.name.includes(search);
-            const w  = parseInt(c.dataset.width);
-            const wt = parseInt(c.dataset.weight);
+        const visible = cards.filter(c => {
+            const name = c.dataset.name || '';
+            const comp = c.dataset.comp || '';
+            const nameMatch = !search || name.includes(search) || comp.includes(search);
+
+            const w  = parseFloat(c.dataset.width);
+            const wt = parseFloat(c.dataset.weight);
+            const pr = parseFloat(c.dataset.price);
+            const unit = c.dataset.unit || '';
+
             const wOk  = isNaN(w)  || w  <= maxW;
             const wtOk = isNaN(wt) || wt <= maxWt;
-            return nameMatch && wOk && wtOk;
+            const prOk = isNaN(pr) || pr <= maxPr;
+            const unitOk = !unitVal || unit === unitVal;
+
+            return nameMatch && wOk && wtOk && prOk && unitOk;
         });
 
         if (sort === 'asc')  visible.sort((a,b) => parseFloat(a.dataset.price) - parseFloat(b.dataset.price));
         if (sort === 'desc') visible.sort((a,b) => parseFloat(b.dataset.price) - parseFloat(a.dataset.price));
-        if (sort === 'name') visible.sort((a,b) => a.dataset.name.localeCompare(b.dataset.name));
+        if (sort === 'name') visible.sort((a,b) => (a.dataset.name||'').localeCompare(b.dataset.name||''));
 
+        const grid = $('productGrid');
         cards.forEach(c => c.style.display = 'none');
-        const totalPages = Math.max(1, Math.ceil(visible.length / ITEMS_PER_PAGE));
-        currentPage = Math.min(currentPage, totalPages);
-        const start = (currentPage - 1) * ITEMS_PER_PAGE;
-        visible.slice(start, start + ITEMS_PER_PAGE).forEach(c => c.style.display = '');
+        visible.forEach(c => { c.style.display = ''; grid.appendChild(c); });
 
-        document.getElementById('resultsCount').textContent = visible.length + ' product' + (visible.length !== 1 ? 's' : '');
-        document.getElementById('emptyState').classList.toggle('show', visible.length === 0);
-        renderPagination(totalPages);
+        const count = visible.length;
+        const countEl = $('resultsCount');
+        if (countEl) countEl.textContent = count + ' ' + (count === 1 ? 'product' : 'products');
+        const emptyEl = $('emptyState');
+        if (emptyEl) emptyEl.style.display = count === 0 ? 'block' : 'none';
     }
 
-    function renderPagination(totalPages) {
-        const wrap = document.getElementById('paginationWrap');
-        wrap.innerHTML = '';
-        if (totalPages <= 1) return;
-        if (currentPage > 1)
-            wrap.innerHTML += `<button class="pp-page-btn pp-page-text" onclick="goPage(${currentPage-1})">Previous</button>`;
-        for (let i = 1; i <= totalPages; i++)
-            wrap.innerHTML += `<button class="pp-page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
-        if (currentPage < totalPages)
-            wrap.innerHTML += `<button class="pp-page-btn pp-page-text" onclick="goPage(${currentPage+1})">Next</button>`;
-    }
-
-    function goPage(n) { currentPage = n; applyFilters(); window.scrollTo({top:0,behavior:'smooth'}); }
-    function clearSearch() { document.getElementById('searchInput').value = ''; applyFilters(); }
-    function resetSort()   { document.getElementById('sortSelect').value = 'new'; applyFilters(); }
+    function clearSearch() { const el = $('searchInput'); if (el) el.value=''; applyFilters(); }
+    function resetSort()   { const el = $('sortSelect');  if (el) el.value='new'; applyFilters(); }
     function resetRange(id, val, labelId, label) {
-        document.getElementById(id).value = val;
-        document.getElementById(labelId).textContent = label;
+        const r = $(id);   if (r) r.value = val;
+        const l = $(labelId); if (l) l.textContent = label;
         applyFilters();
     }
+
     function resetAll() {
-        window.location.href = '/Customer/Home/product';
+        const url = new URL(window.location.href);
+        ['ColorId','FabricTypeId','CompositionId','ProjectCategoryId','CategoryId','Unit','Name','MinPriceDecimal','MaxPriceDecimal','page']
+            .forEach(k => url.searchParams.delete(k));
+        window.location.href = url.pathname;
     }
-    function toggleMobilePanel() {
-        document.getElementById('mobilePanel').classList.toggle('open');
-    }
+
+    function toggleMobilePanel() { $('mobilePanel')?.classList.toggle('open'); }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const s = $('searchInput');
+        if (s) { s.removeAttribute('oninput'); s.addEventListener('input', onSearchInput); }
+        const ms = $('mSearchInput');
+        if (ms) ms.addEventListener('input', () => { const sEl=$('searchInput'); if (sEl) sEl.value = ms.value; onSearchInput(); });
+    });
 </script>

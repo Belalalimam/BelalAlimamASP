@@ -290,9 +290,9 @@
                 </div>
                 <div class="col-6 col-md-3">
                     <div class="border rounded p-3 text-center h-100">
-                        <small class="text-muted d-block">Unit Price</small>
+                        <small class="text-muted d-block">Unit</small>
                         <div class="h5 mb-0">
-                            @(Model.UnitPrice.Length > 0 ? "$" + Model.UnitPrice.ToString() : "—")
+                            @(string.IsNullOrWhiteSpace(Model.UnitPrice) ? "—" : UnitHelper.GetArabicLabel(Model.UnitPrice))
                         </div>
                     </div>
                 </div>

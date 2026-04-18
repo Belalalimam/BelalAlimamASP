@@ -132,6 +132,9 @@ namespace NAKHLA.Controllers.Admin
                     product.CreatedBy = User.Identity?.Name ?? "System";
                     product.IsDeleted = false;
 
+                    // Normalize unit of measure so display is consistent everywhere
+                    product.UnitPrice = NakhlaBelal.Utitlies.UnitHelper.Normalize(product.UnitPrice);
+
                     if (string.IsNullOrEmpty(product.SKU))
                         product.SKU = "PROD-" + Guid.NewGuid().ToString("N").Substring(0, 8).ToUpper();
 
@@ -295,6 +298,9 @@ namespace NAKHLA.Controllers.Admin
                         .FirstOrDefaultAsync(p => p.Id == id);
 
                     if (productDb == null) return NotFound();
+
+                    // Normalize unit of measure so display is consistent everywhere
+                    product.UnitPrice = NakhlaBelal.Utitlies.UnitHelper.Normalize(product.UnitPrice);
 
                     // ===== MAIN IMAGE =====
                     if (img != null && img.Length > 0)

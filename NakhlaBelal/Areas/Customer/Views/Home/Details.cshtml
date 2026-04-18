@@ -73,22 +73,27 @@
 
             
 
+            @{
+                var unitLabel = UnitHelper.GetArabicLabel(Model.Product.UnitPrice);
+                var unitShort = UnitHelper.GetShortLabel(Model.Product.UnitPrice);
+            }
+
             <!-- Price -->
             <div class="pd-price-block">
-                <span class="pd-price">@priceStr / @SharedLocalizer["m"]</span>
+                <span class="pd-price">@priceStr / @unitLabel</span>
                 <span class="pd-price-note"> + @SharedLocalizer["VAT if applicable"]</span>
             </div>
             @if (Model.Product.Discount > 0)
             {
                 <div class="pd-price-discount">
-                    @SharedLocalizer["Save"] @Model.Product.Discount% — @SharedLocalizer["buy 8 m or more at"] @bulkStr / @SharedLocalizer["m"]!
+                    @SharedLocalizer["Save"] @Model.Product.Discount% — @SharedLocalizer["buy 8 or more at"] @bulkStr / @unitLabel!
                 </div>
             }
 
             <!-- Stock -->
             @if (Model.Product.StockQuantity != null)
             {
-                <div class="pd-stock">✓ @Model.Product.StockQuantity @SharedLocalizer["m in stock"]</div>
+                <div class="pd-stock">✓ @Model.Product.StockQuantity @unitShort @SharedLocalizer["in stock"]</div>
             }
             <p class="pd-shipping">@SharedLocalizer["Shipping in"]  <strong>@SharedLocalizer["2 business days"]</strong>.</p>
 
