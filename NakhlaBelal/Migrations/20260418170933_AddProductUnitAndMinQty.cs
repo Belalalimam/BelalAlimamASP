@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,42 +10,39 @@ namespace NakhlaBelal.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "MinimumQuantity",
-                table: "Products",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.Sql(@"
+                IF COL_LENGTH('dbo.Products', 'MinimumQuantity') IS NULL
+                    ALTER TABLE [Products] ADD [MinimumQuantity] int NOT NULL DEFAULT 0;
+            ");
 
-            migrationBuilder.AddColumn<int>(
-                name: "QuantityStep",
-                table: "Products",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.Sql(@"
+                IF COL_LENGTH('dbo.Products', 'QuantityStep') IS NULL
+                    ALTER TABLE [Products] ADD [QuantityStep] int NOT NULL DEFAULT 0;
+            ");
 
-            migrationBuilder.AddColumn<int>(
-                name: "Unit",
-                table: "Products",
-                type: "int",
-                nullable: false,
-                defaultValue: 0);
+            migrationBuilder.Sql(@"
+                IF COL_LENGTH('dbo.Products', 'Unit') IS NULL
+                    ALTER TABLE [Products] ADD [Unit] int NOT NULL DEFAULT 0;
+            ");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "MinimumQuantity",
-                table: "Products");
+            migrationBuilder.Sql(@"
+                IF COL_LENGTH('dbo.Products', 'MinimumQuantity') IS NOT NULL
+                    ALTER TABLE [Products] DROP COLUMN [MinimumQuantity];
+            ");
 
-            migrationBuilder.DropColumn(
-                name: "QuantityStep",
-                table: "Products");
+            migrationBuilder.Sql(@"
+                IF COL_LENGTH('dbo.Products', 'QuantityStep') IS NOT NULL
+                    ALTER TABLE [Products] DROP COLUMN [QuantityStep];
+            ");
 
-            migrationBuilder.DropColumn(
-                name: "Unit",
-                table: "Products");
+            migrationBuilder.Sql(@"
+                IF COL_LENGTH('dbo.Products', 'Unit') IS NOT NULL
+                    ALTER TABLE [Products] DROP COLUMN [Unit];
+            ");
         }
     }
 }

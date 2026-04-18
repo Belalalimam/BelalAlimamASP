@@ -73,22 +73,22 @@
 
             
 
+            @{
+                var unitLabel = Model.Product.Unit.ShortLabel();
+                var minQty = Model.Product.MinimumQuantity > 0 ? Model.Product.MinimumQuantity : 1;
+                var step = Model.Product.QuantityStep > 0 ? Model.Product.QuantityStep : 1;
+                var bulkThreshold = Math.Max(minQty * 2, step * 4);
+            }
             <!-- Price -->
             <div class="pd-price-block">
-                <span class="pd-price">@priceStr / @SharedLocalizer["m"]</span>
+                <span class="pd-price">@priceStr / @unitLabel</span>
                 <span class="pd-price-note"> + @SharedLocalizer["VAT if applicable"]</span>
             </div>
             @if (Model.Product.Discount > 0)
             {
                 <div class="pd-price-discount">
-                    @SharedLocalizer["Save"] @Model.Product.Discount% — @SharedLocalizer["buy 8 m or more at"] @bulkStr / @SharedLocalizer["m"]!
+                    @SharedLocalizer["Save"] @Model.Product.Discount% — @SharedLocalizer["buy"] @bulkThreshold @unitLabel @SharedLocalizer["or more at"] @bulkStr / @unitLabel!
                 </div>
-            }
-
-            @{
-                var unitLabel = Model.Product.Unit.ShortLabel();
-                var minQty = Model.Product.MinimumQuantity > 0 ? Model.Product.MinimumQuantity : 1;
-                var step = Model.Product.QuantityStep > 0 ? Model.Product.QuantityStep : 1;
             }
             <!-- Stock -->
             @if (Model.Product.StockQuantity != null)
