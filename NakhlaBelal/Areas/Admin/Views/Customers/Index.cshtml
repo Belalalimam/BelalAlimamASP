@@ -1,0 +1,269 @@
+@using NakhlaBelal.ViewModels
+@model List<CustomerListItemVM>
+@{
+    ViewBag.Title = "Customers";
+    ViewBag.PageTitle = "العملاء";
+    var search = ViewBag.Search as string;
+    var sort = ViewBag.Sort as string ?? "recent";
+    var currentPage = (int)(ViewBag.CurrentPage ?? 1);
+    var totalPages = (int)(ViewBag.TotalPages ?? 1);
+}
+
+@section Styles {
+    <style>
+        .customers-wrapper { padding: 20px; }
+        .page-title { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 4px; }
+        .page-subtitle { color: #6b7280; font-size: 14px; margin: 0 0 24px; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .mini-stat {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+        }
+        .mini-stat-label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+        .mini-stat-value { font-size: 22px; font-weight: 700; color: #111827; }
+
+        .toolbar {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+        }
+        .toolbar input, .toolbar select {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .toolbar input { flex: 1; min-width: 200px; }
+
+        .customers-table {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .customers-table table { width: 100%; border-collapse: collapse; }
+        .customers-table th {
+            background: #f9fafb;
+            text-align: right;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .customers-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+        .customers-table tr:last-child td { border-bottom: none; }
+        .customers-table tr:hover { background: #f9fafb; }
+
+        .avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 13px;
+            margin-left: 10px;
+        }
+
+        .badge-pill {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-active { background: #d1fae5; color: #065f46; }
+        .badge-blocked { background: #fee2e2; color: #991b1b; }
+        .badge-new { background: #dbeafe; color: #1e40af; }
+
+        .pagination-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 20px;
+        }
+        .pagination-row a, .pagination-row span {
+            padding: 8px 14px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #374151;
+            font-size: 14px;
+        }
+        .pagination-row a:hover { background: #f9fafb; }
+        .pagination-row .active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+
+        .empty-state { text-align: center; padding: 60px 20px; color: #9ca3af; }
+        .empty-state i { font-size: 48px; opacity: 0.4; margin-bottom: 12px; }
+    </style>
+}
+
+<div class="customers-wrapper" dir="rtl">
+
+    <h1 class="page-title">👥 العملاء</h1>
+    <p class="page-subtitle">إدارة عملاء المتجر وعرض سجل طلباتهم</p>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="mini-stat">
+            <div class="mini-stat-label">إجمالي العملاء</div>
+            <div class="mini-stat-value">@ViewBag.TotalCustomers</div>
+        </div>
+        <div class="mini-stat">
+            <div class="mini-stat-label">عملاء نشطون</div>
+            <div class="mini-stat-value" style="color:#10b981;">@ViewBag.ActiveCustomers</div>
+        </div>
+        <div class="mini-stat">
+            <div class="mini-stat-label">عملاء محظورون</div>
+            <div class="mini-stat-value" style="color:#ef4444;">@ViewBag.BlockedCustomers</div>
+        </div>
+        <div class="mini-stat">
+            <div class="mini-stat-label">إجمالي الإيرادات</div>
+            <div class="mini-stat-value" style="color:#10b981;">@(((decimal)ViewBag.TotalRevenue).ToString("N0")) ج.م</div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <form method="get" class="toolbar">
+        <input type="search" name="search" placeholder="بحث بالاسم أو البريد أو الهاتف..." value="@search" />
+        <select name="sort">
+            <option value="recent" selected="@(sort == "recent")">الأحدث انضماماً</option>
+            <option value="name" selected="@(sort == "name")">الاسم (أ-ي)</option>
+            <option value="spent" selected="@(sort == "spent")">الأكثر إنفاقاً</option>
+            <option value="orders" selected="@(sort == "orders")">الأكثر طلباً</option>
+        </select>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> بحث
+        </button>
+        @if (!string.IsNullOrEmpty(search))
+        {
+            <a href="@Url.Action("Index")" class="btn btn-secondary">
+                <i class="fas fa-times"></i> مسح
+            </a>
+        }
+    </form>
+
+    <!-- Table -->
+    <div class="customers-table">
+        @if (Model.Any())
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>العميل</th>
+                        <th>الهاتف</th>
+                        <th>المدينة</th>
+                        <th>الطلبات</th>
+                        <th>الإنفاق الإجمالي</th>
+                        <th>آخر طلب</th>
+                        <th>الحالة</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var c in Model)
+                    {
+                        var initials = string.IsNullOrEmpty(c.FullName) ? "?" :
+                                       string.Concat(c.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                                           .Take(2).Select(w => w[0]));
+                        <tr>
+                            <td>
+                                <div style="display:flex; align-items:center;">
+                                    <div class="avatar">@initials</div>
+                                    <div>
+                                        <div style="font-weight:600; color:#111827;">@(string.IsNullOrEmpty(c.FullName) ? "(بدون اسم)" : c.FullName)</div>
+                                        <div style="font-size:12px; color:#6b7280;">@c.Email</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>@(c.PhoneNumber ?? "—")</td>
+                            <td>@(c.City ?? "—")</td>
+                            <td><strong>@c.OrdersCount</strong></td>
+                            <td style="font-weight:600; color:#10b981;">@c.TotalSpent.ToString("N0") ج.م</td>
+                            <td>@(c.LastOrderDate?.ToString("dd/MM/yyyy") ?? "—")</td>
+                            <td>
+                                @if (c.IsBlocked)
+                                {
+                                    <span class="badge-pill badge-blocked">محظور</span>
+                                }
+                                else if (c.OrdersCount == 0)
+                                {
+                                    <span class="badge-pill badge-new">جديد</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-pill badge-active">نشط</span>
+                                }
+                            </td>
+                            <td>
+                                <a href="@Url.Action("Details", new { id = c.Id })" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i> عرض
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-users-slash"></i>
+                <div>لا يوجد عملاء مطابقون للبحث</div>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <div class="pagination-row">
+            @if (currentPage > 1)
+            {
+                <a href="@Url.Action("Index", new { search, sort, page = currentPage - 1 })">
+                    <i class="fas fa-chevron-right"></i>
+                </a>
+            }
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                if (i == currentPage)
+                {
+                    <span class="active">@i</span>
+                }
+                else
+                {
+                    <a href="@Url.Action("Index", new { search, sort, page = i })">@i</a>
+                }
+            }
+            @if (currentPage < totalPages)
+            {
+                <a href="@Url.Action("Index", new { search, sort, page = currentPage + 1 })">
+                    <i class="fas fa-chevron-left"></i>
+                </a>
+            }
+        </div>
+    }
+
+</div>

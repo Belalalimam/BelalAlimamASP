@@ -24,5 +24,10 @@ namespace NakhlaBelal.Utitlies
         /// إرسال رسالة نصية حرة (فقط للعملاء الذين راسلونا خلال آخر 24 ساعة — سياسة Meta)
         /// </summary>
         Task<(bool Success, string Message)> SendTextMessageAsync(string phoneNumber, string text);
+
+        /// <summary>
+        /// إرسال قالب hello_world الافتراضي (معتمد تلقائياً من Meta — للاختبار فقط)
+        /// </summary>
+        Task<(bool Success, string Message)> SendHelloWorldAsync(string phoneNumber);
     }
 }

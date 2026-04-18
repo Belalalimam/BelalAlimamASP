@@ -40,32 +40,48 @@ namespace NAKHLA.Controllers.Admin
                 return Content(
                     "أضف رقم الهاتف على الرابط هكذا:\n" +
                     "/Admin/Orders/TestWhatsApp?phone=201XXXXXXXXX\n" +
-                    "(ابدأ بكود الدولة بدون + ولا 00)",
+                    "(ابدأ بكود الدولة بدون + ولا 00)\n\n" +
+                    "لاختبار قالب hello_world الافتراضي المعتمد من Meta:\n" +
+                    "/Admin/Orders/TestWhatsApp?phone=201XXXXXXXXX&mode=hello",
                     "text/plain; charset=utf-8");
             }
 
-            // طلب وهمي لاختبار قالب order_confirmation
-            var fakeOrder = new Order
+            // mode=hello → قالب hello_world الافتراضي (معتمد تلقائياً من Meta)
+            // mode=order (الافتراضي) → قالب order_confirmation (يتطلب إنشاءه واعتماده في Meta)
+            var mode = Request.Query["mode"].ToString().ToLowerInvariant();
+
+            bool success;
+            string message;
+            string templateUsed;
+
+            if (mode == "hello")
             {
-                OrderNumber = "TEST-" + DateTime.Now.ToString("HHmmss"),
-                ShippingPhone = phone,
-                FullName = "عميل اختبار",
-                TotalAmount = 100m,
-                ShippingFirstName = "عميل",
-                ShippingLastName = "اختبار"
-            };
+                (success, message) = await _whatsAppService.SendHelloWorldAsync(phone);
+                templateUsed = "hello_world (en_US)";
+            }
+            else
+            {
+                var fakeOrder = new Order
+                {
+                    OrderNumber = "TEST-" + DateTime.Now.ToString("HHmmss"),
+                    ShippingPhone = phone,
+                    TotalAmount = 100m,
+                    ShippingFirstName = "عميل",
+                    ShippingLastName = "اختبار"
+                };
 
-            var trackingUrl = Url.Action("Index", "Tracking",
-                new { area = "Customer", orderNumber = fakeOrder.OrderNumber },
-                Request.Scheme) ?? "https://example.com";
+                var trackingUrl = Url.Action("Index", "Tracking",
+                    new { area = "Customer", orderNumber = fakeOrder.OrderNumber },
+                    Request.Scheme) ?? "https://example.com";
 
-            var (success, message) = await _whatsAppService
-                .SendOrderConfirmationAsync(fakeOrder, trackingUrl);
+                (success, message) = await _whatsAppService.SendOrderConfirmationAsync(fakeOrder, trackingUrl);
+                templateUsed = "order_confirmation (ar)";
+            }
 
             var result = $"Success: {success}\n\nResponse:\n{message}\n\n" +
-                         $"Phone sent to (after normalization): based on input '{phone}'\n" +
-                         $"Template: order_confirmation\n" +
-                         $"OrderNumber: {fakeOrder.OrderNumber}";
+                         $"Phone input: '{phone}'\n" +
+                         $"Template: {templateUsed}\n" +
+                         $"Mode: {(string.IsNullOrEmpty(mode) ? "order (default)" : mode)}";
 
             return Content(result, "text/plain; charset=utf-8");
         }

@@ -1,0 +1,361 @@
+@model List<NakhlaBelal.Models.Product>
+@{
+    ViewBag.Title = "Inventory";
+    ViewBag.PageTitle = "المخزون";
+    var filter = ViewBag.Filter as string;
+    var search = ViewBag.Search as string;
+    var currentPage = (int)(ViewBag.CurrentPage ?? 1);
+    var totalPages = (int)(ViewBag.TotalPages ?? 1);
+}
+
+@section Styles {
+    <style>
+        .inv-wrapper { padding: 20px; }
+        .page-title { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 4px; }
+        .page-subtitle { color: #6b7280; font-size: 14px; margin: 0 0 24px; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+        .stat-card.active { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
+        .stat-card .icon {
+            width: 36px; height: 36px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 10px;
+        }
+        .stat-card .label { font-size: 12px; color: #6b7280; margin-bottom: 3px; }
+        .stat-card .value { font-size: 22px; font-weight: 700; color: #111827; }
+
+        .toolbar {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+            padding: 14px; margin-bottom: 16px;
+            display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+        }
+        .toolbar input {
+            flex: 1; min-width: 220px;
+            padding: 9px 14px; border: 1px solid #d1d5db; border-radius: 6px;
+        }
+
+        .table-wrap {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;
+        }
+        .inv-table { width: 100%; border-collapse: collapse; }
+        .inv-table th {
+            background: #f9fafb; text-align: right; padding: 12px 14px;
+            font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .inv-table td { padding: 12px 14px; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+        .inv-table tr:last-child td { border-bottom: none; }
+        .inv-table tr:hover { background: #fafafa; }
+
+        .product-cell { display: flex; align-items: center; gap: 10px; }
+        .product-cell img {
+            width: 44px; height: 44px; object-fit: cover;
+            border-radius: 8px; border: 1px solid #e5e7eb;
+        }
+        .product-cell .name { font-weight: 600; color: #111827; font-size: 14px; }
+        .product-cell .sku { font-size: 11px; color: #9ca3af; font-family: monospace; }
+
+        .stock-input {
+            width: 80px; text-align: center;
+            padding: 5px 8px; border: 1px solid #d1d5db; border-radius: 6px;
+            font-weight: 600;
+        }
+        .stock-input.saving { background: #fef3c7; border-color: #f59e0b; }
+        .stock-input.saved { background: #d1fae5; border-color: #10b981; }
+
+        .badge-pill {
+            display: inline-block; padding: 4px 10px; border-radius: 999px;
+            font-size: 11px; font-weight: 600;
+        }
+        .badge-out { background: #fee2e2; color: #991b1b; }
+        .badge-low { background: #fef3c7; color: #92400e; }
+        .badge-in { background: #d1fae5; color: #065f46; }
+        .badge-untracked { background: #e5e7eb; color: #374151; }
+
+        .btn-mini {
+            padding: 5px 10px; font-size: 12px;
+            background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px;
+            cursor: pointer;
+        }
+        .btn-mini:hover { background: #e5e7eb; }
+
+        .pagination-row { display: flex; justify-content: center; gap: 6px; margin-top: 20px; }
+        .pagination-row a, .pagination-row span {
+            padding: 7px 13px; border: 1px solid #e5e7eb; border-radius: 6px;
+            text-decoration: none; color: #374151; font-size: 14px;
+        }
+        .pagination-row .active { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+    </style>
+}
+
+<div class="inv-wrapper" dir="rtl">
+
+    <h1 class="page-title">📦 المخزون</h1>
+    <p class="page-subtitle">إدارة المخزون وتتبع الكميات المتاحة لكل منتج</p>
+
+    <!-- Stats (Clickable Filters) -->
+    <div class="stats-row">
+        <a href="@Url.Action("Index")" style="text-decoration:none;">
+            <div class="stat-card @(string.IsNullOrEmpty(filter) ? "active" : "")">
+                <div class="icon" style="background:rgba(59,130,246,0.12); color:#3b82f6;"><i class="fas fa-boxes-stacked"></i></div>
+                <div class="label">إجمالي المنتجات</div>
+                <div class="value">@ViewBag.TotalProducts</div>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", new { filter = "out" })" style="text-decoration:none;">
+            <div class="stat-card @(filter == "out" ? "active" : "")">
+                <div class="icon" style="background:rgba(239,68,68,0.12); color:#ef4444;"><i class="fas fa-circle-exclamation"></i></div>
+                <div class="label">نفد من المخزون</div>
+                <div class="value" style="color:#ef4444;">@ViewBag.OutOfStock</div>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", new { filter = "low" })" style="text-decoration:none;">
+            <div class="stat-card @(filter == "low" ? "active" : "")">
+                <div class="icon" style="background:rgba(245,158,11,0.12); color:#f59e0b;"><i class="fas fa-triangle-exclamation"></i></div>
+                <div class="label">مخزون منخفض</div>
+                <div class="value" style="color:#f59e0b;">@ViewBag.LowStock</div>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", new { filter = "in" })" style="text-decoration:none;">
+            <div class="stat-card @(filter == "in" ? "active" : "")">
+                <div class="icon" style="background:rgba(16,185,129,0.12); color:#10b981;"><i class="fas fa-circle-check"></i></div>
+                <div class="label">متوفر</div>
+                <div class="value" style="color:#10b981;">@ViewBag.InStock</div>
+            </div>
+        </a>
+        <div class="stat-card">
+            <div class="icon" style="background:rgba(139,92,246,0.12); color:#8b5cf6;"><i class="fas fa-money-bill-trend-up"></i></div>
+            <div class="label">قيمة المخزون (تكلفة)</div>
+            <div class="value">@(((decimal)ViewBag.TotalStockValue).ToString("N0")) ج.م</div>
+        </div>
+    </div>
+
+    <!-- Toolbar -->
+    <form method="get" class="toolbar">
+        <input type="search" name="search" placeholder="بحث بالاسم أو SKU أو الباركود..." value="@search" />
+        @if (!string.IsNullOrEmpty(filter))
+        {
+            <input type="hidden" name="filter" value="@filter" />
+        }
+        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> بحث</button>
+        @if (!string.IsNullOrEmpty(search) || !string.IsNullOrEmpty(filter))
+        {
+            <a href="@Url.Action("Index")" class="btn btn-secondary">مسح الفلاتر</a>
+        }
+        <div style="margin-right:auto; color:#6b7280; font-size:13px;">
+            عرض <strong>@ViewBag.TotalItems</strong> نتيجة
+        </div>
+    </form>
+
+    <!-- Table -->
+    <div class="table-wrap">
+        <table class="inv-table">
+            <thead>
+                <tr>
+                    <th>المنتج</th>
+                    <th>الفئة</th>
+                    <th>السعر</th>
+                    <th>المخزون الحالي</th>
+                    <th>حد التنبيه</th>
+                    <th>الحالة</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var p in Model)
+                {
+                    var stockStatus = !p.ManageStock ? "untracked"
+                                    : p.StockQuantity <= 0 ? "out"
+                                    : p.StockQuantity <= p.LowStockThreshold ? "low" : "in";
+                    var statusLabel = stockStatus switch
+                    {
+                        "out" => "نفد",
+                        "low" => "منخفض",
+                        "in" => "متوفر",
+                        _ => "غير متتبع"
+                    };
+
+                    <tr data-product-id="@p.Id">
+                        <td>
+                            <div class="product-cell">
+                                <img src="@(string.IsNullOrEmpty(p.MainImage) ? "/images/no-image.png" : p.MainImage)"
+                                     onerror="this.src='/images/no-image.png'" />
+                                <div>
+                                    <div class="name">@p.Name</div>
+                                    <div class="sku">SKU: @p.SKU</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@(p.Category?.Name ?? "—")</td>
+                        <td>@p.Price.ToString("N2") ج.م</td>
+                        <td>
+                            @if (p.ManageStock)
+                            {
+                                <input type="number" class="stock-input stock-qty" value="@p.StockQuantity" min="0" />
+                            }
+                            else
+                            {
+                                <span style="color:#9ca3af;">—</span>
+                            }
+                        </td>
+                        <td>
+                            @if (p.ManageStock)
+                            {
+                                <input type="number" class="stock-input stock-threshold" value="@p.LowStockThreshold" min="0" />
+                            }
+                            else
+                            {
+                                <span style="color:#9ca3af;">—</span>
+                            }
+                        </td>
+                        <td><span class="badge-pill badge-@stockStatus">@statusLabel</span></td>
+                        <td>
+                            @if (p.ManageStock)
+                            {
+                                <button class="btn-mini btn-save-stock"><i class="fas fa-save"></i> حفظ</button>
+                            }
+                            <button class="btn-mini btn-toggle-track" title="@(p.ManageStock ? "إيقاف التتبع" : "تفعيل التتبع")">
+                                <i class="fas @(p.ManageStock ? "fa-eye-slash" : "fa-eye")"></i>
+                            </button>
+                            <a href="@Url.Action("Edit", "Products", new { id = p.Id })" class="btn-mini">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <div class="pagination-row">
+            @if (currentPage > 1)
+            {
+                <a href="@Url.Action("Index", new { filter, search, page = currentPage - 1 })"><i class="fas fa-chevron-right"></i></a>
+            }
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                if (i == currentPage)
+                {
+                    <span class="active">@i</span>
+                }
+                else
+                {
+                    <a href="@Url.Action("Index", new { filter, search, page = i })">@i</a>
+                }
+            }
+            @if (currentPage < totalPages)
+            {
+                <a href="@Url.Action("Index", new { filter, search, page = currentPage + 1 })"><i class="fas fa-chevron-left"></i></a>
+            }
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    <script>
+        const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value ||
+                      document.querySelector('meta[name="csrf"]')?.content;
+
+        // احصل على توكن CSRF من form داخلي (هنحط واحد مخفي للـ AJAX)
+        const csrfToken = '@Html.AntiForgeryToken()';
+        const getToken = () => document.querySelector('#__RequestVerificationToken_hidden')?.value;
+
+        // حفظ المخزون
+        document.querySelectorAll('.btn-save-stock').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const row = btn.closest('tr');
+                const productId = row.dataset.productId;
+                const qtyInput = row.querySelector('.stock-qty');
+                const thresholdInput = row.querySelector('.stock-threshold');
+
+                qtyInput.classList.add('saving');
+
+                const formData = new FormData();
+                formData.append('productId', productId);
+                formData.append('newStock', qtyInput.value);
+                formData.append('newThreshold', thresholdInput.value);
+                formData.append('__RequestVerificationToken', getToken());
+
+                try {
+                    const res = await fetch('@Url.Action("UpdateStock", "Inventory")', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const data = await res.json();
+
+                    qtyInput.classList.remove('saving');
+                    if (data.success) {
+                        qtyInput.classList.add('saved');
+                        setTimeout(() => qtyInput.classList.remove('saved'), 1200);
+
+                        // تحديث الـ badge
+                        const badge = row.querySelector('.badge-pill');
+                        badge.className = 'badge-pill badge-' + data.status;
+                        badge.textContent = data.status === 'out' ? 'نفد'
+                                          : data.status === 'low' ? 'منخفض'
+                                          : data.status === 'in' ? 'متوفر' : 'غير متتبع';
+                    } else {
+                        alert(data.message || 'فشل الحفظ');
+                    }
+                } catch (err) {
+                    qtyInput.classList.remove('saving');
+                    alert('خطأ في الاتصال');
+                }
+            });
+        });
+
+        // تفعيل/إيقاف تتبع المخزون
+        document.querySelectorAll('.btn-toggle-track').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const row = btn.closest('tr');
+                const productId = row.dataset.productId;
+
+                if (!confirm('هل أنت متأكد من تغيير حالة تتبع هذا المنتج؟')) return;
+
+                const formData = new FormData();
+                formData.append('productId', productId);
+                formData.append('__RequestVerificationToken', getToken());
+
+                const res = await fetch('@Url.Action("ToggleManageStock", "Inventory")', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if (data.success) {
+                    location.reload();
+                } else {
+                    alert(data.message);
+                }
+            });
+        });
+    </script>
+
+    <!-- Hidden form just for CSRF token -->
+    <form style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
+    <script>
+        // نسخ التوكن لـ id معروف
+        const tok = document.querySelector('form[style="display:none;"] input[name="__RequestVerificationToken"]');
+        if (tok) tok.id = '__RequestVerificationToken_hidden';
+    </script>
+}

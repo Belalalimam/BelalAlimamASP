@@ -1,0 +1,254 @@
+@using NakhlaBelal.ViewModels
+@model CustomerDetailsVM
+@{
+    ViewBag.Title = "Customer Details";
+    ViewBag.PageTitle = "تفاصيل العميل";
+
+    var fullName = $"{Model.User.FirstName} {Model.User.LastName}".Trim();
+    var initials = string.IsNullOrEmpty(fullName) ? "?" :
+                   string.Concat(fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                       .Take(2).Select(w => w[0]));
+    var isBlocked = Model.User.LockoutEnd != null && Model.User.LockoutEnd > DateTimeOffset.UtcNow;
+
+    string StatusColor(string s) => s switch
+    {
+        "Pending" => "#f59e0b",
+        "Processing" => "#3b82f6",
+        "Shipped" => "#8b5cf6",
+        "Delivered" => "#10b981",
+        "Cancelled" => "#ef4444",
+        _ => "#6b7280"
+    };
+    string ArabicStatus(string s) => s switch
+    {
+        "Pending" => "قيد الانتظار",
+        "Processing" => "قيد التجهيز",
+        "Shipped" => "تم الشحن",
+        "Delivered" => "تم التوصيل",
+        "Cancelled" => "ملغي",
+        _ => s
+    };
+}
+
+@section Styles {
+    <style>
+        .details-wrapper { padding: 20px; max-width: 1200px; margin: 0 auto; }
+
+        .back-link { color: #6b7280; text-decoration: none; font-size: 14px; margin-bottom: 16px; display: inline-block; }
+        .back-link:hover { color: #3b82f6; }
+
+        .customer-header {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+        .big-avatar {
+            width: 80px; height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: #fff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 28px; font-weight: 600;
+        }
+        .customer-info { flex: 1; }
+        .customer-info h2 { margin: 0 0 4px; font-size: 22px; color: #111827; }
+        .customer-info .meta { color: #6b7280; font-size: 14px; }
+        .customer-info .meta span + span:before { content: " • "; margin: 0 6px; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+        }
+        .stat-box .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+        .stat-box .value { font-size: 24px; font-weight: 700; color: #111827; }
+
+        .info-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .info-card h3 {
+            font-size: 15px; font-weight: 600; color: #111827;
+            margin: 0 0 16px; padding-bottom: 12px;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .info-row { display: flex; margin-bottom: 10px; }
+        .info-row .key { min-width: 140px; color: #6b7280; font-size: 13px; }
+        .info-row .val { color: #111827; font-size: 14px; font-weight: 500; }
+
+        .orders-table { width: 100%; border-collapse: collapse; }
+        .orders-table th {
+            background: #f9fafb;
+            text-align: right;
+            padding: 10px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .orders-table td {
+            padding: 12px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+        .orders-table tr:last-child td { border-bottom: none; }
+
+        .status-pill {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .btn-block { background: #ef4444; color: #fff; }
+        .btn-unblock { background: #10b981; color: #fff; }
+    </style>
+}
+
+<div class="details-wrapper" dir="rtl">
+
+    <a href="@Url.Action("Index")" class="back-link">
+        <i class="fas fa-arrow-right"></i> العودة إلى قائمة العملاء
+    </a>
+
+    @if (TempData["success-notification"] != null)
+    {
+        <div class="alert alert-success">@TempData["success-notification"]</div>
+    }
+    @if (TempData["error-notification"] != null)
+    {
+        <div class="alert alert-danger">@TempData["error-notification"]</div>
+    }
+
+    <!-- Customer Header -->
+    <div class="customer-header">
+        <div class="big-avatar">@initials</div>
+        <div class="customer-info">
+            <h2>@(string.IsNullOrEmpty(fullName) ? "(بدون اسم)" : fullName)</h2>
+            <div class="meta">
+                <span><i class="fas fa-envelope"></i> @Model.User.Email</span>
+                @if (!string.IsNullOrEmpty(Model.User.PhoneNumber))
+                {
+                    <span><i class="fas fa-phone"></i> @Model.User.PhoneNumber</span>
+                }
+                <span><i class="fas fa-calendar"></i> انضم في @Model.User.CreatedAt.ToString("dd/MM/yyyy")</span>
+            </div>
+            @if (isBlocked)
+            {
+                <span style="display:inline-block; margin-top:8px; padding:3px 10px; background:#fee2e2; color:#991b1b; border-radius:999px; font-size:12px; font-weight:600;">
+                    <i class="fas fa-ban"></i> حساب محظور
+                </span>
+            }
+        </div>
+        <div>
+            <form asp-action="ToggleBlock" asp-route-id="@Model.User.Id" method="post" onsubmit="return confirm('هل أنت متأكد؟');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn @(isBlocked ? "btn-unblock" : "btn-block")">
+                    @if (isBlocked)
+                    {
+                        <span><i class="fas fa-unlock"></i> إلغاء الحظر</span>
+                    }
+                    else
+                    {
+                        <span><i class="fas fa-ban"></i> حظر العميل</span>
+                    }
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-box">
+            <div class="label">إجمالي الطلبات</div>
+            <div class="value">@Model.OrdersCount</div>
+        </div>
+        <div class="stat-box">
+            <div class="label">إجمالي الإنفاق</div>
+            <div class="value" style="color:#10b981;">@Model.TotalSpent.ToString("N0") ج.م</div>
+        </div>
+        <div class="stat-box">
+            <div class="label">متوسط قيمة الطلب</div>
+            <div class="value">@Model.AverageOrderValue.ToString("N2") ج.م</div>
+        </div>
+        <div class="stat-box">
+            <div class="label">آخر طلب</div>
+            <div class="value" style="font-size:16px;">@(Model.LastOrderDate?.ToString("dd/MM/yyyy") ?? "لا يوجد")</div>
+        </div>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="info-card">
+        <h3><i class="fas fa-user"></i> البيانات الشخصية</h3>
+        <div class="info-row"><div class="key">الاسم الأول</div><div class="val">@(Model.User.FirstName ?? "—")</div></div>
+        <div class="info-row"><div class="key">الاسم الأخير</div><div class="val">@(Model.User.LastName ?? "—")</div></div>
+        <div class="info-row"><div class="key">البريد</div><div class="val">@Model.User.Email</div></div>
+        <div class="info-row"><div class="key">الهاتف</div><div class="val">@(Model.User.PhoneNumber ?? "—")</div></div>
+        <div class="info-row"><div class="key">العنوان</div><div class="val">@(Model.User.Address ?? "—")</div></div>
+        <div class="info-row"><div class="key">المدينة</div><div class="val">@(Model.User.City ?? "—")</div></div>
+        <div class="info-row"><div class="key">الدولة</div><div class="val">@(Model.User.Country ?? "—")</div></div>
+    </div>
+
+    <!-- Orders -->
+    <div class="info-card">
+        <h3><i class="fas fa-clock-rotate-left"></i> سجل الطلبات (@Model.Orders.Count)</h3>
+        @if (Model.Orders.Any())
+        {
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>التاريخ</th>
+                        <th>عدد المنتجات</th>
+                        <th>المبلغ</th>
+                        <th>الحالة</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model.Orders)
+                    {
+                        <tr>
+                            <td style="color:#3b82f6; font-weight:600;">#@o.OrderNumber</td>
+                            <td>@o.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>@(o.OrderItems?.Count ?? 0)</td>
+                            <td style="font-weight:600;">@o.TotalAmount.ToString("N2") ج.م</td>
+                            <td><span class="status-pill" style="background:@StatusColor(o.OrderStatus);">@ArabicStatus(o.OrderStatus)</span></td>
+                            <td>
+                                <a href="@Url.Action("Details", "Orders", new { id = o.Id })" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div style="text-align:center; padding:30px; color:#9ca3af;">
+                <i class="fas fa-inbox" style="font-size:32px; opacity:0.4;"></i>
+                <div style="margin-top:8px;">لم يقم هذا العميل بأي طلبات بعد</div>
+            </div>
+        }
+    </div>
+
+</div>

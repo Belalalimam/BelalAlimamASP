@@ -26,6 +26,10 @@ namespace NakhlaBelal
             services.AddHttpClient<IWhatsAppService, WhatsAppService>();
             // ==================================================
 
+            // ========== خدمة إعدادات الموقع ==========
+            services.AddSingleton<ISiteSettingsService, SiteSettingsService>();
+            // ==========================================
+
             services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.User.RequireUniqueEmail = true;

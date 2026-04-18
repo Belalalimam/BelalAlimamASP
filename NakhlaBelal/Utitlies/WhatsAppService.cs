@@ -143,6 +143,33 @@ namespace NakhlaBelal.Utitlies
         }
 
         // =========================================================================
+        // HELLO WORLD (قالب افتراضي معتمد مسبقاً من Meta — للاختبار)
+        // =========================================================================
+        public async Task<(bool Success, string Message)> SendHelloWorldAsync(string phoneNumber)
+        {
+            if (!_settings.Enabled)
+                return (false, "WhatsApp service is disabled");
+
+            var phone = NormalizePhone(phoneNumber);
+            if (string.IsNullOrEmpty(phone))
+                return (false, "Invalid phone number");
+
+            var payload = new
+            {
+                messaging_product = "whatsapp",
+                to = phone,
+                type = "template",
+                template = new
+                {
+                    name = "hello_world",
+                    language = new { code = "en_US" }
+                }
+            };
+
+            return await SendAsync(payload, $"hello_world:{phone}");
+        }
+
+        // =========================================================================
         // HELPER: إرسال HTTP POST إلى Meta Graph API
         // =========================================================================
         private async Task<(bool Success, string Message)> SendAsync(object payload, string contextLabel)

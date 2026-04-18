@@ -1,0 +1,298 @@
+@using NakhlaBelal.Areas.Admin.Controllers
+@model List<UserRowVM>
+@{
+    ViewBag.Title = "Users";
+    ViewBag.PageTitle = "المستخدمون";
+    var currentRole = ViewBag.CurrentRole as string;
+    var search = ViewBag.Search as string;
+    var allRoles = ViewBag.AllRoles as List<string> ?? new List<string>();
+    var isSuperAdmin = User.IsInRole(SD.SUPER_ADMIN_ROLE);
+}
+
+@section Styles {
+    <style>
+        .users-wrapper { padding: 20px; }
+        .page-title { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 4px; }
+        .page-subtitle { color: #6b7280; font-size: 14px; margin: 0 0 24px; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+        .stat-card.active { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
+        .stat-card .icon { font-size: 20px; margin-bottom: 8px; }
+        .stat-card .label { font-size: 12px; color: #6b7280; margin-bottom: 2px; }
+        .stat-card .value { font-size: 22px; font-weight: 700; color: #111827; }
+
+        .toolbar {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+            padding: 14px; margin-bottom: 16px;
+            display: flex; gap: 12px; flex-wrap: wrap; align-items: center;
+        }
+        .toolbar input {
+            flex: 1; min-width: 220px;
+            padding: 9px 14px; border: 1px solid #d1d5db; border-radius: 6px;
+        }
+
+        .users-table-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+        .users-table { width: 100%; border-collapse: collapse; }
+        .users-table th {
+            background: #f9fafb; text-align: right; padding: 12px 14px;
+            font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .users-table td { padding: 14px; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+        .users-table tr:last-child td { border-bottom: none; }
+
+        .avatar {
+            width: 38px; height: 38px; border-radius: 50%;
+            display: inline-flex; align-items: center; justify-content: center;
+            color: #fff; font-weight: 600; font-size: 13px;
+            margin-left: 10px;
+        }
+
+        .role-badge {
+            display: inline-block; padding: 4px 10px; border-radius: 999px;
+            font-size: 11px; font-weight: 600; margin: 2px;
+        }
+        .role-SuperAdmin { background: #fce7f3; color: #9f1239; }
+        .role-Admin { background: #dbeafe; color: #1e40af; }
+        .role-Employee { background: #d1fae5; color: #065f46; }
+
+        .role-select {
+            padding: 5px 10px; border: 1px solid #d1d5db; border-radius: 6px;
+            font-size: 12px; background: #fff;
+        }
+
+        .btn-danger-sm { background: #ef4444; color: #fff; padding: 5px 10px; font-size: 12px; border: none; border-radius: 6px; cursor: pointer; }
+        .btn-success-sm { background: #10b981; color: #fff; padding: 5px 10px; font-size: 12px; border: none; border-radius: 6px; cursor: pointer; }
+    </style>
+}
+
+<div class="users-wrapper" dir="rtl">
+
+    <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:16px;">
+        <div>
+            <h1 class="page-title">👔 المستخدمون الإداريون</h1>
+            <p class="page-subtitle">إدارة حسابات المسؤولين والموظفين</p>
+        </div>
+        @if (isSuperAdmin)
+        {
+            <a href="@Url.Action("Invite")" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> دعوة مستخدم جديد
+            </a>
+        }
+    </div>
+
+    @if (TempData["success-notification"] != null)
+    {
+        <div class="alert alert-success">@TempData["success-notification"]</div>
+    }
+    @if (TempData["error-notification"] != null)
+    {
+        <div class="alert alert-danger">@TempData["error-notification"]</div>
+    }
+
+    <!-- Stats (Filters) -->
+    <div class="stats-row">
+        <a href="@Url.Action("Index")" style="text-decoration:none;">
+            <div class="stat-card @(string.IsNullOrEmpty(currentRole) ? "active" : "")">
+                <div class="icon" style="color:#3b82f6;"><i class="fas fa-users"></i></div>
+                <div class="label">كل الإداريين</div>
+                <div class="value">@ViewBag.TotalStaff</div>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", new { role = SD.SUPER_ADMIN_ROLE })" style="text-decoration:none;">
+            <div class="stat-card @(currentRole == SD.SUPER_ADMIN_ROLE ? "active" : "")">
+                <div class="icon" style="color:#9f1239;"><i class="fas fa-crown"></i></div>
+                <div class="label">Super Admins</div>
+                <div class="value">@ViewBag.SuperAdminsCount</div>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", new { role = SD.ADMIN_ROLE })" style="text-decoration:none;">
+            <div class="stat-card @(currentRole == SD.ADMIN_ROLE ? "active" : "")">
+                <div class="icon" style="color:#1e40af;"><i class="fas fa-user-shield"></i></div>
+                <div class="label">Admins</div>
+                <div class="value">@ViewBag.AdminsCount</div>
+            </div>
+        </a>
+        <a href="@Url.Action("Index", new { role = SD.EMPLOYEE_ROLE })" style="text-decoration:none;">
+            <div class="stat-card @(currentRole == SD.EMPLOYEE_ROLE ? "active" : "")">
+                <div class="icon" style="color:#065f46;"><i class="fas fa-user-tie"></i></div>
+                <div class="label">Employees</div>
+                <div class="value">@ViewBag.EmployeesCount</div>
+            </div>
+        </a>
+    </div>
+
+    <!-- Toolbar -->
+    <form method="get" class="toolbar">
+        <input type="search" name="search" placeholder="بحث بالاسم أو البريد..." value="@search" />
+        @if (!string.IsNullOrEmpty(currentRole))
+        {
+            <input type="hidden" name="role" value="@currentRole" />
+        }
+        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> بحث</button>
+        @if (!string.IsNullOrEmpty(search) || !string.IsNullOrEmpty(currentRole))
+        {
+            <a href="@Url.Action("Index")" class="btn btn-secondary">مسح</a>
+        }
+    </form>
+
+    <!-- Table -->
+    <div class="users-table-wrap">
+        <table class="users-table">
+            <thead>
+                <tr>
+                    <th>المستخدم</th>
+                    <th>الدور</th>
+                    <th>البريد</th>
+                    <th>تاريخ الانضمام</th>
+                    <th>الحالة</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model)
+                {
+                    var u = row.User;
+                    var fullName = $"{u.FirstName} {u.LastName}".Trim();
+                    var initials = string.IsNullOrEmpty(fullName) ? "?" :
+                                   string.Concat(fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0]));
+                    var primaryRole = row.Roles.FirstOrDefault(r => r == SD.SUPER_ADMIN_ROLE)
+                                   ?? row.Roles.FirstOrDefault(r => r == SD.ADMIN_ROLE)
+                                   ?? row.Roles.FirstOrDefault(r => r == SD.EMPLOYEE_ROLE)
+                                   ?? "—";
+                    var avatarColor = primaryRole switch
+                    {
+                        SD.SUPER_ADMIN_ROLE => "linear-gradient(135deg, #ec4899, #9f1239)",
+                        SD.ADMIN_ROLE => "linear-gradient(135deg, #3b82f6, #1e40af)",
+                        SD.EMPLOYEE_ROLE => "linear-gradient(135deg, #10b981, #065f46)",
+                        _ => "linear-gradient(135deg, #6b7280, #374151)"
+                    };
+                    var isCurrentUser = u.Id == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                    <tr>
+                        <td>
+                            <div style="display:flex; align-items:center;">
+                                <div class="avatar" style="background: @avatarColor;">@initials</div>
+                                <div>
+                                    <div style="font-weight:600; color:#111827;">
+                                        @(string.IsNullOrEmpty(fullName) ? "(بدون اسم)" : fullName)
+                                        @if (isCurrentUser)
+                                        {
+                                            <span style="font-size:11px; color:#3b82f6;">(أنت)</span>
+                                        }
+                                    </div>
+                                    <div style="font-size:12px; color:#9ca3af;">@u.PhoneNumber</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            @if (isSuperAdmin && !isCurrentUser && primaryRole != SD.SUPER_ADMIN_ROLE)
+                            {
+                                <select class="role-select change-role" data-user-id="@u.Id">
+                                    @foreach (var r in new[] { SD.ADMIN_ROLE, SD.EMPLOYEE_ROLE })
+                                    {
+                                        if (r == primaryRole)
+                                        {
+                                            <option value="@r" selected>@r</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@r">@r</option>
+                                        }
+                                    }
+                                </select>
+                            }
+                            else
+                            {
+                                <span class="role-badge role-@primaryRole">@primaryRole</span>
+                            }
+                        </td>
+                        <td>@u.Email</td>
+                        <td>@u.CreatedAt.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            @if (row.IsBlocked)
+                            {
+                                <span class="role-badge" style="background:#fee2e2; color:#991b1b;">محظور</span>
+                            }
+                            else if (u.EmailConfirmed)
+                            {
+                                <span class="role-badge" style="background:#d1fae5; color:#065f46;">نشط</span>
+                            }
+                            else
+                            {
+                                <span class="role-badge" style="background:#fef3c7; color:#92400e;">لم يؤكد البريد</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!isCurrentUser && primaryRole != SD.SUPER_ADMIN_ROLE)
+                            {
+                                <form asp-action="ToggleBlock" asp-route-id="@u.Id" method="post" style="display:inline;"
+                                      onsubmit="return confirm('هل أنت متأكد؟');">
+                                    @Html.AntiForgeryToken()
+                                    @if (row.IsBlocked)
+                                    {
+                                        <button type="submit" class="btn-success-sm">
+                                            <i class="fas fa-unlock"></i> إلغاء الحظر
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn-danger-sm">
+                                            <i class="fas fa-ban"></i> حظر
+                                        </button>
+                                    }
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@section Scripts {
+    <form style="display:none;">@Html.AntiForgeryToken()</form>
+    <script>
+        const csrf = document.querySelector('form[style="display:none;"] input[name="__RequestVerificationToken"]').value;
+
+        // تغيير الدور (AJAX)
+        document.querySelectorAll('.change-role').forEach(sel => {
+            sel.addEventListener('change', async (e) => {
+                const userId = sel.dataset.userId;
+                const newRole = sel.value;
+
+                if (!confirm(`تأكيد تغيير الدور إلى ${newRole}؟`)) {
+                    sel.value = sel.dataset.originalValue || sel.options[0].value;
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('userId', userId);
+                formData.append('newRole', newRole);
+                formData.append('__RequestVerificationToken', csrf);
+
+                try {
+                    const res = await fetch('@Url.Action("ChangeRole")', { method: 'POST', body: formData });
+                    const data = await res.json();
+                    alert(data.message);
+                    if (data.success) location.reload();
+                } catch (err) {
+                    alert('خطأ في الاتصال');
+                }
+            });
+            sel.dataset.originalValue = sel.value;
+        });
+    </script>
+}
