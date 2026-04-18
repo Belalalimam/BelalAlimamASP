@@ -1,0 +1,64 @@
+@{ ViewBag.Title = "سياسة الشحن"; }
+<partial name="_InfoPageStyles" />
+
+<div class="info-page" dir="rtl">
+    <div class="info-hero">
+        <span class="icon-big">🚚</span>
+        <h1>سياسة الشحن وأسعار التوصيل</h1>
+        <p>كل ما تحتاج معرفته عن الشحن والاستلام</p>
+    </div>
+
+    <div class="info-container">
+        <div class="info-card">
+            <h2><i class="ri-map-2-line"></i> الشحن داخل مصر</h2>
+            <table class="info-table">
+                <thead><tr><th>المنطقة</th><th>السعر</th><th>مدة التوصيل</th></tr></thead>
+                <tbody>
+                    <tr><td>القاهرة والجيزة</td><td>50 جنيه</td><td>2-3 أيام عمل</td></tr>
+                    <tr><td>الإسكندرية والدلتا</td><td>60 جنيه</td><td>2-4 أيام عمل</td></tr>
+                    <tr><td>القناة والساحل الشمالي</td><td>70 جنيه</td><td>3-5 أيام عمل</td></tr>
+                    <tr><td>الصعيد وسيناء والبحر الأحمر</td><td>85 جنيه</td><td>4-6 أيام عمل</td></tr>
+                </tbody>
+            </table>
+            <div class="callout success">
+                🎉 <strong>الشحن مجاني</strong> لأي طلب فوق 1000 جنيه داخل مصر!
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-flashlight-line"></i> التوصيل السريع</h2>
+            <p>للطلبات العاجلة داخل القاهرة الكبرى، نقدّم خدمة التوصيل في نفس اليوم:</p>
+            <ul>
+                <li><strong>قبل 12 ظهراً:</strong> التوصيل في نفس اليوم - <strong>150 جنيه</strong></li>
+                <li><strong>خلال 24 ساعة:</strong> متاح لأي طلب - <strong>100 جنيه</strong></li>
+            </ul>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-plane-line"></i> الشحن الدولي</h2>
+            <p>نشحن إلى جميع دول الخليج العربي وأوروبا عبر شركات شحن عالمية:</p>
+            <table class="info-table">
+                <thead><tr><th>الوجهة</th><th>السعر التقريبي</th><th>المدة</th></tr></thead>
+                <tbody>
+                    <tr><td>السعودية والإمارات والكويت</td><td>من 350 جنيه</td><td>5-7 أيام</td></tr>
+                    <tr><td>قطر والبحرين وعمان</td><td>من 400 جنيه</td><td>6-8 أيام</td></tr>
+                    <tr><td>دول أوروبا</td><td>من 700 جنيه</td><td>7-12 يوم</td></tr>
+                </tbody>
+            </table>
+            <div class="callout warning">
+                ⚠️ الأسعار تقديرية وتختلف حسب الوزن. الرسوم الجمركية تتحمّلها جهة الاستلام.
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-information-line"></i> معلومات مهمة</h2>
+            <ul>
+                <li>يتم شحن الطلبات خلال 24-48 ساعة من تأكيد الدفع.</li>
+                <li>نستخدم شركات شحن موثوقة (بوسطة، أرامكس، DHL).</li>
+                <li>تصلك رسالة وواتساب برقم التتبّع فور شحن الطلب.</li>
+                <li>يمكنك تتبّع طلبك من <a href="/Customer/Tracking">صفحة التتبّع</a>.</li>
+                <li>في حالة عدم تواجدك، يحاول المندوب التواصل ويُعاد الجدولة.</li>
+            </ul>
+        </div>
+    </div>
+</div>

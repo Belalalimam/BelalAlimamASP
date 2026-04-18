@@ -375,5 +375,18 @@ namespace NakhlaBelal.Areas.Customer.Controllers
 
             return View(PersonalInfoVM);
         }
+
+        // ============ Static Info Pages (Footer Links) ============
+        public IActionResult About() => View();
+        public IActionResult Quality() => View();
+        public IActionResult Sustainability() => View();
+        public IActionResult Shipping() => View();
+        public IActionResult Payment() => View();
+
+        public IActionResult Sitemap()
+        {
+            ViewBag.Categories = _context.Categorise.Where(c => !c.IsDeleted).ToList();
+            return View();
+        }
     }
 }

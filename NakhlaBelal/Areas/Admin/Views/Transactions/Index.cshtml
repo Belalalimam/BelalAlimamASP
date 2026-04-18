@@ -1,0 +1,294 @@
+@using NakhlaBelal.Areas.Admin.Controllers
+@model List<TransactionRow>
+@{
+    ViewBag.Title = "Transactions";
+    ViewBag.PageTitle = "سجلّ العمليات المالية";
+    var type = ViewBag.Type as string;
+    var from = ViewBag.From as DateTime?;
+    var to = ViewBag.To as DateTime?;
+    var search = ViewBag.Search as string;
+    var currentPage = (int)ViewBag.CurrentPage;
+    var totalPages = (int)ViewBag.TotalPages;
+    var dailyLabels = ViewBag.DailyLabels as List<string> ?? new List<string>();
+    var dailyCredit = ViewBag.DailyCredit as List<decimal> ?? new List<decimal>();
+    var dailyDebit = ViewBag.DailyDebit as List<decimal> ?? new List<decimal>();
+}
+
+@section Styles {
+    <style>
+        .tx-wrapper { padding: 20px; }
+        .page-title { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 4px; }
+        .page-subtitle { color: #6b7280; font-size: 14px; margin: 0 0 24px; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+            padding: 18px; text-decoration: none; display: block;
+            transition: all 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+        .stat-card.active { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
+        .stat-card .icon { font-size: 20px; margin-bottom: 8px; }
+        .stat-card .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+        .stat-card .value { font-size: 20px; font-weight: 700; color: #111827; }
+        .stat-card .sub { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+        .chart-card {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+            padding: 18px; margin-bottom: 20px;
+        }
+        .chart-card h3 { font-size: 14px; font-weight: 600; color: #374151; margin: 0 0 12px; }
+
+        .toolbar {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+            padding: 14px; margin-bottom: 16px;
+            display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+        }
+        .toolbar input, .toolbar select {
+            padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px;
+        }
+        .toolbar input[type="search"] { flex: 1; min-width: 220px; }
+
+        .tx-table-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+        .tx-table { width: 100%; border-collapse: collapse; }
+        .tx-table th {
+            background: #f9fafb; text-align: right; padding: 12px 14px;
+            font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .tx-table td { padding: 14px; border-bottom: 1px solid #f3f4f6; font-size: 14px; vertical-align: middle; }
+        .tx-table tr:last-child td { border-bottom: none; }
+
+        .type-badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+        .type-Credit { background: #d1fae5; color: #065f46; }
+        .type-Debit { background: #fee2e2; color: #991b1b; }
+
+        .amount-credit { color: #10b981; font-weight: 700; }
+        .amount-debit { color: #ef4444; font-weight: 700; }
+
+        .txn-id { font-family: monospace; font-size: 11px; color: #6b7280; }
+
+        .pagination-wrap { display: flex; justify-content: center; gap: 6px; margin-top: 20px; }
+        .pagination-wrap a, .pagination-wrap span {
+            padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px;
+            text-decoration: none; color: #374151; font-size: 13px; background: #fff;
+        }
+        .pagination-wrap .current { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+
+        .empty { text-align: center; padding: 60px 20px; color: #9ca3af; }
+    </style>
+}
+
+<div class="tx-wrapper" dir="rtl">
+
+    <div style="display:flex; justify-content:space-between; align-items:start; margin-bottom:16px;">
+        <div>
+            <h1 class="page-title">📊 سجلّ العمليات المالية</h1>
+            <p class="page-subtitle">كل العمليات المالية (دفع / استرجاع) مرتبة زمنياً</p>
+        </div>
+        <a href="@Url.Action("Export", new { from, to })" class="btn btn-secondary">
+            <i class="fas fa-download"></i> تصدير CSV
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <a href="@Url.Action("Index", new { from, to })" class="stat-card @(string.IsNullOrEmpty(type) ? "active" : "")">
+            <div class="icon" style="color:#3b82f6;"><i class="fas fa-list"></i></div>
+            <div class="label">إجمالي العمليات</div>
+            <div class="value">@ViewBag.TotalItems</div>
+        </a>
+        <a href="@Url.Action("Index", new { type = "Credit", from, to })" class="stat-card @(type == "Credit" ? "active" : "")">
+            <div class="icon" style="color:#10b981;"><i class="fas fa-arrow-down"></i></div>
+            <div class="label">إجمالي الإيرادات</div>
+            <div class="value" style="color:#10b981;">+@(((decimal)ViewBag.TotalCredit).ToString("N2")) ج.م</div>
+            <div class="sub">@ViewBag.CreditCount عملية دفع</div>
+        </a>
+        <a href="@Url.Action("Index", new { type = "Debit", from, to })" class="stat-card @(type == "Debit" ? "active" : "")">
+            <div class="icon" style="color:#ef4444;"><i class="fas fa-arrow-up"></i></div>
+            <div class="label">إجمالي الخصومات</div>
+            <div class="value" style="color:#ef4444;">-@(((decimal)ViewBag.TotalDebit).ToString("N2")) ج.م</div>
+            <div class="sub">@ViewBag.DebitCount عملية استرجاع</div>
+        </a>
+        <div class="stat-card">
+            <div class="icon" style="color:#6366f1;"><i class="fas fa-balance-scale"></i></div>
+            <div class="label">الصافي</div>
+            <div class="value" style="color:@((decimal)ViewBag.NetAmount >= 0 ? "#10b981" : "#ef4444");">
+                @(((decimal)ViewBag.NetAmount).ToString("N2")) ج.م
+            </div>
+            <div class="sub">خلال الفترة المحددة</div>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    @if (dailyLabels.Any())
+    {
+        <div class="chart-card">
+            <h3>📈 التدفق المالي اليومي</h3>
+            <canvas id="flowChart" height="80"></canvas>
+        </div>
+    }
+
+    <!-- Toolbar -->
+    <form method="get" class="toolbar">
+        <input type="search" name="search" placeholder="بحث برقم الطلب / رقم المعاملة / العميل..." value="@search" />
+        @if (!string.IsNullOrEmpty(type))
+        {
+            <input type="hidden" name="type" value="@type" />
+        }
+        <label style="font-size:13px; color:#6b7280;">من:</label>
+        <input type="date" name="from" value="@(from?.ToString("yyyy-MM-dd"))" />
+        <label style="font-size:13px; color:#6b7280;">إلى:</label>
+        <input type="date" name="to" value="@(to?.ToString("yyyy-MM-dd"))" />
+        <button type="submit" class="btn btn-primary"><i class="fas fa-filter"></i> تطبيق</button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">إعادة تعيين</a>
+    </form>
+
+    <!-- Table -->
+    <div class="tx-table-wrap">
+        @if (!Model.Any())
+        {
+            <div class="empty">
+                <i class="fas fa-receipt" style="font-size:48px; margin-bottom:12px;"></i>
+                <div>لا توجد عمليات مالية في الفترة المحددة</div>
+            </div>
+        }
+        else
+        {
+            <table class="tx-table">
+                <thead>
+                    <tr>
+                        <th>التاريخ</th>
+                        <th>النوع</th>
+                        <th>الوصف</th>
+                        <th>رقم الطلب</th>
+                        <th>العميل</th>
+                        <th>الطريقة</th>
+                        <th>رقم المعاملة</th>
+                        <th>المبلغ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var t in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div>@t.Date.ToString("dd/MM/yyyy")</div>
+                                <div style="font-size:11px; color:#9ca3af;">@t.Date.ToString("HH:mm")</div>
+                            </td>
+                            <td>
+                                <span class="type-badge type-@t.Type">
+                                    @if (t.Type == "Credit")
+                                    {
+                                        <i class="fas fa-arrow-down"></i> <text>دفع</text>
+                                    }
+                                    else
+                                    {
+                                        <i class="fas fa-arrow-up"></i> <text>استرجاع</text>
+                                    }
+                                </span>
+                            </td>
+                            <td>@t.Description</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Orders", new { id = t.OrderId })"
+                                   style="color:#3b82f6; text-decoration:none; font-weight:600;">
+                                    @t.OrderNumber
+                                </a>
+                            </td>
+                            <td>@t.CustomerName</td>
+                            <td><span style="background:#f3f4f6; padding:3px 8px; border-radius:6px; font-size:12px;">@t.Method</span></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(t.TransactionId))
+                                {
+                                    <span class="txn-id" title="@t.TransactionId">
+                                        @(t.TransactionId.Length > 18 ? t.TransactionId.Substring(0, 18) + "..." : t.TransactionId)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="color:#d1d5db;">—</span>
+                                }
+                            </td>
+                            <td>
+                                <span class="@(t.Type == "Credit" ? "amount-credit" : "amount-debit")">
+                                    @(t.Type == "Credit" ? "+" : "-")@t.Amount.ToString("N2") ج.م
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <div class="pagination-wrap">
+            @if (currentPage > 1)
+            {
+                <a href="@Url.Action("Index", new { type, search, from, to, page = currentPage - 1 })">السابق</a>
+            }
+            @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+            {
+                if (i == currentPage)
+                {
+                    <span class="current">@i</span>
+                }
+                else
+                {
+                    <a href="@Url.Action("Index", new { type, search, from, to, page = i })">@i</a>
+                }
+            }
+            @if (currentPage < totalPages)
+            {
+                <a href="@Url.Action("Index", new { type, search, from, to, page = currentPage + 1 })">التالي</a>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @if (dailyLabels.Any())
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            const ctx = document.getElementById('flowChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(dailyLabels)),
+                    datasets: [
+                        {
+                            label: 'إيرادات',
+                            data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(dailyCredit)),
+                            backgroundColor: 'rgba(16,185,129,0.7)',
+                            borderColor: '#10b981',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'استرجاع',
+                            data: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(dailyDebit)),
+                            backgroundColor: 'rgba(239,68,68,0.7)',
+                            borderColor: '#ef4444',
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'top' } },
+                    scales: {
+                        y: { beginAtZero: true, ticks: { callback: (v) => v + ' ج.م' } }
+                    }
+                }
+            });
+        </script>
+    }
+}

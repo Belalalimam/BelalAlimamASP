@@ -1,140 +1,588 @@
-﻿@model ApplicationUserVM
+@model ApplicationUserVM
 @using Microsoft.Extensions.Localization
 @using NakhlaBelal
 @inject IStringLocalizer<SharedResource> SharedLocalizer
+
+@{
+    ViewBag.Title = "My Profile";
+    var totalOrders = (int)(ViewBag.TotalOrders ?? 0);
+    var totalSpent = (decimal)(ViewBag.TotalSpent ?? 0m);
+    var deliveredOrders = (int)(ViewBag.DeliveredOrders ?? 0);
+    var pendingOrders = (int)(ViewBag.PendingOrders ?? 0);
+    var memberSince = (DateTime)(ViewBag.MemberSince ?? DateTime.Now);
+    var emailConfirmed = (bool)(ViewBag.EmailConfirmed ?? false);
+    var recentOrders = ViewBag.RecentOrders as List<NakhlaBelal.Models.Order> ?? new List<NakhlaBelal.Models.Order>();
+
+    var initials = string.IsNullOrEmpty(Model.FullName) ? "?" :
+        string.Concat(Model.FullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(w => w[0])).ToUpper();
+}
+
 @section Scripts {
     <partial name="_NotificationPartial" />
 }
 
-<div class="container">
-    <div class="row gutters my-3">
-        <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-            <div class="card h-100">
-                <div class="card-body BodyOfProfial">
-                    <div class="account-settings ">
-                        <div class="user-profile">
-                            <div class="user-avatar">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar7.png" alt="Maxwell Admin" style="width: 90px">
-                            </div>
-                            <h5 class="user-name">@Model.FullName</h5>
-                            <h6 class="user-email">@Model.Email</h6>
-                        </div>
-                        <div class="about">
-                            <h5>@SharedLocalizer["ABOUT"]</h5>
-                            <p>I'm Yuki. Full Stack Designer I enjoy creating user-centric, delightful and human experiences.</p>
-                        </div>
+<style>
+    .profile-page {
+        background: linear-gradient(135deg, #f5f7fa 0%, #eef2f7 100%);
+        min-height: 100vh;
+        padding: 40px 0;
+    }
+
+    .profile-header-card {
+        background: linear-gradient(135deg, #013220 0%, #025939 100%);
+        color: #fff;
+        border-radius: 16px;
+        padding: 40px;
+        margin-bottom: 24px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(1, 50, 32, 0.25);
+    }
+    .profile-header-card::before {
+        content: "";
+        position: absolute;
+        top: -50px; left: -50px;
+        width: 200px; height: 200px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+    }
+    .profile-header-card::after {
+        content: "";
+        position: absolute;
+        bottom: -80px; right: -30px;
+        width: 250px; height: 250px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+    .profile-header-content {
+        position: relative;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        flex-wrap: wrap;
+    }
+    .avatar-circle {
+        width: 100px; height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #ffd700, #ffa500);
+        color: #013220;
+        font-size: 36px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid rgba(255,255,255,0.3);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .profile-header-info h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 0 6px;
+    }
+    .profile-header-info .email {
+        opacity: 0.9;
+        font-size: 14px;
+        margin: 0 0 10px;
+    }
+    .profile-header-badges {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .badge-item {
+        background: rgba(255,255,255,0.15);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255,255,255,0.2);
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .badge-verified { background: rgba(16, 185, 129, 0.3); border-color: rgba(16, 185, 129, 0.5); }
+    .badge-unverified { background: rgba(245, 158, 11, 0.3); border-color: rgba(245, 158, 11, 0.5); }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+    .stat-box {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid #e5e7eb;
+        transition: transform 0.2s;
+    }
+    .stat-box:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.08); }
+    .stat-box .stat-icon {
+        width: 44px; height: 44px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+    .stat-box .stat-label { font-size: 13px; color: #6b7280; margin-bottom: 4px; }
+    .stat-box .stat-value { font-size: 22px; font-weight: 700; color: #111827; }
+
+    .icon-orders { background: #dbeafe; color: #1e40af; }
+    .icon-spent { background: #d1fae5; color: #065f46; }
+    .icon-delivered { background: #e0e7ff; color: #3730a3; }
+    .icon-pending { background: #fef3c7; color: #92400e; }
+
+    .tab-nav {
+        display: flex;
+        gap: 4px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 6px;
+        margin-bottom: 20px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        flex-wrap: wrap;
+    }
+    .tab-btn {
+        flex: 1;
+        padding: 12px 20px;
+        background: transparent;
+        border: none;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        color: #6b7280;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-width: 140px;
+    }
+    .tab-btn:hover { background: #f3f4f6; color: #111827; }
+    .tab-btn.active {
+        background: #013220;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(1, 50, 32, 0.25);
+    }
+
+    .panel {
+        background: #fff;
+        border-radius: 16px;
+        padding: 32px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        border: 1px solid #e5e7eb;
+        display: none;
+    }
+    .panel.active { display: block; }
+    .panel-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #111827;
+        margin: 0 0 6px;
+    }
+    .panel-subtitle {
+        color: #6b7280;
+        font-size: 14px;
+        margin: 0 0 24px;
+    }
+
+    .field-group {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+    .field {
+        display: flex;
+        flex-direction: column;
+    }
+    .field label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 6px;
+    }
+    .field input, .field select {
+        padding: 11px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background: #fff;
+    }
+    .field input:focus {
+        outline: none;
+        border-color: #013220;
+        box-shadow: 0 0 0 3px rgba(1, 50, 32, 0.1);
+    }
+    .field input:disabled {
+        background: #f9fafb;
+        color: #9ca3af;
+        cursor: not-allowed;
+    }
+
+    .section-divider {
+        border: 0;
+        border-top: 1px solid #e5e7eb;
+        margin: 28px 0 20px;
+    }
+    .section-label {
+        font-size: 16px;
+        font-weight: 700;
+        color: #013220;
+        margin: 0 0 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .action-bar {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+        margin-top: 12px;
+        flex-wrap: wrap;
+    }
+    .btn-profile {
+        padding: 11px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-save {
+        background: #013220;
+        color: #fff;
+    }
+    .btn-save:hover { background: #025939; transform: translateY(-1px); }
+    .btn-cancel {
+        background: #f3f4f6;
+        color: #374151;
+    }
+    .btn-cancel:hover { background: #e5e7eb; }
+
+    .orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .order-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        transition: all 0.2s;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .order-item:hover { border-color: #013220; background: #f9fafb; }
+    .order-info .order-num {
+        font-weight: 700;
+        color: #013220;
+        font-size: 15px;
+    }
+    .order-info .order-date {
+        font-size: 12px;
+        color: #9ca3af;
+        margin-top: 2px;
+    }
+    .order-amount {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 999px;
+        font-size: 11px;
+        font-weight: 600;
+    }
+    .status-Pending { background: #fef3c7; color: #92400e; }
+    .status-Processing { background: #dbeafe; color: #1e40af; }
+    .status-Shipped { background: #e0e7ff; color: #3730a3; }
+    .status-Delivered { background: #d1fae5; color: #065f46; }
+    .status-Cancelled { background: #fee2e2; color: #991b1b; }
+
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #9ca3af;
+    }
+    .empty-state i { font-size: 56px; margin-bottom: 14px; opacity: 0.5; }
+
+    .security-tip {
+        background: #fef3c7;
+        border: 1px solid #fde68a;
+        border-radius: 10px;
+        padding: 14px 18px;
+        font-size: 13px;
+        color: #92400e;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+    }
+</style>
+
+<div class="profile-page">
+    <div class="container">
+
+        <!-- Header Card -->
+        <div class="profile-header-card">
+            <div class="profile-header-content">
+                <div class="avatar-circle">@initials</div>
+                <div class="profile-header-info" style="flex:1;">
+                    <h1>@(string.IsNullOrWhiteSpace(Model.FullName?.Trim()) ? "مرحباً بك" : Model.FullName)</h1>
+                    <p class="email"><i class="ri-mail-line"></i> @Model.Email</p>
+                    <div class="profile-header-badges">
+                        @if (emailConfirmed)
+                        {
+                            <span class="badge-item badge-verified">
+                                <i class="ri-checkbox-circle-fill"></i> بريد مُؤكد
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="badge-item badge-unverified">
+                                <i class="ri-error-warning-fill"></i> بريد غير مؤكد
+                            </span>
+                        }
+                        <span class="badge-item">
+                            <i class="ri-calendar-line"></i> عضو منذ @memberSince.ToString("MM/yyyy")
+                        </span>
+                        @if (!string.IsNullOrEmpty(Model.PhoneNumber))
+                        {
+                            <span class="badge-item">
+                                <i class="ri-phone-line"></i> @Model.PhoneNumber
+                            </span>
+                        }
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12  ">
-            <form asp-action="UpdateProfile" class="my-3 ">
-                <div class="card-body BodyOfProfial py-5 px-4">
-                    <div class="row gutters">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 DetailsContainer">
-                            <h3 class="mb-2 ">@SharedLocalizer["Personal Details"]</h3>
-                        </div>
 
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label for="firstName">@SharedLocalizer["First Name"]</label>
-                                <input class="form-control" asp-for="FirstName" id="firstName" placeholder="@SharedLocalizer["Enter First Name"]">
-                            </div>
-                            <div class="form-group">
-                                <label for="lastName">@SharedLocalizer["Last Name"]</label>
-                                <input class="form-control" asp-for="LastName" id="lastName" placeholder="@SharedLocalizer["Enter Last Name"]">
-                            </div>
-                        </div>
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-icon icon-orders"><i class="ri-shopping-bag-line"></i></div>
+                <div class="stat-label">إجمالي الطلبات</div>
+                <div class="stat-value">@totalOrders</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon icon-spent"><i class="ri-money-dollar-circle-line"></i></div>
+                <div class="stat-label">إجمالي المشتريات</div>
+                <div class="stat-value">@totalSpent.ToString("N0") ج.م</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon icon-delivered"><i class="ri-checkbox-circle-line"></i></div>
+                <div class="stat-label">تم التوصيل</div>
+                <div class="stat-value">@deliveredOrders</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-icon icon-pending"><i class="ri-time-line"></i></div>
+                <div class="stat-label">قيد التنفيذ</div>
+                <div class="stat-value">@pendingOrders</div>
+            </div>
+        </div>
 
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label for="eMail">@SharedLocalizer["Email"]</label>
-                                <input disabled asp-for="Email" class="form-control" placeholder="@SharedLocalizer["Enter email ID"]">
-                            </div>
-                            <div class="form-group">
-                                <label for="phone">@SharedLocalizer["Phone"]</label>
-                                <input asp-for="PhoneNumber" class="form-control" placeholder="@SharedLocalizer["Enter phone number"]">
-                            </div>
-                        </div>
+        <!-- Tabs -->
+        <div class="tab-nav">
+            <button type="button" class="tab-btn active" data-tab="personal">
+                <i class="ri-user-line"></i> البيانات الشخصية
+            </button>
+            <button type="button" class="tab-btn" data-tab="address">
+                <i class="ri-map-pin-line"></i> العنوان
+            </button>
+            <button type="button" class="tab-btn" data-tab="orders">
+                <i class="ri-shopping-bag-line"></i> آخر الطلبات
+            </button>
+            <button type="button" class="tab-btn" data-tab="security">
+                <i class="ri-lock-line"></i> الأمان
+            </button>
+        </div>
 
+        <!-- Personal Details Panel -->
+        <div class="panel active" id="panel-personal">
+            <h2 class="panel-title">البيانات الشخصية</h2>
+            <p class="panel-subtitle">قم بتحديث معلومات حسابك الشخصية</p>
+
+            <form asp-action="UpdateProfile">
+                <div class="field-group">
+                    <div class="field">
+                        <label>الاسم الأول</label>
+                        <input asp-for="FirstName" placeholder="أدخل الاسم الأول" />
                     </div>
-
-                    <div class="row gutters">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 DetailsContainer">
-                            <h3 class="mt-3 mb-2">@SharedLocalizer["Address"]</h3>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label for="Address">@SharedLocalizer["Street Address"]</label>
-                                <input class="form-control" asp-for="Address" id="Address" placeholder="@SharedLocalizer["Enter full Street Address"]">
-                            </div>
-                            <div class="form-group">
-                                <label for="City">@SharedLocalizer["Town / City"]</label>
-                                <input class="form-control" asp-for="City" id="City" placeholder="@SharedLocalizer["Enter your Town / City"]">
-                            </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                            <div class="form-group">    
-                                <label for="State">@SharedLocalizer["State"]</label>
-                                <input class="form-control" asp-for="State" id="State" placeholder="@SharedLocalizer["Enter your State"]">
-                            </div>
-                            <div class="form-group">
-                                <label for="ZipCode">@SharedLocalizer["Postcode / ZIP"]</label>
-                                <input class="form-control" asp-for="ZipCode" id="ZipCode" placeholder="@SharedLocalizer["Enter ZipCode"]   ">
-                            </div>
-                        </div>
-
-                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                            <div class="form-group">
-                                <label for="Country">@SharedLocalizer["Country"]</label>
-                                <input class="form-control" asp-for="Country" id="Country" placeholder="@SharedLocalizer["Enter your Country"]">
-                            </div>
-                        </div>
+                    <div class="field">
+                        <label>الاسم الأخير</label>
+                        <input asp-for="LastName" placeholder="أدخل الاسم الأخير" />
                     </div>
-
-                    <div class="row gutters my-3">
-                        <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                            <div class="text-right">
-                                <button type="reset" id="submit" name="submit" class="Cancel-link">@SharedLocalizer["Cancel"]</button>
-                                <button type="submit" id="submit" name="submit" class="Update-link">@SharedLocalizer["Update"]</button>
-                            </div>
-                        </div>
+                    <div class="field">
+                        <label>البريد الإلكتروني</label>
+                        <input asp-for="Email" disabled />
                     </div>
-
+                    <div class="field">
+                        <label>رقم الهاتف</label>
+                        <input asp-for="PhoneNumber" placeholder="+20 1XX XXX XXXX" />
+                    </div>
                 </div>
-            </form>
-            <form asp-action="UpdatePassword" class="my-3">
-                <div class="card h-100">
-                    <div class="card-body BodyOfProfial">
-                        <div class="row gutters">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12 DetailsContainer">
-                                <h3 class="mb-2">@SharedLocalizer["Update Password"]</h3>
-                            </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label for="CurrentPassword">@SharedLocalizer["Current Password"]</label>
-                                    <input asp-for="CurrentPassword" class="form-control" placeholder="@SharedLocalizer["Enter Current Password"]">
-                                </div>
-                            </div>
-                            <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
-                                <div class="form-group">
-                                    <label for="NewPassword">@SharedLocalizer["NewPassword"]</label>
-                                    <input asp-for="NewPassword" class="form-control" placeholder="@SharedLocalizer["Enter New Password"]">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row gutters my-3">
-                            <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
-                                <div class="text-right">
-                                    <button type="submit" id="submit" name="submit" class="Update-link">@SharedLocalizer["Update Password"] </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
+                <div class="action-bar">
+                    <button type="reset" class="btn-profile btn-cancel">
+                        <i class="ri-close-line"></i> إلغاء
+                    </button>
+                    <button type="submit" class="btn-profile btn-save">
+                        <i class="ri-save-line"></i> حفظ التغييرات
+                    </button>
                 </div>
             </form>
         </div>
+
+        <!-- Address Panel -->
+        <div class="panel" id="panel-address">
+            <h2 class="panel-title">عنوان الشحن</h2>
+            <p class="panel-subtitle">هذا العنوان سيُستخدم كعنوان افتراضي لطلباتك</p>
+
+            <form asp-action="UpdateProfile">
+                <input type="hidden" asp-for="FirstName" />
+                <input type="hidden" asp-for="LastName" />
+                <input type="hidden" asp-for="PhoneNumber" />
+
+                <div class="field-group">
+                    <div class="field" style="grid-column: 1 / -1;">
+                        <label>العنوان بالتفصيل</label>
+                        <input asp-for="Address" placeholder="اسم الشارع، رقم المنزل، الحي..." />
+                    </div>
+                    <div class="field">
+                        <label>المدينة</label>
+                        <input asp-for="City" placeholder="مثال: القاهرة" />
+                    </div>
+                    <div class="field">
+                        <label>المحافظة</label>
+                        <input asp-for="State" placeholder="مثال: القاهرة" />
+                    </div>
+                    <div class="field">
+                        <label>الرمز البريدي</label>
+                        <input asp-for="ZipCode" placeholder="12345" />
+                    </div>
+                    <div class="field">
+                        <label>الدولة</label>
+                        <input asp-for="Country" placeholder="مصر" />
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button type="reset" class="btn-profile btn-cancel">
+                        <i class="ri-close-line"></i> إلغاء
+                    </button>
+                    <button type="submit" class="btn-profile btn-save">
+                        <i class="ri-save-line"></i> حفظ العنوان
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Orders Panel -->
+        <div class="panel" id="panel-orders">
+            <h2 class="panel-title">آخر الطلبات</h2>
+            <p class="panel-subtitle">آخر 5 طلبات قمت بها</p>
+
+            @if (!recentOrders.Any())
+            {
+                <div class="empty-state">
+                    <i class="ri-shopping-bag-line"></i>
+                    <div>لم تقم بأي طلب بعد</div>
+                    <a href="/Customer/home/product" class="btn-profile btn-save" style="margin-top:16px; display:inline-flex;">
+                        <i class="ri-store-2-line"></i> تصفّح المنتجات
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="orders-list">
+                    @foreach (var order in recentOrders)
+                    {
+                        <div class="order-item">
+                            <div class="order-info">
+                                <div class="order-num">@order.OrderNumber</div>
+                                <div class="order-date">
+                                    @order.CreatedAt.ToString("dd MMM yyyy, HH:mm") — @order.OrderItems.Count منتج
+                                </div>
+                            </div>
+                            <div style="display:flex; gap:14px; align-items:center; flex-wrap:wrap;">
+                                <span class="status-badge status-@order.OrderStatus">@order.OrderStatus</span>
+                                <span class="order-amount">@order.TotalAmount.ToString("N2") ج.م</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <div style="text-align:center; margin-top:20px;">
+                    <a href="/Identity/Profile/MyOrders" class="btn-profile btn-cancel">
+                        عرض كل الطلبات <i class="ri-arrow-left-line"></i>
+                    </a>
+                </div>
+            }
+        </div>
+
+        <!-- Security Panel -->
+        <div class="panel" id="panel-security">
+            <h2 class="panel-title">تغيير كلمة المرور</h2>
+            <p class="panel-subtitle">اختر كلمة مرور قوية وآمنة لحماية حسابك</p>
+
+            <div class="security-tip">
+                <i class="ri-shield-keyhole-line" style="font-size:18px;"></i>
+                <div>
+                    <strong>نصائح للأمان:</strong>
+                    استخدم كلمة مرور من 8 أحرف على الأقل، تحتوي على حروف كبيرة وصغيرة وأرقام ورموز.
+                    لا تشاركها مع أي شخص.
+                </div>
+            </div>
+
+            <form asp-action="UpdatePassword">
+                <div class="field-group">
+                    <div class="field">
+                        <label>كلمة المرور الحالية</label>
+                        <input asp-for="CurrentPassword" type="password" placeholder="••••••••" />
+                    </div>
+                    <div class="field">
+                        <label>كلمة المرور الجديدة</label>
+                        <input asp-for="NewPassword" type="password" placeholder="••••••••" />
+                    </div>
+                </div>
+
+                <div class="action-bar">
+                    <button type="submit" class="btn-profile btn-save">
+                        <i class="ri-shield-check-line"></i> تحديث كلمة المرور
+                    </button>
+                </div>
+            </form>
+        </div>
+
     </div>
 </div>
+
+<script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const tab = btn.dataset.tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('panel-' + tab).classList.add('active');
+        });
+    });
+</script>

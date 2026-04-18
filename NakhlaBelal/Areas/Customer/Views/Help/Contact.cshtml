@@ -1,0 +1,80 @@
+@{ ViewBag.Title = "تواصل معنا"; }
+@using NakhlaBelal.Utitlies
+@inject ISiteSettingsService SiteSettings
+@{ var s = SiteSettings.Get(); }
+
+<partial name="_InfoPageStyles" />
+
+<div class="info-page" dir="rtl">
+    <div class="info-hero">
+        <span class="icon-big">💬</span>
+        <h1>تواصل معنا</h1>
+        <p>نحن هنا لمساعدتك — اختر الطريقة الأنسب للتواصل</p>
+    </div>
+
+    <div class="info-container">
+        @if (TempData["success-notification"] != null)
+        {
+            <div class="callout success">
+                <i class="ri-check-line"></i> @TempData["success-notification"]
+            </div>
+        }
+
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px;">
+            <div class="info-card" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; color:#10b981;">📞</div>
+                <h3 style="margin:10px 0 6px;">اتصل بنا</h3>
+                <p style="margin:0;"><a href="tel:@s.ContactPhone">@s.ContactPhone</a></p>
+            </div>
+            <div class="info-card" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; color:#25D366;">💬</div>
+                <h3 style="margin:10px 0 6px;">واتساب</h3>
+                <p style="margin:0;"><a href="https://wa.me/@(new string((s.WhatsAppNumber ?? "").Where(char.IsDigit).ToArray()))" target="_blank">@s.WhatsAppNumber</a></p>
+            </div>
+            <div class="info-card" style="padding:24px; text-align:center;">
+                <div style="font-size:32px; color:#3b82f6;">✉️</div>
+                <h3 style="margin:10px 0 6px;">بريد إلكتروني</h3>
+                <p style="margin:0;"><a href="mailto:@s.ContactEmail">@s.ContactEmail</a></p>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-mail-send-line"></i> أرسل لنا رسالة</h2>
+            <p>املأ النموذج أدناه وسنرد عليك خلال 24 ساعة.</p>
+
+            <form asp-action="Contact" method="post">
+                @Html.AntiForgeryToken()
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div class="form-group">
+                        <label class="form-label">الاسم الكامل *</label>
+                        <input type="text" name="name" class="form-input" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">البريد الإلكتروني *</label>
+                        <input type="email" name="email" class="form-input" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الموضوع *</label>
+                    <input type="text" name="subject" class="form-input" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">الرسالة *</label>
+                    <textarea name="message" class="form-input" rows="6" required></textarea>
+                </div>
+                <button type="submit" class="btn-submit">
+                    <i class="ri-send-plane-fill"></i> إرسال الرسالة
+                </button>
+            </form>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-map-pin-line"></i> مقرّنا</h2>
+            <p><strong>العنوان:</strong> @s.Address</p>
+            <p><strong>ساعات العمل:</strong> @s.WorkingHours</p>
+            <a href="https://maps.google.com/?q=@Uri.EscapeDataString(s.Address ?? "")" target="_blank" class="btn-submit">
+                <i class="ri-map-pin-line"></i> عرض على الخريطة
+            </a>
+        </div>
+    </div>
+</div>

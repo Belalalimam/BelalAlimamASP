@@ -1,0 +1,165 @@
+@model List<NakhlaBelal.Models.Order>
+@{
+    ViewBag.Title = "My Orders";
+    var status = ViewBag.CurrentStatus as string;
+}
+
+<style>
+    .my-orders-page { background: #f5f7fa; min-height: 100vh; padding: 40px 0; }
+    .mo-header { margin-bottom: 24px; }
+    .mo-header h1 { font-size: 28px; font-weight: 700; color: #013220; margin: 0 0 6px; }
+    .mo-header p { color: #6b7280; margin: 0; }
+    .mo-back { color: #6b7280; text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 12px; }
+    .mo-back:hover { color: #013220; }
+
+    .status-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; background: #fff; padding: 8px; border-radius: 12px; border: 1px solid #e5e7eb; }
+    .status-tab {
+        padding: 10px 18px; border-radius: 8px; text-decoration: none;
+        color: #6b7280; font-size: 13px; font-weight: 600; transition: all 0.2s;
+        display: inline-flex; align-items: center; gap: 6px;
+    }
+    .status-tab:hover { background: #f3f4f6; color: #111827; }
+    .status-tab.active { background: #013220; color: #fff; }
+    .status-tab .count { background: rgba(0,0,0,0.15); padding: 2px 8px; border-radius: 999px; font-size: 11px; }
+    .status-tab.active .count { background: rgba(255,255,255,0.25); }
+
+    .order-card {
+        background: #fff; border-radius: 12px; padding: 20px; margin-bottom: 16px;
+        border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        transition: all 0.2s;
+    }
+    .order-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); transform: translateY(-2px); }
+    .order-card-header {
+        display: flex; justify-content: space-between; align-items: center;
+        padding-bottom: 14px; border-bottom: 1px solid #f3f4f6; margin-bottom: 14px;
+        flex-wrap: wrap; gap: 10px;
+    }
+    .oc-num { font-size: 16px; font-weight: 700; color: #013220; }
+    .oc-date { font-size: 12px; color: #9ca3af; margin-top: 3px; }
+    .order-items-preview {
+        display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+    }
+    .item-thumb {
+        width: 50px; height: 50px; border-radius: 8px; object-fit: cover;
+        border: 1px solid #e5e7eb; background: #f9fafb;
+        display: inline-flex; align-items: center; justify-content: center;
+        font-size: 20px; color: #9ca3af;
+    }
+    .oc-footer {
+        display: flex; justify-content: space-between; align-items: center;
+        flex-wrap: wrap; gap: 10px; padding-top: 12px; border-top: 1px solid #f3f4f6;
+    }
+    .oc-total { font-size: 18px; font-weight: 700; color: #013220; }
+    .oc-actions { display: flex; gap: 8px; }
+    .oc-btn { padding: 8px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+    .oc-btn-primary { background: #013220; color: #fff; }
+    .oc-btn-primary:hover { background: #025939; color: #fff; }
+    .oc-btn-secondary { background: #f3f4f6; color: #374151; }
+    .oc-btn-secondary:hover { background: #e5e7eb; }
+
+    .status-badge { display: inline-block; padding: 5px 12px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+    .status-Pending { background: #fef3c7; color: #92400e; }
+    .status-Processing { background: #dbeafe; color: #1e40af; }
+    .status-Shipped { background: #e0e7ff; color: #3730a3; }
+    .status-Delivered { background: #d1fae5; color: #065f46; }
+    .status-Cancelled { background: #fee2e2; color: #991b1b; }
+
+    .empty-state {
+        text-align: center; padding: 80px 20px; background: #fff;
+        border-radius: 12px; border: 1px solid #e5e7eb;
+    }
+    .empty-state i { font-size: 72px; color: #d1d5db; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 20px; color: #374151; margin: 0 0 8px; }
+    .empty-state p { color: #9ca3af; margin: 0 0 20px; }
+</style>
+
+<div class="my-orders-page" dir="rtl">
+    <div class="container">
+        <a href="/Identity/Profile/Index" class="mo-back">
+            <i class="ri-arrow-right-line"></i> العودة للملف الشخصي
+        </a>
+
+        <div class="mo-header">
+            <h1>🛍️ طلباتي</h1>
+            <p>اطّلع على كل طلباتك وتتبّع حالتها</p>
+        </div>
+
+        <div class="status-tabs">
+            <a href="?" class="status-tab @(string.IsNullOrEmpty(status) ? "active" : "")">
+                الكل <span class="count">@ViewBag.AllCount</span>
+            </a>
+            <a href="?status=Pending" class="status-tab @(status == "Pending" ? "active" : "")">
+                قيد الانتظار <span class="count">@ViewBag.PendingCount</span>
+            </a>
+            <a href="?status=Processing" class="status-tab @(status == "Processing" ? "active" : "")">
+                قيد التجهيز <span class="count">@ViewBag.ProcessingCount</span>
+            </a>
+            <a href="?status=Shipped" class="status-tab @(status == "Shipped" ? "active" : "")">
+                تم الشحن <span class="count">@ViewBag.ShippedCount</span>
+            </a>
+            <a href="?status=Delivered" class="status-tab @(status == "Delivered" ? "active" : "")">
+                تم التوصيل <span class="count">@ViewBag.DeliveredCount</span>
+            </a>
+            <a href="?status=Cancelled" class="status-tab @(status == "Cancelled" ? "active" : "")">
+                ملغاة <span class="count">@ViewBag.CancelledCount</span>
+            </a>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <i class="ri-shopping-bag-line"></i>
+                <h3>لا توجد طلبات</h3>
+                <p>لم تقم بأي طلب بهذه الحالة بعد</p>
+                <a href="/Customer/home/product" class="oc-btn oc-btn-primary">
+                    <i class="ri-store-2-line"></i> تصفّح المنتجات
+                </a>
+            </div>
+        }
+        else
+        {
+            foreach (var order in Model)
+            {
+                <div class="order-card">
+                    <div class="order-card-header">
+                        <div>
+                            <div class="oc-num">@order.OrderNumber</div>
+                            <div class="oc-date">@order.CreatedAt.ToString("dd MMM yyyy - HH:mm")</div>
+                        </div>
+                        <span class="status-badge status-@order.OrderStatus">@order.OrderStatus</span>
+                    </div>
+
+                    <div class="order-items-preview">
+                        @foreach (var item in order.OrderItems.Take(5))
+                        {
+                            <div class="item-thumb" title="@(item.Product?.Name)">
+                                <i class="ri-image-line"></i>
+                            </div>
+                        }
+                        @if (order.OrderItems.Count > 5)
+                        {
+                            <div class="item-thumb" style="font-size:13px; color:#6b7280;">
+                                +@(order.OrderItems.Count - 5)
+                            </div>
+                        }
+                        <div style="display:flex; align-items:center; margin-inline-start:10px; color:#6b7280; font-size:13px;">
+                            @order.OrderItems.Count منتج
+                        </div>
+                    </div>
+
+                    <div class="oc-footer">
+                        <div>
+                            <div style="font-size:12px; color:#9ca3af;">الإجمالي</div>
+                            <div class="oc-total">@order.TotalAmount.ToString("N2") ج.م</div>
+                        </div>
+                        <div class="oc-actions">
+                            <a href="/Customer/Tracking?orderNumber=@order.OrderNumber" class="oc-btn oc-btn-secondary">
+                                <i class="ri-truck-line"></i> تتبّع
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>

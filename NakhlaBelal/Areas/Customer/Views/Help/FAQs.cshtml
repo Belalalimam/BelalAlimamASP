@@ -1,0 +1,94 @@
+@{ ViewBag.Title = "الأسئلة الشائعة"; }
+<partial name="_InfoPageStyles" />
+
+<div class="info-page" dir="rtl">
+    <div class="info-hero">
+        <span class="icon-big">❓</span>
+        <h1>الأسئلة الشائعة</h1>
+        <p>إجابات على أكثر الأسئلة التي يسألها عملاؤنا</p>
+    </div>
+
+    <div class="info-container">
+        <div class="info-card">
+            <h2><i class="ri-shopping-bag-line"></i> الطلبات والشراء</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">كيف يمكنني إتمام طلب شراء؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">اختر القماش من صفحة المنتج، حدّد الكمية المطلوبة بالأمتار، ثم اضغط "إضافة للسلة". بعدها من صفحة السلة اضغط "إتمام الشراء" وأدخل بيانات الشحن.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">ما الحد الأدنى للطلب؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">الحد الأدنى للطلب هو متر واحد من كل قماش. لا يوجد حد أدنى لقيمة الطلب الإجمالية.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">هل يمكنني تعديل طلبي بعد تقديمه؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">نعم، يمكنك تعديل الطلب خلال ساعة من تقديمه عبر التواصل مع فريق الدعم. بعد بدء التجهيز لا نستطيع التعديل.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">كيف أتتبّع طلبي؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">من صفحة <a href="/Customer/Tracking">تتبّع الطلب</a> أدخل رقم الطلب والإيميل. أو من "طلباتي" في حسابك الشخصي.</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-truck-line"></i> الشحن والتوصيل</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">كم تستغرق مدة التوصيل؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">داخل القاهرة والجيزة: 2-3 أيام عمل. باقي المحافظات: 3-5 أيام عمل. التوصيل السريع (Express): خلال 24 ساعة داخل القاهرة.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">ما هي تكلفة الشحن؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">50 جنيهاً داخل القاهرة والجيزة، 75 جنيهاً لباقي المحافظات. الشحن <strong>مجاني</strong> للطلبات فوق 1000 جنيه.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">هل تشحنون خارج مصر؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">نعم، نشحن لدول الخليج العربي وأوروبا. رسوم الشحن تُحسب حسب الوزن والوجهة.</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-refresh-line"></i> الاسترجاع والاستبدال</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">هل يمكنني إرجاع القماش بعد شرائه؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">نعم، خلال 14 يوماً من الاستلام بشرط أن يكون القماش في حالته الأصلية (غير مقصوص أو مغسول).</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">كيف أسترجع قيمة الطلب؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">يتم استرجاع المبلغ خلال 7 أيام عمل بنفس طريقة الدفع الأصلية بعد استلامنا للقماش ومراجعته.</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-bank-card-line"></i> الدفع</h2>
+
+            <div class="faq-item">
+                <div class="faq-question">ما طرق الدفع المتاحة؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">فيزا، ماستركارد، ميزة، محافظ إلكترونية (فودافون كاش، إنستاباي)، والدفع عند الاستلام.</div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">هل المدفوعات الإلكترونية آمنة؟ <i class="ri-arrow-down-s-line"></i></div>
+                <div class="faq-answer">نعم، جميع المدفوعات تتم عبر بوابات دفع معتمدة (Stripe) بتشفير SSL كامل. لا نخزّن بيانات بطاقتك.</div>
+            </div>
+        </div>
+
+        <div class="callout">
+            <strong>لم تجد سؤالك؟</strong>
+            تواصل معنا مباشرة من <a href="/Customer/Help/Contact">صفحة التواصل</a> أو عبر واتساب.
+        </div>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll('.faq-question').forEach(q => {
+        q.addEventListener('click', () => q.parentElement.classList.toggle('open'));
+    });
+</script>

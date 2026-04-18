@@ -1,0 +1,289 @@
+@model List<NakhlaBelal.Models.Order>
+@{
+    ViewBag.Title = "Payments";
+    ViewBag.PageTitle = "المدفوعات";
+    var status = ViewBag.Status as string;
+    var method = ViewBag.Method as string;
+    var search = ViewBag.Search as string;
+    var from = ViewBag.From as DateTime?;
+    var to = ViewBag.To as DateTime?;
+    var paymentMethods = ViewBag.PaymentMethods as List<string> ?? new List<string>();
+    var currentPage = (int)ViewBag.CurrentPage;
+    var totalPages = (int)ViewBag.TotalPages;
+}
+
+@section Styles {
+    <style>
+        .pay-wrapper { padding: 20px; }
+        .page-title { font-size: 24px; font-weight: 700; color: #111827; margin: 0 0 4px; }
+        .page-subtitle { color: #6b7280; font-size: 14px; margin: 0 0 24px; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 18px;
+            cursor: pointer; transition: all 0.2s; text-decoration: none; display: block;
+        }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+        .stat-card.active { border-color: #3b82f6; box-shadow: 0 0 0 2px rgba(59,130,246,0.1); }
+        .stat-card .icon { font-size: 20px; margin-bottom: 8px; }
+        .stat-card .label { font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+        .stat-card .value { font-size: 20px; font-weight: 700; color: #111827; }
+        .stat-card .sub { font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+        .toolbar {
+            background: #fff; border: 1px solid #e5e7eb; border-radius: 12px;
+            padding: 14px; margin-bottom: 16px;
+            display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+        }
+        .toolbar input, .toolbar select {
+            padding: 8px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px;
+        }
+        .toolbar input[type="search"] { flex: 1; min-width: 220px; }
+
+        .pay-table-wrap { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden; }
+        .pay-table { width: 100%; border-collapse: collapse; }
+        .pay-table th {
+            background: #f9fafb; text-align: right; padding: 12px 14px;
+            font-size: 12px; font-weight: 600; color: #6b7280; text-transform: uppercase;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .pay-table td { padding: 14px; border-bottom: 1px solid #f3f4f6; font-size: 14px; vertical-align: middle; }
+        .pay-table tr:last-child td { border-bottom: none; }
+
+        .pay-badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+        .pay-Paid { background: #d1fae5; color: #065f46; }
+        .pay-Pending { background: #fef3c7; color: #92400e; }
+        .pay-Failed { background: #fee2e2; color: #991b1b; }
+        .pay-Refunded { background: #e0e7ff; color: #3730a3; }
+
+        .method-badge {
+            display: inline-block; padding: 4px 10px; border-radius: 6px;
+            font-size: 12px; background: #f3f4f6; color: #374151;
+        }
+
+        .txn-id { font-family: monospace; font-size: 11px; color: #6b7280; }
+        .amount { font-weight: 700; color: #111827; }
+
+        .btn-xs { padding: 5px 10px; font-size: 11px; border: none; border-radius: 6px; cursor: pointer; margin: 2px; }
+        .btn-paid { background: #10b981; color: #fff; }
+        .btn-refund { background: #6366f1; color: #fff; }
+        .btn-fail { background: #ef4444; color: #fff; }
+
+        .pagination-wrap { display: flex; justify-content: center; gap: 6px; margin-top: 20px; }
+        .pagination-wrap a, .pagination-wrap span {
+            padding: 8px 12px; border: 1px solid #e5e7eb; border-radius: 6px;
+            text-decoration: none; color: #374151; font-size: 13px; background: #fff;
+        }
+        .pagination-wrap .current { background: #3b82f6; color: #fff; border-color: #3b82f6; }
+
+        .empty { text-align: center; padding: 60px 20px; color: #9ca3af; }
+    </style>
+}
+
+<div class="pay-wrapper" dir="rtl">
+
+    <div style="margin-bottom:16px;">
+        <h1 class="page-title">💳 إدارة المدفوعات</h1>
+        <p class="page-subtitle">تتبّع حالة المدفوعات، استرجاع، وتقارير الإيرادات</p>
+    </div>
+
+    @if (TempData["success-notification"] != null)
+    {
+        <div class="alert alert-success">@TempData["success-notification"]</div>
+    }
+    @if (TempData["error-notification"] != null)
+    {
+        <div class="alert alert-danger">@TempData["error-notification"]</div>
+    }
+
+    <!-- Stats (Filters) -->
+    <div class="stats-row">
+        <a href="@Url.Action("Index")" class="stat-card @(string.IsNullOrEmpty(status) ? "active" : "")">
+            <div class="icon" style="color:#3b82f6;"><i class="fas fa-wallet"></i></div>
+            <div class="label">كل المدفوعات</div>
+            <div class="value">@Model.Count <span style="font-size:12px; color:#6b7280;">(في الصفحة)</span></div>
+        </a>
+        <a href="@Url.Action("Index", new { status = "Paid" })" class="stat-card @(status == "Paid" ? "active" : "")">
+            <div class="icon" style="color:#10b981;"><i class="fas fa-check-circle"></i></div>
+            <div class="label">إجمالي الإيرادات (مدفوع)</div>
+            <div class="value">@(((decimal)ViewBag.TotalRevenue).ToString("N2")) ج.م</div>
+            <div class="sub">@ViewBag.PaidCount طلب</div>
+        </a>
+        <a href="@Url.Action("Index", new { status = "Pending" })" class="stat-card @(status == "Pending" ? "active" : "")">
+            <div class="icon" style="color:#f59e0b;"><i class="fas fa-clock"></i></div>
+            <div class="label">مدفوعات معلّقة</div>
+            <div class="value">@(((decimal)ViewBag.PendingAmount).ToString("N2")) ج.م</div>
+            <div class="sub">@ViewBag.PendingCount طلب</div>
+        </a>
+        <a href="@Url.Action("Index", new { status = "Refunded" })" class="stat-card @(status == "Refunded" ? "active" : "")">
+            <div class="icon" style="color:#6366f1;"><i class="fas fa-undo"></i></div>
+            <div class="label">مبالغ مستردة</div>
+            <div class="value">@(((decimal)ViewBag.RefundedAmount).ToString("N2")) ج.م</div>
+            <div class="sub">@ViewBag.RefundedCount طلب</div>
+        </a>
+        <a href="@Url.Action("Index", new { status = "Failed" })" class="stat-card @(status == "Failed" ? "active" : "")">
+            <div class="icon" style="color:#ef4444;"><i class="fas fa-times-circle"></i></div>
+            <div class="label">مدفوعات فاشلة</div>
+            <div class="value">@(((decimal)ViewBag.FailedAmount).ToString("N2")) ج.م</div>
+            <div class="sub">@ViewBag.FailedCount طلب</div>
+        </a>
+    </div>
+
+    <!-- Toolbar -->
+    <form method="get" class="toolbar">
+        <input type="search" name="search" placeholder="بحث برقم الطلب / رقم المعاملة / اسم العميل..." value="@search" />
+        @if (!string.IsNullOrEmpty(status))
+        {
+            <input type="hidden" name="status" value="@status" />
+        }
+        <select name="method">
+            <option value="">كل طرق الدفع</option>
+            @foreach (var m in paymentMethods)
+            {
+                if (m == method)
+                {
+                    <option value="@m" selected>@m</option>
+                }
+                else
+                {
+                    <option value="@m">@m</option>
+                }
+            }
+        </select>
+        <input type="date" name="from" value="@(from?.ToString("yyyy-MM-dd"))" />
+        <input type="date" name="to" value="@(to?.ToString("yyyy-MM-dd"))" />
+        <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i> بحث</button>
+        @if (!string.IsNullOrEmpty(search) || !string.IsNullOrEmpty(status) || !string.IsNullOrEmpty(method) || from.HasValue || to.HasValue)
+        {
+            <a href="@Url.Action("Index")" class="btn btn-secondary">مسح</a>
+        }
+    </form>
+
+    <!-- Table -->
+    <div class="pay-table-wrap">
+        @if (!Model.Any())
+        {
+            <div class="empty">
+                <i class="fas fa-inbox" style="font-size:48px; margin-bottom:12px;"></i>
+                <div>لا توجد مدفوعات مطابقة</div>
+            </div>
+        }
+        else
+        {
+            <table class="pay-table">
+                <thead>
+                    <tr>
+                        <th>رقم الطلب</th>
+                        <th>العميل</th>
+                        <th>طريقة الدفع</th>
+                        <th>رقم المعاملة</th>
+                        <th>المبلغ</th>
+                        <th>الحالة</th>
+                        <th>تاريخ الطلب</th>
+                        <th>تاريخ الدفع</th>
+                        <th>إجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td>
+                                <a href="@Url.Action("Details", "Orders", new { id = o.Id })"
+                                   style="color:#3b82f6; text-decoration:none; font-weight:600;">
+                                    @o.OrderNumber
+                                </a>
+                            </td>
+                            <td>
+                                <div style="font-weight:500;">@o.FullName</div>
+                                <div style="font-size:12px; color:#9ca3af;">@o.ShippingPhone</div>
+                            </td>
+                            <td><span class="method-badge">@o.PaymentMethod</span></td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(o.PaymentTransactionId))
+                                {
+                                    <span class="txn-id" title="@o.PaymentTransactionId">
+                                        @(o.PaymentTransactionId.Length > 20 ? o.PaymentTransactionId.Substring(0, 20) + "..." : o.PaymentTransactionId)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span style="color:#d1d5db;">—</span>
+                                }
+                            </td>
+                            <td><span class="amount">@o.TotalAmount.ToString("N2") ج.م</span></td>
+                            <td><span class="pay-badge pay-@o.PaymentStatus">@o.PaymentStatus</span></td>
+                            <td>@o.CreatedAt.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @(o.PaymentDate.HasValue ? o.PaymentDate.Value.ToString("dd/MM/yyyy") : "—")
+                            </td>
+                            <td>
+                                @if (o.PaymentStatus == "Pending" || o.PaymentStatus == "Failed")
+                                {
+                                    <form asp-action="MarkAsPaid" asp-route-id="@o.Id" method="post" style="display:inline;"
+                                          onsubmit="return confirm('تعليم كمدفوع؟');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-xs btn-paid">
+                                            <i class="fas fa-check"></i> مدفوع
+                                        </button>
+                                    </form>
+                                }
+                                @if (o.PaymentStatus == "Pending")
+                                {
+                                    <form asp-action="MarkAsFailed" asp-route-id="@o.Id" method="post" style="display:inline;"
+                                          onsubmit="return confirm('تعليم كفاشل؟');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-xs btn-fail">
+                                            <i class="fas fa-times"></i> فشل
+                                        </button>
+                                    </form>
+                                }
+                                @if (o.PaymentStatus == "Paid" && User.IsInRole(SD.SUPER_ADMIN_ROLE))
+                                {
+                                    <form asp-action="Refund" asp-route-id="@o.Id" method="post" style="display:inline;"
+                                          onsubmit="return confirm('تأكيد استرجاع المبلغ؟');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-xs btn-refund">
+                                            <i class="fas fa-undo"></i> استرجاع
+                                        </button>
+                                    </form>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <div class="pagination-wrap">
+            @if (currentPage > 1)
+            {
+                <a href="@Url.Action("Index", new { status, method, search, from, to, page = currentPage - 1 })">السابق</a>
+            }
+            @for (int i = Math.Max(1, currentPage - 2); i <= Math.Min(totalPages, currentPage + 2); i++)
+            {
+                if (i == currentPage)
+                {
+                    <span class="current">@i</span>
+                }
+                else
+                {
+                    <a href="@Url.Action("Index", new { status, method, search, from, to, page = i })">@i</a>
+                }
+            }
+            @if (currentPage < totalPages)
+            {
+                <a href="@Url.Action("Index", new { status, method, search, from, to, page = currentPage + 1 })">التالي</a>
+            }
+        </div>
+    }
+</div>

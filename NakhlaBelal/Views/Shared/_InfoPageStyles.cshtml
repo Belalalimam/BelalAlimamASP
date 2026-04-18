@@ -1,0 +1,107 @@
+@* Shared styles for info/legal/guide pages *@
+<style>
+    .info-page { background: #fafafa; min-height: 70vh; padding: 40px 0 80px; }
+    .info-hero {
+        background: linear-gradient(135deg, #013220 0%, #025939 100%);
+        color: #fff;
+        padding: 60px 0;
+        margin-bottom: 40px;
+        text-align: center;
+    }
+    .info-hero h1 { font-size: 36px; font-weight: 700; margin: 0 0 10px; }
+    .info-hero p { font-size: 16px; opacity: 0.9; margin: 0; }
+    .info-hero .icon-big { font-size: 50px; margin-bottom: 14px; display: block; }
+
+    .info-container { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+    .info-card {
+        background: #fff; border-radius: 12px; padding: 40px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05); margin-bottom: 24px;
+        border: 1px solid #e5e7eb;
+    }
+    .info-card h2 {
+        font-size: 22px; font-weight: 700; color: #013220; margin: 0 0 16px;
+        display: flex; align-items: center; gap: 10px;
+    }
+    .info-card h3 { font-size: 17px; font-weight: 600; color: #374151; margin: 20px 0 10px; }
+    .info-card p { color: #4b5563; line-height: 1.8; margin-bottom: 14px; font-size: 15px; }
+    .info-card ul, .info-card ol { color: #4b5563; line-height: 1.9; padding-inline-start: 25px; margin-bottom: 14px; }
+    .info-card li { margin-bottom: 6px; }
+    .info-card strong { color: #013220; }
+    .info-card a { color: #025939; text-decoration: underline; }
+
+    .info-breadcrumb {
+        color: #6b7280; font-size: 13px; margin-bottom: 14px;
+    }
+    .info-breadcrumb a { color: #013220; text-decoration: none; }
+
+    .faq-item {
+        border-bottom: 1px solid #e5e7eb; padding: 16px 0;
+    }
+    .faq-item:last-child { border-bottom: 0; }
+    .faq-question {
+        font-weight: 600; color: #013220; cursor: pointer;
+        display: flex; justify-content: space-between; align-items: center;
+        font-size: 15px;
+    }
+    .faq-answer {
+        color: #4b5563; line-height: 1.7; margin-top: 12px;
+        display: none; padding-inline-start: 16px; border-inline-start: 3px solid #d1fae5;
+        font-size: 14px;
+    }
+    .faq-item.open .faq-answer { display: block; }
+    .faq-item.open .faq-question i { transform: rotate(180deg); }
+    .faq-question i { transition: transform 0.2s; }
+
+    .glossary-grid, .term-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+    }
+    .term-item {
+        background: #f9fafb; border: 1px solid #e5e7eb; padding: 16px;
+        border-radius: 10px;
+    }
+    .term-item strong { display: block; color: #013220; font-size: 15px; margin-bottom: 4px; }
+    .term-item span { color: #4b5563; font-size: 13px; line-height: 1.6; }
+
+    .info-table {
+        width: 100%; border-collapse: collapse; margin: 12px 0;
+    }
+    .info-table th, .info-table td {
+        padding: 12px 14px; text-align: start;
+        border-bottom: 1px solid #e5e7eb; font-size: 14px;
+    }
+    .info-table th {
+        background: #f3f4f6; color: #374151; font-weight: 600;
+    }
+
+    .form-input {
+        width: 100%; padding: 11px 14px; border: 1px solid #d1d5db;
+        border-radius: 8px; font-size: 14px; transition: all 0.2s;
+        background: #fff;
+    }
+    .form-input:focus {
+        outline: none; border-color: #013220;
+        box-shadow: 0 0 0 3px rgba(1, 50, 32, 0.1);
+    }
+    .form-label {
+        font-size: 13px; font-weight: 600; color: #374151;
+        margin-bottom: 6px; display: block;
+    }
+    .form-group { margin-bottom: 16px; }
+    .btn-submit {
+        background: #013220; color: #fff; padding: 12px 28px;
+        border: none; border-radius: 8px; font-weight: 600;
+        cursor: pointer; transition: all 0.2s; display: inline-flex;
+        align-items: center; gap: 8px;
+    }
+    .btn-submit:hover { background: #025939; transform: translateY(-1px); }
+
+    .callout {
+        background: #eff6ff; border-inline-start: 4px solid #3b82f6;
+        padding: 14px 18px; border-radius: 8px; margin: 16px 0;
+        color: #1e40af; font-size: 14px;
+    }
+    .callout.warning { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+    .callout.success { background: #d1fae5; border-color: #10b981; color: #065f46; }
+</style>

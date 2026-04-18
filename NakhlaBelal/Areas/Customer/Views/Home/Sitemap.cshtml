@@ -1,0 +1,93 @@
+@{
+    ViewBag.Title = "خريطة الموقع";
+    var cats = ViewBag.Categories as List<NakhlaBelal.Models.Category> ?? new List<NakhlaBelal.Models.Category>();
+    var brands = ViewBag.Brands as List<NakhlaBelal.Models.Brand> ?? new List<NakhlaBelal.Models.Brand>();
+}
+<partial name="_InfoPageStyles" />
+
+<div class="info-page" dir="rtl">
+    <div class="info-hero">
+        <span class="icon-big">🗺️</span>
+        <h1>خريطة الموقع</h1>
+        <p>تصفّح كل أقسام الموقع من مكان واحد</p>
+    </div>
+
+    <div class="info-container">
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px;">
+            <div class="info-card">
+                <h2><i class="ri-home-4-line"></i> عام</h2>
+                <ul class="nav-list" style="list-style:none; padding:0;">
+                    <li style="padding:6px 0;"><a href="/">🏠 الرئيسية</a></li>
+                    <li style="padding:6px 0;"><a href="/Customer/home/product">🛍️ كل المنتجات</a></li>
+                    <li style="padding:6px 0;"><a href="/Customer/Cart/index">🛒 سلة التسوق</a></li>
+                    <li style="padding:6px 0;"><a href="/Identity/Profile/Index">👤 حسابي</a></li>
+                    <li style="padding:6px 0;"><a href="/Identity/Profile/MyOrders">📦 طلباتي</a></li>
+                    <li style="padding:6px 0;"><a href="/Customer/Tracking">🔍 تتبّع طلب</a></li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h2><i class="ri-apps-line"></i> التصنيفات</h2>
+                <ul class="nav-list" style="list-style:none; padding:0;">
+                    @foreach (var c in cats.Take(15))
+                    {
+                        <li style="padding:6px 0;">
+                            <a href="/customer/home/CategroySearch?categoryId=@c.Id">@c.Name</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h2><i class="ri-award-line"></i> الماركات</h2>
+                <ul class="nav-list" style="list-style:none; padding:0;">
+                    @foreach (var b in brands.Take(15))
+                    {
+                        <li style="padding:6px 0;">@b.Name</li>
+                    }
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h2><i class="ri-information-line"></i> عن المتجر</h2>
+                <ul class="nav-list" style="list-style:none; padding:0;">
+                    <li style="padding:6px 0;"><a href="@Url.Action("About", "Home")">عن نخلة</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Quality", "Home")">ضمان الجودة</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Sustainability", "Home")">الاستدامة</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Shipping", "Home")">سياسة الشحن</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Payment", "Home")">طرق الدفع</a></li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h2><i class="ri-book-open-line"></i> أدلة الأقمشة</h2>
+                <ul class="nav-list" style="list-style:none; padding:0;">
+                    <li style="padding:6px 0;"><a href="@Url.Action("Glossary", "Guide")">قاموس المصطلحات</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Weaves", "Guide")">أنواع النسيج</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Drape", "Guide")">دليل الانسدال</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Abbreviations", "Guide")">اختصارات الألياف</a></li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h2><i class="ri-customer-service-2-line"></i> المساعدة</h2>
+                <ul class="nav-list" style="list-style:none; padding:0;">
+                    <li style="padding:6px 0;"><a href="@Url.Action("FAQs", "Help")">الأسئلة الشائعة</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Contact", "Help")">تواصل معنا</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Contact", "Support")">الدعم الفني</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("RequestSample", "Order")">طلب عيّنات</a></li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h2><i class="ri-shield-line"></i> قانوني</h2>
+                <ul class="nav-list" style="list-style:none; padding:0;">
+                    <li style="padding:6px 0;"><a href="@Url.Action("Terms", "Legal")">الشروط والأحكام</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Privacy", "Legal")">سياسة الخصوصية</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Cookies", "Legal")">ملفات الكوكيز</a></li>
+                    <li style="padding:6px 0;"><a href="@Url.Action("Accessibility", "Legal")">إمكانية الوصول</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

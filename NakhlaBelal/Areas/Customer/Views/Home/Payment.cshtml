@@ -1,0 +1,72 @@
+@{ ViewBag.Title = "طرق الدفع"; }
+<partial name="_InfoPageStyles" />
+
+<div class="info-page" dir="rtl">
+    <div class="info-hero">
+        <span class="icon-big">💳</span>
+        <h1>طرق الدفع المتاحة</h1>
+        <p>ادفع بالطريقة الأسهل والأأمن بالنسبة لك</p>
+    </div>
+
+    <div class="info-container">
+        <div class="info-card">
+            <h2><i class="ri-bank-card-line"></i> البطاقات البنكية</h2>
+            <p>نقبل كل أنواع البطاقات:</p>
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin:16px 0;">
+                <div class="term-item" style="text-align:center;"><strong>Visa</strong><span>جميع بطاقات فيزا</span></div>
+                <div class="term-item" style="text-align:center;"><strong>Mastercard</strong><span>جميع بطاقات ماستركارد</span></div>
+                <div class="term-item" style="text-align:center;"><strong>ميزة</strong><span>بطاقات ميزة المصرية</span></div>
+                <div class="term-item" style="text-align:center;"><strong>American Express</strong><span>للعملاء الدوليين</span></div>
+            </div>
+            <div class="callout">
+                🔐 <strong>المدفوعات مؤمّنة بالكامل</strong> عبر بوابة Stripe بتشفير SSL 256-bit. لا نخزّن بيانات بطاقتك إطلاقاً.
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-smartphone-line"></i> المحافظ الإلكترونية</h2>
+            <ul>
+                <li><strong>فودافون كاش:</strong> ادفع من محفظتك مباشرة</li>
+                <li><strong>إنستاباي:</strong> تحويل فوري من أي بنك مصري</li>
+                <li><strong>أورانج موني</strong> و <strong>اتصالات كاش</strong></li>
+                <li><strong>ميزة الرقمية</strong> من البنك المركزي</li>
+            </ul>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-wallet-3-line"></i> الدفع عند الاستلام (COD)</h2>
+            <p>متاح لجميع المحافظات المصرية بدون أي رسوم إضافية.</p>
+            <ul>
+                <li>ادفع للمندوب عند استلامك للطلب.</li>
+                <li>يمكنك فحص الطلب قبل الدفع.</li>
+                <li>متاح للطلبات حتى 5000 جنيه كحد أقصى.</li>
+            </ul>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-bank-line"></i> التحويل البنكي</h2>
+            <p>للطلبات الكبيرة أو الشركات، يمكنك التحويل مباشرة لحسابنا:</p>
+            <table class="info-table">
+                <tbody>
+                    <tr><td><strong>البنك</strong></td><td>البنك الأهلي المصري</td></tr>
+                    <tr><td><strong>اسم الحساب</strong></td><td>شركة نخلة للأقمشة</td></tr>
+                    <tr><td><strong>رقم الحساب</strong></td><td>XXXX-XXXX-XXXX-1234</td></tr>
+                    <tr><td><strong>IBAN</strong></td><td>EG00 0000 0000 0000 0000 0000</td></tr>
+                </tbody>
+            </table>
+            <div class="callout warning">
+                بعد التحويل، أرسل صورة الإيصال على واتساب ليتم شحن طلبك.
+            </div>
+        </div>
+
+        <div class="info-card">
+            <h2><i class="ri-shield-keyhole-line"></i> أمان المعاملات</h2>
+            <ul>
+                <li>جميع المعاملات تتم عبر بوابات دفع معتمدة من البنك المركزي.</li>
+                <li>تشفير SSL كامل لحماية بياناتك.</li>
+                <li>امتثال لمعايير PCI DSS العالمية لأمان بطاقات الدفع.</li>
+                <li>لا تُشارَك بياناتك مع أي طرف ثالث.</li>
+            </ul>
+        </div>
+    </div>
+</div>

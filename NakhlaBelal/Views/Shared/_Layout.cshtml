@@ -38,7 +38,9 @@
 @inject IOptions<RequestLocalizationOptions> LocOptions
 @using Microsoft.Extensions.Localization
 @using NakhlaBelal
+@using NakhlaBelal.Utitlies
 @inject IStringLocalizer<SharedResource> SharedLocalizer
+@inject ISiteSettingsService SiteSettings
 @{
     // الحصول على اللغة الحالية
     var requestCulture = Context.Features.Get<IRequestCultureFeature>();
@@ -46,6 +48,13 @@
         .Select(c => new SelectListItem { Value = c.Name, Text = c.DisplayName })
         .ToList();
     var returnUrl = string.IsNullOrEmpty(Context.Request.Path) ? "~/" : $"~{Context.Request.Path.Value}{Context.Request.QueryString}";
+    var isArabic = requestCulture?.RequestCulture.UICulture.Name == "ar";
+    var siteSettings = SiteSettings.Get();
+    var siteDisplayName = isArabic ? siteSettings.SiteNameArabic : siteSettings.SiteName;
+
+    // WhatsApp URL — تنظيف الرقم من المسافات والرموز
+    var whatsappDigits = new string((siteSettings.WhatsAppNumber ?? "").Where(char.IsDigit).ToArray());
+    var whatsappUrl = $"https://wa.me/{whatsappDigits}";
 }
 <body>
     
@@ -279,27 +288,48 @@
     </div>
 
 
+    <!-- ============ Newsletter Strip ============ -->
+    <section class="newsletter-strip">
+        <div class="container">
+            <div class="newsletter-content">
+                <div class="newsletter-text">
+                    <h3>@(isArabic ? "اشترك في النشرة البريدية" : "Subscribe to our Newsletter")</h3>
+                    <p>@(isArabic ? "احصل على آخر العروض وأجدد الأقمشة مباشرة في بريدك" : "Get the latest offers and new arrivals delivered to your inbox")</p>
+                </div>
+                <form class="newsletter-form" action="#" method="post">
+                    <input type="email" placeholder="@(isArabic ? "بريدك الإلكتروني" : "Your email address")" required />
+                    <button type="submit">
+                        <i class="ri-send-plane-fill"></i>
+                        @(isArabic ? "اشترك" : "Subscribe")
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ Main Footer (4 Columns) ============ -->
     <div class="footer-nav">
         <div class="container">
             <div class="row">
+
                 <!-- HELP Column -->
                 <div class="col-lg-3 col-md-6 nav-column">
                     <h4 class="nav-title">@SharedLocalizer["HELP"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("FAQs", "Help")">@SharedLocalizer["FAQs"]</a></li>
-                        <li><a href="@Url.Action("Contact", "Help")">@SharedLocalizer["ContactUs"]</a></li>
-                        <li><a href="@Url.Action("Index", "Account")">@SharedLocalizer["MyAccount"]</a></li>
-                        <li><a href="@Url.Action("Track", "Order")">@SharedLocalizer["TrackOrder"]</a></li>
-                        <li><a href="@Url.Action("RequestSample", "Order")">@SharedLocalizer["RequestFabricsSamples"]</a></li>
-                        <li><a href="@Url.Action("Sitemap", "Home")">@SharedLocalizer["Sitemap"]</a></li>
+                        <li><a href="@Url.Action("FAQs", "Help", new { area = "Customer" })">@SharedLocalizer["FAQs"]</a></li>
+                        <li><a href="@Url.Action("Contact", "Help", new { area = "Customer" })">@SharedLocalizer["ContactUs"]</a></li>
+                        <li><a href="@Url.Action("Index", "Account", new { area = "Customer" })">@SharedLocalizer["MyAccount"]</a></li>
+                        <li><a href="@Url.Action("Track", "Order", new { area = "Customer" })">@SharedLocalizer["TrackOrder"]</a></li>
+                        <li><a href="@Url.Action("RequestSample", "Order", new { area = "Customer" })">@SharedLocalizer["RequestFabricsSamples"]</a></li>
+                        <li><a href="@Url.Action("Sitemap", "Home", new { area = "Customer" })">@SharedLocalizer["Sitemap"]</a></li>
                     </ul>
 
                     <h4 class="nav-title mt-4">@SharedLocalizer["TEXTILE_GUIDES"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("Glossary", "Guide")">@SharedLocalizer["TextileGlossary"]</a></li>
-                        <li><a href="@Url.Action("Weaves", "Guide")">@SharedLocalizer["WeavesGlossary"]</a></li>
-                        <li><a href="@Url.Action("Drape", "Guide")">@SharedLocalizer["FabricDrapeGuide"]</a></li>
-                        <li><a href="@Url.Action("Abbreviations", "Guide")">@SharedLocalizer["TextileFiberAbbreviations"]</a></li>
+                        <li><a href="@Url.Action("Glossary", "Guide", new { area = "Customer" })">@SharedLocalizer["TextileGlossary"]</a></li>
+                        <li><a href="@Url.Action("Weaves", "Guide", new { area = "Customer" })">@SharedLocalizer["WeavesGlossary"]</a></li>
+                        <li><a href="@Url.Action("Drape", "Guide", new { area = "Customer" })">@SharedLocalizer["FabricDrapeGuide"]</a></li>
+                        <li><a href="@Url.Action("Abbreviations", "Guide", new { area = "Customer" })">@SharedLocalizer["TextileFiberAbbreviations"]</a></li>
                     </ul>
                 </div>
 
@@ -307,36 +337,54 @@
                 <div class="col-lg-3 col-md-6 nav-column">
                     <h4 class="nav-title">@SharedLocalizer["ABOUT"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("About", "Home")">@SharedLocalizer["AboutUs"]</a></li>
-                        <li><a href="@Url.Action("Quality", "Home")">@SharedLocalizer["QualityControl"]</a></li>
-                        <li><a href="@Url.Action("Sustainability", "Home")">@SharedLocalizer["Sustainability"]</a></li>
-                        <li><a href="@Url.Action("Shipping", "Home")">@SharedLocalizer["ShippingRates"]</a></li>
-                        <li><a href="@Url.Action("Payment", "Home")">@SharedLocalizer["PaymentMethods"]</a></li>
+                        <li><a href="@Url.Action("About", "Home", new { area = "Customer" })">@SharedLocalizer["AboutUs"]</a></li>
+                        <li><a href="@Url.Action("Quality", "Home", new { area = "Customer" })">@SharedLocalizer["QualityControl"]</a></li>
+                        <li><a href="@Url.Action("Sustainability", "Home", new { area = "Customer" })">@SharedLocalizer["Sustainability"]</a></li>
+                        <li><a href="@Url.Action("Shipping", "Home", new { area = "Customer" })">@SharedLocalizer["ShippingRates"]</a></li>
+                        <li><a href="@Url.Action("Payment", "Home", new { area = "Customer" })">@SharedLocalizer["PaymentMethods"]</a></li>
                     </ul>
 
                     <h4 class="nav-title mt-4">@SharedLocalizer["FOLLOW_US"]</h4>
                     <div class="social-icons">
-                        <a href="https://facebook.com" class="social-icon" target="_blank">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a href="https://instagram.com" class="social-icon" target="_blank">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a href="https://pinterest.com" class="social-icon" target="_blank">
-                            <i class="fab fa-pinterest-p"></i>
-                        </a>
-                        <a href="https://youtube.com" class="social-icon" target="_blank">
-                            <i class="fab fa-youtube"></i>
-                        </a>
+                        @if (!string.IsNullOrEmpty(siteSettings.FacebookUrl))
+                        {
+                            <a href="@siteSettings.FacebookUrl" class="social-icon" target="_blank">
+                                <i class="fab fa-facebook-f"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(siteSettings.InstagramUrl))
+                        {
+                            <a href="@siteSettings.InstagramUrl" class="social-icon" target="_blank">
+                                <i class="fab fa-instagram"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(siteSettings.TwitterUrl))
+                        {
+                            <a href="@siteSettings.TwitterUrl" class="social-icon" target="_blank">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(siteSettings.YouTubeUrl))
+                        {
+                            <a href="@siteSettings.YouTubeUrl" class="social-icon" target="_blank">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(siteSettings.TikTokUrl))
+                        {
+                            <a href="@siteSettings.TikTokUrl" class="social-icon" target="_blank">
+                                <i class="fab fa-tiktok"></i>
+                            </a>
+                        }
                     </div>
 
                     <h4 class="nav-title mt-4">@SharedLocalizer["LEGAL_INFO"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("Terms", "Legal")">@SharedLocalizer["TermsConditions"]</a></li>
-                        <li><a href="@Url.Action("ODR", "Legal")">@SharedLocalizer["ODR"]</a></li>
-                        <li><a href="@Url.Action("Labelling", "Legal")">@SharedLocalizer["LabellingOfPackaging"]</a></li>
-                        <li><a href="@Url.Action("Privacy", "Legal")">@SharedLocalizer["PrivacyPolicy"]</a></li>
-                        <li><a href="@Url.Action("Cookies", "Legal")">@SharedLocalizer["CookiePreferences"]</a></li>
+                        <li><a href="@Url.Action("Terms", "Legal", new { area = "Customer" })">@SharedLocalizer["TermsConditions"]</a></li>
+                        <li><a href="@Url.Action("ODR", "Legal", new { area = "Customer" })">@SharedLocalizer["ODR"]</a></li>
+                        <li><a href="@Url.Action("Labelling", "Legal", new { area = "Customer" })">@SharedLocalizer["LabellingOfPackaging"]</a></li>
+                        <li><a href="@Url.Action("Privacy", "Legal", new { area = "Customer" })">@SharedLocalizer["PrivacyPolicy"]</a></li>
+                        <li><a href="@Url.Action("Cookies", "Legal", new { area = "Customer" })">@SharedLocalizer["CookiePreferences"]</a></li>
                     </ul>
                 </div>
 
@@ -344,17 +392,17 @@
                 <div class="col-lg-3 col-md-6 nav-column">
                     <h4 class="nav-title">@SharedLocalizer["BROWSE_OUR_FABRICS"]</h4>
                     <ul class="nav-list">
-                        <li><a href="@Url.Action("NewArrivals", "Fabrics")">@SharedLocalizer["NewArrivals"]</a></li>
-                        <li><a href="@Url.Action("OnSale", "Fabrics")">@SharedLocalizer["FabricsOnSale"]</a></li>
-                        <li><a href="@Url.Action("Bridal", "Fabrics")">@SharedLocalizer["BridalFabrics"]</a></li>
-                        <li><a href="@Url.Action("SpecialOccasions", "Fabrics")">@SharedLocalizer["SpecialOccasionsFabrics"]</a></li>
-                        <li><a href="@Url.Action("Coating", "Fabrics")">@SharedLocalizer["CoatingFabrics"]</a></li>
-                        <li><a href="@Url.Action("Suiting", "Fabrics")">@SharedLocalizer["FineSuitingFabrics"]</a></li>
-                        <li><a href="@Url.Action("Prints", "Fabrics")">@SharedLocalizer["Prints"]</a></li>
-                        <li><a href="@Url.Action("Jacquards", "Fabrics")">@SharedLocalizer["Jacquards"]</a></li>
-                        <li><a href="@Url.Action("Laces", "Fabrics")">@SharedLocalizer["LacesAndEmbroidery"]</a></li>
-                        <li><a href="@Url.Action("Boucle", "Fabrics")">@SharedLocalizer["Boucle"]</a></li>
-                        <li><a href="@Url.Action("Velvet", "Fabrics")">@SharedLocalizer["Velvet"]</a></li>
+                        <li><a href="@Url.Action("NewArrivals", "Fabrics", new { area = "Customer" })">@SharedLocalizer["NewArrivals"]</a></li>
+                        <li><a href="@Url.Action("OnSale", "Fabrics", new { area = "Customer" })">@SharedLocalizer["FabricsOnSale"]</a></li>
+                        <li><a href="@Url.Action("Bridal", "Fabrics", new { area = "Customer" })">@SharedLocalizer["BridalFabrics"]</a></li>
+                        <li><a href="@Url.Action("SpecialOccasions", "Fabrics", new { area = "Customer" })">@SharedLocalizer["SpecialOccasionsFabrics"]</a></li>
+                        <li><a href="@Url.Action("Coating", "Fabrics", new { area = "Customer" })">@SharedLocalizer["CoatingFabrics"]</a></li>
+                        <li><a href="@Url.Action("Suiting", "Fabrics", new { area = "Customer" })">@SharedLocalizer["FineSuitingFabrics"]</a></li>
+                        <li><a href="@Url.Action("Prints", "Fabrics", new { area = "Customer" })">@SharedLocalizer["Prints"]</a></li>
+                        <li><a href="@Url.Action("Jacquards", "Fabrics", new { area = "Customer" })">@SharedLocalizer["Jacquards"]</a></li>
+                        <li><a href="@Url.Action("Laces", "Fabrics", new { area = "Customer" })">@SharedLocalizer["LacesAndEmbroidery"]</a></li>
+                        <li><a href="@Url.Action("Boucle", "Fabrics", new { area = "Customer" })">@SharedLocalizer["Boucle"]</a></li>
+                        <li><a href="@Url.Action("Velvet", "Fabrics", new { area = "Customer" })">@SharedLocalizer["Velvet"]</a></li>
                     </ul>
                 </div>
 
@@ -365,59 +413,322 @@
                         <div class="contact-item">
                             <div class="contact-label">@SharedLocalizer["ContactForm"]</div>
                             <div class="contact-value">
-                                <a href="@Url.Action("Contact", "Support")">@SharedLocalizer["SendUsAMessage"]</a>
+                                <a href="@Url.Action("Contact", "Support", new { area = "Customer" })">@SharedLocalizer["SendUsAMessage"]</a>
                             </div>
                         </div>
 
                         <div class="contact-item">
                             <div class="contact-label">@SharedLocalizer["WhatsApp"]</div>
                             <div class="contact-value">
-                                <a href="https://wa.me/393316345321" class="whatsapp-link">+39 331 634 5321</a>
+                                <a href="@whatsappUrl" target="_blank" class="whatsapp-link">@siteSettings.WhatsAppNumber</a>
                             </div>
                         </div>
 
                         <div class="contact-item">
                             <div class="contact-label">@SharedLocalizer["SupportTime"]</div>
-                            <div class="contact-value">Mon-Fri 09:00 - 17:00 (UTC+1)</div>
+                            <div class="contact-value">@siteSettings.WorkingHours</div>
                         </div>
 
                         <div class="contact-item">
                             <div class="contact-label">@SharedLocalizer["WarehouseAndOffices"]</div>
                             <div class="contact-value">
-                                Via S. Gottardo, 8<br>22079 Villa Guardia (CO) Italy<br>
-                                <a href="https://maps.google.com/?q=Via+S.+Gottardo,+8+22079+Villa+Guardia+(CO)+Italy"
-                                       target="_blank" class="map-link">
+                                @siteSettings.Address<br>
+                                <a href="https://maps.google.com/?q=@Uri.EscapeDataString(siteSettings.Address ?? "")"
+                                   target="_blank" class="map-link">
                                     @SharedLocalizer["ViewOnGoogleMaps"] <i class="fas fa-arrow-right"></i>
                                 </a>
                             </div>
                         </div>
+
+                        @if (!string.IsNullOrEmpty(siteSettings.ContactEmail))
+                        {
+                            <div class="contact-item">
+                                <div class="contact-label">@SharedLocalizer["Email"]</div>
+                                <div class="contact-value">
+                                    <a href="mailto:@siteSettings.ContactEmail">@siteSettings.ContactEmail</a>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Site Footer -->
+    <!-- ============ Bottom Bar ============ -->
     <footer class="site-footer">
         <div class="container">
-            <div class="row">
+            <div class="row align-items-center">
                 <div class="col-md-6">
                     <div class="copyright">
-                        &copy; 2015-@DateTime.Now.Year Cleric Tessuto & C. SpA &nbsp;|&nbsp;
-                        VAT ID IT01651870139 &nbsp;|&nbsp; Credits
+                        @siteSettings.CopyrightText
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="legal-links">
-                        <a href="@Url.Action("Terms", "Legal")">@SharedLocalizer["Terms"]</a>
-                        <a href="@Url.Action("Privacy", "Legal")">@SharedLocalizer["Privacy"]</a>
-                        <a href="@Url.Action("Cookies", "Legal")">@SharedLocalizer["Cookies"]</a>
-                        <a href="@Url.Action("Accessibility", "Legal")">@SharedLocalizer["Accessibility"]</a>
+                        <a href="@Url.Action("Terms", "Legal", new { area = "Customer" })">@SharedLocalizer["Terms"]</a>
+                        <a href="@Url.Action("Privacy", "Legal", new { area = "Customer" })">@SharedLocalizer["Privacy"]</a>
+                        <a href="@Url.Action("Cookies", "Legal", new { area = "Customer" })">@SharedLocalizer["Cookies"]</a>
+                        <a href="@Url.Action("Accessibility", "Legal", new { area = "Customer" })">@SharedLocalizer["Accessibility"]</a>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
+
+    <!-- ============ Floating WhatsApp Button ============ -->
+    @if (!string.IsNullOrEmpty(whatsappDigits))
+    {
+        <a href="@whatsappUrl" target="_blank" class="whatsapp-float" title="@(isArabic ? "تواصل معنا عبر واتساب" : "Chat on WhatsApp")">
+            <i class="ri-whatsapp-line"></i>
+        </a>
+    }
+
+    <style>
+        /* ============ Newsletter Strip ============ */
+        .newsletter-strip {
+            background: linear-gradient(135deg, #013220 0%, #025939 100%);
+            color: #fff;
+            padding: 40px 0;
+            margin-top: 40px;
+        }
+        .newsletter-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .newsletter-text h3 { margin: 0 0 6px; font-size: 22px; font-weight: 700; }
+        .newsletter-text p { margin: 0; opacity: 0.9; font-size: 14px; }
+        .newsletter-form {
+            display: flex;
+            gap: 8px;
+            min-width: 360px;
+            flex: 1;
+            max-width: 500px;
+        }
+        .newsletter-form input {
+            flex: 1;
+            padding: 13px 18px;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            background: rgba(255,255,255,0.95);
+        }
+        .newsletter-form button {
+            padding: 13px 24px;
+            background: #ffd700;
+            color: #013220;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .newsletter-form button:hover { background: #ffeb3b; transform: translateY(-1px); }
+
+        /* ============ Footer Nav ============ */
+        .footer-nav {
+            background: #0f1f16;
+            color: #cbd5d1;
+            padding: 60px 0 30px;
+        }
+        .footer-nav .nav-title {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            margin: 0 0 18px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .footer-nav .nav-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .footer-nav .nav-list li { margin-bottom: 10px; }
+        .footer-nav .nav-list a {
+            color: #9ca9a4;
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .footer-nav .nav-list a:hover { color: #ffd700; padding-inline-start: 4px; }
+
+        .footer-brand-col { padding-inline-end: 20px; }
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .footer-logo {
+            width: 48px; height: 48px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #fff;
+        }
+        .footer-brand-name {
+            color: #fff;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .footer-tagline {
+            color: #9ca9a4;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0 0 20px;
+        }
+
+        .footer-contact-block {
+            margin-bottom: 20px;
+        }
+        .fc-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #9ca9a4;
+        }
+        .fc-item i {
+            color: #ffd700;
+            font-size: 16px;
+            margin-top: 2px;
+        }
+        .fc-item a {
+            color: #9ca9a4;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .fc-item a:hover { color: #ffd700; }
+
+        /* Social Icons */
+        .social-icons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .social-icon {
+            width: 38px; height: 38px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        .social-icon:hover {
+            background: #ffd700;
+            color: #013220;
+            transform: translateY(-3px);
+        }
+
+        /* WhatsApp CTA */
+        .whatsapp-cta {
+            margin-top: 16px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: #25D366;
+            color: #fff !important;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .whatsapp-cta i { font-size: 24px; }
+        .whatsapp-cta:hover { background: #128C7E; transform: translateY(-2px); color: #fff !important; }
+
+        /* Payment Methods */
+        .payment-methods-strip {
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 40px;
+            padding-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        .payment-label {
+            color: #9ca9a4;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .payment-icons { display: flex; gap: 10px; flex-wrap: wrap; }
+        .pay-badge {
+            background: rgba(255,255,255,0.08);
+            color: #cbd5d1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ============ Bottom Bar ============ */
+        .site-footer {
+            background: #081510;
+            color: #9ca9a4;
+            padding: 20px 0;
+            font-size: 13px;
+        }
+        .site-footer .copyright { padding: 4px 0; }
+        .site-footer .legal-links { text-align: end; }
+        .site-footer .legal-links a {
+            color: #9ca9a4;
+            text-decoration: none;
+            margin-inline-start: 18px;
+            transition: color 0.2s;
+        }
+        .site-footer .legal-links a:hover { color: #ffd700; }
+
+        @@media (max-width: 768px) {
+            .site-footer .legal-links { text-align: start; margin-top: 10px; }
+            .site-footer .legal-links a { margin-inline-start: 0; margin-inline-end: 14px; }
+            .newsletter-form { min-width: 100%; }
+        }
+
+        /* ============ Floating WhatsApp Button ============ */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 25px;
+            inset-inline-end: 25px;
+            width: 58px; height: 58px;
+            background: #25D366;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            text-decoration: none;
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+            z-index: 999;
+            transition: all 0.3s;
+            animation: pulse-whatsapp 2s infinite;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            color: #fff;
+            background: #128C7E;
+        }
+        @@keyframes pulse-whatsapp {
+            0% { box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4), 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4), 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4), 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+    </style>
 
 
     <!-- Custom JS -->
