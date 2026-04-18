@@ -134,6 +134,21 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                     return RedirectToAction("Details", "Product", new { id = productId, area = "" });
                 }
 
+                var productForUnit = await _productRepository.GetOneAsync(e => e.Id == productId);
+                if (productForUnit != null)
+                {
+                    if (productForUnit.MinimumQuantity > 0 && count < productForUnit.MinimumQuantity)
+                    {
+                        TempData["error-notification"] = $"Minimum order quantity is {productForUnit.MinimumQuantity} {productForUnit.Unit.ShortLabel()}";
+                        return RedirectToAction("Details", "Product", new { id = productId, area = "" });
+                    }
+                    if (productForUnit.QuantityStep > 1 && (count - productForUnit.MinimumQuantity) % productForUnit.QuantityStep != 0)
+                    {
+                        TempData["error-notification"] = $"Quantity must be in steps of {productForUnit.QuantityStep} {productForUnit.Unit.ShortLabel()}";
+                        return RedirectToAction("Details", "Product", new { id = productId, area = "" });
+                    }
+                }
+
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 if (string.IsNullOrEmpty(userId))
                 {

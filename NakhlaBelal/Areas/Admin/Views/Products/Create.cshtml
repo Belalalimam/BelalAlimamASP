@@ -123,6 +123,31 @@
                                         </div>
                                     </div>
 
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label asp-for="Unit" class="form-label">وحدة البيع *</label>
+                                                <select asp-for="Unit" class="form-select"
+                                                        asp-items="Html.GetEnumSelectList<NakhlaBelal.Models.ProductUnit>()"></select>
+                                                <span asp-validation-for="Unit" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label asp-for="MinimumQuantity" class="form-label">أقل كمية للطلب</label>
+                                                <input asp-for="MinimumQuantity" type="number" min="1" class="form-control" value="1" />
+                                                <span asp-validation-for="MinimumQuantity" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-3">
+                                                <label asp-for="QuantityStep" class="form-label">خطوة الزيادة</label>
+                                                <input asp-for="QuantityStep" type="number" min="1" class="form-control" value="1" />
+                                                <span asp-validation-for="QuantityStep" class="text-danger"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                     <div class="form-group mb-3">
                                         <label asp-for="Description" class="form-label">الوصف الكامل</label>
                                         <textarea asp-for="Description" class="form-control" rows="4" placeholder="وصف تفصيلي للمنتج"></textarea>

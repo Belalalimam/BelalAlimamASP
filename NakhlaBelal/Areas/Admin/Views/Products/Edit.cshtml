@@ -318,6 +318,24 @@
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="Unit" class="form-label fw-bold">Sales Unit</label>
+                            <select asp-for="Unit" class="form-select"
+                                    asp-items="Html.GetEnumSelectList<NakhlaBelal.Models.ProductUnit>()"></select>
+                            <span asp-validation-for="Unit" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="MinimumQuantity" class="form-label fw-bold">Minimum Quantity</label>
+                            <input asp-for="MinimumQuantity" type="number" min="1" class="form-control" />
+                            <span asp-validation-for="MinimumQuantity" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label asp-for="QuantityStep" class="form-label fw-bold">Quantity Step</label>
+                            <input asp-for="QuantityStep" type="number" min="1" class="form-control" />
+                            <span asp-validation-for="QuantityStep" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div class="form-check form-switch mb-2">
                                 <input asp-for="ManageStock" class="form-check-input" role="switch" />
