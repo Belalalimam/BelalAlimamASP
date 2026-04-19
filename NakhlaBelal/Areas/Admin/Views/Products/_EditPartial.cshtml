@@ -423,9 +423,14 @@
                                         <option value="">Select Material</option>
                                         @foreach (var comp in allComps)
                                         {
-                                            <option value="@comp.Id" selected="@(pc.CompositionId == comp.Id ? "selected" : "")">
-                                                @comp.Name
-                                            </option>
+                                            if (pc.CompositionId == comp.Id)
+                                            {
+                                                <option value="@comp.Id" selected>@comp.Name</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="@comp.Id">@comp.Name</option>
+                                            }
                                         }
                                     </select>
                                 </div>
@@ -434,8 +439,8 @@
                                         <input type="number"
                                                name="ProductCompositions[@compIndex].Percentage"
                                                class="form-control"
-                                               value="@pc.Percentage"
-                                               min="1" max="100" required />
+                                               value="@pc.Percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                               min="1" max="100" step="0.01" required />
                                         <span class="input-group-text">%</span>
                                     </div>
                                 </div>

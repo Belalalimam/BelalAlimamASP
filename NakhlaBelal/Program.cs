@@ -1,3 +1,4 @@
+using System.Globalization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using NakhlaBelal;
@@ -37,12 +38,22 @@ builder.Services.AddControllersWithViews()
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
 
-// تحديد اللغات المدعومة
-var supportedCultures = new[] { "en", "ar" };
-var localizationOptions = new RequestLocalizationOptions()
-    .SetDefaultCulture("en") // اللغة الافتراضية
-    .AddSupportedCultures(supportedCultures)
-    .AddSupportedUICultures(supportedCultures);
+// تحديد اللغات المدعومة — نستعمل النسخة الإنجليزية من تنسيق الأرقام في كل الثقافات
+// علشان الـ HTML5 number inputs دايماً تبعت "50.00" بنقطة، والـ model binding يقراها صح
+CultureInfo BuildCulture(string name)
+{
+    var culture = new CultureInfo(name);
+    culture.NumberFormat = CultureInfo.InvariantCulture.NumberFormat;
+    return culture;
+}
+
+var supportedCultures = new[] { BuildCulture("en"), BuildCulture("ar") };
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture(supportedCultures[0]),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+};
 
 var app = builder.Build();
 
