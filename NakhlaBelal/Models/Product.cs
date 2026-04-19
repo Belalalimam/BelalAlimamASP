@@ -36,6 +36,9 @@ namespace NakhlaBelal.Models
         public int MinimumQuantity { get; set; } = 1;
         public int QuantityStep { get; set; } = 1;
 
+        // Pattern (Solid / Striped / Checkered / Floral / ...)
+        public ProductPattern Pattern { get; set; } = ProductPattern.None;
+
 
         // Properties
         

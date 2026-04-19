@@ -1,0 +1,71 @@
+@model NakhlaBelal.Models.Product
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@using NakhlaBelal.Utitlies
+@inject IStringLocalizer<SharedResource> L
+
+@{
+    var unit = UnitHelper.GetEnglishShort(Model.UnitPrice);
+    var unitAr = UnitHelper.GetArabicLabel(Model.UnitPrice);
+}
+
+<div class="qv-body">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <img src="~/images/@Model.MainImage" class="w-100 rounded-3" style="max-height:420px;object-fit:cover;" />
+        </div>
+        <div class="col-md-6">
+            <small class="text-muted">@Model.Category?.Name @(Model.FabricType != null ? "• " + Model.FabricType.Name : "")</small>
+            <h3 class="fw-bold mt-1">@Model.Name</h3>
+
+            <div class="d-flex align-items-center my-2">
+                @for (int i = 1; i <= 5; i++)
+                {
+                    <i class="@(i <= Math.Floor(Model.AverageRating) ? "fas" : "far") fa-star text-warning"></i>
+                }
+                <small class="text-muted ms-2">(@Model.ReviewCount)</small>
+            </div>
+
+            <div class="mb-3">
+                @if (Model.IsOnSale)
+                {
+                    <span class="h4 fw-bold text-danger">€ @Model.FinalPrice.ToString("N2")</span>
+                    <span class="text-muted text-decoration-line-through ms-2">€ @Model.Price.ToString("N2")</span>
+                }
+                else
+                {
+                    <span class="h4 fw-bold">€ @Model.Price.ToString("N2")</span>
+                }
+                <span class="text-muted">/ @unit (@unitAr)</span>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ShortDescription))
+            {
+                <p class="text-muted">@Model.ShortDescription</p>
+            }
+
+            <ul class="list-unstyled small mb-3">
+                @if (Model.Width.HasValue) { <li><b>@L["Width"]:</b> @Model.Width cm</li> }
+                @if (Model.Weight.HasValue) { <li><b>@L["Weight"]:</b> @Model.Weight g/m</li> }
+                @if (Model.Color != null) { <li><b>@L["Color"]:</b> @Model.Color.Name</li> }
+                <li><b>@L["Stock"]:</b> @Model.StockQuantity @unit</li>
+                @if (Model.ProductCompositions?.Any() == true)
+                {
+                    <li><b>@L["Composition"]:</b> @string.Join(", ", Model.ProductCompositions.Select(c => $"{c.Composition?.Name} {c.Percentage}%"))</li>
+                }
+            </ul>
+
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-dark rounded-pill px-4" onclick="addToCart(@Model.Id, 1)">
+                    <i class="fas fa-shopping-cart me-2"></i>@L["Add to Cart"]
+                </button>
+                <a class="btn btn-outline-dark rounded-pill px-4" href="@Url.Action("Details","Home", new { id = Model.Id, area="Customer" })">
+                    @L["View details"] <i class="ri-arrow-right-line"></i>
+                </a>
+                <button class="btn btn-outline-secondary rounded-pill" onclick="requestSampleQuick(@Model.Id)">
+                    <i class="ri-scissors-cut-line me-1"></i>@L["Request Sample"]
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

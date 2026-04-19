@@ -30,6 +30,7 @@ namespace NakhlaBelal.DataAccess
         public DbSet<ProjectCategory> ProjectCategories { get; set; }
         public DbSet<Composition> Compositions { get; set; }
         public DbSet<ProductComposition> ProductCompositions { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

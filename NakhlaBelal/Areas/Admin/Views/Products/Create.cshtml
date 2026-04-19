@@ -178,10 +178,10 @@
                                                         <label asp-for="UnitPrice" class="form-label">وحدة السعر *</label>
                                                         <select asp-for="UnitPrice" class="form-control" required>
                                                             <option value="">اختر الوحدة</option>
-                                                            <option value="متر">متر</option>
-                                                            <option value="قطعة">قطعة</option>
-                                                            <option value="كيلو">كيلو</option>
-                                                            <option value="ياردة">ياردة</option>
+                                                            <option value="@UnitHelper.Meter">متر</option>
+                                                            <option value="@UnitHelper.Piece">قطعة</option>
+                                                            <option value="@UnitHelper.Kilo">كيلو</option>
+                                                            <option value="@UnitHelper.Yard">ياردة</option>
                                                         </select>
                                                         <span asp-validation-for="UnitPrice" class="text-danger"></span>
                                                     </div>

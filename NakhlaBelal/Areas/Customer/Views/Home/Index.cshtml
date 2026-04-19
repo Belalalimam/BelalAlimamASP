@@ -152,3 +152,12 @@
 
         </div>
     </section>
+
+    <!-- Recently Viewed strip (populated from localStorage) -->
+    <section class="container my-5" id="recentlyViewedWrap" style="display:none;">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+            <h3 class="fw-bold mb-0"><i class="ri-history-line me-2"></i>@SharedLocalizer["Recently Viewed"]</h3>
+            <button type="button" class="btn btn-link btn-sm text-muted" onclick="clearRecentlyViewed()">@SharedLocalizer["Clear"]</button>
+        </div>
+        <div id="recentlyViewedStrip"></div>
+    </section>

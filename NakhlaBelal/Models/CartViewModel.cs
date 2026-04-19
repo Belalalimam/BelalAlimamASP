@@ -24,7 +24,7 @@ namespace NakhlaBelal.Models
         public decimal PricePerUnit { get; set; }
         public int Quantity { get; set; }
         public decimal Subtotal { get; set; }
-        public string Unit { get; set; } = "m"; // meters for fabrics
+        public string Unit { get; set; } = "متر"; // canonical unit key — see UnitHelper
     }
 
     public class RelatedProductViewModel

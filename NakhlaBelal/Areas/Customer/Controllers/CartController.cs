@@ -94,15 +94,25 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                 await _cartRepository.UpdateAsync(item);
             }
             await _cartRepository.CommitAsync();
-            decimal finalTotal = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m;
+
+            // Shipping: read user's selection from session (Cart radios save to session via SetShipping)
+            var shippingSessionRaw = HttpContext.Session.GetString("ShippingCost");
+            decimal shippingCost = 5.99m;
+            if (!string.IsNullOrEmpty(shippingSessionRaw) &&
+                decimal.TryParse(shippingSessionRaw, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var parsedShip))
+            {
+                shippingCost = parsedShip;
+            }
+
+            decimal finalTotal = (subtotalOriginal - totalDiscount) + taxTotal + shippingCost;
             var vm = new CartVM
             {
                 CartItems = cartItems,
                 Subtotal = subtotalOriginal,
                 Discount = totalDiscount,
                 Tax = taxTotal,
-                Shipping = 5.99m,
-                Total = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m,
+                Shipping = shippingCost,
+                Total = (subtotalOriginal - totalDiscount) + taxTotal + shippingCost,
                 PromotionCode = appliedCode,
                 PromotionName = promotion?.Name,
 
@@ -437,6 +447,23 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                 TempData["error-notification"] = "An error occurred while clearing cart";
                 return RedirectToAction("Index");
             }
+        }
+
+        // POST: /Customer/Cart/SetShipping — persist the user's shipping choice in session
+        [HttpPost]
+        [IgnoreAntiforgeryToken]
+        public IActionResult SetShipping([FromForm] decimal amount)
+        {
+            // Accept only the two known options to avoid tampering
+            decimal allowed = amount switch
+            {
+                5.99m => 5.99m,
+                12.99m => 12.99m,
+                _ => 5.99m
+            };
+            HttpContext.Session.SetString("ShippingCost",
+                allowed.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            return Json(new { ok = true, amount = allowed });
         }
 
         // GET: /Customer/Cart/GetCartCount

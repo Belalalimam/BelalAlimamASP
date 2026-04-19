@@ -137,9 +137,12 @@
                                                 <div class="product-info">
                                                     <h3>@product.Name</h3>
 
+                                                    @{
+                                                        var cartSuggUnit = UnitHelper.GetShortLabel(product.UnitPrice);
+                                                    }
                                                     <div class="rowProduct split bottom px-3">
-                                                        <span class="price">€ @product.Price / m</span>
-                                                        <span class="stock">@product.StockQuantity m</span>
+                                                        <span class="price">€ @product.Price / @cartSuggUnit</span>
+                                                        <span class="stock">@product.StockQuantity @cartSuggUnit</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -186,11 +189,11 @@
                             </div>
                             <div class="shipping-methods">
                                 <div class="shipping-method">
-                                    <input type="radio" id="standard" name="shipping" class="inputCheck" checked value="5.99">
+                                    <input type="radio" id="standard" name="shipping" class="inputCheck" value="5.99" @(Model.Shipping == 12.99m ? "" : "checked")>
                                     <label for="standard">@SharedLocalizer["Standard Shipping"]: € 5.99</label>
                                 </div>
                                 <div class="shipping-method">
-                                    <input type="radio" id="express" name="shipping" class="inputCheck" value="12.99">
+                                    <input type="radio" id="express" name="shipping" class="inputCheck" value="12.99" @(Model.Shipping == 12.99m ? "checked" : "")>
                                     <label for="express">@SharedLocalizer["Express Shipping"]: € 12.99</label>
                                 </div>
                             </div>
@@ -244,21 +247,62 @@
 </div>
 
 <script>
-    // Update shipping when method changes
-    document.querySelectorAll('input[name="shipping"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-            if (this.checked) {
-                const shippingCost = parseFloat(this.value);
-                // Update shipping display - you might want to AJAX update
-                console.log('Shipping updated to:', shippingCost);
+    // Cart totals (rendered with InvariantCulture so JS parseFloat is safe)
+    const CART_SUBTOTAL = @Model.Subtotal.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    const CART_DISCOUNT = @Model.Discount.ToString(System.Globalization.CultureInfo.InvariantCulture);
+    const CART_TAX      = @Model.Tax.ToString(System.Globalization.CultureInfo.InvariantCulture);
 
-                // 
-                //  loading state
-                const shippingPrice = document.querySelector('.shipping-price');
-                if (shippingPrice) {
-                    shippingPrice.textContent = '€ ' + shippingCost.toFixed(2);
-                }
-            }
+    function recomputeCartTotal(shippingCost){
+        // refresh the shipping line
+        const shippingPrice = document.querySelector('.shipping-price');
+        if (shippingPrice) shippingPrice.textContent = '€ ' + shippingCost.toFixed(2);
+
+        // refresh grand total + USD estimate
+        const newTotal = (CART_SUBTOTAL - CART_DISCOUNT) + CART_TAX + shippingCost;
+        const totalEl = document.querySelector('.final-total');
+        if (totalEl) totalEl.textContent = '€ ' + newTotal.toFixed(2);
+        const usdEl = document.querySelector('.usd-estimate');
+        if (usdEl) usdEl.textContent = 'about US $' + (newTotal * 1.08).toFixed(2);
+    }
+
+    function persistShipping(amount, opts){
+        const fd = new FormData();
+        fd.append('amount', amount.toFixed(2));
+        // keepalive:true → the request survives page navigation (clicking "Checkout")
+        return fetch('/Customer/Cart/SetShipping', Object.assign({
+            method: 'POST',
+            body: fd,
+            keepalive: true
+        }, opts || {})).catch(err => console.warn('SetShipping failed', err));
+    }
+
+    // Update shipping when method changes — recompute total + persist choice to server session
+    document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            if (!this.checked) return;
+            const shippingCost = parseFloat(this.value);
+            if (isNaN(shippingCost)) return;
+            recomputeCartTotal(shippingCost);
+            persistShipping(shippingCost);
+        });
+    });
+
+    // Ensure the displayed total matches the currently-checked radio on load
+    (function syncInitialShipping(){
+        const checked = document.querySelector('input[name="shipping"]:checked');
+        if (checked) recomputeCartTotal(parseFloat(checked.value));
+    })();
+
+    // Intercept "Proceed to Checkout" — wait for shipping to be saved before navigating
+    document.querySelectorAll('a.checkout-btn').forEach(link => {
+        link.addEventListener('click', function(e){
+            const checked = document.querySelector('input[name="shipping"]:checked');
+            if (!checked) return;
+            const amount = parseFloat(checked.value);
+            if (isNaN(amount)) return;
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            persistShipping(amount).finally(() => { window.location.href = href; });
         });
     });
 
@@ -291,7 +335,7 @@
 
     // Calculate USD conversion
     function updateUSDConversion() {
-        const total = @Model.Total;
+        const total = @Model.Total.ToString(System.Globalization.CultureInfo.InvariantCulture);
         const usdRate = 1.08; // Example conversion rate
         const usdTotal = (total * usdRate).toFixed(2);
 

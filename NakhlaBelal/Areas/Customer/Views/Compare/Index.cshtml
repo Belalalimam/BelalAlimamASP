@@ -1,0 +1,111 @@
+@model List<NakhlaBelal.Models.Product>
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@using NakhlaBelal.Utitlies
+@inject IStringLocalizer<SharedResource> L
+@{
+    ViewData["Title"] = L["Compare Products"].Value;
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="ri-arrow-left-right-line me-2"></i>@L["Compare Products"]</h2>
+        <button class="btn btn-outline-danger rounded-pill" onclick="clearCompare()"><i class="ri-delete-bin-line me-1"></i>@L["Clear all"]</button>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5 border rounded-4 bg-light">
+            <i class="ri-scales-3-line" style="font-size:60px;color:#ccc;"></i>
+            <h4 class="mt-3">@L["Nothing to compare yet"]</h4>
+            <p class="text-muted">@L["Tap the compare icon on product cards to add up to 4 fabrics."]</p>
+            <a class="btn btn-dark rounded-pill px-4" href="/Customer/Home/Product">@L["Browse fabrics"]</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered align-top text-center compare-table">
+                <thead>
+                    <tr>
+                        <th style="width:170px;background:#f5f7f4;">@L["Attribute"]</th>
+                        @foreach (var p in Model)
+                        {
+                            <th>
+                                <div class="p-2">
+                                    <img src="~/images/@p.MainImage" style="width:100%;max-height:170px;object-fit:cover;border-radius:10px;" />
+                                    <h6 class="mt-2 mb-1"><a class="text-dark" href="@Url.Action("Details","Home", new { id = p.Id, area="Customer" })">@p.Name</a></h6>
+                                    <button class="btn btn-sm btn-outline-danger rounded-pill" onclick="removeFromCompare(@p.Id)"><i class="ri-close-line"></i></button>
+                                </div>
+                            </th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><th>@L["Price"]</th>@foreach (var p in Model) {<td>€ @p.Price.ToString("N2") / @UnitHelper.GetEnglishShort(p.UnitPrice)</td>}</tr>
+                    <tr><th>@L["Category"]</th>@foreach (var p in Model) {<td>@p.Category?.Name</td>}</tr>
+                    <tr><th>@L["Type"]</th>@foreach (var p in Model) {<td>@p.FabricType?.Name</td>}</tr>
+                    <tr><th>@L["Color"]</th>@foreach (var p in Model) {<td>@p.Color?.Name</td>}</tr>
+                    <tr><th>@L["Width"]</th>@foreach (var p in Model) {<td>@p.Width cm</td>}</tr>
+                    <tr><th>@L["Weight"]</th>@foreach (var p in Model) {<td>@p.Weight g/m</td>}</tr>
+                    <tr><th>@L["Composition"]</th>
+                        @foreach (var p in Model)
+                        {
+                            <td>
+                                @if (p.ProductCompositions?.Any() == true)
+                                {
+                                    @string.Join(", ", p.ProductCompositions.Select(c => $"{c.Composition?.Name} {c.Percentage}%"))
+                                }
+                            </td>
+                        }
+                    </tr>
+                    <tr><th>@L["Stock"]</th>@foreach (var p in Model) {<td>@p.StockQuantity</td>}</tr>
+                    <tr><th>@L["Rating"]</th>@foreach (var p in Model) {<td>★ @p.AverageRating.ToString("0.0") (@p.ReviewCount)</td>}</tr>
+                    <tr><th></th>
+                        @foreach (var p in Model)
+                        {
+                            <td>
+                                <a href="@Url.Action("Details","Home", new { id = p.Id, area="Customer" })" class="btn btn-sm btn-dark rounded-pill">@L["View details"]</a>
+                            </td>
+                        }
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<style>
+    .compare-table th { vertical-align: middle; }
+    .compare-table td { vertical-align: middle; font-size: 14px; }
+</style>
+
+@section Scripts {
+<script>
+    // Hydrate from localStorage if the page was opened directly without ?ids=
+    (function(){
+        try {
+            var url = new URL(location.href);
+            var hasQuery = url.searchParams.has('ids') && url.searchParams.get('ids').trim().length > 0;
+            if (!hasQuery) {
+                var ids = JSON.parse(localStorage.getItem('compareIds')||'[]');
+                if (Array.isArray(ids) && ids.length > 0) {
+                    location.replace('/Customer/Compare/Index?ids=' + ids.join(','));
+                }
+            }
+        } catch(e) { console.warn('compare hydrate failed', e); }
+    })();
+
+    function removeFromCompare(id){
+        let ids = JSON.parse(localStorage.getItem('compareIds')||'[]');
+        ids = ids.filter(x => x !== id);
+        localStorage.setItem('compareIds', JSON.stringify(ids));
+        if (ids.length === 0) location.href = '/Customer/Compare/Index';
+        else location.href = '/Customer/Compare/Index?ids=' + ids.join(',');
+    }
+    function clearCompare(){
+        localStorage.removeItem('compareIds');
+        location.href = '/Customer/Compare/Index';
+    }
+</script>
+}

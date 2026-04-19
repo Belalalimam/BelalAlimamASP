@@ -4,13 +4,18 @@
     var discounted = Model.Product.Price - Model.Product.Price * (Model.Product.Discount / 100);
     var priceStr = "€ " + discounted.ToString("N2").Replace(".", ",");
     var bulkStr = "€ " + (discounted * 0.92m).ToString("N2").Replace(".", ",");
+
+    // وحدة البيع + الكمية الأدنى + خطوة الإضافة
+    var unitLabel = Model.Product.Unit.ShortLabel();
+    var minQty    = Model.Product.MinimumQuantity > 0 ? Model.Product.MinimumQuantity : 1;
+    var step      = Model.Product.QuantityStep    > 0 ? Model.Product.QuantityStep    : 1;
 }
 @using Microsoft.Extensions.Localization
 @using NakhlaBelal
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 
 
-<div class="pd-root">
+<div class="pd-root" data-track-product-id="@Model.Product.Id">
 
     <!-- Breadcrumb -->
     <nav class="pd-breadcrumb">
@@ -73,12 +78,6 @@
 
             
 
-            @{
-                var unitLabel = Model.Product.Unit.ShortLabel();
-                var minQty = Model.Product.MinimumQuantity > 0 ? Model.Product.MinimumQuantity : 1;
-                var step = Model.Product.QuantityStep > 0 ? Model.Product.QuantityStep : 1;
-                var bulkThreshold = Math.Max(minQty * 2, step * 4);
-            }
             <!-- Price -->
             <div class="pd-price-block">
                 <span class="pd-price">@priceStr / @unitLabel</span>
@@ -87,13 +86,13 @@
             @if (Model.Product.Discount > 0)
             {
                 <div class="pd-price-discount">
-                    @SharedLocalizer["Save"] @Model.Product.Discount% — @SharedLocalizer["buy"] @bulkThreshold @unitLabel @SharedLocalizer["or more at"] @bulkStr / @unitLabel!
+                    @SharedLocalizer["Save"] @Model.Product.Discount% — @SharedLocalizer["buy 8 m or more at"] @bulkStr / @SharedLocalizer["m"]!
                 </div>
             }
             <!-- Stock -->
             @if (Model.Product.StockQuantity != null)
             {
-                <div class="pd-stock">✓ @Model.Product.StockQuantity @unitLabel @SharedLocalizer["in stock"]</div>
+                <div class="pd-stock">✓ @Model.Product.StockQuantity @SharedLocalizer["m in stock"]</div>
             }
             <p class="pd-shipping">@SharedLocalizer["Shipping in"]  <strong>@SharedLocalizer["2 business days"]</strong>.</p>
 
@@ -112,6 +111,30 @@
                 </div>
                 <button type="submit" class="pd-add-btn">@SharedLocalizer["ADD TO BASKET"]</button>
             </form>
+
+            <!-- Secondary actions: Wishlist / Compare / Sample -->
+            <div class="pd-secondary-actions">
+                <button type="button" class="pd-sec-btn wishlist-btn" data-pid="@Model.Product.Id" onclick="toggleWishlist(@Model.Product.Id, this)">
+                    <i class="ri-heart-line"></i>
+                    <span>@SharedLocalizer["Wishlist"]</span>
+                </button>
+                <button type="button" class="pd-sec-btn compare-btn" data-pid="@Model.Product.Id" onclick="toggleCompare(@Model.Product.Id, this)">
+                    <i class="ri-arrow-left-right-line"></i>
+                    <span>@SharedLocalizer["Compare"]</span>
+                </button>
+                <button type="button" class="pd-sec-btn" onclick="requestSampleQuick(@Model.Product.Id)">
+                    <i class="ri-scissors-cut-line"></i>
+                    <span>@SharedLocalizer["Request Sample"]</span>
+                </button>
+            </div>
+            <style>
+                .pd-secondary-actions{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+                .pd-sec-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:999px;border:1px solid #d9dcd6;background:#fff;color:#013220;font-weight:600;font-size:13.5px;cursor:pointer;transition:.15s}
+                .pd-sec-btn:hover{background:#013220;color:#fff;border-color:#013220}
+                .pd-sec-btn.wishlist-btn.active{background:#e91e63;color:#fff;border-color:#e91e63}
+                .pd-sec-btn.compare-btn.active{background:#013220;color:#ffd700;border-color:#013220}
+                .pd-sec-btn i{font-size:16px}
+            </style>
             @if (minQty > 1 || step > 1)
             {
                 <small class="pd-qty-hint">
@@ -341,4 +364,10 @@
             btn.querySelector('span').style.display = 'inline-block';
         }
     </script>
+
+<!-- Recently Viewed strip -->
+<section class="container my-4" id="recentlyViewedWrap" style="display:none;">
+    <h4 class="fw-bold mb-3"><i class="ri-history-line me-2"></i>@SharedLocalizer["Recently Viewed"]</h4>
+    <div id="recentlyViewedStrip"></div>
+</section>
 }

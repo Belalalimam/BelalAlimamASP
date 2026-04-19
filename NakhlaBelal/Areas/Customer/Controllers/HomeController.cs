@@ -56,6 +56,23 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             if (filterVM.CompositionId.HasValue)
                 products = products.Where(p => p.ProductCompositions.Any(pc => pc.CompositionId == filterVM.CompositionId));
 
+            // فلترة حسب وحدة البيع (متر / قطعة / كيلو / ياردة)
+            if (!string.IsNullOrWhiteSpace(filterVM.Unit))
+            {
+                var canonicalUnit = NakhlaBelal.Utitlies.UnitHelper.Normalize(filterVM.Unit);
+                products = products.Where(p => p.UnitPrice == canonicalUnit);
+            }
+
+            // فلترة حسب نطاق السعر
+            if (filterVM.MinPriceDecimal.HasValue)
+                products = products.Where(p => p.Price >= filterVM.MinPriceDecimal.Value);
+            if (filterVM.MaxPriceDecimal.HasValue)
+                products = products.Where(p => p.Price <= filterVM.MaxPriceDecimal.Value);
+
+            // فلترة حسب النقش (Pattern)
+            if (filterVM.Pattern.HasValue && filterVM.Pattern.Value != NakhlaBelal.Models.ProductPattern.None)
+                products = products.Where(p => p.Pattern == filterVM.Pattern.Value);
+
             // الترقيم (Pagination)
             const int pageSize = 12;
             var totalItems = products.Count();
@@ -73,6 +90,11 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             ViewBag.FabricTypes = _context.FabricTypes.ToList();
             ViewBag.ProjectCategory = _context.ProjectCategories.ToList();
             ViewBag.Compositions = _context.Compositions.ToList();
+
+            // نطاق السعر الكلي (للـ slider في الـ sidebar)
+            var activeProducts = _context.Products.Where(p => !p.IsDeleted);
+            ViewBag.MinPriceBound = activeProducts.Any() ? (int)Math.Floor(activeProducts.Min(p => p.Price)) : 0;
+            ViewBag.MaxPriceBound = activeProducts.Any() ? (int)Math.Ceiling(activeProducts.Max(p => p.Price)) : 1000;
 
             return View(result);
         }
@@ -146,7 +168,22 @@ namespace NakhlaBelal.Areas.Customer.Controllers
 
             ViewBag.SelectedComposition = composition;
 
+            // فلترة حسب وحدة البيع (متر / قطعة / كيلو / ياردة)
+            if (!string.IsNullOrWhiteSpace(filterVM.Unit))
+            {
+                var canonicalUnit = NakhlaBelal.Utitlies.UnitHelper.Normalize(filterVM.Unit);
+                products = products.Where(p => p.UnitPrice == canonicalUnit);
+            }
 
+            // فلترة حسب نطاق السعر
+            if (filterVM.MinPriceDecimal.HasValue)
+                products = products.Where(p => p.Price >= filterVM.MinPriceDecimal.Value);
+            if (filterVM.MaxPriceDecimal.HasValue)
+                products = products.Where(p => p.Price <= filterVM.MaxPriceDecimal.Value);
+
+            // فلترة حسب النقش (Pattern)
+            if (filterVM.Pattern.HasValue && filterVM.Pattern.Value != NakhlaBelal.Models.ProductPattern.None)
+                products = products.Where(p => p.Pattern == filterVM.Pattern.Value);
 
             // الترقيم (Pagination)
             const int pageSize = 12;
@@ -182,6 +219,11 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             }
 
             ViewBag.SelectedCategory = category;
+
+            // نطاق السعر الكلي (للـ slider في الـ sidebar)
+            var activeProductsCS = _context.Products.Where(p => !p.IsDeleted);
+            ViewBag.MinPriceBound = activeProductsCS.Any() ? (int)Math.Floor(activeProductsCS.Min(p => p.Price)) : 0;
+            ViewBag.MaxPriceBound = activeProductsCS.Any() ? (int)Math.Ceiling(activeProductsCS.Max(p => p.Price)) : 1000;
 
             return View(result);
         }
@@ -309,6 +351,43 @@ namespace NakhlaBelal.Areas.Customer.Controllers
         public IActionResult NotFoundPage()
         {
             return View();
+        }
+
+        // ============ Quick View (partial modal content) ============
+        [HttpGet]
+        public IActionResult QuickView(int id)
+        {
+            var product = _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Color)
+                .Include(p => p.FabricType)
+                .Include(p => p.ProductCompositions).ThenInclude(pc => pc.Composition)
+                .FirstOrDefault(p => p.Id == id && !p.IsDeleted);
+            if (product == null) return NotFound();
+            return PartialView("_QuickView", product);
+        }
+
+        // ============ Recently Viewed / Compare mini cards ============
+        [HttpGet]
+        public IActionResult GetProductsByIds(string? ids)
+        {
+            var list = new List<int>();
+            if (!string.IsNullOrWhiteSpace(ids))
+            {
+                foreach (var s in ids.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    if (int.TryParse(s.Trim(), out var n)) list.Add(n);
+            }
+            if (!list.Any()) return PartialView("_MiniProductStrip", new List<Product>());
+
+            var products = _context.Products
+                .Include(p => p.Category)
+                .Where(p => list.Contains(p.Id) && !p.IsDeleted)
+                .ToList();
+
+            // preserve order
+            products = list.Select(id => products.FirstOrDefault(p => p.Id == id))
+                           .Where(p => p != null).ToList()!;
+            return PartialView("_MiniProductStrip", products);
         }
 
 
