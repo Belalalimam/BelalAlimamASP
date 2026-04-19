@@ -1,0 +1,120 @@
+@model NakhlaBelal.ViewModels.FilterVM
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@using NakhlaBelal.Utitlies
+@inject IStringLocalizer<SharedResource> L
+
+@{
+    var colors = ViewBag.Colors as System.Collections.IEnumerable;
+    var fabricTypes = ViewBag.FabricTypes as System.Collections.IEnumerable;
+    var comps = ViewBag.Compositions as System.Collections.IEnumerable;
+    var projs = ViewBag.ProjectCategory as System.Collections.IEnumerable;
+
+    string FindName(System.Collections.IEnumerable? src, int id)
+    {
+        if (src == null) return id.ToString();
+        foreach (var o in src)
+        {
+            var t = o.GetType();
+            var idProp = t.GetProperty("Id");
+            var nmProp = t.GetProperty("Name");
+            if (idProp != null && nmProp != null)
+            {
+                var oid = idProp.GetValue(o);
+                if (oid != null && (int)oid == id) return (nmProp.GetValue(o) as string) ?? id.ToString();
+            }
+        }
+        return id.ToString();
+    }
+
+    string BuildRemoveUrl(string keyToRemove)
+    {
+        var url = new Uri($"http://x{Context.Request.Path}{Context.Request.QueryString}");
+        var q = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(url.Query);
+        q.Remove(keyToRemove);
+        q.Remove("page");
+        var dict = q.ToDictionary(kv => kv.Key, kv => (string?)kv.Value.ToString());
+        return Microsoft.AspNetCore.WebUtilities.QueryHelpers.AddQueryString(Context.Request.Path, dict);
+    }
+
+    bool hasAny = Model != null && (
+        !string.IsNullOrWhiteSpace(Model.Name) ||
+        Model.CategoryId.HasValue ||
+        Model.FabricTypeId.HasValue ||
+        Model.ColorId.HasValue ||
+        Model.ProjectCategoryId.HasValue ||
+        Model.CompositionId.HasValue ||
+        !string.IsNullOrWhiteSpace(Model.Unit) ||
+        Model.MinPriceDecimal.HasValue ||
+        Model.MaxPriceDecimal.HasValue);
+}
+
+@if (hasAny)
+{
+    <div class="afc-wrap">
+        <span class="afc-label">@L["Active filters"]:</span>
+
+        @if (!string.IsNullOrWhiteSpace(Model.Name))
+        {
+            <a class="afc-chip" href="@BuildRemoveUrl("Name")">
+                <span>@L["Search"]: @Model.Name</span><i class="ri-close-line"></i>
+            </a>
+        }
+        @if (Model.FabricTypeId.HasValue)
+        {
+            <a class="afc-chip" href="@BuildRemoveUrl("FabricTypeId")">
+                <span>@L["Type"]: @FindName(fabricTypes, Model.FabricTypeId.Value)</span><i class="ri-close-line"></i>
+            </a>
+        }
+        @if (Model.ColorId.HasValue)
+        {
+            <a class="afc-chip" href="@BuildRemoveUrl("ColorId")">
+                <span>@L["Color"]: @FindName(colors, Model.ColorId.Value)</span><i class="ri-close-line"></i>
+            </a>
+        }
+        @if (Model.CompositionId.HasValue)
+        {
+            <a class="afc-chip" href="@BuildRemoveUrl("CompositionId")">
+                <span>@L["Composition"]: @FindName(comps, Model.CompositionId.Value)</span><i class="ri-close-line"></i>
+            </a>
+        }
+        @if (Model.ProjectCategoryId.HasValue)
+        {
+            <a class="afc-chip" href="@BuildRemoveUrl("ProjectCategoryId")">
+                <span>@L["Project"]: @FindName(projs, Model.ProjectCategoryId.Value)</span><i class="ri-close-line"></i>
+            </a>
+        }
+        @if (!string.IsNullOrWhiteSpace(Model.Unit))
+        {
+            <a class="afc-chip" href="@BuildRemoveUrl("Unit")">
+                <span>@L["Unit"]: @UnitHelper.GetArabicLabel(Model.Unit)</span><i class="ri-close-line"></i>
+            </a>
+        }
+        @if (Model.MinPriceDecimal.HasValue)
+        {
+            <a class="afc-chip" href="@BuildRemoveUrl("MinPriceDecimal")">
+                <span>@L["Min Price"]: €@Model.MinPriceDecimal</span><i class="ri-close-line"></i>
+            </a>
+        }
+        @if (Model.MaxPriceDecimal.HasValue)
+        {
+            <a class="afc-chip" href="@BuildRemoveUrl("MaxPriceDecimal")">
+                <span>@L["Max Price"]: €@Model.MaxPriceDecimal</span><i class="ri-close-line"></i>
+            </a>
+        }
+
+        <a class="afc-clear" href="@Context.Request.Path">
+            <i class="ri-close-circle-line"></i> @L["Clear all"]
+        </a>
+    </div>
+
+    <style>
+        .afc-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:10px 0 16px;padding:10px 12px;background:#f6f7f5;border:1px solid #e7e9e5;border-radius:10px}
+        .afc-label{font-weight:700;color:#013220;font-size:13px;margin-inline-end:4px}
+        .afc-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;background:#fff;border:1px solid #d9dcd6;border-radius:999px;color:#013220;text-decoration:none;font-size:12.5px;transition:.15s}
+        .afc-chip:hover{background:#013220;color:#fff;border-color:#013220}
+        .afc-chip i{font-size:14px}
+        .afc-clear{margin-inline-start:auto;color:#a30000;text-decoration:none;font-size:12.5px;font-weight:600}
+        .afc-clear:hover{text-decoration:underline}
+    </style>
+}

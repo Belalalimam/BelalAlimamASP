@@ -78,6 +78,17 @@ namespace NAKHLA.Areas.Customer.Controllers
                 .ToListAsync();
         }
 
+        private decimal _ResolveShippingCost()
+        {
+            var raw = HttpContext.Session.GetString("ShippingCost");
+            if (!string.IsNullOrEmpty(raw) &&
+                decimal.TryParse(raw, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var parsed))
+            {
+                return parsed;
+            }
+            return 5.99m;
+        }
+
         private async Task<CartVM> BuildCartDataAsync(List<Cart> cartItems)
         {
             var appliedCode = HttpContext.Session.GetString("AppliedPromotionCode");
@@ -110,14 +121,23 @@ namespace NAKHLA.Areas.Customer.Controllers
                 }
             }
 
+            // Honor the shipping option the user picked in the Cart
+            var shippingSessionRaw = HttpContext.Session.GetString("ShippingCost");
+            decimal shippingCost = 5.99m;
+            if (!string.IsNullOrEmpty(shippingSessionRaw) &&
+                decimal.TryParse(shippingSessionRaw, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var parsedShip))
+            {
+                shippingCost = parsedShip;
+            }
+
             return new CartVM
             {
                 CartItems = cartItems,
                 Subtotal = subtotalOriginal,
                 Discount = totalDiscount,
                 Tax = taxTotal,
-                Shipping = 5.99m,
-                Total = (subtotalOriginal - totalDiscount) + taxTotal + 5.99m,
+                Shipping = shippingCost,
+                Total = (subtotalOriginal - totalDiscount) + taxTotal + shippingCost,
                 PromotionCode = appliedCode
             };
         }
@@ -168,12 +188,12 @@ namespace NAKHLA.Areas.Customer.Controllers
                 BillingZipCode = model.BillingSameAsShipping ? model.ShippingZipCode : model.BillingZipCode,
                 BillingCountry = model.BillingSameAsShipping ? model.ShippingCountry : model.BillingCountry,
 
-                // Order amounts
+                // Order amounts — honor shipping option the user picked in the cart (saved in session)
                 Subtotal = cartItems.Sum(c => c.Price * c.Count),
-                ShippingCost = model.ShippingCost,
+                ShippingCost = _ResolveShippingCost(),
                 TaxAmount = cartItems.Sum(c => c.Price * c.Count) * 0.08m,
                 DiscountAmount = model.DiscountAmount,
-                TotalAmount = cartItems.Sum(c => c.Price * c.Count) + model.ShippingCost + (cartItems.Sum(c => c.Price * c.Count) * 0.08m) - model.DiscountAmount,
+                TotalAmount = cartItems.Sum(c => c.Price * c.Count) + _ResolveShippingCost() + (cartItems.Sum(c => c.Price * c.Count) * 0.08m) - model.DiscountAmount,
 
                 // Payment info
                 PaymentMethod = model.PaymentMethod,

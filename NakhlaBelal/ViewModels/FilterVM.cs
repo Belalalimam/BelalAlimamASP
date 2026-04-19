@@ -20,5 +20,8 @@
         // نطاق السعر
         public decimal? MinPriceDecimal { get; set; }
         public decimal? MaxPriceDecimal { get; set; }
+
+        // Pattern filter (Solid / Striped / Checkered / Floral / ...)
+        public NakhlaBelal.Models.ProductPattern? Pattern { get; set; }
     }
 }

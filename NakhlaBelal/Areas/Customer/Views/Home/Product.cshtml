@@ -190,16 +190,22 @@
                 </div>
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label"> @SharedLocalizer["Pattern"]</span>
-                    <select class="cs-topfilter-select">
+                    <select class="cs-topfilter-select" onchange="navigateFilter('Pattern', this.value)">
                         <option value="">@SharedLocalizer["Any"]</option>
-                        <option>Solid</option>
-                        <option>Checkered</option>
-                        <option>Striped</option>
-                        <option>Floral</option>
+                        @foreach (var pv in Enum.GetValues<NakhlaBelal.Models.ProductPattern>())
+                        {
+                            if (pv == NakhlaBelal.Models.ProductPattern.None) { continue; }
+                            var sel = ViewBag.Filter?.Pattern != null && ViewBag.Filter.Pattern == pv ? "selected" : null;
+                            <option value="@pv" selected="@sel">@SharedLocalizer[pv.EnglishLabel()]</option>
+                        }
                     </select>
                 </div>
             </div>
         </div>
+
+        @await Html.PartialAsync("_ActiveFilterChips", ViewBag.Filter as NakhlaBelal.ViewModels.FilterVM)
+
+        
 
         <p class="pp-count" id="resultsCount">@Model.Count() @SharedLocalizer["products"]</p>
 
@@ -294,6 +300,13 @@
                        data-weight="@item.Weight"
                        data-unit="@itemUnitKey">
 
+                    <div class="pp-card-actions" onclick="event.preventDefault();event.stopPropagation();">
+                        <button type="button" class="pp-act wishlist-btn" data-pid="@item.Id" onclick="toggleWishlist(@item.Id, this)" title="@SharedLocalizer["Wishlist"]"><i class="ri-heart-line"></i></button>
+                        <button type="button" class="pp-act compare-btn" data-pid="@item.Id" onclick="toggleCompare(@item.Id, this)" title="@SharedLocalizer["Compare"]"><i class="ri-arrow-left-right-line"></i></button>
+                        <button type="button" class="pp-act" onclick="openQuickView(@item.Id)" title="@SharedLocalizer["Quick View"]"><i class="ri-eye-line"></i></button>
+                        <button type="button" class="pp-act" onclick="requestSampleQuick(@item.Id)" title="@SharedLocalizer["Request Sample"]"><i class="ri-scissors-cut-line"></i></button>
+                    </div>
+
                     <img src="~/images/@item.MainImage" alt="@item.Name" class="pp-card-img" />
 
                     <div class="pp-card-body">
@@ -352,8 +365,28 @@
             </nav>
         </div>
 
+
+        <!-- Recently Viewed strip -->
+        <section id="recentlyViewedWrap" class="mb-3" style="display:none;">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <strong class="small text-muted"><i class="ri-history-line me-1"></i>@SharedLocalizer["Recently Viewed"]</strong>
+                <button type="button" class="btn btn-link btn-sm p-0 text-muted" onclick="clearRecentlyViewed()">@SharedLocalizer["Clear"]</button>
+            </div>
+            <div id="recentlyViewedStrip"></div>
+        </section>
     </main>
 </div>
+
+<style>
+    .pp-card{position:relative}
+    .pp-card-actions{position:absolute;top:10px;inset-inline-end:10px;display:flex;flex-direction:column;gap:6px;z-index:3;opacity:0;transition:opacity .2s}
+    .pp-card:hover .pp-card-actions{opacity:1}
+    .pp-act{width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.96);box-shadow:0 2px 6px rgba(0,0,0,.12);display:inline-flex;align-items:center;justify-content:center;color:#013220;cursor:pointer;transition:.15s;font-size:15px}
+    .pp-act:hover{background:#013220;color:#fff;transform:scale(1.08)}
+    .pp-act.wishlist-btn.active{background:#e91e63;color:#fff}
+    .pp-act.compare-btn.active{background:#013220;color:#ffd700}
+    /* @@media (max-width: 768px){ .pp-card-actions{opacity:1} } */
+</style>
 
 <script>
     /* =========================================================

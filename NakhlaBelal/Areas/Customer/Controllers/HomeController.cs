@@ -69,6 +69,10 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             if (filterVM.MaxPriceDecimal.HasValue)
                 products = products.Where(p => p.Price <= filterVM.MaxPriceDecimal.Value);
 
+            // فلترة حسب النقش (Pattern)
+            if (filterVM.Pattern.HasValue && filterVM.Pattern.Value != NakhlaBelal.Models.ProductPattern.None)
+                products = products.Where(p => p.Pattern == filterVM.Pattern.Value);
+
             // الترقيم (Pagination)
             const int pageSize = 12;
             var totalItems = products.Count();
@@ -176,6 +180,10 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                 products = products.Where(p => p.Price >= filterVM.MinPriceDecimal.Value);
             if (filterVM.MaxPriceDecimal.HasValue)
                 products = products.Where(p => p.Price <= filterVM.MaxPriceDecimal.Value);
+
+            // فلترة حسب النقش (Pattern)
+            if (filterVM.Pattern.HasValue && filterVM.Pattern.Value != NakhlaBelal.Models.ProductPattern.None)
+                products = products.Where(p => p.Pattern == filterVM.Pattern.Value);
 
             // الترقيم (Pagination)
             const int pageSize = 12;
@@ -343,6 +351,43 @@ namespace NakhlaBelal.Areas.Customer.Controllers
         public IActionResult NotFoundPage()
         {
             return View();
+        }
+
+        // ============ Quick View (partial modal content) ============
+        [HttpGet]
+        public IActionResult QuickView(int id)
+        {
+            var product = _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Color)
+                .Include(p => p.FabricType)
+                .Include(p => p.ProductCompositions).ThenInclude(pc => pc.Composition)
+                .FirstOrDefault(p => p.Id == id && !p.IsDeleted);
+            if (product == null) return NotFound();
+            return PartialView("_QuickView", product);
+        }
+
+        // ============ Recently Viewed / Compare mini cards ============
+        [HttpGet]
+        public IActionResult GetProductsByIds(string? ids)
+        {
+            var list = new List<int>();
+            if (!string.IsNullOrWhiteSpace(ids))
+            {
+                foreach (var s in ids.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    if (int.TryParse(s.Trim(), out var n)) list.Add(n);
+            }
+            if (!list.Any()) return PartialView("_MiniProductStrip", new List<Product>());
+
+            var products = _context.Products
+                .Include(p => p.Category)
+                .Where(p => list.Contains(p.Id) && !p.IsDeleted)
+                .ToList();
+
+            // preserve order
+            products = list.Select(id => products.FirstOrDefault(p => p.Id == id))
+                           .Where(p => p != null).ToList()!;
+            return PartialView("_MiniProductStrip", products);
         }
 
 

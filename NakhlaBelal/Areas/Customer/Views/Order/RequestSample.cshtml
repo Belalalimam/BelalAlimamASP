@@ -1,0 +1,63 @@
+@using Microsoft.Extensions.Localization
+@using NakhlaBelal
+@inject IStringLocalizer<SharedResource> L
+@{
+    ViewData["Title"] = L["Request Fabric Samples"].Value;
+    var preId   = ViewBag.PreselectedProductId as int?;
+    var preName = ViewBag.PreselectedProductName as string;
+    var preSku  = ViewBag.PreselectedProductSKU  as string;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <h2 class="fw-bold mb-1"><i class="ri-scissors-cut-line me-2"></i>@L["Request Fabric Samples"]</h2>
+            <p class="text-muted">@L["Fill in your details and we'll ship free samples to you."]</p>
+
+            @if (TempData["success-notification"] != null)
+            {
+                <div class="alert alert-success rounded-3">@TempData["success-notification"]</div>
+            }
+
+            <form method="post" asp-action="RequestSample" class="card border-0 shadow-sm rounded-4 p-4 mt-3">
+                @Html.AntiForgeryToken()
+
+                @if (preId.HasValue)
+                {
+                    <div class="alert alert-light border rounded-3 d-flex align-items-center justify-content-between">
+                        <div>
+                            <strong>@L["Selected fabric"]:</strong> @preName <small class="text-muted">(@preSku)</small>
+                        </div>
+                        <input type="hidden" name="productId" value="@preId" />
+                    </div>
+                }
+
+                <div class="mb-3">
+                    <label class="form-label">@L["Full name"]</label>
+                    <input name="fullName" class="form-control" required />
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">@L["Email"]</label>
+                        <input type="email" name="email" class="form-control" required />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">@L["Phone"]</label>
+                        <input name="phone" class="form-control" required />
+                    </div>
+                </div>
+                <div class="mb-3 mt-3">
+                    <label class="form-label">@L["Shipping address"]</label>
+                    <input name="address" class="form-control" required />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">@L["Fabric references / notes"]</label>
+                    <textarea name="fabrics" class="form-control" rows="3" placeholder="@L["e.g. SKU list or description"]">@(preSku != null ? preSku : "")</textarea>
+                </div>
+                <button class="btn btn-dark rounded-pill px-4">
+                    <i class="ri-send-plane-line me-1"></i>@L["Send request"]
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

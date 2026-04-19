@@ -141,13 +141,54 @@
                             
 
                             <li>
+                                <a href="/Customer/Compare/Index" title="Compare">
+                                    <span id="compareBadgeDesktop" class="num d-none">0</span>
+                                    <i class="ri-arrow-left-right-line"></i>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="/Customer/Wishlist/Index" title="Wishlist">
+                                    <span id="wishlistBadgeDesktop" class="num d-none">0</span>
+                                    <i class="ri-heart-line"></i>
+                                </a>
+                            </li>
+
+                            <li>
                                 <a href="/Customer/Cart/index">
                                     <span id="cartBadge" class="num d-none">0</span>
                                     <i class="ri-shopping-bag-2-line"></i>
                                 </a>
                             </li>
 
-                            <li><a href="/Identity/Profile/index"><i class="ri-user-line"> @User.Identity.Name </i></a></li>
+                            <li class="dropdown1 account-dd">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <a class="dropdown1-btn" href="#" onclick="return false;">
+                                        <i class="ri-user-line"></i>
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            <span class="account-name">@User.Identity.Name</span>
+                                        }
+                                    </a>
+                                    <ul class="dropdown1-menu account-menu">
+                                        @if (User.Identity.IsAuthenticated)
+                                        {
+                                            <li><a class="dropdown-item" href="/Identity/Profile/index"><i class="ri-user-3-line me-2"></i>@SharedLocalizer["MyAccount"]</a></li>
+                                            <li><a class="dropdown-item" href="/Customer/Wishlist/Index"><i class="ri-heart-line me-2"></i>@SharedLocalizer["Wishlist"] <span class="acc-count" id="wishlistBadgeAccount">0</span></a></li>
+                                            <li><a class="dropdown-item" href="/Customer/Compare/Index"><i class="ri-arrow-left-right-line me-2"></i>@SharedLocalizer["Compare"] <span class="acc-count" id="compareBadgeAccount">0</span></a></li>
+                                            <li><a class="dropdown-item" href="@Url.Action("Track", "Order", new { area = "Customer" })"><i class="ri-truck-line me-2"></i>@SharedLocalizer["TrackOrder"]</a></li>
+                                            <li><a class="dropdown-item" href="@Url.Action("RequestSample", "Order", new { area = "Customer" })"><i class="ri-scissors-cut-line me-2"></i>@SharedLocalizer["RequestFabricsSamples"]</a></li>
+                                            <li><hr class="dropdown-divider my-1" /></li>
+                                            <li><a class="dropdown-item text-danger" href="/Identity/Account/Logout"><i class="ri-logout-box-r-line me-2"></i>@SharedLocalizer["Logout"]</a></li>
+                                        }
+                                        else
+                                        {
+                                            <li><a class="dropdown-item" href="/Identity/Account/Login"><i class="ri-login-box-line me-2"></i>@SharedLocalizer["Login"]</a></li>
+                                            <li><a class="dropdown-item" href="/Identity/Account/Register"><i class="ri-user-add-line me-2"></i>@SharedLocalizer["Register"]</a></li>
+                                        }
+                                    </ul>
+                                </div>
+                            </li>
 
                             
 
@@ -188,7 +229,7 @@
                                 </div>
                             </li>
 
-                            <li><a href="/Identity/Account/Logout"><i class="ri-door-line"></i></a></li>
+                            @* moved into account dropdown *@
 
 
                         </ul>
@@ -214,10 +255,10 @@
                 <div class="menu-head">
                     <div class="top">
                         <ul>
-                            <li><a href="#" data-target="bag"><span class="num">0</span><i class="ri-shopping-bag-2-line"></i></a></li>
-                            <li><a href="#" data-target="wishlist"><span class="num">3</span><i class="ri-heart-line"></i></a></li>
-                            <li><a href="#" data-target="compare"><span class="num">0</span><i class="ri-arrow-left-right-line"></i></a></li>
-                            <li><a href="/Identity/home/Account" data-target="account"><i class="ri-user-line"></i></a></li>
+                            <li><a href="/Customer/Cart/index"><span id="cartBadgeMobile" class="num d-none">0</span><i class="ri-shopping-bag-2-line"></i></a></li>
+                            <li><a href="/Customer/Wishlist/Index"><span id="wishlistBadgeMobile" class="num d-none">0</span><i class="ri-heart-line"></i></a></li>
+                            <li><a href="/Customer/Compare/Index"><span id="compareBadgeMobile" class="num d-none">0</span><i class="ri-arrow-left-right-line"></i></a></li>
+                            <li><a href="#" data-target="account"><i class="ri-user-line"></i></a></li>
                             <li><a href="#" data-target="lunguage"><i class="ri-globe-line"></i></a></li>
                         </ul>
                     </div>
@@ -262,7 +303,34 @@
                     <span>compare</span><i class="ri-arrow-left-right-line"></i>
                 </div>
                 <div id="account" data-target="account">
-                    <span>account</span><i class="ri-user-line"></i>
+                    <div class="acc-panel-inner">
+                        <p class="acc-panel-title"><i class="ri-user-line"></i> @SharedLocalizer["My Account"]</p>
+                        @if (User.Identity != null && User.Identity.IsAuthenticated)
+                        {
+                            <ul class="acc-panel-list">
+                                <li><a href="/Identity/home/Account"><i class="ri-user-settings-line"></i> @SharedLocalizer["Profile"]</a></li>
+                                <li><a href="/Customer/Wishlist/Index"><i class="ri-heart-line"></i> @SharedLocalizer["Wishlist"] <span id="wishlistBadgeAccountMobile" class="acc-count d-none">0</span></a></li>
+                                <li><a href="/Customer/Compare/Index"><i class="ri-arrow-left-right-line"></i> @SharedLocalizer["Compare"] <span id="compareBadgeAccountMobile" class="acc-count d-none">0</span></a></li>
+                                <li><a href="@Url.Action("Track", "Order", new { area = "Customer" })"><i class="ri-truck-line"></i> @SharedLocalizer["Track Order"]</a></li>
+                                <li><a href="@Url.Action("RequestSample", "Order", new { area = "Customer" })"><i class="ri-file-paper-2-line"></i> @SharedLocalizer["Request Samples"]</a></li>
+                                <li>
+                                    <form method="post" action="/Identity/Account/Logout" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="acc-logout-btn"><i class="ri-logout-box-r-line"></i> @SharedLocalizer["Logout"]</button>
+                                    </form>
+                                </li>
+                            </ul>
+                        }
+                        else
+                        {
+                            <ul class="acc-panel-list">
+                                <li><a href="/Identity/Account/Login"><i class="ri-login-box-line"></i> @SharedLocalizer["Login"]</a></li>
+                                <li><a href="/Identity/Account/Register"><i class="ri-user-add-line"></i> @SharedLocalizer["Register"]</a></li>
+                                <li><a href="@Url.Action("Track", "Order", new { area = "Customer" })"><i class="ri-truck-line"></i> @SharedLocalizer["Track Order"]</a></li>
+                                <li><a href="@Url.Action("RequestSample", "Order", new { area = "Customer" })"><i class="ri-file-paper-2-line"></i> @SharedLocalizer["Request Samples"]</a></li>
+                            </ul>
+                        }
+                    </div>
                 </div>
                 <div id="lunguage" data-target="lunguage">
                     <div class="lang-panel-inner">
@@ -483,6 +551,72 @@
             <i class="ri-whatsapp-line"></i>
         </a>
     }
+
+    <!-- ============ Anti-Forgery Token (for AJAX) ============ -->
+    <form id="__afForm" style="display:none">@Html.AntiForgeryToken()</form>
+
+    <!-- ============ Quick View Modal ============ -->
+    <div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content rounded-4 border-0">
+                <div class="modal-header border-0">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-3 p-md-4" id="quickViewBody">
+                    <div class="text-center py-5 text-muted">
+                        <div class="spinner-border text-success" role="status"></div>
+                        <div class="mt-2">@(isArabic ? "جاري التحميل..." : "Loading...")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ Floating Compare Bar ============ -->
+    <div id="compareBar" class="compare-bar" style="display:none;">
+        <div class="compare-bar-inner">
+            <div class="compare-bar-items" id="compareBarItems"></div>
+            <div class="compare-bar-actions">
+                <button class="compare-bar-clear" onclick="clearAllCompare()"><i class="ri-delete-bin-line"></i></button>
+                <a class="compare-bar-go" id="compareBarGo" href="/Customer/Compare/Index">
+                    <i class="ri-arrow-left-right-line"></i> @(isArabic ? "قارن الآن" : "Compare now")
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* Account dropdown */
+        .account-dd .account-name{margin-inline-start:6px;font-size:13px}
+        .account-dd .account-menu{min-width:220px}
+        .account-dd .dropdown-item{display:flex;align-items:center;padding:8px 12px;color:#013220;white-space:nowrap}
+        .account-dd .dropdown-item:hover{background:#f5f7f4;color:#013220}
+        .account-dd .acc-count{margin-inline-start:auto;background:#013220;color:#ffd700;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700;min-width:20px;text-align:center;display:inline-block}
+        .account-dd .acc-count:empty,.account-dd .acc-count[data-empty="1"]{display:none}
+
+        /* Compare floating bar */
+        .compare-bar{position:fixed;bottom:18px;inset-inline-start:50%;transform:translateX(-50%);z-index:998;max-width:720px;width:calc(100% - 32px)}
+        [dir="rtl"] .compare-bar{transform:translateX(50%)}
+        .compare-bar-inner{background:#013220;color:#fff;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+        .compare-bar-items{display:flex;gap:8px;flex:1;overflow-x:auto}
+        .cbi{position:relative;width:48px;height:48px;border-radius:10px;overflow:hidden;flex:0 0 48px;background:#fff}
+        .cbi img{width:100%;height:100%;object-fit:cover}
+        .cbi button{position:absolute;top:-4px;inset-inline-end:-4px;width:18px;height:18px;border-radius:50%;border:none;background:#e91e63;color:#fff;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer}
+        .compare-bar-actions{display:flex;gap:6px;align-items:center}
+        .compare-bar-clear{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;width:34px;height:34px;cursor:pointer}
+        .compare-bar-go{background:#ffd700;color:#013220;border-radius:999px;padding:8px 16px;font-weight:700;text-decoration:none;white-space:nowrap}
+        .compare-bar-go:hover{background:#ffeb3b;color:#013220}
+
+        /* Mobile menu account sub-panel */
+        .acc-panel-inner{padding:18px 16px;color:#013220}
+        .acc-panel-title{font-weight:700;font-size:15px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #e9ecef;display:flex;align-items:center;gap:8px}
+        .acc-panel-list{list-style:none;padding:0;margin:0}
+        .acc-panel-list li{margin-bottom:4px}
+        .acc-panel-list li a,.acc-panel-list li .acc-logout-btn{display:flex;align-items:center;gap:10px;padding:10px 12px;color:#013220;text-decoration:none;border-radius:10px;font-size:14px;font-weight:500;transition:background .15s ease;width:100%;background:transparent;border:none;text-align:inherit;cursor:pointer}
+        .acc-panel-list li a:hover,.acc-panel-list li .acc-logout-btn:hover{background:#f5f7f4}
+        .acc-panel-list li a i,.acc-panel-list li .acc-logout-btn i{font-size:18px}
+        .acc-panel-list .acc-count{margin-inline-start:auto;background:#013220;color:#ffd700;border-radius:999px;padding:1px 8px;font-size:11px;font-weight:700;min-width:20px;text-align:center;display:inline-block}
+    </style>
 
     <style>
         /* ============ Newsletter Strip ============ */
@@ -731,6 +865,220 @@
     </style>
 
 
+    <!-- ============ Nakhla Features JS (wishlist/compare/quick-view/sample/recently-viewed) ============ -->
+    <script>
+        (function(){
+            const IS_AUTH = "@User.Identity.IsAuthenticated" === "True";
+            const RV_KEY = 'recentlyViewedIds';
+            const CMP_KEY = 'compareIds';
+            const MAX_RV = 12;
+            const MAX_CMP = 4;
+
+            function getAfToken(){
+                const t = document.querySelector('#__afForm input[name="__RequestVerificationToken"]')
+                       || document.querySelector('input[name="__RequestVerificationToken"]');
+                return t ? t.value : '';
+            }
+
+            function readList(k){ try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch(e){ return []; } }
+            function writeList(k,v){ localStorage.setItem(k, JSON.stringify(v)); }
+
+            // ---------- Wishlist ----------
+            window.toggleWishlist = function(id, btn){
+                if (!IS_AUTH){
+                    Swal.fire({ icon:'info', title:'@(isArabic ? "سجّل دخولك أولاً" : "Please log in")',
+                                text:'@(isArabic ? "يلزمك تسجيل الدخول لاستخدام قائمة المفضلات." : "Log in to save items to your wishlist.")',
+                                confirmButtonColor:'#013220' });
+                    return;
+                }
+                fetch('/Customer/Wishlist/Toggle', {
+                    method:'POST',
+                    headers:{ 'Content-Type':'application/x-www-form-urlencoded', 'RequestVerificationToken': getAfToken() },
+                    body: 'productId=' + encodeURIComponent(id)
+                })
+                .then(r => r.json())
+                .then(d => {
+                    if (!d || !d.ok) return;
+                    const icon = btn && btn.querySelector('i');
+                    if (icon){
+                        if (d.added){ icon.classList.remove('far'); icon.classList.add('fas'); btn.classList.add('active'); }
+                        else { icon.classList.remove('fas'); icon.classList.add('far'); btn.classList.remove('active'); }
+                    }
+                    updateWishlistBadge(d.count);
+                    if (window.toastr) toastr[d.added?'success':'info'](d.added ? '@(isArabic ? "أُضيف إلى المفضلات" : "Added to wishlist")' : '@(isArabic ? "أُزيل من المفضلات" : "Removed from wishlist")');
+                });
+            };
+
+            function updateWishlistBadge(n){
+                ['wishlistBadgeDesktop','wishlistBadgeMobile'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    el.textContent = n;
+                    if (n > 0) el.classList.remove('d-none'); else el.classList.add('d-none');
+                });
+                ['wishlistBadgeAccount','wishlistBadgeAccountMobile'].forEach(aid => {
+                    const acc = document.getElementById(aid);
+                    if (!acc) return;
+                    acc.textContent = n;
+                    acc.setAttribute('data-empty', n > 0 ? '0' : '1');
+                    if (n > 0) acc.classList.remove('d-none'); else acc.classList.add('d-none');
+                });
+            }
+
+            function loadWishlistIds(){
+                if (!IS_AUTH) return;
+                fetch('/Customer/Wishlist/MyIds').then(r => r.json()).then(ids => {
+                    if (!Array.isArray(ids)) return;
+                    ids.forEach(id => {
+                        document.querySelectorAll('.wishlist-btn[data-pid="'+id+'"]').forEach(btn => {
+                            btn.classList.add('active');
+                            const i = btn.querySelector('i'); if (i){ i.classList.remove('far'); i.classList.add('fas'); }
+                        });
+                    });
+                    updateWishlistBadge(ids.length);
+                }).catch(()=>{});
+            }
+
+            // ---------- Compare ----------
+            window.toggleCompare = function(id, btn){
+                let ids = readList(CMP_KEY);
+                const existing = ids.indexOf(id);
+                if (existing >= 0){
+                    ids.splice(existing, 1);
+                    btn && btn.classList.remove('active');
+                } else {
+                    if (ids.length >= MAX_CMP){
+                        Swal.fire({ icon:'warning', title:'@(isArabic ? "الحد 4 منتجات" : "Max 4 products")',
+                                    text:'@(isArabic ? "احذف واحدًا لإضافة آخر." : "Remove one to add another.")',
+                                    confirmButtonColor:'#013220' });
+                        return;
+                    }
+                    ids.push(id);
+                    btn && btn.classList.add('active');
+                }
+                writeList(CMP_KEY, ids);
+                renderCompareBar();
+            };
+
+            window.clearAllCompare = function(){ writeList(CMP_KEY, []); renderCompareBar(); document.querySelectorAll('.compare-btn.active').forEach(b => b.classList.remove('active')); };
+
+            function renderCompareBar(){
+                const ids = readList(CMP_KEY);
+                const bar = document.getElementById('compareBar');
+                const wrap = document.getElementById('compareBarItems');
+                const go = document.getElementById('compareBarGo');
+                ['compareBadgeDesktop','compareBadgeMobile'].forEach(bid => {
+                    const el = document.getElementById(bid);
+                    if (!el) return;
+                    el.textContent = ids.length;
+                    if (ids.length > 0) el.classList.remove('d-none'); else el.classList.add('d-none');
+                });
+                ['compareBadgeAccount','compareBadgeAccountMobile'].forEach(aid => {
+                    const accCmp = document.getElementById(aid);
+                    if (!accCmp) return;
+                    accCmp.textContent = ids.length;
+                    accCmp.setAttribute('data-empty', ids.length > 0 ? '0' : '1');
+                    if (ids.length > 0) accCmp.classList.remove('d-none'); else accCmp.classList.add('d-none');
+                });
+                if (!bar || !wrap) return;
+                if (ids.length === 0){ bar.style.display='none'; return; }
+                bar.style.display='block';
+                go.setAttribute('href','/Customer/Compare/Index?ids=' + ids.join(','));
+                // fetch thumbnails via mini strip endpoint
+                fetch('/Customer/Home/GetProductsByIds?ids=' + ids.join(','))
+                    .then(r => r.text())
+                    .then(html => {
+                        // Parse out the mps cards as thumbs
+                        const tmp = document.createElement('div'); tmp.innerHTML = html;
+                        wrap.innerHTML = '';
+                        tmp.querySelectorAll('.mps-card').forEach((a,i) => {
+                            const img = a.querySelector('img')?.getAttribute('src') || '';
+                            const pid = ids[i];
+                            const cbi = document.createElement('div');
+                            cbi.className = 'cbi';
+                            cbi.innerHTML = '<img src="'+img+'" /><button title="remove" onclick="toggleCompare('+pid+')">×</button>';
+                            wrap.appendChild(cbi);
+                        });
+                    });
+            }
+
+            function applyCompareActiveStates(){
+                const ids = readList(CMP_KEY);
+                ids.forEach(id => {
+                    document.querySelectorAll('.compare-btn[data-pid="'+id+'"]').forEach(b => b.classList.add('active'));
+                });
+            }
+
+            // ---------- Quick View ----------
+            window.openQuickView = function(id){
+                const body = document.getElementById('quickViewBody');
+                if (body) body.innerHTML = '<div class="text-center py-5"><div class="spinner-border text-success"></div></div>';
+                const modalEl = document.getElementById('quickViewModal');
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+                fetch('/Customer/Home/QuickView?id=' + id)
+                    .then(r => r.text())
+                    .then(html => { body.innerHTML = html; })
+                    .catch(() => { body.innerHTML = '<div class="text-center text-danger py-4">@(isArabic ? "حدث خطأ" : "Error loading")</div>'; });
+            };
+
+            // ---------- Request Sample (one-click) ----------
+            window.requestSampleQuick = function(id){
+                Swal.fire({
+                    title:'@(isArabic ? "طلب عيّنة" : "Request Sample")',
+                    text:'@(isArabic ? "هل تريد طلب عيّنة من هذا القماش؟" : "Request a sample of this fabric?")',
+                    icon:'question', showCancelButton:true,
+                    confirmButtonText:'@(isArabic ? "نعم، أكمل الطلب" : "Yes, continue")',
+                    cancelButtonText:'@(isArabic ? "إلغاء" : "Cancel")',
+                    confirmButtonColor:'#013220'
+                }).then(r => {
+                    if (r.isConfirmed){
+                        // Take user to the sample form pre-filled with this product
+                        location.href = '/Customer/Order/RequestSample?productId=' + id;
+                    }
+                });
+            };
+
+            // ---------- Recently Viewed ----------
+            function trackRecentlyViewed(){
+                const el = document.querySelector('[data-track-product-id]');
+                if (!el) return;
+                const pid = parseInt(el.getAttribute('data-track-product-id'));
+                if (!pid) return;
+                let list = readList(RV_KEY).filter(x => x !== pid);
+                list.unshift(pid);
+                if (list.length > MAX_RV) list = list.slice(0, MAX_RV);
+                writeList(RV_KEY, list);
+            }
+
+            function renderRecentlyViewed(){
+                const wrap = document.getElementById('recentlyViewedWrap');
+                const strip = document.getElementById('recentlyViewedStrip');
+                if (!wrap || !strip) return;
+                const currentId = parseInt(document.querySelector('[data-track-product-id]')?.getAttribute('data-track-product-id') || '0');
+                const ids = readList(RV_KEY).filter(x => x !== currentId);
+                if (ids.length === 0){ wrap.style.display='none'; return; }
+                fetch('/Customer/Home/GetProductsByIds?ids=' + ids.join(','))
+                    .then(r => r.text()).then(html => { strip.innerHTML = html; wrap.style.display=''; })
+                    .catch(() => {});
+            }
+
+            window.clearRecentlyViewed = function(){
+                localStorage.removeItem(RV_KEY);
+                const wrap = document.getElementById('recentlyViewedWrap');
+                if (wrap) wrap.style.display='none';
+            };
+
+            // ---------- Boot ----------
+            document.addEventListener('DOMContentLoaded', function(){
+                try { trackRecentlyViewed(); } catch(e){}
+                try { renderRecentlyViewed(); } catch(e){}
+                try { renderCompareBar(); applyCompareActiveStates(); } catch(e){}
+                try { loadWishlistIds(); } catch(e){}
+            });
+        })();
+    </script>
+
     <!-- Custom JS -->
     <script>
 
@@ -770,16 +1118,13 @@
                     fetch('/Customer/Cart/GetCartCount')
                         .then(response => response.json())
                         .then(data => {
-                            const badge = document.getElementById('cartBadge');
-                            if (badge) {
+                            ['cartBadge','cartBadgeMobile'].forEach(id => {
+                                const badge = document.getElementById(id);
+                                if (!badge) return;
                                 badge.textContent = data.count;
-                                // إذا كانت السلة فيها منتجات، نظهر الدائرة، وإذا كانت 0 نخفيها
-                                if (data.count > 0) {
-                                    badge.classList.remove('d-none');
-                                } else {
-                                    badge.classList.add('d-none');
-                                }
-                            }
+                                if (data.count > 0) badge.classList.remove('d-none');
+                                else badge.classList.add('d-none');
+                            });
                         })
                         .catch(error => console.error('Error fetching cart count:', error));
                 }
