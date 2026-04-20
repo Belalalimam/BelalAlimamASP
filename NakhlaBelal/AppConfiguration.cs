@@ -19,10 +19,6 @@ namespace NakhlaBelal
                 //option.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["DefaultConnection"]);
                 //option.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]);
                 option.UseSqlServer(connection);
-                // نسكّت تحذير PendingModelChanges لأن الـ Notifications migration تستخدم Raw SQL
-                // والـ Snapshot رح ننقّيه في أول فرصة نشغّل dotnet ef migrations add
-                option.ConfigureWarnings(w =>
-                    w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning));
             });
 
             // ========== WhatsApp Business Cloud API ==========
@@ -65,8 +61,7 @@ namespace NakhlaBelal
             services.AddScoped<IRepository<Color>, Repository<Color>>();
             services.AddScoped<IRepository<FabricType>, Repository<FabricType>>();
             services.AddScoped<IRepository<ProjectCategory>, Repository<ProjectCategory>>();
-            services.AddScoped<IRepository<Notification>, Repository<Notification>>();
-            services.AddScoped<INotificationService, NotificationService>();
+            services.AddScoped<IAdminEmailNotifier, AdminEmailNotifier>();
 
 
             services.AddScoped<IDBInitializer, DBInitializer>();

@@ -20,7 +20,7 @@ namespace NAKHLA.Areas.Customer.Controllers
         private readonly IRepository<Promotion> _promotionRepository;
         private readonly ILogger<CheckoutController> _logger;
         private readonly IWhatsAppService _whatsAppService;
-        private readonly INotificationService _notificationService;
+        private readonly IAdminEmailNotifier _adminEmailNotifier;
 
         public CheckoutController(
             UserManager<ApplicationUser> userManager,
@@ -28,14 +28,14 @@ namespace NAKHLA.Areas.Customer.Controllers
             IRepository<Promotion> promotionRepository,
             ILogger<CheckoutController> logger,
             IWhatsAppService whatsAppService,
-            INotificationService notificationService)
+            IAdminEmailNotifier adminEmailNotifier)
         {
             _userManager = userManager;
             _context = context;
             _promotionRepository = promotionRepository;
             _logger = logger;
             _whatsAppService = whatsAppService;
-            _notificationService = notificationService;
+            _adminEmailNotifier = adminEmailNotifier;
         }
 
         [HttpGet]
@@ -271,20 +271,14 @@ namespace NAKHLA.Areas.Customer.Controllers
                     }
                 }
 
-                // 6a. إشعار كل الـ SuperAdmin/Admin/Employee بالطلب الجديد
+                // 6a. إيميل لكل الـ SuperAdmin/Admin/Employee بتفاصيل الطلب
                 try
                 {
-                    var adminOrderUrl = Url.Action(
-                        "Details",
-                        "Orders",
-                        new { area = "Admin", id = order.Id },
-                        Request.Scheme);
-
-                    await _notificationService.NotifyStaffOfNewOrderAsync(order, adminOrderUrl);
+                    await _adminEmailNotifier.NotifyNewOrderAsync(order);
                 }
                 catch (Exception notifEx)
                 {
-                    _logger.LogError(notifEx, "Failed to send staff notifications for order {OrderNumber}", order.OrderNumber);
+                    _logger.LogError(notifEx, "Failed to send admin email notification for order {OrderNumber}", order.OrderNumber);
                 }
 
                 // 6. إرسال رسالة واتساب بتأكيد الطلب (لا تؤثر على تدفق الطلب إذا فشلت)
