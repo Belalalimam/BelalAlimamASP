@@ -61,6 +61,8 @@ namespace NakhlaBelal
             services.AddScoped<IRepository<Color>, Repository<Color>>();
             services.AddScoped<IRepository<FabricType>, Repository<FabricType>>();
             services.AddScoped<IRepository<ProjectCategory>, Repository<ProjectCategory>>();
+            services.AddScoped<IRepository<Notification>, Repository<Notification>>();
+            services.AddScoped<INotificationService, NotificationService>();
 
 
             services.AddScoped<IDBInitializer, DBInitializer>();

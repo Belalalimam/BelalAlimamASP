@@ -20,19 +20,22 @@ namespace NAKHLA.Areas.Customer.Controllers
         private readonly IRepository<Promotion> _promotionRepository;
         private readonly ILogger<CheckoutController> _logger;
         private readonly IWhatsAppService _whatsAppService;
+        private readonly INotificationService _notificationService;
 
         public CheckoutController(
             UserManager<ApplicationUser> userManager,
             ApplicationDbContext context,
             IRepository<Promotion> promotionRepository,
             ILogger<CheckoutController> logger,
-            IWhatsAppService whatsAppService)
+            IWhatsAppService whatsAppService,
+            INotificationService notificationService)
         {
             _userManager = userManager;
             _context = context;
             _promotionRepository = promotionRepository;
             _logger = logger;
             _whatsAppService = whatsAppService;
+            _notificationService = notificationService;
         }
 
         [HttpGet]
@@ -266,6 +269,22 @@ namespace NAKHLA.Areas.Customer.Controllers
                         await transaction.RollbackAsync();
                         throw; // ابعته للـ catch البرانية لنعرف شو السبب
                     }
+                }
+
+                // 6a. إشعار كل الـ SuperAdmin/Admin/Employee بالطلب الجديد
+                try
+                {
+                    var adminOrderUrl = Url.Action(
+                        "Details",
+                        "Orders",
+                        new { area = "Admin", id = order.Id },
+                        Request.Scheme);
+
+                    await _notificationService.NotifyStaffOfNewOrderAsync(order, adminOrderUrl);
+                }
+                catch (Exception notifEx)
+                {
+                    _logger.LogError(notifEx, "Failed to send staff notifications for order {OrderNumber}", order.OrderNumber);
                 }
 
                 // 6. إرسال رسالة واتساب بتأكيد الطلب (لا تؤثر على تدفق الطلب إذا فشلت)
