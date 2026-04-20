@@ -17,9 +17,10 @@ namespace NakhlaBelal.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.ProjectCategories = _context.ProjectCategories.ToList();
-            ViewBag.FabricTypes = _context.FabricTypes.ToList();
-            ViewBag.Colors = _context.Colors.ToList(); // افترضنا أن اسم الجدول Colors
+            const int HOME_LIMIT = 10;
+            ViewBag.ProjectCategories = _context.ProjectCategories.OrderBy(p => p.Name).Take(HOME_LIMIT).ToList();
+            ViewBag.FabricTypes = _context.FabricTypes.OrderBy(f => f.Name).Take(HOME_LIMIT).ToList();
+            ViewBag.Colors = _context.Colors.OrderBy(c => c.Name).Take(HOME_LIMIT).ToList();
             return View();
         }
         public IActionResult Product(FilterVM filterVM, int page = 1)

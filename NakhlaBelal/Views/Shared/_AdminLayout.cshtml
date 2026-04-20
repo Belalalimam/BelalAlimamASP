@@ -87,6 +87,10 @@
                     <i class="fas fa-hashtag"></i>
                     <span>Product Tags</span>
                 </a>
+                <a href="@Url.Action("Index", "ProjectCategories")" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "ProjectCategories" ? "active" : "")">
+                    <i class="fas fa-drafting-compass"></i>
+                    <span>Project Categories</span>
+                </a>
 
                 <div class="nav-section">Financial</div>
                 <a href="@Url.Action("Index", "Payments")" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payments" ? "active" : "")">
