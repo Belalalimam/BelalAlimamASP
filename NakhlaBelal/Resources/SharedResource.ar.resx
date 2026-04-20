@@ -885,4 +885,7 @@
   <data name="SuccessTitle" xml:space="preserve">
     <value>تم إنشاء الحساب!</value>
   </data>
+  <data name="AllProduct" xml:space="preserve">
+    <value>كل المنتجات</value>
+  </data>
 </root>
