@@ -70,6 +70,24 @@
                     <span>Inventory</span>
                 </a>
 
+                <div class="nav-section">Filters &amp; Attributes</div>
+                <a href="@Url.Action("Index", "Colors")" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Colors" ? "active" : "")">
+                    <i class="fas fa-palette"></i>
+                    <span>Colors</span>
+                </a>
+                <a href="@Url.Action("Index", "Compositions")" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Compositions" ? "active" : "")">
+                    <i class="fas fa-flask"></i>
+                    <span>Compositions</span>
+                </a>
+                <a href="@Url.Action("Index", "FabricTypes")" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "FabricTypes" ? "active" : "")">
+                    <i class="fas fa-layer-group"></i>
+                    <span>Fabric Types</span>
+                </a>
+                <a href="@Url.Action("Index", "ProductTags")" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "ProductTags" ? "active" : "")">
+                    <i class="fas fa-hashtag"></i>
+                    <span>Product Tags</span>
+                </a>
+
                 <div class="nav-section">Financial</div>
                 <a href="@Url.Action("Index", "Payments")" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Payments" ? "active" : "")">
                     <i class="fas fa-credit-card"></i>

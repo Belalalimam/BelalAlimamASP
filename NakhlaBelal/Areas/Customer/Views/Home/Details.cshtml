@@ -146,62 +146,90 @@
                 </small>
             }
 
-            <!-- Specs -->
-            <div class="pd-specs">
-                <div class="pd-spec-row full">
-                    <div class="pd-spec-cell">
-                        <span class="pd-spec-label">@SharedLocalizer["COMPOSITION"]</span>
-                        <div class="pd-spec-comp">
-                            @if (Model.SelectedCompositions != null && Model.SelectedCompositions.Any())
-                            {
-                                foreach (var c in Model.SelectedCompositions)
-                                {
-                                    <span>@c.Percentage% @SharedLocalizer[@c.CompositionName]</span>
-                                }
-                            }
-                        </div>
-                    </div>
-                </div>
+            @{
+                // Detect whether this product is a fabric (so we can hide fabric-only specs for
+                // accessories like buttons / clips / hooks that don't have composition / weight / width).
+                var hasComposition = Model.SelectedCompositions != null && Model.SelectedCompositions.Any();
+                var hasWeight      = (Model.Product.Weight ?? 0) > 0;
+                var hasHeight      = (Model.Product.Height ?? 0) > 0;
+                var hasWidth       = (Model.Product.Width  ?? 0) > 0;
+                var hasFabricType  = Model.Product.FabricTypeId.HasValue;
+                var hasProjects    = Model.Product.ProjectCategories != null && Model.Product.ProjectCategories.Any();
+                var isFabric       = hasComposition || hasWeight || hasHeight || hasWidth || hasFabricType;
+            }
 
-                <div class="pd-spec-row halves">
-                    <div class="pd-spec-cell">
-                        <span class="pd-spec-label">@SharedLocalizer["HEIGHT"]</span>
-                        <span class="pd-spec-val">@Model.Product.Height cm</span>
-                    </div>
-                    <div class="pd-spec-cell">
-                        <span class="pd-spec-label">@SharedLocalizer["WEIGHT"]</span>
-                        <span class="pd-spec-val">@Model.Product.Weight g / m</span>
-                    </div>
-                </div>
-
-                @if (Model.Product.ProjectCategories != null && Model.Product.ProjectCategories.Any())
-                {
-                    <div class="pd-spec-row full">
-                        <div class="pd-spec-cell">
-                            <span class="pd-spec-label">@SharedLocalizer["PROJECT"]</span>
-                            <div class="pd-spec-icons">
-                                @foreach (var cat in Model.Product.ProjectCategories)
-                                {
-                                    <i class="@cat.Icon" title="@cat.Name" style="font-size:22px"></i>
-                                }
+            <!-- Specs (only render sections that have data) -->
+            @if (isFabric || hasProjects)
+            {
+                <div class="pd-specs">
+                    @if (hasComposition)
+                    {
+                        <div class="pd-spec-row full">
+                            <div class="pd-spec-cell">
+                                <span class="pd-spec-label">@SharedLocalizer["COMPOSITION"]</span>
+                                <div class="pd-spec-comp">
+                                    @foreach (var c in Model.SelectedCompositions)
+                                    {
+                                        <span>@c.Percentage% @SharedLocalizer[@c.CompositionName]</span>
+                                    }
+                                </div>
                             </div>
                         </div>
-                    </div>
-                }
+                    }
 
-                <div class="pd-spec-row full last">
-                    <div class="pd-spec-cell">
-                        <span class="pd-spec-label">@SharedLocalizer["CARE INSTRUCTIONS"]</span>
-                        <div class="pd-spec-icons">
-                            <i class="ri-t-shirt-line"></i>
-                            <i class="ri-scissors-line"></i>
-                            <i class="ri-temp-cold-line"></i>
-                            <i class="ri-drop-line"></i>
-                            <i class="ri-sun-line"></i>
+                    @if (hasHeight || hasWeight)
+                    {
+                        <div class="pd-spec-row halves">
+                            @if (hasHeight)
+                            {
+                                <div class="pd-spec-cell">
+                                    <span class="pd-spec-label">@SharedLocalizer["HEIGHT"]</span>
+                                    <span class="pd-spec-val">@Model.Product.Height cm</span>
+                                </div>
+                            }
+                            @if (hasWeight)
+                            {
+                                <div class="pd-spec-cell">
+                                    <span class="pd-spec-label">@SharedLocalizer["WEIGHT"]</span>
+                                    <span class="pd-spec-val">@Model.Product.Weight g / m</span>
+                                </div>
+                            }
                         </div>
-                    </div>
+                    }
+
+                    @if (hasProjects)
+                    {
+                        <div class="pd-spec-row full">
+                            <div class="pd-spec-cell">
+                                <span class="pd-spec-label">@SharedLocalizer["PROJECT"]</span>
+                                <div class="pd-spec-icons">
+                                    @foreach (var cat in Model.Product.ProjectCategories)
+                                    {
+                                        <i class="@cat.Icon" title="@cat.Name" style="font-size:22px"></i>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    @* Care instructions are meaningful only for fabrics *@
+                    @if (isFabric)
+                    {
+                        <div class="pd-spec-row full last">
+                            <div class="pd-spec-cell">
+                                <span class="pd-spec-label">@SharedLocalizer["CARE INSTRUCTIONS"]</span>
+                                <div class="pd-spec-icons">
+                                    <i class="ri-t-shirt-line"></i>
+                                    <i class="ri-scissors-line"></i>
+                                    <i class="ri-temp-cold-line"></i>
+                                    <i class="ri-drop-line"></i>
+                                    <i class="ri-sun-line"></i>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
-            </div>
+            }
 
 
             <div class="pd-desc">
@@ -242,22 +270,40 @@
                 </div>
             }
 
-            <!-- Accordion -->
-            <div class="pd-acc-item">
-                <button class="pd-acc-btn" type="button" onclick="toggleAcc('accDetails',this)">
-                    @SharedLocalizer["Fabric Details"]<span>&#8964;</span>
-                </button>
-                <div id="accDetails" class="pd-acc-body">
-                    @if (Model.Product.Color != null)
-                    {
-                        <p><strong>@SharedLocalizer["Color:"]</strong> @SharedLocalizer[@Model.Product.Color.Name] — @Model.Product.Color.HexCode</p>
-                    }
-                    @if (Model.Product.Width.HasValue)
-                    {
-                        <p><strong>@SharedLocalizer["Width:"]</strong> @Model.Product.Width cm</p>
-                    }
+            @{
+                var showFabricAccordion = isFabric && (Model.Product.Color != null || hasWidth);
+            }
+            @if (showFabricAccordion)
+            {
+                <!-- Accordion -->
+                <div class="pd-acc-item">
+                    <button class="pd-acc-btn" type="button" onclick="toggleAcc('accDetails',this)">
+                        @SharedLocalizer["Fabric Details"]<span>&#8964;</span>
+                    </button>
+                    <div id="accDetails" class="pd-acc-body">
+                        @if (Model.Product.Color != null)
+                        {
+                            <p><strong>@SharedLocalizer["Color:"]</strong> @SharedLocalizer[@Model.Product.Color.Name] — @Model.Product.Color.HexCode</p>
+                        }
+                        @if (hasWidth)
+                        {
+                            <p><strong>@SharedLocalizer["Width:"]</strong> @Model.Product.Width cm</p>
+                        }
+                    </div>
                 </div>
-            </div>
+            }
+            else if (Model.Product.Color != null)
+            {
+                <!-- Accordion (non-fabric item with just a color) -->
+                <div class="pd-acc-item">
+                    <button class="pd-acc-btn" type="button" onclick="toggleAcc('accDetails',this)">
+                        @SharedLocalizer["Product Details"]<span>&#8964;</span>
+                    </button>
+                    <div id="accDetails" class="pd-acc-body">
+                        <p><strong>@SharedLocalizer["Color:"]</strong> @SharedLocalizer[@Model.Product.Color.Name] — @Model.Product.Color.HexCode</p>
+                    </div>
+                </div>
+            }
 
             <div class="pd-acc-item">
                 <button class="pd-acc-btn" type="button" onclick="toggleAcc('accReviews',this)">
