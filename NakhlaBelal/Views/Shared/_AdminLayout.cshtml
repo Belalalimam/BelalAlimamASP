@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -30,7 +30,7 @@
                 <a href="@Url.Action("Index", "Dashboard")" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")">
                     <i class="fas fa-chart-line"></i>
                     <span>Overview</span>
-                </a>                    
+                </a>
 
                 <div class="nav-section">Sales</div>
                 <a href="@Url.Action("Index", "Orders")" class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Orders" ? "active" : "")">

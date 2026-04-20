@@ -20,19 +20,22 @@ namespace NAKHLA.Areas.Customer.Controllers
         private readonly IRepository<Promotion> _promotionRepository;
         private readonly ILogger<CheckoutController> _logger;
         private readonly IWhatsAppService _whatsAppService;
+        private readonly IAdminEmailNotifier _adminEmailNotifier;
 
         public CheckoutController(
             UserManager<ApplicationUser> userManager,
             ApplicationDbContext context,
             IRepository<Promotion> promotionRepository,
             ILogger<CheckoutController> logger,
-            IWhatsAppService whatsAppService)
+            IWhatsAppService whatsAppService,
+            IAdminEmailNotifier adminEmailNotifier)
         {
             _userManager = userManager;
             _context = context;
             _promotionRepository = promotionRepository;
             _logger = logger;
             _whatsAppService = whatsAppService;
+            _adminEmailNotifier = adminEmailNotifier;
         }
 
         [HttpGet]
@@ -266,6 +269,16 @@ namespace NAKHLA.Areas.Customer.Controllers
                         await transaction.RollbackAsync();
                         throw; // ابعته للـ catch البرانية لنعرف شو السبب
                     }
+                }
+
+                // 6a. إيميل لكل الـ SuperAdmin/Admin/Employee بتفاصيل الطلب
+                try
+                {
+                    await _adminEmailNotifier.NotifyNewOrderAsync(order);
+                }
+                catch (Exception notifEx)
+                {
+                    _logger.LogError(notifEx, "Failed to send admin email notification for order {OrderNumber}", order.OrderNumber);
                 }
 
                 // 6. إرسال رسالة واتساب بتأكيد الطلب (لا تؤثر على تدفق الطلب إذا فشلت)

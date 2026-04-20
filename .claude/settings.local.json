@@ -3,7 +3,8 @@
     "allow": [
       "Bash(dotnet build *)",
       "Bash(dotnet ef *)",
-      "Bash(dotnet tool *)"
+      "Bash(dotnet tool *)",
+      "Bash(taskkill //F //IM NakhlaBelal.exe)"
     ]
   }
 }

@@ -269,7 +269,9 @@
                                         <div class="col-3">
                                             <div class="input-group">
                                                 <input type="number" name="ProductCompositions[@compIndex].Percentage"
-                                                       class="form-control" value="@pc.Percentage" min="1" max="100" placeholder="%" required />
+                                                       class="form-control"
+                                                       value="@pc.Percentage.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                                       min="1" max="100" step="0.01" placeholder="%" required />
                                                 <span class="input-group-text">%</span>
                                             </div>
                                         </div>

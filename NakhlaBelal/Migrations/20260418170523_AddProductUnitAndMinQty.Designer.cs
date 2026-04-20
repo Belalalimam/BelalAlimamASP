@@ -12,7 +12,7 @@ using NakhlaBelal.DataAccess;
 namespace NakhlaBelal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260418170933_AddProductUnitAndMinQty")]
+    [Migration("20260418170523_AddProductUnitAndMinQty")]
     partial class AddProductUnitAndMinQty
     {
         /// <inheritdoc />
