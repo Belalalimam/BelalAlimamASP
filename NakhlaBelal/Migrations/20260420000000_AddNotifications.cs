@@ -28,7 +28,7 @@ namespace NakhlaBelal.Migrations
                         CONSTRAINT [FK_Notifications_AspNetUsers_RecipientUserId]
                             FOREIGN KEY ([RecipientUserId]) REFERENCES [dbo].[AspNetUsers]([Id]) ON DELETE CASCADE,
                         CONSTRAINT [FK_Notifications_Orders_OrderId]
-                            FOREIGN KEY ([OrderId]) REFERENCES [dbo].[Orders]([Id]) ON DELETE SET NULL
+                            FOREIGN KEY ([OrderId]) REFERENCES [dbo].[Orders]([Id]) ON DELETE NO ACTION
                     );
 
                     CREATE INDEX [IX_Notifications_RecipientUserId] ON [dbo].[Notifications]([RecipientUserId]);

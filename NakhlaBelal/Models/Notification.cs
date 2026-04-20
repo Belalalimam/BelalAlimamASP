@@ -25,9 +25,10 @@ namespace NakhlaBelal.Models
         [MaxLength(500)]
         public string? Url { get; set; }
 
-        // ربط اختياري بالـ Order
+        // ربط اختياري بالـ Order (NO ACTION عشان ما يصير cascade cycle مع SQL Server)
         public int? OrderId { get; set; }
         public Order? Order { get; set; }
+
 
         public bool IsRead { get; set; } = false;
         public DateTime? ReadAt { get; set; }
