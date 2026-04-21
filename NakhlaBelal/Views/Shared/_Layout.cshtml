@@ -37,7 +37,7 @@
         .theme-accent { color: var(--brand-accent) !important; }
     </style>
     <script type="importmap"></script>
-    <link rel="icon" type="image/svg+xml" href="~/Logo.png" />
+    <link rel="icon" type="image/svg+xml" href="~/images/LogoUp.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
@@ -108,9 +108,7 @@
             });
         </script>
     }
-    <div class="text-black text-center py-2 small">
-        @Localizer["FreeShipping"]</u> @Localizer["on local orders of 1,000 EGP or more"]
-    </div>
+    
     <div class="site">
         <header class="">
             <div class="container1 ">
@@ -120,7 +118,10 @@
                         <a class="trigger" onclick="document.body.classList.add('showmenu'); return false;">
                             <i class="ri-menu-line"></i>
                         </a>
-                        <div class="logo"><a href="/">@Localizer["FUTIAN"]</a></div>
+                        <div class="logo ">
+                        @* <img src="~/images/Logo2.png" width="300px" alt="Alternate Text" /> *@
+                            <a href="/">@Localizer["Your  logo"]</a>
+                        </div>
                     </div>
 
 
@@ -130,7 +131,7 @@
                     <div class="middle">
                         <nav>
                             <ul>
-                                <li><a href="/Customer/home/product">@Localizer["AllFabrics"]</a></li>
+                                <li><a href="/Customer/home/product">@Localizer["AllProduct"]</a></li>
                                 
                                 @await Component.InvokeAsync("NavMenu")
                                 
@@ -285,7 +286,7 @@
                             <li><a href="#" data-target="lunguage"><i class="ri-globe-line"></i></a></li>
                         </ul>
                     </div>
-                    <div class="logo"><a href="/">@Localizer["FUTIAN"]</a></div>
+                    <div class="logo"><a href="/">@Localizer["Your Logo"]</a></div>
                     <div class="socials">
                         <ul>
                             <li><a href="#"><i class="ri-instagram-line"></i></a></li>
@@ -306,7 +307,7 @@
                     </div>
                     <div class="menu-list ">
                         <ul class="">
-                            <li><a href="/Customer/home/product"><span>@Localizer["AllFabrics"]</span></a></li>
+                            <li><a href="/Customer/home/product"><span>@Localizer["AllProduct"]</span></a></li>
                             @await Component.InvokeAsync("MobilMenu")
 
                         </ul>
@@ -380,7 +381,7 @@
 
 
     <!-- ============ Newsletter Strip ============ -->
-    <section class="newsletter-strip">
+    @* <section class="newsletter-strip">
         <div class="container">
             <div class="newsletter-content">
                 <div class="newsletter-text">
@@ -396,7 +397,7 @@
                 </form>
             </div>
         </div>
-    </section>
+    </section> *@
 
     <!-- ============ Main Footer (4 Columns) ============ -->
     <div class="footer-nav">

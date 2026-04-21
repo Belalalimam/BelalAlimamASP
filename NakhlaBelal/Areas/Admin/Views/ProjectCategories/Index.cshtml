@@ -1,0 +1,134 @@
+@model List<NakhlaBelal.Models.ProjectCategory>
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Project Categories";
+}
+
+<div class="content-card">
+    <div class="content-card-header d-flex justify-content-between align-items-center">
+        <div>
+            <h2 class="mb-1">Project Categories</h2>
+            <p class="text-muted mb-0">@ViewBag.Subtitle</p>
+        </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#pcCreate">
+            <i class="fas fa-plus me-1"></i> New project category
+        </button>
+    </div>
+
+    @if (TempData["success-notification"] != null)
+    { <div class="alert alert-success m-3">@TempData["success-notification"]</div> }
+    @if (TempData["error-notification"] != null)
+    { <div class="alert alert-danger m-3">@TempData["error-notification"]</div> }
+
+    <div class="p-3">
+        @if (!Model.Any())
+        {
+            <div class="text-center text-muted py-5">
+                <i class="fas fa-drafting-compass fa-3x mb-3"></i>
+                <p>No project categories yet. Create ones like <code>Dress</code>, <code>Coat</code>, <code>Jacket</code>.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width:70px">Image</th>
+                            <th style="width:70px">Icon</th>
+                            <th>Name</th>
+                            <th>Slug</th>
+                            <th>Products</th>
+                            <th class="text-end" style="width:160px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var p in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(p.ImageUrl))
+                                    { <img src="~/images/@p.ImageUrl" style="width:48px;height:48px;object-fit:cover;border-radius:8px" /> }
+                                    else
+                                    { <div style="width:48px;height:48px;background:#f1f3f5;border-radius:8px;display:flex;align-items:center;justify-content:center"><i class="fas fa-image text-muted"></i></div> }
+                                </td>
+                                <td>
+                                    @if (!string.IsNullOrEmpty(p.Icon))
+                                    { <i class="@p.Icon fa-lg text-secondary"></i> }
+                                    else
+                                    { <span class="text-muted">-</span> }
+                                </td>
+                                <td class="fw-semibold">@p.Name</td>
+                                <td><code>@p.Slug</code></td>
+                                <td><span class="badge bg-light text-dark">@(p.Products?.Count ?? 0)</span></td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-outline-primary"
+                                            data-bs-toggle="modal" data-bs-target="#pcEdit"
+                                            data-id="@p.Id" data-name="@p.Name" data-slug="@p.Slug"
+                                            data-icon="@p.Icon" data-desc="@p.Description" data-img="@p.ImageUrl">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <form asp-action="Delete" method="post" class="d-inline"
+                                          onsubmit="return confirm('Delete this project category? It will be detached from all products.');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@p.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="modal fade" id="pcCreate" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="Create" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <div class="modal-header"><h5 class="modal-title">New project category</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3"><label class="form-label">Name *</label><input class="form-control" name="Name" required placeholder="Dress" /></div>
+                <div class="mb-3"><label class="form-label">Slug <small class="text-muted">(leave empty to auto-generate)</small></label><input class="form-control" name="Slug" /></div>
+                <div class="mb-3"><label class="form-label">Icon class <small class="text-muted">(Font Awesome, e.g. fas fa-tshirt)</small></label><input class="form-control" name="Icon" placeholder="fas fa-tshirt" /></div>
+                <div class="mb-3"><label class="form-label">Image filename <small class="text-muted">(from /images)</small></label><input class="form-control" name="ImageUrl" /></div>
+                <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" name="Description" rows="2"></textarea></div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Create</button></div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="pcEdit" tabindex="-1">
+    <div class="modal-dialog">
+        <form asp-action="Edit" method="post" class="modal-content">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="Id" id="pc-id" />
+            <div class="modal-header"><h5 class="modal-title">Edit project category</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3"><label class="form-label">Name *</label><input class="form-control" name="Name" id="pc-name" required /></div>
+                <div class="mb-3"><label class="form-label">Slug</label><input class="form-control" name="Slug" id="pc-slug" /></div>
+                <div class="mb-3"><label class="form-label">Icon class</label><input class="form-control" name="Icon" id="pc-icon" /></div>
+                <div class="mb-3"><label class="form-label">Image filename</label><input class="form-control" name="ImageUrl" id="pc-img" /></div>
+                <div class="mb-3"><label class="form-label">Description</label><textarea class="form-control" name="Description" id="pc-desc" rows="2"></textarea></div>
+            </div>
+            <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.getElementById('pcEdit').addEventListener('show.bs.modal', function (ev) {
+        var b = ev.relatedTarget;
+        document.getElementById('pc-id').value   = b.getAttribute('data-id');
+        document.getElementById('pc-name').value = b.getAttribute('data-name');
+        document.getElementById('pc-slug').value = b.getAttribute('data-slug') || '';
+        document.getElementById('pc-icon').value = b.getAttribute('data-icon') || '';
+        document.getElementById('pc-img').value  = b.getAttribute('data-img') || '';
+        document.getElementById('pc-desc').value = b.getAttribute('data-desc') || '';
+    });
+</script>
+}

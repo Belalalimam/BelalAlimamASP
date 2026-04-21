@@ -120,8 +120,8 @@
   <data name="FreeShipping" xml:space="preserve">
     <value>Free Shipping</value>
   </data>
-  <data name="AllFabrics" xml:space="preserve">
-    <value>All Fabrics</value>
+  <data name="AllProduct" xml:space="preserve">
+    <value>All Products</value>
   </data>
   <data name="ByType" xml:space="preserve">
     <value>By Type</value>
