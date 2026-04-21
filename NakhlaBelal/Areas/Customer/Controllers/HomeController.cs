@@ -20,6 +20,10 @@ namespace NakhlaBelal.Areas.Customer.Controllers
             ViewBag.ProjectCategories = _context.ProjectCategories.ToList();
             ViewBag.FabricTypes = _context.FabricTypes.ToList();
             ViewBag.Colors = _context.Colors.ToList(); // افترضنا أن اسم الجدول Colors
+            ViewBag.Categories = _context.Categorise
+                .Where(c => !c.IsDeleted)
+                .OrderBy(c => c.DisplayOrder)
+                .ToList();
             return View();
         }
         public IActionResult Product(FilterVM filterVM, int page = 1)

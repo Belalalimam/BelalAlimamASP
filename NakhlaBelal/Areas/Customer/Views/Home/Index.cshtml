@@ -4,47 +4,218 @@
 @using Microsoft.Extensions.Localization
 @using NakhlaBelal
 @inject IStringLocalizer<SharedResource> SharedLocalizer
-<section class="hero">
-    <div class="hero-overlay"></div>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-    <div class="hero-content container-fluid">
-        <h1>@SharedLocalizer["Find High-Quality Textiles In our Online Fabric Store"]</h1>
-        <p>
-            @SharedLocalizer["Design your dreams and make them come true with our online fabrics."]
-        </p>
-
-        <a href="@Url.Action("product", "Home")" class="btn-hero">
-            @SharedLocalizer["Browse Our Fabrics"]
-        </a>
+<section class="hero-swiper-wrap">
+    <div class="swiper heroSwiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1600&q=80');">
+                    <div class="hero-slide-overlay"></div>
+                    <div class="hero-slide-content">
+                        <h1>@SharedLocalizer["Find High-Quality Textiles In our Online Fabric Store"]</h1>
+                        <p>@SharedLocalizer["Design your dreams and make them come true with our online fabrics."]</p>
+                        <a href="@Url.Action("Product", "Home")" class="hero-slide-btn theme-btn">@SharedLocalizer["Browse Our Fabrics"]</a>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1600&q=80');">
+                    <div class="hero-slide-overlay"></div>
+                    <div class="hero-slide-content">
+                        <h1>@SharedLocalizer["Premium Materials for Every Project"]</h1>
+                        <p>@SharedLocalizer["Discover a curated selection of fabrics, labels, and packaging."]</p>
+                        <a href="@Url.Action("Product", "Home")" class="hero-slide-btn theme-btn">@SharedLocalizer["Shop Now"]</a>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80');">
+                    <div class="hero-slide-overlay"></div>
+                    <div class="hero-slide-content">
+                        <h1>@SharedLocalizer["New Arrivals This Season"]</h1>
+                        <p>@SharedLocalizer["Fresh designs, trusted quality — delivered to your door."]</p>
+                        <a href="@Url.Action("Product", "Home")" class="hero-slide-btn theme-btn">@SharedLocalizer["Explore Collection"]</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="swiper-pagination"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-button-next"></div>
     </div>
 </section>
 
-<section class="categories container">
-    <div class="category-grid">
+<style>
+    .hero-swiper-wrap { position: relative; margin-bottom: 30px; }
+    .heroSwiper { width: 100%; height: 520px; }
+    .hero-slide {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0 8%;
+    }
+    .hero-slide-overlay {
+        position: absolute; inset: 0;
+        background: linear-gradient(90deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 60%, rgba(0,0,0,0) 100%);
+    }
+    [dir="rtl"] .hero-slide-overlay {
+        background: linear-gradient(270deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 60%, rgba(0,0,0,0) 100%);
+    }
+    .hero-slide-content {
+        position: relative;
+        z-index: 2;
+        max-width: 620px;
+        color: #fff;
+    }
+    .hero-slide-content h1 {
+        font-size: 40px;
+        font-weight: 800;
+        line-height: 1.2;
+        margin: 0 0 14px;
+        text-shadow: 0 2px 10px rgba(0,0,0,.35);
+    }
+    .hero-slide-content p {
+        font-size: 17px;
+        margin: 0 0 22px;
+        opacity: .95;
+    }
+    .hero-slide-btn {
+        display: inline-block;
+        padding: 12px 28px;
+        border-radius: 999px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: filter .15s ease, transform .15s ease;
+    }
+    .hero-slide-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+    .heroSwiper .swiper-button-prev,
+    .heroSwiper .swiper-button-next {
+        color: #fff;
+        background: rgba(0,0,0,.35);
+        width: 44px; height: 44px;
+        border-radius: 50%;
+        backdrop-filter: blur(4px);
+    }
+    .heroSwiper .swiper-button-prev:after,
+    .heroSwiper .swiper-button-next:after { font-size: 18px; font-weight: 700; }
+    .heroSwiper .swiper-pagination-bullet { background: #fff; opacity: .6; }
+    .heroSwiper .swiper-pagination-bullet-active { opacity: 1; background: var(--brand-secondary, #ffd700); }
+    @@media (max-width: 767px) {
+        .heroSwiper { height: 380px; }
+        .hero-slide { padding: 0 24px; }
+        .hero-slide-content h1 { font-size: 26px; }
+        .hero-slide-content p { font-size: 14px; }
+        .hero-slide-btn { padding: 10px 22px; font-size: 14px; }
+        .heroSwiper .swiper-button-prev,
+        .heroSwiper .swiper-button-next { display: none; }
+    }
+</style>
 
-        <a href="@Url.Action("CategroySearch", "Home", new { FabricTypeId = 1 })" class="category-card">
-            <img src="~/images/warm-coating-fabrics.webp" alt="Flash Sale" />
-            <div class="category-overlay">
-                <h3>@SharedLocalizer["Flash Sale"]</h3>
-            </div>
-        </a>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            new Swiper('.heroSwiper', {
+                loop: true,
+                autoplay: { delay: 5500, disableOnInteraction: false },
+                speed: 700,
+                effect: 'fade',
+                fadeEffect: { crossFade: true },
+                pagination: { el: '.heroSwiper .swiper-pagination', clickable: true },
+                navigation: {
+                    nextEl: '.heroSwiper .swiper-button-next',
+                    prevEl: '.heroSwiper .swiper-button-prev'
+                }
+            });
+        });
+    </script>
+}
 
-        <a href="@Url.Action("CategroySearch", "Home", new { CompositionId = 4 })" class="category-card">
-            <img src="~/images/Silk-Crepe-Satin-Fabric-033374_02.webp" alt="Solid Fabrics" />
-            <div class="category-overlay">
-                <h3>@SharedLocalizer["Solid Fabrics Always in Stock"]</h3>
-            </div>
-        </a>
-
-        <a href="@Url.Action("CategroySearch", "Home", new { CompositionId = 3 })" class="category-card">
-            <img src="~/images/BROCHIER-online-deadstock-decor-fabrics.webp" alt="Furnishing Fabrics" />
-            <div class="category-overlay">
-                <h3>@SharedLocalizer["Furnishing Fabrics"]</h3>
-            </div>
-        </a>
-
+<section class="dynamic-categories container py-5">
+    <div class="dc-header text-center mb-4">
+        <h2 class="dc-title">@SharedLocalizer["Shop by Category"]</h2>
+        <p class="dc-sub text-muted">@SharedLocalizer["Browse our categories and find what fits your project"]</p>
     </div>
+
+    @if (ViewBag.Categories != null && ((IEnumerable<NakhlaBelal.Models.Category>)ViewBag.Categories).Any())
+    {
+        <div class="dc-grid">
+            @foreach (var cat in (IEnumerable<NakhlaBelal.Models.Category>)ViewBag.Categories)
+            {
+                <a href="@Url.Action("CategroySearch", "Home", new { CategoryId = cat.Id })"
+                   class="dc-card"
+                   title="@cat.Name">
+                    <div class="dc-thumb">
+                        @if (!string.IsNullOrWhiteSpace(cat.ImageUrl))
+                        {
+                            <img src="@cat.ImageUrl" alt="@cat.Name" loading="lazy" />
+                        }
+                        else if (!string.IsNullOrWhiteSpace(cat.IconClass))
+                        {
+                            <span class="dc-icon"><i class="@cat.IconClass"></i></span>
+                        }
+                        else
+                        {
+                            <span class="dc-icon"><i class="ri-price-tag-3-line"></i></span>
+                        }
+                    </div>
+                    <span class="dc-name">@SharedLocalizer[cat.Name]</span>
+                </a>
+            }
+        </div>
+    }
 </section>
+
+<style>
+    .dynamic-categories .dc-title { font-weight: 700; letter-spacing: .3px; }
+    .dynamic-categories .dc-sub { font-size: 15px; }
+    .dc-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 18px;
+    }
+    .dc-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        color: inherit;
+        transition: transform .25s ease;
+    }
+    .dc-card:hover { transform: translateY(-4px); }
+    .dc-thumb {
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        border-radius: 18px;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f5f5f7 0%, #e9ecef 100%);
+        box-shadow: 0 4px 14px rgba(0,0,0,.06);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: box-shadow .25s ease, transform .25s ease;
+    }
+    .dc-card:hover .dc-thumb { box-shadow: 0 10px 24px rgba(0,0,0,.12); }
+    .dc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .dc-icon { font-size: 38px; color: #1a1a2e; }
+    .dc-name {
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        color: #1a1a2e;
+    }
+    @@media (max-width: 1199px) { .dc-grid { grid-template-columns: repeat(5, 1fr); } }
+    @@media (max-width: 991px)  { .dc-grid { grid-template-columns: repeat(4, 1fr); } }
+    @@media (max-width: 767px)  { .dc-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; } .dc-name { font-size: 13px; } }
+    @@media (max-width: 480px)  { .dc-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; } }
+</style>
 
 
 
@@ -58,10 +229,66 @@
     </div>
 
 
-    @* البحث بهي الطريقة سيء جدا وبده تعديل*@
-    <form class="search-box  d-flex justify-content-center" action="@Url.Action("CategroySearch", "Home")" method="get">
-        <input type="text" name="Name" placeholder="Type & hit 'enter'" />
+    <form class="home-search" action="@Url.Action("CategroySearch", "Home")" method="get" role="search" autocomplete="off">
+        <div class="home-search-inner">
+            <i class="ri-search-line home-search-icon" aria-hidden="true"></i>
+            <input type="text" name="Name" class="home-search-input"
+                   placeholder="@SharedLocalizer["Search for products, categories, colors..."]"
+                   aria-label="@SharedLocalizer["Search"]" />
+            <button type="submit" class="home-search-btn theme-btn">
+                <i class="ri-search-line d-md-none"></i>
+                <span class="d-none d-md-inline">@SharedLocalizer["Search"]</span>
+            </button>
+        </div>
     </form>
+    <style>
+        .home-search { max-width: 720px; margin: 0 auto 28px; padding: 0 12px; }
+        .home-search-inner {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 999px;
+            box-shadow: 0 6px 18px rgba(0,0,0,.06);
+            transition: box-shadow .2s ease, border-color .2s ease;
+        }
+        .home-search-inner:focus-within {
+            border-color: var(--brand-primary, #013220);
+            box-shadow: 0 8px 22px rgba(0,0,0,.12);
+        }
+        .home-search-icon {
+            font-size: 20px;
+            color: #9ca3af;
+            padding: 0 16px;
+            flex: 0 0 auto;
+        }
+        .home-search-input {
+            flex: 1;
+            border: none;
+            outline: none;
+            background: transparent;
+            padding: 14px 0;
+            font-size: 15px;
+            min-width: 0;
+        }
+        .home-search-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 10px 22px;
+            margin: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 0 0 auto;
+            transition: filter .15s ease;
+        }
+        .home-search-btn:hover { filter: brightness(1.1); }
+        @@media (max-width: 575px) {
+            .home-search-btn { padding: 10px 14px; }
+            .home-search-input { font-size: 14px; padding: 12px 0; }
+            .home-search-icon { padding: 0 12px; font-size: 18px; }
+        }
+    </style>
 
     <!-- Divider -->
     <div class="changeColor">

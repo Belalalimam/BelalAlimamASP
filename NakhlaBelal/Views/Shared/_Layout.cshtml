@@ -10,9 +10,32 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="theme-color" content="#013220" />
+    @{
+        var earlySettings = SiteSettings.Get();
+        var earlyIsArabic = (Context.Features.Get<IRequestCultureFeature>()?.RequestCulture.UICulture.Name) == "ar";
+        var earlyName = earlyIsArabic ? earlySettings.SiteNameArabic : earlySettings.SiteName;
+    }
+    <meta name="theme-color" content="@earlySettings.PrimaryColor" />
     <meta name="author" content="">
-    <title>@Localizer["FUTIAN"]</title>
+    <title>@earlyName</title>
+    @if (!string.IsNullOrWhiteSpace(earlySettings.FaviconUrl))
+    {
+        <link rel="icon" href="@earlySettings.FaviconUrl" />
+    }
+    <style>
+        :root {
+            --brand-primary: @earlySettings.PrimaryColor;
+            --brand-secondary: @earlySettings.SecondaryColor;
+            --brand-accent: @earlySettings.AccentColor;
+            --brand-btn: @earlySettings.ButtonColor;
+            --brand-btn-text: @earlySettings.ButtonTextColor;
+        }
+        .theme-bg-primary { background-color: var(--brand-primary) !important; }
+        .theme-text-primary { color: var(--brand-primary) !important; }
+        .theme-btn { background-color: var(--brand-btn) !important; color: var(--brand-btn-text) !important; border-color: var(--brand-btn) !important; }
+        .theme-btn:hover { filter: brightness(1.1); }
+        .theme-accent { color: var(--brand-accent) !important; }
+    </style>
     <script type="importmap"></script>
     <link rel="icon" type="image/svg+xml" href="~/Logo.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" asp-append-version="true" />
@@ -574,16 +597,40 @@
 
     <!-- ============ Floating Compare Bar ============ -->
     <div id="compareBar" class="compare-bar" style="display:none;">
-        <div class="compare-bar-inner">
+        <!-- Collapsed pill (mobile-friendly) -->
+        <button type="button" id="compareBarPill" class="compare-bar-pill" onclick="toggleCompareBar(true)" title="@(isArabic ? "عرض المقارنة" : "Show compare")">
+            <i class="ri-arrow-left-right-line"></i>
+            <span class="compare-bar-pill-count" id="compareBarPillCount">0</span>
+        </button>
+        <div class="compare-bar-inner" id="compareBarInner">
+            <button type="button" class="compare-bar-min" onclick="toggleCompareBar(false)" title="@(isArabic ? "تصغير" : "Minimize")">
+                <i class="ri-subtract-line"></i>
+            </button>
             <div class="compare-bar-items" id="compareBarItems"></div>
             <div class="compare-bar-actions">
-                <button class="compare-bar-clear" onclick="clearAllCompare()"><i class="ri-delete-bin-line"></i></button>
+                <button class="compare-bar-clear" onclick="clearAllCompare()" title="@(isArabic ? "مسح الكل" : "Clear all")"><i class="ri-delete-bin-line"></i></button>
                 <a class="compare-bar-go" id="compareBarGo" href="/Customer/Compare/Index">
-                    <i class="ri-arrow-left-right-line"></i> @(isArabic ? "قارن الآن" : "Compare now")
+                    <i class="ri-arrow-left-right-line"></i> <span class="cbg-text">@(isArabic ? "قارن الآن" : "Compare now")</span>
                 </a>
             </div>
         </div>
     </div>
+    <script>
+        (function(){
+            const KEY = 'cmpBarCollapsed';
+            window.toggleCompareBar = function(expand){
+                const bar = document.getElementById('compareBar');
+                if (!bar) return;
+                if (expand) { bar.classList.remove('collapsed'); localStorage.setItem(KEY,'0'); }
+                else { bar.classList.add('collapsed'); localStorage.setItem(KEY,'1'); }
+            };
+            document.addEventListener('DOMContentLoaded', function(){
+                const bar = document.getElementById('compareBar');
+                if (!bar) return;
+                if (localStorage.getItem(KEY) === '1') bar.classList.add('collapsed');
+            });
+        })();
+    </script>
 
     <style>
         /* Account dropdown */
@@ -597,7 +644,7 @@
         /* Compare floating bar */
         .compare-bar{position:fixed;bottom:18px;inset-inline-start:50%;transform:translateX(-50%);z-index:998;max-width:720px;width:calc(100% - 32px)}
         [dir="rtl"] .compare-bar{transform:translateX(50%)}
-        .compare-bar-inner{background:#013220;color:#fff;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+        .compare-bar-inner{background:#013220;color:#fff;border-radius:14px;padding:10px 14px;display:flex;align-items:center;gap:10px;box-shadow:0 10px 30px rgba(0,0,0,.25);position:relative}
         .compare-bar-items{display:flex;gap:8px;flex:1;overflow-x:auto}
         .cbi{position:relative;width:48px;height:48px;border-radius:10px;overflow:hidden;flex:0 0 48px;background:#fff}
         .cbi img{width:100%;height:100%;object-fit:cover}
@@ -606,6 +653,27 @@
         .compare-bar-clear{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:999px;width:34px;height:34px;cursor:pointer}
         .compare-bar-go{background:#ffd700;color:#013220;border-radius:999px;padding:8px 16px;font-weight:700;text-decoration:none;white-space:nowrap}
         .compare-bar-go:hover{background:#ffeb3b;color:#013220}
+        .compare-bar-min{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25);border-radius:50%;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 28px}
+        .compare-bar-min:hover{background:rgba(255,255,255,.08)}
+        /* Collapsed pill */
+        .compare-bar-pill{display:none;align-items:center;justify-content:center;gap:6px;background:#013220;color:#ffd700;border:none;border-radius:999px;width:52px;height:52px;box-shadow:0 8px 20px rgba(0,0,0,.25);cursor:pointer;position:relative}
+        .compare-bar-pill i{font-size:22px}
+        .compare-bar-pill-count{position:absolute;top:-4px;inset-inline-end:-4px;background:#e91e63;color:#fff;border-radius:999px;min-width:20px;height:20px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;padding:0 5px}
+        .compare-bar.collapsed{width:auto;max-width:none;inset-inline-start:auto;inset-inline-end:16px;transform:none;bottom:80px}
+        [dir="rtl"] .compare-bar.collapsed{transform:none}
+        .compare-bar.collapsed .compare-bar-inner{display:none}
+        .compare-bar.collapsed .compare-bar-pill{display:inline-flex}
+        @@media (max-width:575px){
+            .compare-bar{bottom:12px;width:calc(100% - 20px)}
+            .compare-bar-inner{padding:8px 10px;gap:8px;border-radius:12px}
+            .compare-bar-items{gap:6px}
+            .cbi{width:40px;height:40px;flex:0 0 40px;border-radius:8px}
+            .compare-bar-go{padding:7px 12px;font-size:13px}
+            .compare-bar-go .cbg-text{display:none}
+            .compare-bar-go i{font-size:16px}
+            .compare-bar-clear{width:30px;height:30px}
+            .compare-bar.collapsed{bottom:72px;inset-inline-end:12px}
+        }
 
         /* Mobile menu account sub-panel */
         .acc-panel-inner{padding:18px 16px;color:#013220}
@@ -980,6 +1048,8 @@
                     accCmp.setAttribute('data-empty', ids.length > 0 ? '0' : '1');
                     if (ids.length > 0) accCmp.classList.remove('d-none'); else accCmp.classList.add('d-none');
                 });
+                const pillCount = document.getElementById('compareBarPillCount');
+                if (pillCount) pillCount.textContent = ids.length;
                 if (!bar || !wrap) return;
                 if (ids.length === 0){ bar.style.display='none'; return; }
                 bar.style.display='block';

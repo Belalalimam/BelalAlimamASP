@@ -92,6 +92,27 @@ namespace NakhlaBelal.ViewModels
         [Display(Name = "نص حقوق النشر")]
         public string CopyrightText { get; set; } = "© 2025 نخلة. جميع الحقوق محفوظة.";
 
+        // ============ Theme / Branding Colors ============
+        [Display(Name = "اللون الأساسي")]
+        [RegularExpression(@"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$", ErrorMessage = "يجب أن يكون كود HEX صالح (مثل #013220)")]
+        public string PrimaryColor { get; set; } = "#013220";
+
+        [Display(Name = "اللون الثانوي")]
+        [RegularExpression(@"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$", ErrorMessage = "يجب أن يكون كود HEX صالح")]
+        public string SecondaryColor { get; set; } = "#ffd700";
+
+        [Display(Name = "لون التمييز (Accent)")]
+        [RegularExpression(@"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$", ErrorMessage = "يجب أن يكون كود HEX صالح")]
+        public string AccentColor { get; set; } = "#e91e63";
+
+        [Display(Name = "لون الأزرار")]
+        [RegularExpression(@"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$", ErrorMessage = "يجب أن يكون كود HEX صالح")]
+        public string ButtonColor { get; set; } = "#013220";
+
+        [Display(Name = "لون نص الأزرار")]
+        [RegularExpression(@"^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$", ErrorMessage = "يجب أن يكون كود HEX صالح")]
+        public string ButtonTextColor { get; set; } = "#ffffff";
+
         // ============ Metadata ============
         public DateTime LastUpdated { get; set; } = DateTime.Now;
         public string? UpdatedBy { get; set; }

@@ -153,7 +153,60 @@
             <button type="button" class="tab-btn" data-tab="social"><i class="fas fa-share-nodes"></i> السوشيال ميديا</button>
             <button type="button" class="tab-btn" data-tab="business"><i class="fas fa-money-bill"></i> الأعمال</button>
             <button type="button" class="tab-btn" data-tab="seo"><i class="fas fa-magnifying-glass"></i> SEO</button>
+            <button type="button" class="tab-btn" data-tab="theme"><i class="fas fa-palette"></i> الألوان</button>
             <button type="button" class="tab-btn" data-tab="maintenance"><i class="fas fa-screwdriver-wrench"></i> الصيانة</button>
+        </div>
+
+        <!-- Theme / Colors -->
+        <div class="tab-panel" data-tab-panel="theme">
+            <div class="settings-card">
+                <h3>ألوان الهوية البصرية</h3>
+                <p class="form-text" style="margin-bottom:16px;">تُطبَّق هذه الألوان على الموقع بأكمله فور الحفظ.</p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>اللون الأساسي (Primary)</label>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <input type="color" value="@Model.PrimaryColor" data-color-for="PrimaryColor" style="width:52px;height:42px;padding:2px;border-radius:8px;border:1px solid #d1d5db;" />
+                            <input asp-for="PrimaryColor" class="form-control" style="flex:1;" />
+                        </div>
+                        <span asp-validation-for="PrimaryColor" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>اللون الثانوي (Secondary)</label>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <input type="color" value="@Model.SecondaryColor" data-color-for="SecondaryColor" style="width:52px;height:42px;padding:2px;border-radius:8px;border:1px solid #d1d5db;" />
+                            <input asp-for="SecondaryColor" class="form-control" style="flex:1;" />
+                        </div>
+                        <span asp-validation-for="SecondaryColor" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>لون التمييز (Accent)</label>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <input type="color" value="@Model.AccentColor" data-color-for="AccentColor" style="width:52px;height:42px;padding:2px;border-radius:8px;border:1px solid #d1d5db;" />
+                            <input asp-for="AccentColor" class="form-control" style="flex:1;" />
+                        </div>
+                        <span asp-validation-for="AccentColor" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>لون الأزرار</label>
+                        <div style="display:flex;gap:8px;align-items:center;">
+                            <input type="color" value="@Model.ButtonColor" data-color-for="ButtonColor" style="width:52px;height:42px;padding:2px;border-radius:8px;border:1px solid #d1d5db;" />
+                            <input asp-for="ButtonColor" class="form-control" style="flex:1;" />
+                        </div>
+                        <span asp-validation-for="ButtonColor" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>لون نص الأزرار</label>
+                    <div style="display:flex;gap:8px;align-items:center;max-width:320px;">
+                        <input type="color" value="@Model.ButtonTextColor" data-color-for="ButtonTextColor" style="width:52px;height:42px;padding:2px;border-radius:8px;border:1px solid #d1d5db;" />
+                        <input asp-for="ButtonTextColor" class="form-control" style="flex:1;" />
+                    </div>
+                    <span asp-validation-for="ButtonTextColor" class="text-danger"></span>
+                </div>
+            </div>
         </div>
 
         <!-- General -->
@@ -352,6 +405,17 @@
                 document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
                 btn.classList.add('active');
                 document.querySelector(`[data-tab-panel="${target}"]`).classList.add('active');
+            });
+        });
+
+        // Sync color pickers with their text inputs (both directions)
+        document.querySelectorAll('input[type="color"][data-color-for]').forEach(picker => {
+            const name = picker.dataset.colorFor;
+            const textInput = document.querySelector(`input[name="${name}"]:not([type="color"])`);
+            if (!textInput) return;
+            picker.addEventListener('input', () => { textInput.value = picker.value; });
+            textInput.addEventListener('input', () => {
+                if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(textInput.value)) picker.value = textInput.value;
             });
         });
     </script>
