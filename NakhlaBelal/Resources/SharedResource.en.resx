@@ -886,4 +886,7 @@ In this section you can find our wide selection of plain, woven, printed, embroi
   <data name="SuccessTitle" xml:space="preserve">
     <value>Account Created!</value>
   </data>
+  <data name="AllProduct" xml:space="preserve">
+    <value>All Product</value>
+  </data>
 </root>
