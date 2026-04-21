@@ -154,7 +154,7 @@
                     <div class="dc-thumb">
                         @if (!string.IsNullOrWhiteSpace(cat.ImageUrl))
                         {
-                            <img src="@cat.ImageUrl" alt="@cat.Name" loading="lazy" />
+                            <img src="~/images/@cat.ImageUrl" alt="@cat.Name" loading="lazy" />
                         }
                         else if (!string.IsNullOrWhiteSpace(cat.IconClass))
                         {
