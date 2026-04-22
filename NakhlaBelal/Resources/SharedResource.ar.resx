@@ -193,13 +193,13 @@
     <value>تنورة</value>
   </data>
   <data name="Coat" xml:space="preserve">
-    <value>معطف</value>
+    <value>بالطو</value>
   </data>
   <data name="Dress" xml:space="preserve">
     <value>فستان</value>
   </data>
   <data name="Jacket" xml:space="preserve">
-    <value>سترة</value>
+    <value>جاكيت</value>
   </data>
   <data name="Pants" xml:space="preserve">
     <value>بنطال</value>
@@ -887,5 +887,8 @@
   </data>
   <data name="AllProduct" xml:space="preserve">
     <value>كل المنتجات</value>
+  </data>
+  <data name="Search for products, categories, colors..." xml:space="preserve">
+    <value>ابحث عن المنتجات والفئات والألوان...</value>
   </data>
 </root>

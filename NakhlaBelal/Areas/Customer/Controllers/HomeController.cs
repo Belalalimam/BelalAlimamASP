@@ -78,7 +78,7 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                 products = products.Where(p => p.Pattern == filterVM.Pattern.Value);
 
             // الترقيم (Pagination)
-            const int pageSize = 12;
+            const int pageSize = 20;
             var totalItems = products.Count();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
@@ -190,7 +190,7 @@ namespace NakhlaBelal.Areas.Customer.Controllers
                 products = products.Where(p => p.Pattern == filterVM.Pattern.Value);
 
             // الترقيم (Pagination)
-            const int pageSize = 12;
+            const int pageSize = 20;
             var totalItems = products.Count();
             var totalPages = (int)Math.Ceiling(totalItems / (double)pageSize);
 
