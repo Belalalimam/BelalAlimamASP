@@ -80,7 +80,7 @@
 
             <!-- Price -->
             <div class="pd-price-block">
-                <span class="pd-price">@priceStr / @unitLabel</span>
+                <span class="pd-price">@priceStr / @SharedLocalizer[@unitLabel]</span>
                 <span class="pd-price-note"> + @SharedLocalizer["VAT if applicable"]</span>
             </div>
             @if (Model.Product.Discount > 0)
@@ -107,7 +107,7 @@
                            value="@minQty" min="@minQty" step="@step" max="@Model.Product.StockQuantity"
                            class="pd-qty-val" />
                     <button type="button" class="pd-qty-btn" onclick="incQty()">+</button>
-                    <span class="pd-qty-unit">@unitLabel</span>
+                    @* <span class="pd-qty-unit">@unitLabel</span> *@
                 </div>
                 <button type="submit" class="pd-add-btn">@SharedLocalizer["ADD TO BASKET"]</button>
             </form>

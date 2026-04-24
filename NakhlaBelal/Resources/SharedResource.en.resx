@@ -892,4 +892,100 @@ In this section you can find our wide selection of plain, woven, printed, embroi
   <data name="Search for products, categories, colors..." xml:space="preserve">
     <value>Search for products, categories, colors...</value>
   </data>
+  <data name="Buttons" xml:space="preserve">
+    <value>Buttons</value>
+  </data>
+  <data name="Packaging" xml:space="preserve">
+    <value>Packaging</value>
+  </data>
+  <data name="Recently Viewed" xml:space="preserve">
+    <value>Recently Viewed</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="Shop by Category" xml:space="preserve">
+    <value>Shop by Category</value>
+  </data>
+  <data name="Browse our categories and find what fits your project" xml:space="preserve">
+    <value>Browse our categories and find what fits your project</value>
+  </data>
+  <data name="Premium Materials for Every Project" xml:space="preserve">
+    <value>Premium Materials for Every Project</value>
+  </data>
+  <data name="Discover a curated selection of fabrics, labels, and packaging." xml:space="preserve">
+    <value>Discover a curated selection of fabrics, labels, and packaging.</value>
+  </data>
+  <data name="Shop Now" xml:space="preserve">
+    <value>Shop Now</value>
+  </data>
+  <data name="New Arrivals This Season" xml:space="preserve">
+    <value>New Arrivals This Season</value>
+  </data>
+  <data name="Fresh designs, trusted quality — delivered to your door." xml:space="preserve">
+    <value>Fresh designs, trusted quality — delivered to your door.</value>
+  </data>
+  <data name="Explore Collection" xml:space="preserve">
+    <value>Explore Collection</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="pc" xml:space="preserve">
+    <value>pc</value>
+  </data>
+  <data name="kg" xml:space="preserve">
+    <value>kg</value>
+  </data>
+  <data name="Wishlist" xml:space="preserve">
+    <value>Wishlist</value>
+  </data>
+  <data name="Compare" xml:space="preserve">
+    <value>Compare</value>
+  </data>
+  <data name="Request Sample" xml:space="preserve">
+    <value>Request Sample</value>
+  </data>
+  <data name="Nothing to compare yet" xml:space="preserve">
+    <value>Nothing to compare yet</value>
+  </data>
+  <data name="Tap the compare icon on product cards to add up to 4 fabrics." xml:space="preserve">
+    <value>Tap the compare icon on product cards to add up to 4 fabrics.</value>
+  </data>
+  <data name="Browse fabrics" xml:space="preserve">
+    <value>Browse fabrics</value>
+  </data>
+  <data name="My Wishlist" xml:space="preserve">
+    <value>My Wishlist</value>
+  </data>
+  <data name="Your wishlist is empty" xml:space="preserve">
+    <value>Your wishlist is empty</value>
+  </data>
+  <data name="Browse fabrics and tap the heart to save them here." xml:space="preserve">
+    <value>Browse fabrics and tap the heart to save them here.</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Logout</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="Meter" xml:space="preserve">
+    <value>Meter</value>
+  </data>
+  <data name="Piece" xml:space="preserve">
+    <value>Piece</value>
+  </data>
+  <data name="Kilo" xml:space="preserve">
+    <value>Kilo</value>
+  </data>
+  <data name="Yard" xml:space="preserve">
+    <value>Yard</value>
+  </data>
+  <data name="Minimum" xml:space="preserve">
+    <value>Minimum</value>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>Step</value>
+  </data>
 </root>

@@ -891,4 +891,100 @@
   <data name="Search for products, categories, colors..." xml:space="preserve">
     <value>ابحث عن المنتجات والفئات والألوان...</value>
   </data>
+  <data name="Buttons" xml:space="preserve">
+    <value>أزرار</value>
+  </data>
+  <data name="Packaging" xml:space="preserve">
+    <value>التغليف</value>
+  </data>
+  <data name="Recently Viewed" xml:space="preserve">
+    <value>تمت مشاهدته مؤخراً</value>
+  </data>
+  <data name="Label" xml:space="preserve">
+    <value>الشعارات</value>
+  </data>
+  <data name="Shop by Category" xml:space="preserve">
+    <value>تسوق حسب الفئة</value>
+  </data>
+  <data name="Browse our categories and find what fits your project" xml:space="preserve">
+    <value>تصفح فئاتنا واعثر على ما يناسب مشروعك</value>
+  </data>
+  <data name="Premium Materials for Every Project" xml:space="preserve">
+    <value>مواد عالية الجودة لكل مشروع</value>
+  </data>
+  <data name="Discover a curated selection of fabrics, labels, and packaging." xml:space="preserve">
+    <value>اكتشف مجموعة مختارة بعناية من الأقمشة والعلامات التجارية والتغليف.</value>
+  </data>
+  <data name="Shop Now" xml:space="preserve">
+    <value>تسوق الآن</value>
+  </data>
+  <data name="New Arrivals This Season" xml:space="preserve">
+    <value>أحدث الموديلات لهذا الموسم</value>
+  </data>
+  <data name="Fresh designs, trusted quality — delivered to your door." xml:space="preserve">
+    <value>تصاميم جديدة، جودة موثوقة — تُسلَّم إلى عتبة بابك.</value>
+  </data>
+  <data name="Explore Collection" xml:space="preserve">
+    <value>استكشف المجموعة</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>الوحدة</value>
+  </data>
+  <data name="pc" xml:space="preserve">
+    <value>للقطعة</value>
+  </data>
+  <data name="kg" xml:space="preserve">
+    <value>للكيلو</value>
+  </data>
+  <data name="Wishlist" xml:space="preserve">
+    <value>المفضلة</value>
+  </data>
+  <data name="Compare" xml:space="preserve">
+    <value>مقارنة</value>
+  </data>
+  <data name="Request Sample" xml:space="preserve">
+    <value>طلب عينة</value>
+  </data>
+  <data name="Nothing to compare yet" xml:space="preserve">
+    <value>لا يوجد ما يقارن به حتى الآن</value>
+  </data>
+  <data name="Tap the compare icon on product cards to add up to 4 fabrics." xml:space="preserve">
+    <value>اضغط على أيقونة المقارنة الموجودة على بطاقات المنتجات لإضافة ما يصل إلى 4 أنواع من الأقمشة.</value>
+  </data>
+  <data name="Browse fabrics" xml:space="preserve">
+    <value>تصفح الأقمشة</value>
+  </data>
+  <data name="My Wishlist" xml:space="preserve">
+    <value>قائمة المفضلة</value>
+  </data>
+  <data name="Your wishlist is empty" xml:space="preserve">
+    <value>قائمة المفضلة فارغة</value>
+  </data>
+  <data name="Browse fabrics and tap the heart to save them here." xml:space="preserve">
+    <value>تصفح الأقمشة وانقر على رمز القلب لحفظها هنا.</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>تسجيل الخروج</value>
+  </data>
+  <data name="Register" xml:space="preserve">
+    <value>انشاء حساب</value>
+  </data>
+  <data name="Meter" xml:space="preserve">
+    <value>متر</value>
+  </data>
+  <data name="Piece" xml:space="preserve">
+    <value>قطعة</value>
+  </data>
+  <data name="Kilo" xml:space="preserve">
+    <value>كيلو جرام</value>
+  </data>
+  <data name="Yard" xml:space="preserve">
+    <value>يرد</value>
+  </data>
+  <data name="Minimum" xml:space="preserve">
+    <value>الحد الأدنى للطلب</value>
+  </data>
+  <data name="Step" xml:space="preserve">
+    <value>خطوات الزيادة</value>
+  </data>
 </root>
