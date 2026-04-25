@@ -313,7 +313,7 @@
                         <h3 class="pp-card-name">@item.Name</h3>
                         @if (item.ProductCompositions?.Any() == true)
                         {
-                            <p class="pp-card-comp">
+                            <p class="pp-card-comp d-flex justify-content-center">
                                 @string.Join(", ", item.ProductCompositions.Take(3)
                                   .Select(c => $"{c.Composition?.Name?.Substring(0, Math.Min(c.Composition.Name.Length, 2))} {c.Percentage}%"))
                             </p>
@@ -321,7 +321,7 @@
                         @{
                             var itemUnit = UnitHelper.GetEnglishShort(item.UnitPrice);
                         }
-                        <div class="pp-card-specs">
+                        <div class="pp-card-specs justify-content-between">
                             <span>@item.Width cm</span>
                             <span>@item.Weight g / m</span>
                         </div>
