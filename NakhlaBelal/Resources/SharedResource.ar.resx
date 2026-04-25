@@ -987,4 +987,7 @@
   <data name="Step" xml:space="preserve">
     <value>خطوات الزيادة</value>
   </data>
+  <data name="£" xml:space="preserve">
+    <value>جنيه</value>
+  </data>
 </root>

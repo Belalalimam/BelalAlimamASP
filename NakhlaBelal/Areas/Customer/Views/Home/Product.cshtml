@@ -326,7 +326,7 @@
                             <span>@item.Weight g / m</span>
                         </div>
                         <div class="pp-card-price-row">
-                            <span class="pp-card-price">€ @item.Price.ToString("N2").Replace(".", ",") / @itemUnit</span>
+                            <span class="pp-card-price">@SharedLocalizer["£"] @item.Price.ToString("N2").Replace(".", ",") / @SharedLocalizer[@itemUnit]</span>
                             <span class="pp-card-stock">@item.StockQuantity @itemUnit</span>
                         </div>
                     </div>
@@ -337,7 +337,7 @@
         <div class="pp-empty" id="emptyState">
             <h3>@SharedLocalizer["No products found"]</h3>
             <p>@SharedLocalizer["Try adjusting your filters"]</p>
-            <button onclick="resetAll()">@SharedLocalizer["Reset all filters"]</button>
+            <button onclick="resetAll()">@SharedLocalizer["Reset all filters"]</button> 
         </div>
 
         <div class="pp-pagination" id="paginationWrap">

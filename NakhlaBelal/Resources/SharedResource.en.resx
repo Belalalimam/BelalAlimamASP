@@ -988,4 +988,7 @@ In this section you can find our wide selection of plain, woven, printed, embroi
   <data name="Step" xml:space="preserve">
     <value>Step</value>
   </data>
+  <data name="£" xml:space="preserve">
+    <value>£</value>
+  </data>
 </root>
