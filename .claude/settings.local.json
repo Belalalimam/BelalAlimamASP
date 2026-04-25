@@ -6,7 +6,12 @@
       "Bash(dotnet tool *)",
       "Bash(taskkill //F //IM NakhlaBelal.exe)",
       "WebFetch(domain:api.anthropic.com)",
-      "Bash(xargs grep *)"
+      "Bash(xargs grep *)",
+      "Bash(dotnet restore *)",
+      "Bash(taskkill /PID 7652 /F)",
+      "Bash(flutter --version)",
+      "Bash(where flutter *)",
+      "Read(//c/Users/Belal/AppData/Local/Programs/**)"
     ]
   }
 }

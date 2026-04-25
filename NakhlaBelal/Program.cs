@@ -28,6 +28,7 @@ builder.Services.AddSession(options =>
 // Register your custom configurations
 builder.Services.RegisterConfig(connectionString, builder.Configuration);
 builder.Services.RegisterMapsterConfig();
+builder.Services.RegisterApiConfig(builder.Configuration);
 
 
 
@@ -67,7 +68,12 @@ var service = scope.ServiceProvider.GetService<IDBInitializer>();
 service!.Initialize();
 
 // Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Nakhla API v1"));
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
@@ -78,6 +84,7 @@ app.UseStaticFiles(); // Move this here to serve static files
 
 app.UseRouting();
 
+app.UseCors("MobileApp");
 app.UseAuthentication();
 app.UseAuthorization();
 
