@@ -2,8 +2,8 @@
 
 @{
     var discounted = Model.Product.Price - Model.Product.Price * (Model.Product.Discount / 100);
-    var priceStr = "€ " + discounted.ToString("N2").Replace(".", ",");
-    var bulkStr = "€ " + (discounted * 0.92m).ToString("N2").Replace(".", ",");
+    var priceStr = @SharedLocalizer["£"] + discounted.ToString("N2").Replace(".", ",");
+    var bulkStr = @SharedLocalizer["£"] + (discounted * 0.92m).ToString("N2").Replace(".", ",");
 
     // وحدة البيع + الكمية الأدنى + خطوة الإضافة
     var unitLabel = Model.Product.Unit.ShortLabel();
@@ -80,7 +80,7 @@
 
             <!-- Price -->
             <div class="pd-price-block">
-                <span class="pd-price">@priceStr / @SharedLocalizer[@unitLabel]</span>
+                <span class="pd-price">@SharedLocalizer[@priceStr] / @SharedLocalizer[@unitLabel]</span>
                 <span class="pd-price-note"> + @SharedLocalizer["VAT if applicable"]</span>
             </div>
             @if (Model.Product.Discount > 0)
