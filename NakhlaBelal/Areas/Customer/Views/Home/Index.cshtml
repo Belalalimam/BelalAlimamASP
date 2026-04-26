@@ -6,112 +6,161 @@
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-<section class="hero-swiper-wrap">
+{{!-- ═══════════════════════════════════════════════════
+     SAUDI HERO — نص وسط داخل إطار ذهبي ملكي
+     ═══════════════════════════════════════════════════ --}}
+<section class="sa-hero-wrap">
     <div class="swiper heroSwiper">
         <div class="swiper-wrapper">
+
             <div class="swiper-slide">
-                <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1600&q=80');">
-                    <div class="hero-slide-overlay"></div>
-                    <div class="hero-slide-content">
-                        <h1>@SharedLocalizer["Find High-Quality Textiles In our Online Fabric Store"]</h1>
-                        <p>@SharedLocalizer["Design your dreams and make them come true with our online fabrics."]</p>
-                        <a href="@Url.Action("Product", "Home")" class="hero-slide-btn theme-btn">@SharedLocalizer["Browse Our Fabrics"]</a>
+                <div class="sa-slide" style="background-image:url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1600&q=80')">
+                    <div class="sa-slide-overlay"></div>
+                    <div class="sa-slide-center">
+                        <div class="sa-frame">
+                            <span class="sa-fc tl"></span><span class="sa-fc tr"></span>
+                            <span class="sa-fc bl"></span><span class="sa-fc br"></span>
+                            <p class="sa-eyebrow">✦ THE ROYAL COLLECTION ✦</p>
+                            <h1>@SharedLocalizer["Find High-Quality Textiles In our Online Fabric Store"]</h1>
+                            <p class="sa-sub">@SharedLocalizer["Design your dreams and make them come true with our online fabrics."]</p>
+                            <a href="@Url.Action("Product", "Home")" class="sa-cta">@SharedLocalizer["Browse Our Fabrics"]</a>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div class="swiper-slide">
-                <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1600&q=80');">
-                    <div class="hero-slide-overlay"></div>
-                    <div class="hero-slide-content">
-                        <h1>@SharedLocalizer["Premium Materials for Every Project"]</h1>
-                        <p>@SharedLocalizer["Discover a curated selection of fabrics, labels, and packaging."]</p>
-                        <a href="@Url.Action("Product", "Home")" class="hero-slide-btn theme-btn">@SharedLocalizer["Shop Now"]</a>
+                <div class="sa-slide" style="background-image:url('https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1600&q=80')">
+                    <div class="sa-slide-overlay"></div>
+                    <div class="sa-slide-center">
+                        <div class="sa-frame">
+                            <span class="sa-fc tl"></span><span class="sa-fc tr"></span>
+                            <span class="sa-fc bl"></span><span class="sa-fc br"></span>
+                            <p class="sa-eyebrow">✦ PREMIUM FABRICS ✦</p>
+                            <h1>@SharedLocalizer["Premium Materials for Every Project"]</h1>
+                            <p class="sa-sub">@SharedLocalizer["Discover a curated selection of fabrics, labels, and packaging."]</p>
+                            <a href="@Url.Action("Product", "Home")" class="sa-cta">@SharedLocalizer["Shop Now"]</a>
+                        </div>
                     </div>
                 </div>
             </div>
+
             <div class="swiper-slide">
-                <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80');">
-                    <div class="hero-slide-overlay"></div>
-                    <div class="hero-slide-content">
-                        <h1>@SharedLocalizer["New Arrivals This Season"]</h1>
-                        <p>@SharedLocalizer["Fresh designs, trusted quality — delivered to your door."]</p>
-                        <a href="@Url.Action("Product", "Home")" class="hero-slide-btn theme-btn">@SharedLocalizer["Explore Collection"]</a>
+                <div class="sa-slide" style="background-image:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80')">
+                    <div class="sa-slide-overlay"></div>
+                    <div class="sa-slide-center">
+                        <div class="sa-frame">
+                            <span class="sa-fc tl"></span><span class="sa-fc tr"></span>
+                            <span class="sa-fc bl"></span><span class="sa-fc br"></span>
+                            <p class="sa-eyebrow">✦ NEW SEASON ✦</p>
+                            <h1>@SharedLocalizer["New Arrivals This Season"]</h1>
+                            <p class="sa-sub">@SharedLocalizer["Fresh designs, trusted quality — delivered to your door."]</p>
+                            <a href="@Url.Action("Product", "Home")" class="sa-cta">@SharedLocalizer["Explore Collection"]</a>
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
         <div class="swiper-pagination"></div>
         <div class="swiper-button-prev"></div>
         <div class="swiper-button-next"></div>
     </div>
+    <div class="sa-hero-gold-bar"></div>
 </section>
 
 <style>
-    .hero-swiper-wrap { position: relative; margin-bottom: 30px; }
-    .heroSwiper { width: 100%; height: 520px; }
-    .hero-slide {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 0 8%;
+    /* ── Saudi Hero ── */
+    .sa-hero-wrap { position: relative; margin-bottom: 0; }
+    .heroSwiper   { width: 100%; height: 620px; }
+
+    .sa-slide {
+        position: relative; width: 100%; height: 100%;
+        background-size: cover; background-position: center;
+        display: flex; align-items: center; justify-content: center;
     }
-    .hero-slide-overlay {
+    .sa-slide-overlay {
         position: absolute; inset: 0;
-        background: linear-gradient(90deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 60%, rgba(0,0,0,0) 100%);
+        background: linear-gradient(135deg, rgba(0,61,31,.72) 0%, rgba(0,20,10,.45) 100%);
     }
-    [dir="rtl"] .hero-slide-overlay {
-        background: linear-gradient(270deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 60%, rgba(0,0,0,0) 100%);
+    .sa-slide-center {
+        position: relative; z-index: 2;
+        display: flex; align-items: center; justify-content: center;
+        width: 100%; padding: 40px 24px;
     }
-    .hero-slide-content {
+
+    /* Outer golden frame */
+    .sa-frame {
         position: relative;
-        z-index: 2;
-        max-width: 620px;
+        text-align: center;
         color: #fff;
+        padding: 52px 64px;
+        border: 1px solid rgba(201,168,76,.55);
+        background: rgba(0,40,20,.3);
+        backdrop-filter: blur(2px);
+        max-width: 720px;
+        width: 100%;
     }
-    .hero-slide-content h1 {
-        font-size: 40px;
-        font-weight: 800;
-        line-height: 1.2;
-        margin: 0 0 14px;
-        text-shadow: 0 2px 10px rgba(0,0,0,.35);
+
+    /* Golden corner brackets */
+    .sa-fc {
+        position: absolute;
+        width: 28px; height: 28px;
+        border-color: #C9A84C; border-style: solid;
+        display: block;
     }
-    .hero-slide-content p {
-        font-size: 17px;
-        margin: 0 0 22px;
-        opacity: .95;
+    .sa-fc.tl { top: -2px;  left: -2px;  border-width: 3px 0 0 3px; }
+    .sa-fc.tr { top: -2px;  right: -2px; border-width: 3px 3px 0 0; }
+    .sa-fc.bl { bottom: -2px; left: -2px;  border-width: 0 0 3px 3px; }
+    .sa-fc.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; }
+
+    .sa-eyebrow {
+        font-size: 10px; letter-spacing: 4px; text-transform: uppercase;
+        color: #C9A84C; margin: 0 0 18px; font-weight: 700;
     }
-    .hero-slide-btn {
-        display: inline-block;
-        padding: 12px 28px;
-        border-radius: 999px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: filter .15s ease, transform .15s ease;
+    .sa-frame h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 42px; font-weight: 700; line-height: 1.2;
+        margin: 0 0 16px; text-shadow: 0 2px 12px rgba(0,0,0,.4);
     }
-    .hero-slide-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+    .sa-sub { font-size: 16px; opacity: .88; margin: 0 0 30px; }
+
+    .sa-cta {
+        display: inline-block; padding: 13px 40px;
+        background: #C9A84C; color: #003D1F;
+        font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+        font-size: 12px; text-decoration: none;
+        border: 2px solid #C9A84C; transition: all .25s;
+    }
+    .sa-cta:hover {
+        background: transparent; color: #C9A84C;
+    }
+
+    /* Gold bar at bottom of hero */
+    .sa-hero-gold-bar {
+        height: 5px;
+        background: linear-gradient(90deg, #003D1F 0%, #C9A84C 35%, #F0DFA0 50%, #C9A84C 65%, #003D1F 100%);
+    }
+
+    /* Nav arrows */
     .heroSwiper .swiper-button-prev,
     .heroSwiper .swiper-button-next {
-        color: #fff;
-        background: rgba(0,0,0,.35);
-        width: 44px; height: 44px;
-        border-radius: 50%;
+        color: #C9A84C; background: rgba(0,61,31,.6);
+        width: 48px; height: 48px; border-radius: 0;
+        border: 1px solid rgba(201,168,76,.4);
         backdrop-filter: blur(4px);
     }
     .heroSwiper .swiper-button-prev:after,
-    .heroSwiper .swiper-button-next:after { font-size: 18px; font-weight: 700; }
-    .heroSwiper .swiper-pagination-bullet { background: #fff; opacity: .6; }
-    .heroSwiper .swiper-pagination-bullet-active { opacity: 1; background: var(--brand-secondary, #ffd700); }
+    .heroSwiper .swiper-button-next:after { font-size: 16px; font-weight: 900; }
+    .heroSwiper .swiper-pagination-bullet { background: rgba(201,168,76,.6); opacity:1; }
+    .heroSwiper .swiper-pagination-bullet-active { background: #C9A84C; }
+
     @@media (max-width: 767px) {
-        .heroSwiper { height: 380px; }
-        .hero-slide { padding: 0 24px; }
-        .hero-slide-content h1 { font-size: 26px; }
-        .hero-slide-content p { font-size: 14px; }
-        .hero-slide-btn { padding: 10px 22px; font-size: 14px; }
+        .heroSwiper { height: 480px; }
+        .sa-frame { padding: 36px 28px; }
+        .sa-frame h1 { font-size: 26px; }
+        .sa-sub { font-size: 14px; }
+        .sa-cta { padding: 11px 26px; font-size: 11px; }
         .heroSwiper .swiper-button-prev,
         .heroSwiper .swiper-button-next { display: none; }
     }
