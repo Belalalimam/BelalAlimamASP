@@ -6,112 +6,147 @@
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-<section class="hero-swiper-wrap">
+{{!-- ═══════════════════════════════════════════════════
+     MAGHREB HERO — diagonal split: red panel + fabric image + mosaic border
+     ═══════════════════════════════════════════════════ --}}
+<section class="mg-hero-wrap">
     <div class="swiper heroSwiper">
         <div class="swiper-wrapper">
+
             <div class="swiper-slide">
-                <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1600&q=80');">
-                    <div class="hero-slide-overlay"></div>
-                    <div class="hero-slide-content">
+                <div class="mg-slide" style="--bg:url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1600&q=80')">
+                    <div class="mg-slide-img"></div>
+                    <div class="mg-slide-panel">
+                        <p class="mg-eyebrow">مجموعة حصرية</p>
                         <h1>@SharedLocalizer["Find High-Quality Textiles In our Online Fabric Store"]</h1>
-                        <p>@SharedLocalizer["Design your dreams and make them come true with our online fabrics."]</p>
-                        <a href="@Url.Action("Product", "Home")" class="hero-slide-btn theme-btn">@SharedLocalizer["Browse Our Fabrics"]</a>
+                        <p class="mg-sub">@SharedLocalizer["Design your dreams and make them come true with our online fabrics."]</p>
+                        <a href="@Url.Action("Product", "Home")" class="mg-cta">@SharedLocalizer["Browse Our Fabrics"]</a>
                     </div>
                 </div>
             </div>
+
             <div class="swiper-slide">
-                <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1600&q=80');">
-                    <div class="hero-slide-overlay"></div>
-                    <div class="hero-slide-content">
+                <div class="mg-slide" style="--bg:url('https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1600&q=80')">
+                    <div class="mg-slide-img"></div>
+                    <div class="mg-slide-panel">
+                        <p class="mg-eyebrow">أقمشة فاخرة</p>
                         <h1>@SharedLocalizer["Premium Materials for Every Project"]</h1>
-                        <p>@SharedLocalizer["Discover a curated selection of fabrics, labels, and packaging."]</p>
-                        <a href="@Url.Action("Product", "Home")" class="hero-slide-btn theme-btn">@SharedLocalizer["Shop Now"]</a>
+                        <p class="mg-sub">@SharedLocalizer["Discover a curated selection of fabrics, labels, and packaging."]</p>
+                        <a href="@Url.Action("Product", "Home")" class="mg-cta">@SharedLocalizer["Shop Now"]</a>
                     </div>
                 </div>
             </div>
+
             <div class="swiper-slide">
-                <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80');">
-                    <div class="hero-slide-overlay"></div>
-                    <div class="hero-slide-content">
+                <div class="mg-slide" style="--bg:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80')">
+                    <div class="mg-slide-img"></div>
+                    <div class="mg-slide-panel">
+                        <p class="mg-eyebrow">وصل حديثاً</p>
                         <h1>@SharedLocalizer["New Arrivals This Season"]</h1>
-                        <p>@SharedLocalizer["Fresh designs, trusted quality — delivered to your door."]</p>
-                        <a href="@Url.Action("Product", "Home")" class="hero-slide-btn theme-btn">@SharedLocalizer["Explore Collection"]</a>
+                        <p class="mg-sub">@SharedLocalizer["Fresh designs, trusted quality — delivered to your door."]</p>
+                        <a href="@Url.Action("Product", "Home")" class="mg-cta">@SharedLocalizer["Explore Collection"]</a>
                     </div>
                 </div>
             </div>
+
         </div>
         <div class="swiper-pagination"></div>
         <div class="swiper-button-prev"></div>
         <div class="swiper-button-next"></div>
     </div>
+    <div class="mg-mosaic-bar"></div>
 </section>
 
 <style>
-    .hero-swiper-wrap { position: relative; margin-bottom: 30px; }
-    .heroSwiper { width: 100%; height: 520px; }
-    .hero-slide {
-        position: relative;
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center;
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 0 8%;
+    /* ── Maghreb Hero ── */
+    .mg-hero-wrap { position: relative; margin-bottom: 0; }
+    .heroSwiper   { width: 100%; height: 580px; }
+
+    .mg-slide {
+        position: relative; width: 100%; height: 100%;
+        display: flex; align-items: stretch;
+        overflow: hidden;
     }
-    .hero-slide-overlay {
+
+    /* Full background image */
+    .mg-slide-img {
         position: absolute; inset: 0;
-        background: linear-gradient(90deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 60%, rgba(0,0,0,0) 100%);
+        background-image: var(--bg);
+        background-size: cover; background-position: center;
+        transition: transform .8s ease;
     }
-    [dir="rtl"] .hero-slide-overlay {
-        background: linear-gradient(270deg, rgba(0,0,0,.6) 0%, rgba(0,0,0,.2) 60%, rgba(0,0,0,0) 100%);
+    .heroSwiper .swiper-slide-active .mg-slide-img { transform: scale(1.04); }
+
+    /* Diagonal red panel (left side) */
+    .mg-slide-panel {
+        position: relative; z-index: 2;
+        width: 50%; min-width: 320px;
+        padding: 60px 56px 60px 8%;
+        display: flex; flex-direction: column; justify-content: center;
+        color: #FFF8F0;
+        background: #7A1218;
+        clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%);
     }
-    .hero-slide-content {
-        position: relative;
-        z-index: 2;
-        max-width: 620px;
-        color: #fff;
+    [dir="rtl"] .mg-slide-panel {
+        clip-path: polygon(0 0, 100% 0, 100% 100%, 18% 100%);
+        padding: 60px 8% 60px 56px;
     }
-    .hero-slide-content h1 {
-        font-size: 40px;
-        font-weight: 800;
-        line-height: 1.2;
-        margin: 0 0 14px;
-        text-shadow: 0 2px 10px rgba(0,0,0,.35);
+
+    .mg-eyebrow {
+        font-family: 'Amiri', serif;
+        font-size: 14px; letter-spacing: 2px;
+        color: #C9A000; margin: 0 0 14px; font-weight: 700;
     }
-    .hero-slide-content p {
-        font-size: 17px;
-        margin: 0 0 22px;
-        opacity: .95;
+    .mg-slide-panel h1 {
+        font-family: 'Amiri', serif;
+        font-size: 38px; font-weight: 700; line-height: 1.25;
+        margin: 0 0 14px; text-shadow: 0 2px 8px rgba(0,0,0,.3);
     }
-    .hero-slide-btn {
-        display: inline-block;
-        padding: 12px 28px;
-        border-radius: 999px;
-        font-weight: 700;
-        text-decoration: none;
-        transition: filter .15s ease, transform .15s ease;
+    .mg-sub { font-size: 15px; opacity: .88; margin: 0 0 28px; line-height: 1.6; }
+
+    .mg-cta {
+        display: inline-block; padding: 13px 32px;
+        background: #C9A000; color: #2D1B1B;
+        font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+        font-size: 12px; text-decoration: none; border-radius: 3px;
+        border: 2px solid #C9A000; transition: all .25s; align-self: flex-start;
+        font-family: 'Lato', sans-serif;
     }
-    .hero-slide-btn:hover { filter: brightness(1.1); transform: translateY(-2px); }
+    .mg-cta:hover { background: transparent; color: #C9A000; }
+
+    /* Zellige mosaic bar at bottom */
+    .mg-mosaic-bar {
+        height: 8px;
+        background: repeating-linear-gradient(
+            90deg,
+            #C1272D 0px,  #C1272D 20px,
+            #C9A000 20px, #C9A000 40px,
+            #1B4F8A 40px, #1B4F8A 60px,
+            #CC5500 60px, #CC5500 80px
+        );
+    }
+
+    /* Swiper controls */
     .heroSwiper .swiper-button-prev,
     .heroSwiper .swiper-button-next {
-        color: #fff;
-        background: rgba(0,0,0,.35);
-        width: 44px; height: 44px;
-        border-radius: 50%;
+        color: #C9A000; background: rgba(122,18,24,.7);
+        width: 46px; height: 46px; border-radius: 50%;
         backdrop-filter: blur(4px);
     }
     .heroSwiper .swiper-button-prev:after,
-    .heroSwiper .swiper-button-next:after { font-size: 18px; font-weight: 700; }
-    .heroSwiper .swiper-pagination-bullet { background: #fff; opacity: .6; }
-    .heroSwiper .swiper-pagination-bullet-active { opacity: 1; background: var(--brand-secondary, #ffd700); }
+    .heroSwiper .swiper-button-next:after { font-size: 16px; font-weight: 900; }
+    .heroSwiper .swiper-pagination-bullet { background: rgba(201,160,0,.7); opacity: 1; }
+    .heroSwiper .swiper-pagination-bullet-active { background: #C9A000; }
+
     @@media (max-width: 767px) {
-        .heroSwiper { height: 380px; }
-        .hero-slide { padding: 0 24px; }
-        .hero-slide-content h1 { font-size: 26px; }
-        .hero-slide-content p { font-size: 14px; }
-        .hero-slide-btn { padding: 10px 22px; font-size: 14px; }
+        .heroSwiper { height: 480px; }
+        .mg-slide-panel {
+            width: 100%; clip-path: none;
+            background: rgba(122,18,24,.82);
+            padding: 40px 28px;
+        }
+        .mg-slide-panel h1 { font-size: 26px; }
+        .mg-sub { font-size: 14px; }
         .heroSwiper .swiper-button-prev,
         .heroSwiper .swiper-button-next { display: none; }
     }
