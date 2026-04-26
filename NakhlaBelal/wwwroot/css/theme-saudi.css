@@ -1,401 +1,418 @@
-/* ====================================================
-   SAUDI ARABIA THEME — فاخر ملكي أناقة خليجية
-   Colors: Deep Saudi Green + Royal Gold + Ivory
-   ==================================================== */
+/* ═══════════════════════════════════════════════════════════════
+   SAUDI THEME — Royal luxury, deep green + gold
+   Covers: announce bar, header, all home sections, footer, global
+   ═══════════════════════════════════════════════════════════════ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Scheherazade+New:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;600;700&display=swap');
 
 :root {
-    --primary-color:      #C9A84C;
-    --evergreen-color:    #004D29;
-    --cotton-color:       #FDFAF3;
-    --jade-color:         #EBF2EB;
-    --dustyolive-color:   #8B7B4A;
-
-    --sa-gold:            #C9A84C;
-    --sa-light-gold:      #F0DFA0;
-    --sa-deep-green:      #003D1F;
-    --sa-mid-green:       #005B2E;
-    --sa-cream:           #FDFAF3;
-    --sa-dark:            #1A1A1A;
+    --sa-green:   #003D1F;
+    --sa-green2:  #004D26;
+    --sa-gold:    #C9A84C;
+    --sa-gold2:   #F0DFA0;
+    --sa-cream:   #FDFAF3;
+    --sa-dark:    #0A1A0F;
+    --sa-text:    #1A1A1A;
+    --sa-muted:   #8B7B4A;
 }
 
-/* ── Body & Background ── */
-body {
-    font-family: 'Playfair Display', 'Scheherazade New', Georgia, serif;
-}
+/* ── Global body ── */
+body { background: var(--sa-cream); font-family: 'Lato', sans-serif; color: var(--sa-text); }
 
-.content-body {
-    background-color: var(--sa-cream) !important;
-    background-image: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 0 L56 28 L28 56 L0 28 Z' fill='none' stroke='%23C9A84C' stroke-opacity='0.06' stroke-width='1'/%3E%3Cpath d='M28 14 L42 28 L28 42 L14 28 Z' fill='none' stroke='%23C9A84C' stroke-opacity='0.05' stroke-width='1'/%3E%3C/svg%3E");
-}
+/* ── Hide original header elements ── */
+header .container1,
+header .content,
+header .left,
+header .middle,
+header .right { display: none !important; }
 
-/* ── Gold accent bar at very top ── */
-body > * header::before,
-header::before {
-    content: '';
-    display: block;
-    height: 4px;
-    background: linear-gradient(90deg, var(--sa-deep-green) 0%, var(--sa-gold) 50%, var(--sa-deep-green) 100%);
-}
-
-/* ── Header ── */
-header .content {
-    background: var(--sa-cream);
-    border-bottom: 2px solid var(--sa-gold);
-}
-
-header .logo a {
-    font-family: 'Playfair Display', serif;
-    font-size: 26px;
+/* ══════════════════════════════════════
+   ANNOUNCEMENT BAR
+══════════════════════════════════════ */
+.sa-announce-bar {
+    background: var(--sa-green);
+    color: var(--sa-gold);
+    text-align: center;
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 4px;
-    color: var(--sa-deep-green);
+    letter-spacing: 2.5px;
     text-transform: uppercase;
+    padding: 9px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+.sa-announce-sep { opacity: .4; }
+
+/* ══════════════════════════════════════
+   HEADER — 2-ROW LUXURY LAYOUT
+══════════════════════════════════════ */
+.sa-header {
+    background: var(--sa-cream);
+    border-bottom: 1px solid rgba(201,168,76,.2);
+    position: sticky;
+    top: 0;
+    z-index: 900;
+    box-shadow: 0 2px 20px rgba(0,61,31,.08);
 }
 
-header .content i {
-    transition: color 0.3s;
+/* Row 1: Brand bar */
+.sa-header-brand {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 40px;
+    border-bottom: 1px solid rgba(201,168,76,.15);
 }
 
-header .right ul li a:hover i,
-header ul li a:hover {
-    color: var(--sa-gold) !important;
+.sa-hamburger {
+    background: transparent;
+    border: 1px solid rgba(201,168,76,.4);
+    color: var(--sa-green);
+    width: 40px; height: 40px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; cursor: pointer;
+    transition: all .2s;
+}
+.sa-hamburger:hover { background: var(--sa-green); color: var(--sa-gold); }
+
+.sa-logo a {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--sa-green);
+    text-decoration: none;
+    letter-spacing: 1px;
+}
+.sa-logo a::before { content: "\2756 "; color: var(--sa-gold); font-size: 14px; }
+.sa-logo a::after  { content: " \2756"; color: var(--sa-gold); font-size: 14px; }
+
+.sa-header-icons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
-/* Navigation links */
-header .middle nav ul li a {
-    font-size: 13px;
+.sa-icon-btn {
+    position: relative;
+    background: transparent;
+    border: none;
+    color: var(--sa-green);
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 18px; cursor: pointer;
+    text-decoration: none;
+    transition: color .2s;
+}
+.sa-icon-btn:hover { color: var(--sa-gold); }
+
+.sa-badge-num {
+    position: absolute;
+    top: 4px; inset-inline-end: 4px;
+    background: var(--sa-gold);
+    color: var(--sa-green);
+    font-size: 9px; font-weight: 800;
+    min-width: 16px; height: 16px;
+    border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+}
+
+.sa-icon-dd { position: relative; }
+.sa-icon-dd .dropdown1-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    inset-inline-end: 0;
+    min-width: 220px;
+    background: #fff;
+    border: 1px solid rgba(201,168,76,.25);
+    border-top: 3px solid var(--sa-gold);
+    box-shadow: 0 14px 40px rgba(0,61,31,.12);
+    list-style: none; padding: 8px 0; margin: 0;
+    z-index: 999; display: none;
+}
+.sa-icon-dd:hover .dropdown1-menu { display: block; }
+.sa-icon-dd .dropdown-item {
+    display: flex; align-items: center;
+    padding: 9px 16px;
+    color: var(--sa-green); font-size: 13px;
+    text-decoration: none; cursor: pointer;
+    background: transparent; border: none; width: 100%; text-align: inherit;
+}
+.sa-icon-dd .dropdown-item:hover { background: rgba(201,168,76,.08); color: var(--sa-green); }
+.sa-icon-dd .acc-count {
+    margin-inline-start: auto;
+    background: var(--sa-green); color: var(--sa-gold);
+    border-radius: 999px; padding: 1px 8px;
+    font-size: 10px; font-weight: 700; min-width: 18px; text-align: center;
+}
+
+/* Row 2: Navigation bar */
+.sa-header-nav {
+    background: var(--sa-green);
+}
+.sa-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+.sa-header-nav ul {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    list-style: none; margin: 0; padding: 0;
+}
+.sa-header-nav ul li a,
+.sa-header-nav ul li .dropdown1-btn {
+    display: block;
+    padding: 14px 20px;
+    color: rgba(253,250,243,.85);
+    font-size: 12px;
+    font-weight: 600;
     letter-spacing: 1.5px;
     text-transform: uppercase;
-    font-weight: 600;
-    color: var(--sa-deep-green);
+    text-decoration: none;
+    background: transparent; border: none; cursor: pointer;
+    transition: color .2s, background .2s;
 }
+.sa-header-nav ul li a:hover,
+.sa-header-nav ul li .dropdown1-btn:hover { color: var(--sa-gold); background: rgba(201,168,76,.08); }
 
-header .middle nav ul li a:hover {
-    color: var(--sa-gold);
-}
-
-/* ── Dropdown ── */
-.dropdown1-menu {
-    background: var(--sa-cream);
-    border: 1px solid rgba(201, 168, 76, 0.4);
+.sa-header-nav .dropdown1 { position: relative; }
+.sa-header-nav .dropdown1-menu {
+    position: absolute;
+    top: 100%; inset-inline-start: 0;
+    background: #fff;
     border-top: 3px solid var(--sa-gold);
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 8px 32px rgba(0, 61, 31, 0.12);
+    min-width: 180px;
+    list-style: none; padding: 8px 0; margin: 0;
+    box-shadow: 0 12px 30px rgba(0,0,0,.15);
+    display: none; z-index: 999;
 }
-
-.dropdown1-menu a,
-.dropdown1-menu a:hover {
-    color: var(--sa-deep-green);
+.sa-header-nav .dropdown1:hover .dropdown1-menu { display: block; }
+.sa-header-nav .dropdown1-menu a {
+    display: block; padding: 10px 18px;
+    color: var(--sa-green); font-size: 13px;
+    text-decoration: none; letter-spacing: normal;
+    text-transform: none; font-weight: 400;
 }
+.sa-header-nav .dropdown1-menu a:hover { background: rgba(201,168,76,.1); }
 
-.dropdown1-menu a:hover {
-    color: var(--sa-gold) !important;
-}
-
-.dropdown1::after {
-    border-bottom-color: var(--sa-gold);
-}
-
-/* ── Mobile Menu ── */
-.mobile-menu .mini {
-    background: linear-gradient(180deg, var(--sa-deep-green) 0%, var(--sa-mid-green) 100%);
-}
-
-.mobile-menu {
-    background: var(--sa-cream);
-}
-
-.mobile-menu .logo a {
-    color: rgba(253, 250, 243, 0.9);
-}
-
-.mobile-menu .menu-list {
-    background-color: var(--sa-cream);
-}
-
-.mobile-menu .menu-list ul li a {
-    color: var(--sa-deep-green);
-    border-bottom-color: rgba(201, 168, 76, 0.15);
-}
-
-.mobile-menu .menu-list ul li a:hover {
-    color: var(--sa-gold);
-}
-
-/* ── Hero Section ── */
-.hero-overlay {
-    background: linear-gradient(135deg,
-        rgba(0, 61, 31, 0.65) 0%,
-        rgba(201, 168, 76, 0.18) 100%);
-}
-
-.hero h1 {
-    font-family: 'Playfair Display', serif;
-    font-size: 3.6rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-shadow: 2px 3px 10px rgba(0, 0, 0, 0.45);
-}
-
-.hero p {
-    font-size: 1.15rem;
-    letter-spacing: 0.5px;
-    opacity: 0.92;
-}
-
-.btn-hero {
-    background: var(--sa-gold);
-    color: var(--sa-deep-green);
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    letter-spacing: 2px;
-    border-radius: 2px;
-    padding: 15px 44px;
-    font-size: 0.88rem;
-    border: 2px solid transparent;
-    text-transform: uppercase;
-    box-shadow: 0 4px 16px rgba(201, 168, 76, 0.4);
-}
-
-.btn-hero:hover {
-    background: transparent;
-    color: var(--sa-light-gold);
-    border-color: var(--sa-gold);
-    box-shadow: 0 6px 20px rgba(201, 168, 76, 0.25);
-    transform: translateY(-3px);
-}
-
-/* Gold ornamental divider after hero */
-.categories {
-    position: relative;
-}
-
-.categories::before {
-    content: '✦   ◆   ✦';
+/* Gold accent bar under nav */
+.sa-header-nav::after {
+    content: '';
     display: block;
-    text-align: center;
+    height: 3px;
+    background: linear-gradient(90deg, var(--sa-green), var(--sa-gold) 30%, var(--sa-gold2) 50%, var(--sa-gold) 70%, var(--sa-green));
+}
+
+/* ══════════════════════════════════════
+   SECTION TITLES — Ornate Saudi Style
+══════════════════════════════════════ */
+.dc-header .dc-title,
+.dynamic-categories .dc-title {
+    font-family: 'Playfair Display', serif;
+    color: var(--sa-green);
+    font-size: 28px;
+}
+.dc-header .dc-title::before,
+.dc-header .dc-title::after {
+    content: '\2756';
     color: var(--sa-gold);
-    font-size: 11px;
-    letter-spacing: 12px;
-    padding: 14px 0 0;
-    opacity: 0.7;
-}
-
-/* ── Category Cards ── */
-.category-overlay {
-    background: linear-gradient(to top, rgba(0,61,31,0.7) 0%, rgba(0,61,31,0.15) 100%);
-}
-
-.category-overlay h3 {
-    font-family: 'Playfair Display', serif;
-    font-size: 1.5rem;
-    letter-spacing: 1px;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
-}
-
-.category-card {
-    border-radius: 4px;
-}
-
-.category-card:hover .category-overlay {
-    background: linear-gradient(to top, rgba(0,61,31,0.8) 0%, rgba(201,168,76,0.2) 100%);
-}
-
-/* ── Product Cards ── */
-.pp-card-img {
-    border-radius: 0;
-    border: 1px solid #EAE4D6;
-    transition: all 0.35s ease;
-}
-
-.pp-card:hover .pp-card-img {
-    opacity: 1;
-    border-color: var(--sa-gold);
-    box-shadow: 0 8px 28px rgba(0, 61, 31, 0.14);
-    transform: translateY(-3px);
-}
-
-.pp-card-name {
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
     font-size: 14px;
-    color: var(--sa-dark);
+    margin: 0 12px;
+    vertical-align: middle;
+}
+.dc-header .dc-sub { color: var(--sa-muted); font-size: 14px; letter-spacing: .5px; }
+.dc-header::after {
+    content: '';
+    display: block;
+    height: 2px; width: 80px;
+    background: linear-gradient(90deg, var(--sa-gold), transparent);
+    margin: 12px auto 0;
 }
 
-.pp-card-price {
-    color: var(--sa-deep-green);
-    font-weight: 700;
-    font-size: 14px;
+/* ══════════════════════════════════════
+   DYNAMIC CATEGORIES — Arch-top cards
+══════════════════════════════════════ */
+.dc-thumb {
+    border-radius: 50% 50% 0 0 / 30% 30% 0 0;
+    border: 2px solid rgba(201,168,76,.3);
+    background: linear-gradient(135deg, rgba(201,168,76,.07), rgba(0,61,31,.04));
+    transition: border-color .25s, box-shadow .25s;
 }
-
-.pp-card-stock {
-    color: var(--sa-gold);
-    font-weight: 600;
-}
-
-/* Product page sidebar */
-:root {
-    --pp-bg:          #FAF7EF;
-    --pp-sidebar-bg:  #F0EBD8;
-    --pp-card-bg:     #FDFAF3;
-    --pp-ring:        #C9A84C;
-    --pp-green:       #C9A84C;
-    --pp-primary:     #004D29;
-}
-
-.pp-page-btn.active {
-    background: var(--sa-deep-green);
-    border-color: var(--sa-deep-green);
-}
-
-.page-link {
-    color: var(--sa-deep-green);
-    background-color: var(--sa-cream);
-    border-color: #D9CFA5;
-}
-
-.page-link:hover {
-    background: #F0EBD8;
+.dc-card:hover .dc-thumb {
     border-color: var(--sa-gold);
+    box-shadow: 0 8px 28px rgba(201,168,76,.25);
 }
-
-.page-item.active .page-link {
-    background: var(--sa-deep-green);
-    border-color: var(--sa-gold);
-    color: var(--sa-cream);
-}
-
-/* ── Footer Navigation ── */
-.footer-nav {
-    background: var(--sa-deep-green);
-    background-image: url("data:image/svg+xml,%3Csvg width='56' height='56' viewBox='0 0 56 56' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M28 0 L56 28 L28 56 L0 28 Z' fill='none' stroke='%23C9A84C' stroke-opacity='0.07' stroke-width='1'/%3E%3C/svg%3E");
-    border-top: 4px solid var(--sa-gold);
-    padding: 60px 0 30px;
-}
-
-.footer-nav .nav-title {
-    color: var(--sa-gold);
+.dc-icon { color: var(--sa-green); }
+.dc-name {
     font-family: 'Playfair Display', serif;
-    font-size: 13px;
-    letter-spacing: 2px;
-    border-bottom: 1px solid rgba(201, 168, 76, 0.25);
-    padding-bottom: 10px;
-    margin-bottom: 18px;
-}
-
-.footer-nav .nav-list a {
-    color: rgba(255, 255, 255, 0.65);
+    color: var(--sa-green);
     font-size: 13px;
 }
+.dc-card:hover .dc-name { color: var(--sa-gold); }
 
-.footer-nav .nav-list a:hover {
-    color: var(--sa-gold);
-    padding-inline-start: 6px;
+/* ══════════════════════════════════════
+   SEARCH SECTION — Royal frame
+══════════════════════════════════════ */
+.changeColor h1 {
+    font-family: 'Playfair Display', serif;
+    color: var(--sa-green);
+    font-size: 24px;
+}
+.changeColor h2.or-text {
+    font-family: 'Playfair Display', serif;
+    color: var(--sa-green);
+    font-size: 20px;
+}
+.changeColor .sub-text { color: var(--sa-muted); }
+
+.home-search-inner {
+    background: var(--sa-cream) !important;
+    border: 2px solid rgba(201,168,76,.4) !important;
+    border-radius: 0 !important;
+}
+.home-search-inner:focus-within {
+    border-color: var(--sa-gold) !important;
+    box-shadow: 0 0 0 4px rgba(201,168,76,.12) !important;
+}
+.home-search-btn {
+    background: var(--sa-green) !important;
+    color: var(--sa-gold) !important;
+    border-radius: 0 !important;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    border: 2px solid var(--sa-green) !important;
+}
+.home-search-btn:hover {
+    background: var(--sa-gold) !important;
+    color: var(--sa-green) !important;
+    border-color: var(--sa-gold) !important;
+    filter: none !important;
 }
 
-.footer-nav .contact-info {
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(201, 168, 76, 0.25);
-    border-radius: 6px;
-    padding: 20px;
+/* ══════════════════════════════════════
+   PROJECT CATEGORIES (categories2)
+══════════════════════════════════════ */
+.categories2 { gap: 12px !important; padding: 20px 40px !important; justify-content: center !important; flex-wrap: wrap !important; }
+.cat {
+    background: var(--sa-cream) !important;
+    border: 1px solid rgba(201,168,76,.35) !important;
+    color: var(--sa-green) !important;
+    border-radius: 0 !important;
+    padding: 10px 22px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 1.5px !important;
+    text-transform: uppercase !important;
+    transition: all .2s !important;
+}
+.cat:hover {
+    background: var(--sa-green) !important;
+    color: var(--sa-gold) !important;
+    border-color: var(--sa-green) !important;
 }
 
-.footer-nav .contact-label {
-    color: var(--sa-gold);
+/* ══════════════════════════════════════
+   COLOR FILTER — Gold bordered circles
+══════════════════════════════════════ */
+.color-filter { padding: 30px 0 !important; }
+.color-circle {
+    border: 2px solid rgba(201,168,76,.5) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,.1) !important;
+    transition: transform .2s, box-shadow .2s, border-color .2s !important;
+}
+.color-circle:hover {
+    transform: scale(1.2) !important;
+    border-color: var(--sa-gold) !important;
+    box-shadow: 0 4px 16px rgba(201,168,76,.3) !important;
 }
 
-.footer-nav .contact-value,
-.footer-nav .contact-value a {
-    color: rgba(255, 255, 255, 0.65);
-}
-
-.footer-nav .contact-value a:hover {
-    color: var(--sa-gold);
-}
-
-.social-icon {
-    background: rgba(255, 255, 255, 0.08);
-    color: #fff;
-}
-
-.social-icon:hover {
-    background: var(--sa-gold);
-    color: var(--sa-deep-green) !important;
-    transform: translateY(-4px);
-}
-
-/* ── Bottom Footer ── */
-.site-footer {
-    background: #001810;
-    border-top: 1px solid rgba(201, 168, 76, 0.18);
-}
-
-.site-footer .copyright,
-.site-footer .legal-links a {
-    color: rgba(255, 255, 255, 0.45);
-}
-
-.site-footer .legal-links a:hover {
-    color: var(--sa-gold);
-}
-
-/* ── Compare Bar ── */
-.compare-bar-inner {
-    background: var(--sa-deep-green);
-    border: 1px solid rgba(201, 168, 76, 0.4);
-}
-
-.compare-bar-go {
-    background: var(--sa-gold);
-    color: var(--sa-deep-green);
-    font-weight: 700;
-}
-
-.compare-bar-go:hover {
-    background: var(--sa-light-gold);
-    color: var(--sa-deep-green);
-}
-
-/* ── Account Dropdown ── */
-.account-dd .dropdown-item {
-    color: var(--sa-deep-green);
-}
-
-.account-dd .dropdown-item:hover {
-    background: #F0EBD8;
-    color: var(--sa-deep-green);
-}
-
-.account-dd .acc-count {
-    background: var(--sa-deep-green);
-    color: var(--sa-gold);
-}
-
-/* ── Fabric types headings ── */
+/* ══════════════════════════════════════
+   FABRIC TYPES — Cards with gold accent
+══════════════════════════════════════ */
 .fabric-types h2 {
     font-family: 'Playfair Display', serif;
-    font-weight: 400;
-    letter-spacing: 2px;
-    color: var(--sa-deep-green);
+    color: var(--sa-green);
+    font-size: 22px;
+}
+.fabric-types h2::before { content: '\2014 '; color: var(--sa-gold); }
+.fabric-types h2::after  { content: ' \2014'; color: var(--sa-gold); }
+
+.fabric-card {
+    border: 1px solid rgba(201,168,76,.25) !important;
+    border-radius: 0 !important;
+    overflow: hidden;
+    transition: transform .3s, border-color .3s, box-shadow .3s !important;
+}
+.fabric-card:hover {
+    transform: translateY(-5px) !important;
+    border-color: var(--sa-gold) !important;
+    box-shadow: 0 12px 30px rgba(201,168,76,.2) !important;
+}
+.fabric-card span {
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--sa-green) !important;
+    text-transform: uppercase;
+    font-size: 11px;
 }
 
-/* ── Buttons (general) ── */
-.Update-link {
-    background-color: var(--sa-deep-green);
-    border-color: var(--sa-deep-green);
-    color: var(--sa-cream);
+/* ══════════════════════════════════════
+   SEO SECTION — Royal manuscript style
+══════════════════════════════════════ */
+.seo-section {
+    background: #F5EFE0 !important;
+    border-top: 3px solid var(--sa-gold);
+    border-bottom: 3px solid var(--sa-gold);
 }
-
-.Update-link:hover {
-    background: var(--sa-gold);
-    border-color: var(--sa-gold);
-    color: var(--sa-deep-green);
+.seo-section h2 {
+    font-family: 'Playfair Display', serif !important;
+    color: var(--sa-green) !important;
 }
+.seo-section p { color: #5a4a2a !important; line-height: 1.8 !important; }
 
-/* ── WhatsApp float ── */
-.whatsapp-float {
-    background: #25D366;
-    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+/* ══════════════════════════════════════
+   FOOTER — Dark green royal style
+══════════════════════════════════════ */
+.footer-nav {
+    background: var(--sa-dark) !important;
+    border-top: 4px solid var(--sa-gold) !important;
+}
+.footer-nav .nav-title {
+    font-family: 'Playfair Display', serif !important;
+    color: var(--sa-gold) !important;
+    font-size: 14px !important;
+    letter-spacing: 2px !important;
+    border-bottom: 1px solid rgba(201,168,76,.2) !important;
+    padding-bottom: 10px !important;
+}
+.footer-nav .nav-list a { color: rgba(253,250,243,.6) !important; }
+.footer-nav .nav-list a:hover { color: var(--sa-gold) !important; padding-inline-start: 6px !important; }
+.footer-nav .contact-label { color: var(--sa-gold) !important; font-size: 11px !important; font-weight: 700 !important; letter-spacing: 1.5px !important; text-transform: uppercase !important; }
+.footer-nav .contact-value,
+.footer-nav .contact-value a { color: rgba(253,250,243,.7) !important; }
+.footer-nav .contact-value a:hover { color: var(--sa-gold) !important; }
+.social-icon { background: rgba(201,168,76,.1) !important; color: var(--sa-gold) !important; border: 1px solid rgba(201,168,76,.2) !important; }
+.social-icon:hover { background: var(--sa-gold) !important; color: var(--sa-green) !important; }
+.site-footer { background: #050F07 !important; border-top: 1px solid rgba(201,168,76,.15) !important; }
+.site-footer .legal-links a:hover { color: var(--sa-gold) !important; }
+
+/* ══════════════════════════════════════
+   WHATSAPP FLOAT
+══════════════════════════════════════ */
+.whatsapp-float { bottom: 80px !important; }
+
+/* Mobile */
+@media (max-width: 767px) {
+    .sa-header-brand { padding: 14px 16px; }
+    .sa-logo a { font-size: 20px; }
+    .sa-logo a::before, .sa-logo a::after { display: none; }
+    .sa-nav-inner { padding: 0 12px; overflow-x: auto; }
+    .sa-header-nav ul li a { padding: 12px 14px; font-size: 11px; }
+    .sa-announce-bar { gap: 8px; font-size: 10px; padding: 7px 12px; }
+    .sa-announce-sep { display: none; }
 }
