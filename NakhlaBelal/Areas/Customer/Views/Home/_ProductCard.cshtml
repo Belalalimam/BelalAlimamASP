@@ -1,103 +1,162 @@
 @model Product
+@{
+    var cardUnit = UnitHelper.GetShortLabel(Model.UnitPrice);
+}
 
-<div class="card product-card border-0 shadow-sm h-100 rounded-4 overflow-hidden position-relative">
-    <!-- Badges -->
-    <div class="position-absolute top-0 start-0 m-3 z-1">
-        @if (Model.IsOnSale)
-        {
-            <span class="badge bg-danger rounded-pill px-2 py-1">
-                <small><i class="fas fa-tag me-1"></i>SALE</small>
-            </span>
-        }
-        @if (Model.IsNew)
-        {
-            <span class="badge bg-success rounded-pill px-2 py-1 mt-1">
-                <small><i class="fas fa-star me-1"></i>NEW</small>
-            </span>
-        }
-    </div>
+<div class="eg-pcard">
 
-    <!-- Product Image -->
-    <div class="position-relative overflow-hidden" style="height: 200px; background: #f8f9fa;">
-        <img src="~/images/@Model.MainImage"
-             class="img-fluid w-100 h-100 object-fit-cover"
-             alt="@Model.Name"
-             onerror="this.src='https://via.placeholder.com/300x200?text=Product'">
+    <div class="eg-pcard-head"></div>
 
-        <!-- Quick Actions stack (top-end) -->
-        <div class="card-actions-stack">
-            <button type="button" class="card-action-btn wishlist-btn" data-pid="@Model.Id" onclick="toggleWishlist(@Model.Id, this); return false;" title="Wishlist">
+    <a href="@Url.Action("Details", "Home", new { id = Model.Id, area = "Customer" })" class="eg-pcard-imgwrap" tabindex="-1">
+        <img src="~/images/@Model.MainImage" alt="@Model.Name"
+             onerror="this.src='https://via.placeholder.com/300x240?text=Fabric'" loading="lazy" />
+
+        <div class="eg-pcard-badges">
+            @if (Model.IsOnSale) { <span class="eg-badge eg-sale">SALE</span> }
+            @if (Model.IsNew)    { <span class="eg-badge eg-new">NEW</span> }
+        </div>
+
+        <div class="eg-pcard-actions">
+            <button type="button" class="eg-act-btn wishlist-btn" data-pid="@Model.Id"
+                    onclick="toggleWishlist(@Model.Id, this); return false;" title="Wishlist">
                 <i class="far fa-heart"></i>
             </button>
-            <button type="button" class="card-action-btn compare-btn" data-pid="@Model.Id" onclick="toggleCompare(@Model.Id, this); return false;" title="Compare">
+            <button type="button" class="eg-act-btn compare-btn" data-pid="@Model.Id"
+                    onclick="toggleCompare(@Model.Id, this); return false;" title="Compare">
                 <i class="ri-arrow-left-right-line"></i>
             </button>
-            <button type="button" class="card-action-btn quickview-btn" onclick="openQuickView(@Model.Id); return false;" title="Quick view">
+            <button type="button" class="eg-act-btn quickview-btn"
+                    onclick="openQuickView(@Model.Id); return false;" title="Quick view">
                 <i class="ri-eye-line"></i>
             </button>
-            <button type="button" class="card-action-btn sample-btn" onclick="requestSampleQuick(@Model.Id); return false;" title="Request Sample">
+            <button type="button" class="eg-act-btn sample-btn"
+                    onclick="requestSampleQuick(@Model.Id); return false;" title="Sample">
                 <i class="ri-scissors-cut-line"></i>
             </button>
         </div>
-    </div>
+    </a>
 
-    <!-- Product Info -->
-    <div class="card-body p-3">
-        <!-- Category -->
-        <small class="text-muted d-block mb-1">@Model.Category?.Name</small>
-
-        <!-- Name -->
-        <h6 class="card-title fw-bold mb-2">
-            <a href="@Url.Action("Details", "Home", new { id = Model.Id, area = "Customer" })"
-               class="text-decoration-none text-dark">
-                @(Model.Name.Length > 50 ? Model.Name.Substring(0, 50) + "..." : Model.Name)
+    <div class="eg-pcard-body">
+        <p class="eg-pcard-cat">@Model.Category?.Name</p>
+        <h3 class="eg-pcard-name">
+            <a href="@Url.Action("Details", "Home", new { id = Model.Id, area = "Customer" })">
+                @(Model.Name.Length > 46 ? Model.Name.Substring(0, 46) + "…" : Model.Name)
             </a>
-        </h6>
+        </h3>
 
-        <!-- Rating -->
-        <div class="d-flex align-items-center mb-2">
-            <div class="rating-stars small">
-                @for (int i = 1; i <= 5; i++)
+        <div class="eg-pcard-stars">
+            @for (int i = 1; i <= 5; i++)
+            {
+                <i class="@(i <= Math.Floor(Model.AverageRating) ? "fas" : "far") fa-star"></i>
+            }
+            <span>(@Model.ReviewCount)</span>
+        </div>
+
+        <div class="eg-pcard-foot">
+            <div>
+                @if (Model.IsOnSale)
                 {
-                    <i class="@(i <= Math.Floor(Model.AverageRating) ? "fas" : "far") fa-star text-warning"></i>
+                    <span class="eg-price-sale">$@Model.FinalPrice.ToString("N2")</span>
+                    <span class="eg-price-old">$@Model.Price.ToString("N2")</span>
                 }
+                else
+                {
+                    <span class="eg-price">$@Model.Price.ToString("N2")</span>
+                }
+                <span class="eg-unit">/ @cardUnit</span>
             </div>
-            <small class="text-muted ms-2">(@Model.ReviewCount)</small>
-        </div>
-
-        <!-- Price -->
-        @{
-            var cardUnit = UnitHelper.GetShortLabel(Model.UnitPrice);
-        }
-        <div class="d-flex align-items-center mb-3">
-            @if (Model.IsOnSale)
-            {
-                <span class="h5 mb-0 fw-bold text-danger">$@Model.FinalPrice.ToString("N2")</span>
-                <small class="text-muted ms-1">/ @cardUnit</small>
-                <small class="text-muted text-decoration-line-through ms-2">$@Model.Price.ToString("N2")</small>
-            }
-            else
-            {
-                <span class="h5 mb-0 fw-bold">$@Model.Price.ToString("N2")</span>
-                <small class="text-muted ms-1">/ @cardUnit</small>
-            }
-        </div>
-
-        <!-- Add to Cart -->
-        <div class="d-grid">
-            <button class="btn btn-outline-primary btn-sm rounded-pill"
-                    onclick="addToCart(@Model.Id, 1)">
-                <i class="fas fa-shopping-cart me-2"></i>Add to Cart
-            </button>
+            <a href="@Url.Action("Details", "Home", new { id = Model.Id, area = "Customer" })"
+               class="eg-view-btn">عرض</a>
         </div>
     </div>
+
 </div>
 
 <style>
-    .card-actions-stack{position:absolute;top:12px;inset-inline-end:12px;display:flex;flex-direction:column;gap:6px;z-index:2}
-    .card-action-btn{width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.95);box-shadow:0 2px 6px rgba(0,0,0,.12);display:inline-flex;align-items:center;justify-content:center;color:#013220;transition:.15s;cursor:pointer}
-    .card-action-btn:hover{background:#013220;color:#fff;transform:scale(1.08)}
-    .card-action-btn.active{background:#e91e63;color:#fff}
-    .card-action-btn.active .fa-heart{font-weight:900}
-    .card-action-btn.compare-btn.active{background:#013220;color:#ffd700}
+/* ── Egypt Product Card ── */
+.eg-pcard {
+    display: flex; flex-direction: column;
+    background: #FDF5E6;
+    border: 1px solid rgba(212,160,23,.2);
+    border-radius: 2px; overflow: hidden;
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+.eg-pcard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 14px 38px rgba(0,59,111,.14);
+}
+
+/* Blue Nile header stripe */
+.eg-pcard-head {
+    height: 4px;
+    background: linear-gradient(90deg, #003B6F 0%, #0055A4 50%, #003B6F 100%);
+    flex-shrink: 0;
+}
+
+/* Image */
+.eg-pcard-imgwrap {
+    position: relative; display: block;
+    overflow: hidden; aspect-ratio: 4 / 3; background: #F0E0BA;
+    text-decoration: none;
+}
+.eg-pcard-imgwrap img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform .45s ease;
+}
+.eg-pcard:hover .eg-pcard-imgwrap img { transform: scale(1.05); }
+
+/* Badges */
+.eg-pcard-badges {
+    position: absolute; top: 8px; inset-inline-start: 8px;
+    display: flex; flex-direction: column; gap: 3px; z-index: 2;
+}
+.eg-badge { font-size: 9px; font-weight: 800; letter-spacing: 1px; padding: 3px 8px; border-radius: 2px; text-transform: uppercase; }
+.eg-sale { background: #D4A017; color: #1A2B3C; }
+.eg-new  { background: #003B6F; color: #fff; }
+
+/* Action buttons — fade in over image */
+.eg-pcard-actions {
+    position: absolute; top: 8px; inset-inline-end: 8px;
+    display: flex; flex-direction: column; gap: 5px; z-index: 3;
+    opacity: 0; transition: opacity .25s ease;
+}
+.eg-pcard:hover .eg-pcard-actions { opacity: 1; }
+
+.eg-act-btn {
+    width: 32px; height: 32px; border-radius: 4px; border: none;
+    background: rgba(253,245,230,.95); color: #003B6F;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 14px; cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,.14);
+    transition: background .15s, color .15s;
+}
+.eg-act-btn:hover { background: #D4A017; color: #1A2B3C; }
+.eg-act-btn.active { background: #D4A017; color: #1A2B3C; }
+.eg-act-btn.compare-btn.active { background: #003B6F; color: #D4A017; }
+
+/* Body */
+.eg-pcard-body { padding: 12px 14px 14px; background: #FDF5E6; }
+.eg-pcard-cat { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #B8860B; margin: 0 0 4px; }
+.eg-pcard-name {
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px; font-weight: 700; margin: 0 0 6px; line-height: 1.4;
+}
+.eg-pcard-name a { color: #1A2B3C; text-decoration: none; }
+.eg-pcard-name a:hover { color: #003B6F; }
+
+.eg-pcard-stars { color: #D4A017; font-size: 11px; margin-bottom: 8px; display: flex; align-items: center; gap: 3px; }
+.eg-pcard-stars span { color: #888; font-size: 10px; }
+
+.eg-pcard-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.eg-price, .eg-price-sale { font-size: 15px; font-weight: 700; color: #003B6F; font-family: 'Cairo', sans-serif; }
+.eg-price-old { font-size: 11px; color: #bbb; text-decoration: line-through; }
+.eg-unit { font-size: 11px; color: #B8860B; }
+
+.eg-view-btn {
+    padding: 6px 14px; background: #003B6F; color: #fff;
+    font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
+    text-decoration: none; border-radius: 3px; border: 2px solid #003B6F;
+    transition: background .2s, color .2s; white-space: nowrap; flex-shrink: 0;
+}
+.eg-view-btn:hover { background: #D4A017; color: #1A2B3C; border-color: #D4A017; }
 </style>
