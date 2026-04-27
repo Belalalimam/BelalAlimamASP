@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout *)",
+      "Bash(dir \"C:\\\\Users\\\\Belal\\\\source\\\\repos\\\\Belalalimam\\\\BelalAlimamASP\\\\.claude\\\\worktrees\\\\romantic-bassi-ce128f\\\\NakhlaBelal\\\\Areas\\\\Customer\\\\Views\\\\Home\")",
+      "Bash(grep -v \"^\\\\s*//\")"
+    ]
+  }
+}
