@@ -1,14 +1,15 @@
-﻿@{
+@{
     ViewBag.Title = "Home";
 }
 @using Microsoft.Extensions.Localization
 @using NakhlaBelal
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<link rel="stylesheet" href="~/css/animate.css" asp-append-version="true" />
 
-{{!-- ═══════════════════════════════════════════════════
-     EGYPT HERO — لوحة بردي طافية + حدود ذهب فرعوني
-     ═══════════════════════════════════════════════════ --}}
+@* ══════════════════════════════════════════════════════════
+   SECTION 1 — HERO SLIDER (enhanced with animate.css)
+══════════════════════════════════════════════════════════ *@
 <section class="eg-hero-wrap">
     <div class="swiper heroSwiper">
         <div class="swiper-wrapper">
@@ -16,12 +17,12 @@
             <div class="swiper-slide">
                 <div class="eg-slide" style="background-image:url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?auto=format&fit=crop&w=1600&q=80')">
                     <div class="eg-slide-overlay"></div>
-                    <div class="eg-panel">
+                    <div class="eg-panel animate__animated animate__fadeInLeft">
                         <p class="eg-glyph">𓂀  𓋹  𓂀</p>
-                        <p class="eg-eyebrow">مجموعة متميزة</p>
-                        <h1>@SharedLocalizer["Find High-Quality Textiles In our Online Fabric Store"]</h1>
-                        <p class="eg-sub">@SharedLocalizer["Design your dreams and make them come true with our online fabrics."]</p>
-                        <a href="@Url.Action("Product", "Home")" class="eg-cta">@SharedLocalizer["Browse Our Fabrics"]</a>
+                        <p class="eg-eyebrow animate__animated animate__fadeInDown">مجموعة متميزة</p>
+                        <h1 class="animate__animated animate__fadeInUp">@SharedLocalizer["Find High-Quality Textiles In our Online Fabric Store"]</h1>
+                        <p class="eg-sub animate__animated animate__fadeIn">@SharedLocalizer["Design your dreams and make them come true with our online fabrics."]</p>
+                        <a href="@Url.Action("Product", "Home")" class="eg-cta animate__animated animate__fadeInUp">@SharedLocalizer["Browse Our Fabrics"]</a>
                         <p class="eg-glyph eg-glyph-bot">𓂀  𓋹  𓂀</p>
                     </div>
                 </div>
@@ -30,7 +31,7 @@
             <div class="swiper-slide">
                 <div class="eg-slide" style="background-image:url('https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=1600&q=80')">
                     <div class="eg-slide-overlay"></div>
-                    <div class="eg-panel">
+                    <div class="eg-panel animate__animated animate__fadeInLeft">
                         <p class="eg-glyph">𓂀  𓋹  𓂀</p>
                         <p class="eg-eyebrow">أقمشة راقية</p>
                         <h1>@SharedLocalizer["Premium Materials for Every Project"]</h1>
@@ -44,7 +45,7 @@
             <div class="swiper-slide">
                 <div class="eg-slide" style="background-image:url('https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1600&q=80')">
                     <div class="eg-slide-overlay"></div>
-                    <div class="eg-panel">
+                    <div class="eg-panel animate__animated animate__fadeInLeft">
                         <p class="eg-glyph">𓂀  𓋹  𓂀</p>
                         <p class="eg-eyebrow">وصل حديثاً</p>
                         <h1>@SharedLocalizer["New Arrivals This Season"]</h1>
@@ -61,368 +62,611 @@
         <div class="swiper-button-next"></div>
     </div>
     <div class="eg-hero-gold-strip"></div>
+    <a href="#eg-trust" class="eg-scroll-hint" aria-label="Scroll down">
+        <i class="ri-arrow-down-s-line"></i>
+    </a>
 </section>
 
-<style>
-    /* ── Egypt Hero ── */
-    .eg-hero-wrap { position: relative; margin-bottom: 0; }
-    .heroSwiper   { width: 100%; height: 600px; }
+@* ══════════════════════════════════════════════════════════
+   SECTION 2 — TRUST BAR (NEW)
+══════════════════════════════════════════════════════════ *@
+<div class="eg-trust-bar eg-reveal" id="eg-trust">
+    <div class="eg-trust-inner">
+        <div class="eg-trust-item">
+            <i class="ri-truck-line"></i>
+            <div>
+                <strong>@(ViewBag.IsArabic == true ? "شحن مجاني" : "Free Shipping")</strong>
+                <span>@(ViewBag.IsArabic == true ? "للطلبات فوق $200" : "On orders over $200")</span>
+            </div>
+        </div>
+        <div class="eg-trust-divider"></div>
+        <div class="eg-trust-item">
+            <i class="ri-shield-check-line"></i>
+            <div>
+                <strong>@(ViewBag.IsArabic == true ? "ضمان الجودة" : "Quality Guarantee")</strong>
+                <span>@(ViewBag.IsArabic == true ? "أقمشة مختارة بعناية" : "Carefully selected fabrics")</span>
+            </div>
+        </div>
+        <div class="eg-trust-divider"></div>
+        <div class="eg-trust-item">
+            <i class="ri-refresh-line"></i>
+            <div>
+                <strong>@(ViewBag.IsArabic == true ? "إرجاع سهل" : "Easy Returns")</strong>
+                <span>@(ViewBag.IsArabic == true ? "خلال 14 يوم" : "Within 14 days")</span>
+            </div>
+        </div>
+        <div class="eg-trust-divider"></div>
+        <div class="eg-trust-item">
+            <i class="ri-lock-line"></i>
+            <div>
+                <strong>@(ViewBag.IsArabic == true ? "دفع آمن" : "Secure Payment")</strong>
+                <span>@(ViewBag.IsArabic == true ? "بيانات محمية بالكامل" : "100% protected data")</span>
+            </div>
+        </div>
+    </div>
+</div>
 
-    .eg-slide {
-        position: relative; width: 100%; height: 100%;
-        background-size: cover; background-position: center;
-        display: flex; align-items: center; justify-content: flex-start;
-        padding: 0 8%;
-    }
-    [dir="rtl"] .eg-slide { justify-content: flex-end; }
-
-    .eg-slide-overlay {
-        position: absolute; inset: 0;
-        background: linear-gradient(110deg, rgba(0,59,111,.55) 0%, rgba(0,20,50,.25) 50%, rgba(0,0,0,.05) 100%);
-    }
-
-    /* Papyrus floating panel */
-    .eg-panel {
-        position: relative; z-index: 2;
-        background: rgba(253,245,230,.93);
-        padding: 36px 44px;
-        max-width: 500px; width: 100%;
-        border-top: 4px solid #D4A017;
-        border-bottom: 4px solid #D4A017;
-        border-left: 1px solid rgba(212,160,23,.3);
-        border-right: 1px solid rgba(212,160,23,.3);
-        box-shadow: 0 12px 48px rgba(0,0,0,.2);
-    }
-
-    .eg-glyph {
-        text-align: center; color: #D4A017;
-        font-size: 16px; letter-spacing: 10px; margin: 0 0 12px; opacity: .55;
-    }
-    .eg-glyph-bot { margin: 12px 0 0; }
-
-    .eg-eyebrow {
-        font-family: 'Cairo', sans-serif;
-        font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
-        color: #D4A017; font-weight: 700; margin: 0 0 12px;
-    }
-    .eg-panel h1 {
-        font-family: 'Cairo', sans-serif;
-        font-size: 30px; font-weight: 800; line-height: 1.3;
-        color: #003B6F; margin: 0 0 14px;
-    }
-    .eg-sub {
-        font-family: 'Cairo', sans-serif;
-        font-size: 14px; color: #1A2B3C; opacity: .8;
-        margin: 0 0 22px; line-height: 1.7;
-    }
-    .eg-cta {
-        display: inline-block; padding: 12px 34px;
-        background: #D4A017; color: #1A2B3C;
-        font-family: 'Cairo', sans-serif;
-        font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
-        font-size: 12px; text-decoration: none; border-radius: 3px;
-        border: 2px solid #D4A017; transition: all .25s;
-    }
-    .eg-cta:hover { background: #003B6F; color: #fff; border-color: #003B6F; }
-
-    /* Gold shimmer strip at bottom */
-    .eg-hero-gold-strip {
-        height: 5px;
-        background: linear-gradient(90deg, #003B6F 0%, #D4A017 30%, #E8C547 50%, #D4A017 70%, #003B6F 100%);
-    }
-
-    /* Nav controls */
-    .heroSwiper .swiper-button-prev,
-    .heroSwiper .swiper-button-next {
-        color: #D4A017; background: rgba(0,59,111,.65);
-        width: 46px; height: 46px; border-radius: 50%;
-        backdrop-filter: blur(4px); border: 1px solid rgba(212,160,23,.35);
-    }
-    .heroSwiper .swiper-button-prev:after,
-    .heroSwiper .swiper-button-next:after { font-size: 16px; font-weight: 900; }
-    .heroSwiper .swiper-pagination-bullet { background: rgba(212,160,23,.6); opacity: 1; }
-    .heroSwiper .swiper-pagination-bullet-active { background: #D4A017; }
-
-    @@media (max-width: 767px) {
-        .heroSwiper { height: 520px; }
-        .eg-panel { max-width: 100%; padding: 28px 24px; }
-        .eg-panel h1 { font-size: 22px; }
-        .eg-sub { font-size: 13px; }
-        .heroSwiper .swiper-button-prev,
-        .heroSwiper .swiper-button-next { display: none; }
-    }
-</style>
-
-@section Scripts {
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            new Swiper('.heroSwiper', {
-                loop: true,
-                autoplay: { delay: 5500, disableOnInteraction: false },
-                speed: 700,
-                effect: 'fade',
-                fadeEffect: { crossFade: true },
-                pagination: { el: '.heroSwiper .swiper-pagination', clickable: true },
-                navigation: {
-                    nextEl: '.heroSwiper .swiper-button-next',
-                    prevEl: '.heroSwiper .swiper-button-prev'
-                }
-            });
-        });
-    </script>
-}
-
-<section class="dynamic-categories container py-5">
-    <div class="dc-header text-center mb-4">
-        <h2 class="dc-title">@SharedLocalizer["Shop by Category"]</h2>
-        <p class="dc-sub text-muted">@SharedLocalizer["Browse our categories and find what fits your project"]</p>
+@* ══════════════════════════════════════════════════════════
+   SECTION 3 — CATEGORIES — Full-image overlay tiles
+══════════════════════════════════════════════════════════ *@
+<section class="eg-cat-section eg-reveal">
+    <div class="eg-section-header">
+        <h2>@SharedLocalizer["Shop by Category"]</h2>
+        <p>@SharedLocalizer["Browse our categories and find what fits your project"]</p>
     </div>
 
     @if (ViewBag.Categories != null && ((IEnumerable<NakhlaBelal.Models.Category>)ViewBag.Categories).Any())
     {
-        <div class="dc-grid">
+        <div class="eg-cat-grid">
             @foreach (var cat in (IEnumerable<NakhlaBelal.Models.Category>)ViewBag.Categories)
             {
                 <a href="@Url.Action("CategroySearch", "Home", new { CategoryId = cat.Id })"
-                   class="dc-card"
-                   title="@cat.Name">
-                    <div class="dc-thumb">
-                        @if (!string.IsNullOrWhiteSpace(cat.ImageUrl))
-                        {
-                            <img src="~/images/@cat.ImageUrl" alt="@cat.Name" loading="lazy" />
-                        }
-                        else if (!string.IsNullOrWhiteSpace(cat.IconClass))
-                        {
-                            <span class="dc-icon"><i class="@cat.IconClass"></i></span>
-                        }
-                        else
-                        {
-                            <span class="dc-icon"><i class="ri-price-tag-3-line"></i></span>
-                        }
+                   class="eg-cat-tile" title="@cat.Name">
+                    @if (!string.IsNullOrWhiteSpace(cat.ImageUrl))
+                    {
+                        <img src="~/images/@cat.ImageUrl" alt="@cat.Name" loading="lazy" />
+                    }
+                    else
+                    {
+                        <div class="eg-cat-tile-fallback">
+                            <i class="@(string.IsNullOrWhiteSpace(cat.IconClass) ? "ri-price-tag-3-line" : cat.IconClass)"></i>
+                        </div>
+                    }
+                    <div class="eg-cat-tile-overlay">
+                        <span>@SharedLocalizer[cat.Name]</span>
+                        <i class="ri-arrow-right-line"></i>
                     </div>
-                    <span class="dc-name">@SharedLocalizer[cat.Name]</span>
                 </a>
             }
         </div>
     }
 </section>
 
-<style>
-    .dynamic-categories .dc-title { font-weight: 700; letter-spacing: .3px; }
-    .dynamic-categories .dc-sub { font-size: 15px; }
-    .dc-grid {
-        display: grid;
-        grid-template-columns: repeat(6, 1fr);
-        gap: 18px;
-    }
-    .dc-card {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 10px;
-        text-decoration: none;
-        color: inherit;
-        transition: transform .25s ease;
-    }
-    .dc-card:hover { transform: translateY(-4px); }
-    .dc-thumb {
-        width: 100%;
-        aspect-ratio: 1 / 1;
-        border-radius: 18px;
-        overflow: hidden;
-        background: linear-gradient(135deg, #f5f5f7 0%, #e9ecef 100%);
-        box-shadow: 0 4px 14px rgba(0,0,0,.06);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: box-shadow .25s ease, transform .25s ease;
-    }
-    .dc-card:hover .dc-thumb { box-shadow: 0 10px 24px rgba(0,0,0,.12); }
-    .dc-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .dc-icon { font-size: 38px; color: #1a1a2e; }
-    .dc-name {
-        font-size: 14px;
-        font-weight: 600;
-        text-align: center;
-        color: #1a1a2e;
-    }
-    @@media (max-width: 1199px) { .dc-grid { grid-template-columns: repeat(5, 1fr); } }
-    @@media (max-width: 991px)  { .dc-grid { grid-template-columns: repeat(4, 1fr); } }
-    @@media (max-width: 767px)  { .dc-grid { grid-template-columns: repeat(3, 1fr); gap: 14px; } .dc-name { font-size: 13px; } }
-    @@media (max-width: 480px)  { .dc-grid { grid-template-columns: repeat(3, 1fr); gap: 12px; } }
-</style>
+@* ══════════════════════════════════════════════════════════
+   SECTION 4 — OFFERS BANNER (NEW)
+══════════════════════════════════════════════════════════ *@
+<section class="eg-offers-banner eg-reveal">
+    <div class="eg-offers-content">
+        <span class="eg-offers-tag">@(ViewBag.IsArabic == true ? "عروض حصرية" : "EXCLUSIVE DEALS")</span>
+        <h2>@(ViewBag.IsArabic == true ? "خصومات تصل إلى ٤٠٪" : "SALE UP TO 40% OFF")</h2>
+        <p>@(ViewBag.IsArabic == true ? "أقمشة فاخرة بأسعار استثنائية — لفترة محدودة" : "Premium fabrics at exceptional prices — limited time only")</p>
+        <a href="@Url.Action("CategroySearch", "Home", new { OnSale = true })" class="eg-offers-btn">
+            @(ViewBag.IsArabic == true ? "تسوق العروض الآن" : "Shop Sale Now")
+            <i class="ri-arrow-right-line ms-2"></i>
+        </a>
+    </div>
+    <div class="eg-offers-visual">
+        <div class="eg-offers-shape"></div>
+        <div class="eg-offers-pct">40<sup>%</sup></div>
+    </div>
+</section>
 
-
-
-
-
- 
-<div class="container  ">
-    <!-- Search Section -->
-    <div class="changeColor">
-        <h1 class="text-center">@SharedLocalizer["Search for the fabric you desire:"]</h1>
+@* ══════════════════════════════════════════════════════════
+   SECTION 5 — FABRIC TYPES — Swiper horizontal carousel
+══════════════════════════════════════════════════════════ *@
+<section class="eg-fabrics-section eg-reveal">
+    <div class="eg-section-header">
+        <h2>@SharedLocalizer["What material do you need? Browse our fabrics by type"]</h2>
+        <a href="@Url.Action("Product", "Home")" class="eg-section-link">
+            @(ViewBag.IsArabic == true ? "عرض الكل" : "View All") <i class="ri-arrow-right-line"></i>
+        </a>
     </div>
 
-
-    <form class="home-search" action="@Url.Action("CategroySearch", "Home")" method="get" role="search" autocomplete="off">
-        <div class="home-search-inner">
-            <i class="ri-search-line home-search-icon" aria-hidden="true"></i>
-            <input type="text" name="Name" class="home-search-input"
-                   placeholder="@SharedLocalizer["Search for products, categories, colors..."]"
-                   aria-label="@SharedLocalizer["Search"]" />
-            <button type="submit" class="home-search-btn theme-btn">
-                <i class="ri-search-line d-md-none"></i>
-                <span class="d-none d-md-inline">@SharedLocalizer["Search"]</span>
-            </button>
-        </div>
-    </form>
-    <style>
-        .home-search { max-width: 720px; margin: 0 auto 28px; padding: 0 12px;  }
-        .home-search-inner {
-            position: relative;
-            display: flex;
-            align-items: center;
-            background-color: var(--cotton-color);
-            border: 1px solid #e5e7eb;
-            border-radius: 999px;
-            box-shadow: 0 6px 18px rgba(0,0,0,.06);
-            transition: box-shadow .2s ease, border-color .2s ease;
-        }
-        .home-search-inner:focus-within {
-            border-color: var(--brand-primary, #013220);
-            box-shadow: 0 8px 22px rgba(0,0,0,.12);
-        }
-        .home-search-icon {
-            font-size: 20px;
-            color: #9ca3af;
-            padding: 0 16px;
-            flex: 0 0 auto;
-        }
-        .home-search-input {
-            flex: 1;
-            border: none;
-            outline: none;
-            background: transparent;
-            padding: 14px 0;
-            font-size: 15px;
-            min-width: 0;
-        }
-        .home-search-btn {
-            border: none;
-            border-radius: 999px;
-            padding: 10px 22px;
-            margin: 5px;
-            font-weight: 600;
-            cursor: pointer;
-            flex: 0 0 auto;
-            background: var(--evergreen-color);
-            color: var(--cotton-color);
-            transition: filter .15s ease;
-        }
-        .home-search-btn:hover { filter: brightness(1.1); }
-        @@media (max-width: 575px) {
-            .home-search-btn { padding: 10px 14px; }
-            .home-search-input { font-size: 14px; padding: 12px 0; }
-            .home-search-icon { padding: 0 12px; font-size: 18px; }
-        }
-    </style>
-
-    <!-- Divider -->
-    <div class="changeColor">
-        <h2 class="or-text text-center">@SharedLocalizer["Or start from here"]</h2>
-        <p class="sub-text text-center">
-            @SharedLocalizer["What are you making? Choose the fabrics best suited to your project."]
-        </p>
-    </div>
-</div>
-
-
-
-
-
-<!-- Categories -->
-<div class="categories2">
-    @if (ViewBag.ProjectCategories != null)
+    @if (ViewBag.FabricTypes != null)
     {
-        @foreach (var project in ViewBag.ProjectCategories)
-        {
-            <a href="@Url.Action("CategroySearch", "Home", new { ProjectCategoryId = project.Id })" class="cat text-decoration-none">
-                <i class="@project.Icon"></i> @SharedLocalizer[project.Name]
-            </a>
-        }
+        <div class="swiper fabricSwiper">
+            <div class="swiper-wrapper">
+                @foreach (var type in ViewBag.FabricTypes)
+                {
+                    <div class="swiper-slide">
+                        <a class="eg-fabric-card" href="@Url.Action("CategroySearch", "Home", new { FabricTypeId = type.Id })">
+                            <div class="eg-fabric-img">
+                                <img src="~/images/@type.ImageUrl" alt="@type.Name" loading="lazy" />
+                            </div>
+                            <div class="eg-fabric-label">
+                                <span>@SharedLocalizer[type.Name]</span>
+                                <i class="ri-arrow-right-up-line"></i>
+                            </div>
+                        </a>
+                    </div>
+                }
+            </div>
+            <div class="swiper-button-prev eg-fab-prev"></div>
+            <div class="swiper-button-next eg-fab-next"></div>
+        </div>
     }
-</div>
+</section>
 
+@* ══════════════════════════════════════════════════════════
+   SECTION 6 — SEARCH (repositioned, redesigned)
+══════════════════════════════════════════════════════════ *@
+<section class="eg-search-section eg-reveal">
+    <div class="eg-search-inner-wrap">
+        <h2 class="eg-search-title">@SharedLocalizer["Search for the fabric you desire:"]</h2>
+        <form class="eg-search-form" action="@Url.Action("CategroySearch", "Home")" method="get" role="search" autocomplete="off">
+            <div class="eg-search-box">
+                <i class="ri-search-line"></i>
+                <input type="text" name="Name"
+                       placeholder="@SharedLocalizer["Search for products, categories, colors..."]"
+                       aria-label="@SharedLocalizer["Search"]" />
+                <button type="submit">
+                    <span class="d-none d-md-inline">@SharedLocalizer["Search"]</span>
+                    <i class="ri-arrow-right-line d-md-none"></i>
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
 
+@* ══════════════════════════════════════════════════════════
+   SECTION 7 — PROJECT CATEGORIES (icon grid)
+══════════════════════════════════════════════════════════ *@
+<section class="eg-projects-section eg-reveal container">
+    <div class="eg-section-header text-center">
+        <h2>@SharedLocalizer["Or start from here"]</h2>
+        <p>@SharedLocalizer["What are you making? Choose the fabrics best suited to your project."]</p>
+    </div>
+    <div class="eg-projects-grid">
+        @if (ViewBag.ProjectCategories != null)
+        {
+            @foreach (var project in ViewBag.ProjectCategories)
+            {
+                <a href="@Url.Action("CategroySearch", "Home", new { ProjectCategoryId = project.Id })"
+                   class="eg-project-card text-decoration-none">
+                    <div class="eg-project-icon">
+                        <i class="@project.Icon"></i>
+                    </div>
+                    <span>@SharedLocalizer[project.Name]</span>
+                </a>
+            }
+        }
+    </div>
+</section>
 
-
-
-<!-- COLOR FILTER SECTION -->
-<section class="color-filter container">
-    <div class="color-row">
+@* ══════════════════════════════════════════════════════════
+   SECTION 8 — COLOR SHOP (square swatches + labels)
+══════════════════════════════════════════════════════════ *@
+<section class="eg-colors-section eg-reveal">
+    <div class="eg-section-header text-center">
+        <h2>@(ViewBag.IsArabic == true ? "تسوق حسب اللون" : "Shop by Color")</h2>
+    </div>
+    <div class="eg-colors-row container">
         @if (ViewBag.Colors != null)
         {
             @foreach (var color in ViewBag.Colors)
             {
                 <a href="@Url.Action("CategroySearch", "Home", new { ColorId = color.Id })"
-                       class="color-circle"
-                       style="background:@color.HexCode;"
-                       title="@color.Name">
+                   class="eg-color-swatch"
+                   style="background:@color.HexCode;"
+                   title="@color.Name">
+                    <span class="eg-color-label">@color.Name</span>
                 </a>
             }
         }
     </div>
 </section>
 
-<!-- FABRIC TYPES -->
-<section class="fabric-types container">
-    <h2>@SharedLocalizer["What material do you need? Browse our fabrics by type"]</h2>
+@* ══════════════════════════════════════════════════════════
+   SECTION 9 — TESTIMONIALS (NEW — static)
+══════════════════════════════════════════════════════════ *@
+<section class="eg-testimonials eg-reveal">
+    <div class="eg-section-header text-center">
+        <h2>@(ViewBag.IsArabic == true ? "ماذا يقول عملاؤنا" : "What Our Customers Say")</h2>
+    </div>
+    <div class="eg-testimonials-grid container">
+        <div class="eg-testi-card">
+            <div class="eg-testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <p class="eg-testi-quote">"@(ViewBag.IsArabic == true ? "جودة الأقمشة رائعة، وصلت بسرعة والتغليف كان ممتازاً. سأعود للشراء مرة أخرى بالتأكيد." : "Exceptional fabric quality, arrived quickly with excellent packaging. Will definitely shop again.")"</p>
+            <div class="eg-testi-author">
+                <div class="eg-testi-avatar">ن</div>
+                <div>
+                    <strong>@(ViewBag.IsArabic == true ? "نورة المنصور" : "Noura M.")</strong>
+                    <span>@(ViewBag.IsArabic == true ? "مصممة أزياء" : "Fashion Designer")</span>
+                </div>
+            </div>
+        </div>
+        <div class="eg-testi-card">
+            <div class="eg-testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+            <p class="eg-testi-quote">"@(ViewBag.IsArabic == true ? "تنوع هائل في الألوان والأنواع. الموقع سهل الاستخدام وعملية الطلب سلسة جداً." : "Huge variety in colors and types. The site is easy to use and the ordering process is very smooth.")"</p>
+            <div class="eg-testi-author">
+                <div class="eg-testi-avatar">م</div>
+                <div>
+                    <strong>@(ViewBag.IsArabic == true ? "محمد الشريف" : "Mohamed S.")</strong>
+                    <span>@(ViewBag.IsArabic == true ? "خياط محترف" : "Professional Tailor")</span>
+                </div>
+            </div>
+        </div>
+        <div class="eg-testi-card">
+            <div class="eg-testi-stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i></div>
+            <p class="eg-testi-quote">"@(ViewBag.IsArabic == true ? "طلبت عينات قبل الشراء وكانت التجربة رائعة. الأقمشة تطابق تماماً ما يُعرض على الموقع." : "Ordered samples before buying and the experience was great. Fabrics match exactly what's shown on the site.")"</p>
+            <div class="eg-testi-author">
+                <div class="eg-testi-avatar">س</div>
+                <div>
+                    <strong>@(ViewBag.IsArabic == true ? "سارة بدر" : "Sara B.")</strong>
+                    <span>@(ViewBag.IsArabic == true ? "مهتمة بالأزياء" : "Fashion Enthusiast")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <div class="fabric-grid">
-        @if (ViewBag.FabricTypes != null)
-        {
-            @foreach (var type in ViewBag.FabricTypes)
-            {
-                <a class="fabric-card" href="@Url.Action("CategroySearch", "Home", new { FabricTypeId = type.Id })">
-                    <img src="~/images/@type.ImageUrl" alt="@type.Name">
-                        <span>@SharedLocalizer[type.Name]</span>
-                    </a>
-                }
+@* ══════════════════════════════════════════════════════════
+   SECTION 10 — NEWSLETTER CTA STRIP (NEW)
+══════════════════════════════════════════════════════════ *@
+<section class="eg-newsletter-strip eg-reveal">
+    <div class="eg-newsletter-inner container">
+        <div class="eg-newsletter-text">
+            <h3>@(ViewBag.IsArabic == true ? "اشترك في نشرتنا البريدية" : "Subscribe to our Newsletter")</h3>
+            <p>@(ViewBag.IsArabic == true ? "احصل على آخر العروض وتشكيلات الموسم مباشرة في بريدك" : "Get the latest offers and new arrivals delivered to your inbox")</p>
+        </div>
+        <form class="eg-newsletter-form" action="#" method="post" onsubmit="return false;">
+            <input type="email" placeholder="@(ViewBag.IsArabic == true ? "بريدك الإلكتروني" : "Your email address")" required />
+            <button type="submit">
+                <i class="ri-send-plane-fill me-1"></i>
+                @(ViewBag.IsArabic == true ? "اشترك" : "Subscribe")
+            </button>
+        </form>
+    </div>
+</section>
+
+@* ══════════════════════════════════════════════════════════
+   SECTION 11 — SEO CONTENT
+══════════════════════════════════════════════════════════ *@
+<section class="seo-section eg-reveal">
+    <div class="seo-container">
+        <h2>@SharedLocalizer["Discover Quality Fabrics for Every Project"]</h2>
+        <p>@SharedLocalizer["We provide a carefully curated selection of high-quality fabrics designed to meet the needs of designers, tailors, and fashion enthusiasts.Whether you are creating formal wear, casual clothing, or custom pieces, our platform helps you find the right materials with confidence."]</p>
+        <p>@SharedLocalizer["Our fabric collection includes options for dresses, suits, shirts, coats, and lightweight garments, allowing you to choose based on texture, weight, and purpose. Each product is selected with attention to quality, durability, and comfort."]</p>
+        <p>@SharedLocalizer["We believe that a great shopping experience should be simple and enjoyable. That's why our platform is designed with intuitive search tools, clear categorization, and a smooth browsing experience across all devices."]</p>
+        <p>@SharedLocalizer["From discovering new materials to selecting trusted classics, we aim to support your creative journey by offering reliable products and a seamless online experience."]</p>
+    </div>
+</section>
+
+@* Recently Viewed strip (populated from localStorage) *@
+<section class="container my-5" id="recentlyViewedWrap" style="display:none;">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h3 class="fw-bold mb-0"><i class="ri-history-line me-2"></i>@SharedLocalizer["Recently Viewed"]</h3>
+        <button type="button" class="btn btn-link btn-sm text-muted" onclick="clearRecentlyViewed()">@SharedLocalizer["Clear"]</button>
+    </div>
+    <div id="recentlyViewedStrip"></div>
+</section>
+
+@* ══════════════════════════════════════════════════════════
+   PAGE-LEVEL STYLES
+══════════════════════════════════════════════════════════ *@
+<style>
+/* ── Hero ── */
+.eg-hero-wrap { position: relative; }
+.heroSwiper { width: 100%; height: 600px; }
+.eg-slide {
+    position: relative; width: 100%; height: 100%;
+    background-size: cover; background-position: center;
+    display: flex; align-items: center; justify-content: flex-start;
+    padding: 0 8%;
+}
+[dir="rtl"] .eg-slide { justify-content: flex-end; }
+.eg-slide-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(110deg, rgba(0,59,111,.55) 0%, rgba(0,20,50,.25) 50%, rgba(0,0,0,.05) 100%);
+}
+.eg-panel {
+    position: relative; z-index: 2;
+    background: rgba(253,245,230,.93);
+    padding: 36px 44px;
+    max-width: 500px; width: 100%;
+    border-top: 4px solid var(--eg-gold, #D4A017);
+    border-bottom: 4px solid var(--eg-gold, #D4A017);
+    border-left: 1px solid rgba(212,160,23,.3);
+    border-right: 1px solid rgba(212,160,23,.3);
+    box-shadow: 0 12px 48px rgba(0,0,0,.2);
+    animation-delay: .2s;
+}
+.eg-glyph { text-align: center; color: var(--eg-gold, #D4A017); font-size: 16px; letter-spacing: 10px; margin: 0 0 12px; opacity: .55; }
+.eg-glyph-bot { margin: 12px 0 0; }
+.eg-eyebrow { font-family: 'Cairo', sans-serif; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--eg-gold, #D4A017); font-weight: 700; margin: 0 0 12px; }
+.eg-panel h1 { font-family: 'Cairo', sans-serif; font-size: 30px; font-weight: 800; line-height: 1.3; color: var(--eg-blue, #003B6F); margin: 0 0 14px; }
+.eg-sub { font-family: 'Cairo', sans-serif; font-size: 14px; color: #1A2B3C; opacity: .8; margin: 0 0 22px; line-height: 1.7; }
+.eg-cta {
+    display: inline-block; padding: 12px 34px;
+    background: var(--eg-gold, #D4A017); color: #1A2B3C;
+    font-family: 'Cairo', sans-serif; font-weight: 800; letter-spacing: 1.5px;
+    text-transform: uppercase; font-size: 12px; text-decoration: none;
+    border-radius: 3px; border: 2px solid var(--eg-gold, #D4A017); transition: all .25s;
+}
+.eg-cta:hover { background: var(--eg-blue, #003B6F); color: #fff; border-color: var(--eg-blue, #003B6F); }
+.eg-hero-gold-strip { height: 5px; background: linear-gradient(90deg, var(--eg-blue,#003B6F) 0%, var(--eg-gold,#D4A017) 30%, #E8C547 50%, var(--eg-gold,#D4A017) 70%, var(--eg-blue,#003B6F) 100%); }
+.heroSwiper .swiper-button-prev, .heroSwiper .swiper-button-next { color: var(--eg-gold,#D4A017); background: rgba(0,59,111,.65); width: 46px; height: 46px; border-radius: 50%; backdrop-filter: blur(4px); border: 1px solid rgba(212,160,23,.35); }
+.heroSwiper .swiper-button-prev:after, .heroSwiper .swiper-button-next:after { font-size: 16px; font-weight: 900; }
+.heroSwiper .swiper-pagination-bullet { background: rgba(212,160,23,.6); opacity: 1; }
+.heroSwiper .swiper-pagination-bullet-active { background: var(--eg-gold,#D4A017); }
+.eg-scroll-hint {
+    position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+    z-index: 10; color: #fff; font-size: 28px; opacity: .7;
+    animation: eg-bounce 2s infinite; text-decoration: none;
+}
+@@keyframes eg-bounce { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(6px)} }
+
+/* ── Trust Bar ── */
+.eg-trust-bar { background: #fff; border-top: 1px solid rgba(0,59,111,.08); border-bottom: 1px solid rgba(0,59,111,.08); padding: 0; }
+.eg-trust-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: stretch; }
+.eg-trust-item {
+    flex: 1; display: flex; align-items: center; gap: 14px;
+    padding: 22px 28px; transition: background .2s;
+}
+.eg-trust-item:hover { background: rgba(0,59,111,.03); }
+.eg-trust-item i { font-size: 30px; color: var(--eg-gold,#D4A017); flex-shrink: 0; }
+.eg-trust-item strong { display: block; font-size: 14px; font-weight: 700; color: var(--eg-blue,#003B6F); margin-bottom: 2px; }
+.eg-trust-item span { font-size: 12px; color: #888; }
+.eg-trust-divider { width: 1px; background: rgba(0,59,111,.08); margin: 14px 0; flex-shrink: 0; }
+
+/* ── Section Headers ── */
+.eg-section-header { display: flex; align-items: center; justify-content: space-between; padding: 0 0 24px; flex-wrap: wrap; gap: 8px; }
+.eg-section-header.text-center { justify-content: center; flex-direction: column; }
+.eg-section-header h2 { font-family: 'Cairo', sans-serif; font-size: 24px; font-weight: 700; color: var(--eg-blue,#003B6F); margin: 0; }
+.eg-section-header p { font-size: 14px; color: #888; margin: 4px 0 0; }
+.eg-section-link { font-size: 13px; font-weight: 600; color: var(--eg-blue,#003B6F); text-decoration: none; display: flex; align-items: center; gap: 4px; white-space: nowrap; }
+.eg-section-link:hover { color: var(--eg-gold,#D4A017); }
+
+/* ── Categories Overlay Tiles ── */
+.eg-cat-section { padding: 60px 40px; max-width: 1200px; margin: 0 auto; }
+.eg-cat-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+.eg-cat-tile {
+    position: relative; aspect-ratio: 1/1;
+    overflow: hidden; border-radius: 10px;
+    text-decoration: none; display: block;
+    background: linear-gradient(135deg, #E8F0F8, #F5EDDB);
+}
+.eg-cat-tile img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s ease; }
+.eg-cat-tile-fallback { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 42px; color: var(--eg-blue,#003B6F); background: linear-gradient(135deg, #E8F0F8, #F5EDDB); }
+.eg-cat-tile-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,27,53,.85) 0%, rgba(0,27,53,.2) 60%, transparent 100%);
+    display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
+    padding: 16px 10px; gap: 4px;
+    opacity: 0; transition: opacity .3s ease;
+}
+.eg-cat-tile:hover .eg-cat-tile-overlay { opacity: 1; }
+.eg-cat-tile:hover img { transform: scale(1.08); }
+.eg-cat-tile-overlay span { font-family: 'Cairo', sans-serif; color: #fff; font-size: 13px; font-weight: 700; text-align: center; transform: translateY(8px); transition: transform .3s; }
+.eg-cat-tile-overlay i { color: var(--eg-gold,#D4A017); font-size: 16px; transform: translateY(8px); transition: transform .3s .05s; }
+.eg-cat-tile:hover .eg-cat-tile-overlay span,
+.eg-cat-tile:hover .eg-cat-tile-overlay i { transform: translateY(0); }
+
+/* ── Offers Banner ── */
+.eg-offers-banner {
+    background: var(--eg-blue,#003B6F);
+    display: flex; align-items: stretch;
+    min-height: 240px; overflow: hidden; position: relative;
+    margin: 0;
+}
+.eg-offers-content {
+    flex: 1; padding: 50px 60px;
+    display: flex; flex-direction: column; align-items: flex-start; justify-content: center;
+    gap: 14px; position: relative; z-index: 2;
+}
+.eg-offers-tag {
+    font-size: 10px; font-weight: 800; letter-spacing: 3px;
+    text-transform: uppercase; color: var(--eg-gold,#D4A017);
+    background: rgba(212,160,23,.12); padding: 5px 12px; border-radius: 999px;
+}
+.eg-offers-content h2 { font-family: 'Cairo', sans-serif; font-size: 48px; font-weight: 900; color: #fff; margin: 0; line-height: 1; }
+.eg-offers-content p { font-size: 16px; color: rgba(255,255,255,.75); margin: 0; }
+.eg-offers-btn {
+    display: inline-flex; align-items: center;
+    padding: 14px 32px; background: var(--eg-gold,#D4A017); color: #1A2B3C;
+    font-weight: 800; text-decoration: none; border-radius: 6px;
+    font-size: 14px; transition: all .25s;
+    animation: eg-pulse 2.5s infinite;
+}
+.eg-offers-btn:hover { background: #E8C547; color: #1A2B3C; transform: translateY(-2px); }
+@@keyframes eg-pulse { 0%,100%{box-shadow:0 0 0 0 rgba(212,160,23,.5)} 50%{box-shadow:0 0 0 14px rgba(212,160,23,0)} }
+.eg-offers-visual {
+    width: 340px; flex-shrink: 0; position: relative;
+    display: flex; align-items: center; justify-content: center;
+}
+.eg-offers-shape {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,.04);
+    clip-path: polygon(18% 0, 100% 0, 100% 100%, 0% 100%);
+}
+.eg-offers-pct {
+    font-family: 'Cairo', sans-serif; font-size: 120px; font-weight: 900;
+    color: rgba(255,255,255,.08); line-height: 1; position: relative; z-index: 1;
+    user-select: none;
+}
+.eg-offers-pct sup { font-size: 50px; vertical-align: super; }
+
+/* ── Fabric Types Swiper ── */
+.eg-fabrics-section { padding: 60px 40px; max-width: 1200px; margin: 0 auto; }
+.fabricSwiper { padding: 10px 4px 16px !important; }
+.eg-fabric-card { display: block; text-decoration: none; border-radius: 10px; overflow: hidden; background: #fff; box-shadow: 0 3px 12px rgba(0,0,0,.07); transition: transform .3s, box-shadow .3s; }
+.eg-fabric-card:hover { transform: translateY(-5px); box-shadow: 0 14px 32px rgba(0,59,111,.13); }
+.eg-fabric-img { aspect-ratio: 2/3; overflow: hidden; }
+.eg-fabric-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s; }
+.eg-fabric-card:hover .eg-fabric-img img { transform: scale(1.06); }
+.eg-fabric-label {
+    padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
+    font-family: 'Cairo', sans-serif; font-size: 13px; font-weight: 700;
+    color: var(--eg-blue,#003B6F);
+    border-top: 3px solid var(--eg-gold,#D4A017);
+}
+.eg-fabric-label i { color: var(--eg-gold,#D4A017); font-size: 16px; transition: transform .2s; }
+.eg-fabric-card:hover .eg-fabric-label i { transform: translate(3px, -3px); }
+.eg-fab-prev, .eg-fab-next { color: var(--eg-blue,#003B6F) !important; background: #fff !important; width: 40px !important; height: 40px !important; border-radius: 50% !important; box-shadow: 0 4px 14px rgba(0,0,0,.12) !important; border: 1px solid rgba(0,59,111,.15) !important; }
+.eg-fab-prev:after, .eg-fab-next:after { font-size: 14px !important; font-weight: 900 !important; }
+
+/* ── Search Section ── */
+.eg-search-section { background: linear-gradient(135deg, rgba(0,59,111,.04), rgba(212,160,23,.04)); padding: 60px 24px; }
+.eg-search-inner-wrap { max-width: 700px; margin: 0 auto; text-align: center; }
+.eg-search-title { font-family: 'Cairo', sans-serif; font-size: 24px; font-weight: 700; color: var(--eg-blue,#003B6F); margin-bottom: 24px; }
+.eg-search-form { }
+.eg-search-box {
+    display: flex; align-items: center;
+    background: #fff; border-radius: 50px;
+    border: 2px solid rgba(0,59,111,.15);
+    box-shadow: 0 6px 24px rgba(0,0,0,.08);
+    overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+}
+.eg-search-box:focus-within { border-color: var(--eg-blue,#003B6F); box-shadow: 0 8px 28px rgba(0,59,111,.14); }
+.eg-search-box i { font-size: 20px; color: #aaa; padding: 0 16px; flex-shrink: 0; }
+.eg-search-box input { flex: 1; border: none; outline: none; background: transparent; padding: 16px 0; font-size: 15px; font-family: 'Cairo', sans-serif; min-width: 0; }
+.eg-search-box button {
+    background: var(--eg-blue,#003B6F); color: #fff;
+    border: none; border-radius: 0 50px 50px 0;
+    padding: 16px 28px; font-weight: 700; cursor: pointer;
+    font-family: 'Cairo', sans-serif; font-size: 14px;
+    transition: background .2s; flex-shrink: 0;
+}
+.eg-search-box button:hover { background: var(--eg-gold,#D4A017); color: #1A2B3C; }
+
+/* ── Project Categories Grid ── */
+.eg-projects-section { padding: 60px 24px; }
+.eg-projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 16px; margin-top: 32px; }
+.eg-project-card { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 20px 12px; background: #fff; border-radius: 12px; border: 2px solid transparent; text-decoration: none; color: var(--eg-blue,#003B6F); transition: all .25s; box-shadow: 0 3px 10px rgba(0,0,0,.05); }
+.eg-project-card:hover { border-color: var(--eg-gold,#D4A017); box-shadow: 0 8px 24px rgba(0,59,111,.1); transform: translateY(-3px); color: var(--eg-blue,#003B6F); }
+.eg-project-icon { width: 54px; height: 54px; background: rgba(0,59,111,.07); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: background .2s; }
+.eg-project-card:hover .eg-project-icon { background: var(--eg-gold,#D4A017); color: #1A2B3C; }
+.eg-project-card span { font-size: 12px; font-weight: 600; text-align: center; font-family: 'Cairo', sans-serif; }
+
+/* ── Color Shop ── */
+.eg-colors-section { padding: 50px 0; background: rgba(0,59,111,.02); }
+.eg-colors-row { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; padding: 0 24px; }
+.eg-color-swatch {
+    width: 52px; height: 52px; border-radius: 8px;
+    border: 2px solid rgba(0,0,0,.1);
+    position: relative; overflow: visible;
+    transition: transform .2s, box-shadow .2s;
+    flex-shrink: 0;
+}
+.eg-color-swatch:hover { transform: scale(1.2); box-shadow: 0 6px 18px rgba(0,0,0,.2); z-index: 5; }
+.eg-color-label {
+    position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+    background: #1A2B3C; color: #fff; font-size: 10px; font-weight: 600;
+    padding: 4px 8px; border-radius: 4px; white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+}
+.eg-color-swatch:hover .eg-color-label { opacity: 1; }
+
+/* ── Testimonials ── */
+.eg-testimonials { padding: 70px 0; }
+.eg-testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.eg-testi-card {
+    background: #fff; border-radius: 14px;
+    padding: 32px 28px;
+    box-shadow: 0 4px 18px rgba(0,0,0,.06);
+    border-bottom: 3px solid var(--eg-gold,#D4A017);
+    transition: transform .3s, box-shadow .3s;
+}
+.eg-testi-card:hover { transform: translateY(-5px); box-shadow: 0 14px 36px rgba(0,59,111,.1); }
+.eg-testi-stars { color: var(--eg-gold,#D4A017); font-size: 14px; margin-bottom: 16px; display: flex; gap: 3px; }
+.eg-testi-quote { font-size: 14px; color: #4a5568; line-height: 1.75; margin: 0 0 20px; font-style: italic; }
+.eg-testi-quote::before { content: '\201C'; font-size: 28px; color: var(--eg-gold,#D4A017); line-height: 0; vertical-align: -12px; margin-inline-end: 4px; }
+.eg-testi-author { display: flex; align-items: center; gap: 12px; }
+.eg-testi-avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--eg-blue,#003B6F); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; }
+.eg-testi-author strong { display: block; font-size: 14px; font-weight: 700; color: var(--eg-blue,#003B6F); }
+.eg-testi-author span { font-size: 12px; color: #aaa; }
+
+/* ── Newsletter CTA ── */
+.eg-newsletter-strip { background: var(--eg-blue,#003B6F); padding: 50px 0; }
+.eg-newsletter-inner { display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+.eg-newsletter-text h3 { color: #fff; font-family: 'Cairo', sans-serif; font-size: 22px; font-weight: 700; margin: 0 0 6px; }
+.eg-newsletter-text p { color: rgba(255,255,255,.7); font-size: 14px; margin: 0; }
+.eg-newsletter-form { display: flex; gap: 10px; flex: 1; min-width: 300px; max-width: 460px; }
+.eg-newsletter-form input { flex: 1; padding: 13px 18px; border-radius: 6px; border: none; font-size: 14px; background: rgba(255,255,255,.95); outline: none; font-family: 'Cairo', sans-serif; }
+.eg-newsletter-form button { padding: 13px 24px; background: var(--eg-gold,#D4A017); color: #1A2B3C; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all .2s; white-space: nowrap; font-family: 'Cairo', sans-serif; }
+.eg-newsletter-form button:hover { background: #E8C547; transform: translateY(-1px); }
+
+/* ── Scroll-reveal base ── */
+.eg-reveal { opacity: 0; transform: translateY(30px); transition: opacity .6s ease, transform .6s ease; }
+.eg-reveal.is-visible { opacity: 1; transform: translateY(0); }
+
+/* ── Responsive ── */
+@@media (max-width: 1199px) { .eg-cat-grid { grid-template-columns: repeat(5, 1fr); } }
+@@media (max-width: 991px)  { .eg-cat-grid { grid-template-columns: repeat(4, 1fr); } .eg-testimonials-grid { grid-template-columns: 1fr 1fr; } }
+@@media (max-width: 767px) {
+    .heroSwiper { height: 520px; }
+    .eg-panel { max-width: 100%; padding: 28px 24px; }
+    .eg-panel h1 { font-size: 22px; }
+    .eg-sub { font-size: 13px; }
+    .heroSwiper .swiper-button-prev, .heroSwiper .swiper-button-next { display: none; }
+    .eg-trust-inner { flex-direction: column; }
+    .eg-trust-divider { width: auto; height: 1px; margin: 0 20px; }
+    .eg-cat-section, .eg-fabrics-section { padding: 40px 16px; }
+    .eg-cat-grid { grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .eg-offers-content { padding: 36px 24px; }
+    .eg-offers-content h2 { font-size: 32px; }
+    .eg-offers-visual { display: none; }
+    .eg-testimonials-grid { grid-template-columns: 1fr; }
+    .eg-newsletter-inner { flex-direction: column; align-items: flex-start; }
+    .eg-newsletter-form { min-width: 100%; }
+}
+@@media (max-width: 480px) { .eg-cat-grid { grid-template-columns: repeat(2, 1fr); } }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Hero slider
+        new Swiper('.heroSwiper', {
+            loop: true,
+            autoplay: { delay: 5500, disableOnInteraction: false },
+            speed: 700,
+            effect: 'fade',
+            fadeEffect: { crossFade: true },
+            pagination: { el: '.heroSwiper .swiper-pagination', clickable: true },
+            navigation: {
+                nextEl: '.heroSwiper .swiper-button-next',
+                prevEl: '.heroSwiper .swiper-button-prev'
             }
-        </div>
-    </section>
+        });
 
+        // Fabric types carousel
+        new Swiper('.fabricSwiper', {
+            slidesPerView: 2,
+            spaceBetween: 16,
+            freeMode: true,
+            navigation: { nextEl: '.eg-fab-next', prevEl: '.eg-fab-prev' },
+            breakpoints: {
+                576:  { slidesPerView: 3 },
+                768:  { slidesPerView: 4 },
+                1024: { slidesPerView: 5 },
+                1200: { slidesPerView: 6 }
+            }
+        });
 
-    <section class="seo-section">
-        <div class="seo-container">
-
-            <h2>@SharedLocalizer["Discover Quality Fabrics for Every Project"]</h2>
-
-            <p>
-                @SharedLocalizer["We provide a carefully curated selection of high-quality fabrics designed to meet the needs of designers, tailors, and fashion enthusiasts.Whether you are creating formal wear, casual clothing, or custom pieces, our platform helps you find the right materials with confidence."]
-            </p>
-
-            <p>
-                @SharedLocalizer["Our fabric collection includes options for dresses, suits, shirts, coats, and lightweight garments, allowing you to choose based on texture, weight, and purpose. Each product is selected with attention to quality, durability, and comfort."]
-            </p>
-
-            <p>
-                @SharedLocalizer["We believe that a great shopping experience should be simple and enjoyable. That’s why our platform is designed with intuitive search tools, clear categorization, and a smooth browsing experience across all devices."]
-            </p>
-
-            <p>
-                @SharedLocalizer["From discovering new materials to selecting trusted classics, we aim to support your creative journey by offering reliable products and a seamless online experience."]
-            </p>
-
-        </div>
-    </section>
-
-    <!-- Recently Viewed strip (populated from localStorage) -->
-    <section class="container my-5" id="recentlyViewedWrap" style="display:none;">
-        <div class="d-flex align-items-center justify-content-between mb-3">
-            <h3 class="fw-bold mb-0"><i class="ri-history-line me-2"></i>@SharedLocalizer["Recently Viewed"]</h3>
-            <button type="button" class="btn btn-link btn-sm text-muted" onclick="clearRecentlyViewed()">@SharedLocalizer["Clear"]</button>
-        </div>
-        <div id="recentlyViewedStrip"></div>
-    </section>
+        // Scroll-reveal using IntersectionObserver
+        const reveals = document.querySelectorAll('.eg-reveal');
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        reveals.forEach(function(el) { observer.observe(el); });
+    });
+    </script>
+}

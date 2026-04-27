@@ -1,57 +1,122 @@
-﻿@model NakhlaBelal.ViewModels.RegisterVM
+@model NakhlaBelal.ViewModels.RegisterVM
 @using Microsoft.AspNetCore.Html
 @using Microsoft.Extensions.Localization
 @using NakhlaBelal
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 
+<div class="eg-auth-wrap">
 
-<div class="Samebody">
-    <div class="container2" id="container2 border1">
-        <div class="form-container sign-up">
+    @* ── Left panel: brand ── *@
+    <div class="eg-auth-panel">
+        <div class="eg-auth-panel-inner">
+            <div class="eg-auth-logo">
+                <span class="eg-auth-logo-icon"><i class="ri-store-2-line"></i></span>
+                <span class="eg-auth-logo-text">@SharedLocalizer["NakhlaStore"]</span>
+            </div>
+            <h2 class="eg-auth-tagline">@SharedLocalizer["Join the"]<br/>@SharedLocalizer["Nakhla Family"]</h2>
+            <p class="eg-auth-sub">@SharedLocalizer["Create your account and enjoy exclusive access to premium fabrics, special offers, and personalized recommendations."]</p>
+            <div class="eg-auth-features">
+                <div class="eg-auth-feat"><i class="ri-vip-crown-line"></i> @SharedLocalizer["Exclusive member discounts"]</div>
+                <div class="eg-auth-feat"><i class="ri-heart-line"></i> @SharedLocalizer["Save your wishlist & compare"]</div>
+                <div class="eg-auth-feat"><i class="ri-history-line"></i> @SharedLocalizer["Track orders & purchase history"]</div>
+            </div>
+            @* Decorative circles *@
+            <div class="eg-auth-deco eg-auth-deco1"></div>
+            <div class="eg-auth-deco eg-auth-deco2"></div>
+            <div class="eg-auth-deco eg-auth-deco3"></div>
+        </div>
+    </div>
 
-            <form asp-action="Register" method="post">
+    @* ── Right panel: form ── *@
+    <div class="eg-auth-form-wrap">
+        <div class="eg-auth-card">
+
+            <h1 class="eg-auth-title">@SharedLocalizer["CreateAccount"]</h1>
+            <p class="eg-auth-subtitle">@SharedLocalizer["OrUseEmailForRegistration"]</p>
+
+            <div class="eg-auth-socials">
+                <a href="#" class="eg-auth-social"><i class="ri-google-line"></i></a>
+                <a href="#" class="eg-auth-social"><i class="ri-facebook-line"></i></a>
+                <a href="#" class="eg-auth-social"><i class="ri-github-line"></i></a>
+            </div>
+            <div class="eg-auth-divider"><span>@SharedLocalizer["or use your email"]</span></div>
+
+            <form asp-action="Register" method="post" class="eg-auth-form">
                 @Html.AntiForgeryToken()
 
-                <h1>@SharedLocalizer["CreateAccount"]</h1>
+                <div asp-validation-summary="All" class="eg-auth-errors"></div>
 
-                <div class="social-icons">
-                    <a href="#" class="icon"><i class="ri-google-line"></i></a>
-                    <a href="#" class="icon"><i class="ri-facebook-line"></i></a>
-                    <a href="#" class="icon"><i class="ri-github-line"></i></a>
-                    <a href="#" class="icon"><i class="ri-linkedin-line"></i></a>
+                <div class="eg-auth-field-row">
+                    <div class="eg-auth-field">
+                        <label>@SharedLocalizer["First Name"]</label>
+                        <div class="eg-auth-input-wrap">
+                            <i class="ri-user-line"></i>
+                            <input asp-for="FirstName" placeholder="@SharedLocalizer["First Name"]" />
+                        </div>
+                        <span asp-validation-for="FirstName" class="eg-auth-err"></span>
+                    </div>
+                    <div class="eg-auth-field">
+                        <label>@SharedLocalizer["Last Name"]</label>
+                        <div class="eg-auth-input-wrap">
+                            <i class="ri-user-line"></i>
+                            <input asp-for="LastName" placeholder="@SharedLocalizer["Last Name"]" />
+                        </div>
+                        <span asp-validation-for="LastName" class="eg-auth-err"></span>
+                    </div>
                 </div>
 
-                <span>@SharedLocalizer["OrUseEmailForRegistration"]</span>
+                <div class="eg-auth-field">
+                    <label>@SharedLocalizer["Email"]</label>
+                    <div class="eg-auth-input-wrap">
+                        <i class="ri-mail-line"></i>
+                        <input asp-for="Email" placeholder="@SharedLocalizer["Enter your email"]" />
+                    </div>
+                    <span asp-validation-for="Email" class="eg-auth-err"></span>
+                </div>
 
-                <!-- Validation summary -->
-                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="eg-auth-field">
+                    <label>@SharedLocalizer["UserName"]</label>
+                    <div class="eg-auth-input-wrap">
+                        <i class="ri-at-line"></i>
+                        <input asp-for="UserName" placeholder="@SharedLocalizer["Choose a username"]" />
+                    </div>
+                    <span asp-validation-for="UserName" class="eg-auth-err"></span>
+                </div>
 
-                <input asp-for="FirstName" placeholder="@SharedLocalizer["First Name"]" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
+                <div class="eg-auth-field">
+                    <label>@SharedLocalizer["Password"]</label>
+                    <div class="eg-auth-input-wrap">
+                        <i class="ri-lock-line"></i>
+                        <input asp-for="Password" type="password" placeholder="@SharedLocalizer["Create a password"]" id="regPwd" />
+                        <button type="button" class="eg-pwd-toggle" onclick="togglePwd('regPwd',this)" tabindex="-1">
+                            <i class="ri-eye-off-line"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="eg-auth-err"></span>
+                </div>
 
-                <input asp-for="LastName" placeholder="@SharedLocalizer["Last Name"]" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
+                <div class="eg-auth-field">
+                    <label>@SharedLocalizer["ConfirmPassword"]</label>
+                    <div class="eg-auth-input-wrap">
+                        <i class="ri-lock-2-line"></i>
+                        <input asp-for="ConfirmPassword" type="password" placeholder="@SharedLocalizer["Repeat your password"]" id="regPwdConfirm" />
+                        <button type="button" class="eg-pwd-toggle" onclick="togglePwd('regPwdConfirm',this)" tabindex="-1">
+                            <i class="ri-eye-off-line"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="eg-auth-err"></span>
+                </div>
 
-                <input asp-for="Email" placeholder="@SharedLocalizer["Email"]" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-
-                <input asp-for="UserName" placeholder="@SharedLocalizer["UserName"]" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
-
-                <input asp-for="Password" placeholder="@SharedLocalizer["Password"]" type="password" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-
-                <input asp-for="ConfirmPassword" placeholder="@SharedLocalizer["ConfirmPassword"]" type="password" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-
-                <button type="submit">@SharedLocalizer["Sign Up"]</button>
-
-                <p class="mt-3">
-                    @SharedLocalizer["AlreadyHaveAnAccount"]
-                    <a asp-action="Login" asp-controller="Account">@SharedLocalizer["Login"]</a>
-                </p>
+                <button type="submit" class="eg-auth-submit">
+                    <i class="ri-user-add-line"></i>
+                    @SharedLocalizer["Sign Up"]
+                </button>
             </form>
 
+            <p class="eg-auth-switch">
+                @SharedLocalizer["AlreadyHaveAnAccount"]
+                <a asp-action="Login" asp-controller="Account">@SharedLocalizer["Login"]</a>
+            </p>
         </div>
     </div>
 </div>
@@ -61,12 +126,166 @@
     <script>
         Swal.fire({
             title: '@SharedLocalizer["SuccessTitle"]',
-            text: '@SharedLocalizer["RegistrationSuccess"]', // نادِ المفتاح مباشرة كنص ثابت
+            text: '@SharedLocalizer["RegistrationSuccess"]',
             icon: 'success',
-            confirmButtonColor: '#013220',
+            confirmButtonColor: '#003B6F',
             confirmButtonText: '@SharedLocalizer["GreatText"]',
             customClass: { popup: 'swal-rtl' }
         });
     </script>
-    TempData["RegistrationSuccess"] = null;
+}
+
+<style>
+/* Shared styles loaded from Login.cshtml if both on the same page,
+   but each page is standalone so we include them here too */
+.eg-auth-wrap {
+    display: flex;
+    min-height: 100vh;
+    margin: 0 -15px;
+}
+.eg-auth-panel {
+    flex: 0 0 42%;
+    background: var(--eg-blue, #003B6F);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.eg-auth-panel-inner {
+    padding: 48px 44px;
+    position: relative;
+    z-index: 2;
+    color: #fff;
+}
+.eg-auth-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 36px; }
+.eg-auth-logo-icon {
+    width: 48px; height: 48px;
+    background: var(--eg-gold, #D4A017);
+    border-radius: 10px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 24px; color: #1A2B3C; flex-shrink: 0;
+}
+.eg-auth-logo-text {
+    font-family: 'Playfair Display', 'Cairo', serif;
+    font-size: 26px; font-weight: 800; color: #fff; letter-spacing: .5px;
+}
+.eg-auth-tagline {
+    font-family: 'Cairo', sans-serif;
+    font-size: 30px; font-weight: 800; color: #fff; line-height: 1.3; margin: 0 0 16px;
+}
+.eg-auth-sub { font-size: 14px; color: rgba(255,255,255,.75); line-height: 1.6; margin: 0 0 32px; }
+.eg-auth-features { display: flex; flex-direction: column; gap: 12px; }
+.eg-auth-feat { display: flex; align-items: center; gap: 10px; font-size: 13px; color: rgba(255,255,255,.88); font-family: 'Cairo', sans-serif; }
+.eg-auth-feat i { color: var(--eg-gold, #D4A017); font-size: 17px; flex-shrink: 0; }
+.eg-auth-deco { position: absolute; border-radius: 50%; background: rgba(255,255,255,.06); z-index: 1; }
+.eg-auth-deco1 { width: 320px; height: 320px; bottom: -120px; right: -80px; }
+.eg-auth-deco2 { width: 180px; height: 180px; top: -60px; left: -50px; }
+.eg-auth-deco3 { width: 100px; height: 100px; top: 50%; right: 30px; background: rgba(212,160,23,.15); }
+
+.eg-auth-form-wrap {
+    flex: 1;
+    background: #F7F4EE;
+    display: flex; align-items: center; justify-content: center;
+    padding: 40px 24px;
+    overflow-y: auto;
+}
+.eg-auth-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 44px;
+    width: 100%;
+    max-width: 460px;
+    box-shadow: 0 8px 40px rgba(0,59,111,.1);
+}
+.eg-auth-title { font-family: 'Cairo', sans-serif; font-size: 26px; font-weight: 800; color: #1A2B3C; margin: 0 0 6px; }
+.eg-auth-subtitle { font-size: 13px; color: #888; margin: 0 0 22px; }
+
+.eg-auth-socials { display: flex; gap: 10px; margin-bottom: 18px; }
+.eg-auth-social {
+    flex: 1; height: 40px; border-radius: 8px; border: 1px solid #e8e4da;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: #555; font-size: 18px; text-decoration: none;
+    transition: border-color .15s, color .15s, background .15s;
+}
+.eg-auth-social:hover { border-color: #003B6F; color: #003B6F; background: #EEF4FB; }
+
+.eg-auth-divider {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 12px; color: #bbb; margin-bottom: 20px;
+}
+.eg-auth-divider::before,
+.eg-auth-divider::after { content: ''; flex: 1; height: 1px; background: #ebebeb; }
+
+.eg-auth-form { display: flex; flex-direction: column; gap: 14px; }
+.eg-auth-field-row { display: flex; gap: 12px; }
+.eg-auth-field-row .eg-auth-field { flex: 1; min-width: 0; }
+.eg-auth-field { display: flex; flex-direction: column; gap: 5px; }
+.eg-auth-field label { font-size: 12px; font-weight: 700; color: #555; letter-spacing: .5px; }
+.eg-auth-input-wrap {
+    display: flex; align-items: center;
+    border: 1.5px solid #e0dbd0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fafaf7;
+    transition: border-color .2s;
+}
+.eg-auth-input-wrap:focus-within { border-color: #003B6F; background: #fff; }
+.eg-auth-input-wrap > i { padding: 0 12px; color: #bbb; font-size: 16px; flex-shrink: 0; }
+.eg-auth-input-wrap input {
+    flex: 1; border: none; background: none;
+    padding: 11px 10px 11px 0;
+    font-size: 14px; color: #1A2B3C;
+    font-family: 'Cairo', sans-serif; outline: none;
+}
+.eg-pwd-toggle { background: none; border: none; padding: 0 12px; color: #bbb; font-size: 16px; cursor: pointer; transition: color .15s; }
+.eg-pwd-toggle:hover { color: #003B6F; }
+.eg-auth-err { font-size: 11px; color: #c0392b; }
+.eg-auth-errors { background: #fdf0ee; border-radius: 6px; padding: 10px 14px; font-size: 13px; color: #c0392b; }
+
+.eg-auth-submit {
+    width: 100%; padding: 13px;
+    background: #003B6F; color: #fff;
+    border: none; border-radius: 8px;
+    font-family: 'Cairo', sans-serif; font-size: 15px; font-weight: 800;
+    cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    transition: background .2s, transform .15s;
+    margin-top: 4px;
+}
+.eg-auth-submit:hover { background: #002a52; transform: translateY(-1px); }
+.eg-auth-submit i { font-size: 18px; }
+
+.eg-auth-switch { text-align: center; font-size: 13px; color: #888; margin: 18px 0 0; }
+.eg-auth-switch a { color: #003B6F; font-weight: 700; text-decoration: none; }
+.eg-auth-switch a:hover { text-decoration: underline; }
+
+@@media (max-width: 860px) {
+    .eg-auth-wrap { flex-direction: column; }
+    .eg-auth-panel { flex: none; min-height: 200px; }
+    .eg-auth-panel-inner { padding: 28px 22px; }
+    .eg-auth-tagline { font-size: 20px; }
+    .eg-auth-features { display: none; }
+    .eg-auth-card { padding: 26px 20px; }
+}
+@@media (max-width: 480px) {
+    .eg-auth-field-row { flex-direction: column; gap: 14px; }
+    .eg-auth-card { padding: 20px 14px; }
+}
+</style>
+
+@section Scripts {
+<script>
+function togglePwd(id, btn) {
+    var input = document.getElementById(id);
+    if (!input) return;
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.querySelector('i').className = 'ri-eye-line';
+    } else {
+        input.type = 'password';
+        btn.querySelector('i').className = 'ri-eye-off-line';
+    }
+}
+</script>
 }

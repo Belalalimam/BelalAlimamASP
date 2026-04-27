@@ -5,6 +5,69 @@
 @{
     ViewData["Title"] = "Shopping Cart";
 }
+@* ── Egypt: Step Progress Bar ── *@
+<div class="eg-cart-steps">
+    <div class="eg-step active">
+        <div class="eg-step-num"><i class="ri-shopping-cart-2-line"></i></div>
+        <span>@SharedLocalizer["Cart"]</span>
+    </div>
+    <div class="eg-step-connector"></div>
+    <div class="eg-step">
+        <div class="eg-step-num"><i class="ri-secure-payment-line"></i></div>
+        <span>@SharedLocalizer["Checkout"]</span>
+    </div>
+    <div class="eg-step-connector"></div>
+    <div class="eg-step">
+        <div class="eg-step-num"><i class="ri-checkbox-circle-line"></i></div>
+        <span>@SharedLocalizer["Confirmation"]</span>
+    </div>
+</div>
+
+<style>
+.eg-cart-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    padding: 24px 16px 0;
+    max-width: 420px;
+    margin: 0 auto;
+}
+.eg-step {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    flex-shrink: 0;
+}
+.eg-step-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    border: 2px solid #ddd;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #bbb;
+    transition: all .3s;
+}
+.eg-step span {
+    font-size: 11px; font-weight: 700;
+    color: #bbb; font-family: 'Cairo', sans-serif;
+    letter-spacing: .5px;
+}
+.eg-step.active .eg-step-num {
+    background: #003B6F; border-color: #003B6F; color: #fff;
+    box-shadow: 0 4px 14px rgba(0,59,111,.3);
+}
+.eg-step.active span { color: #003B6F; }
+.eg-step.done .eg-step-num  { background: #2a7d4f; border-color: #2a7d4f; color: #fff; }
+.eg-step.done span { color: #2a7d4f; }
+.eg-step-connector {
+    flex: 1;
+    height: 2px;
+    background: #ddd;
+    margin-bottom: 22px;
+    min-width: 40px;
+    max-width: 80px;
+}
+</style>
+
 <div class="cart-page ">
 
     <div class="container-cart ">

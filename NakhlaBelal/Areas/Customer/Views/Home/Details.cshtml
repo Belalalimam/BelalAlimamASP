@@ -39,7 +39,9 @@
             <img id="mainImg"
                  src="~/images/@(first?.ImageUrl ?? Model.Product.MainImage ?? "products/default.jpg")"
                  alt="@Model.Product.Name"
-                 class="pd-main-img" />
+                 class="pd-main-img pd-zoomable"
+                 onclick="openLightbox(this.src)"
+                 title="@SharedLocalizer["Click to zoom"]" />
 
             <div class="pd-thumbs">
                 @if (imgs != null && imgs.Any())
@@ -376,6 +378,28 @@
         </form>
     </div>
 
+@* ── Sticky Add-to-Cart Bar ── *@
+<div class="pd-sticky-bar" id="pdStickyBar">
+    <div class="pd-sticky-inner">
+        <img src="~/images/@(Model.Product.MainImage ?? "products/default.jpg")"
+             alt="@Model.Product.Name" class="pd-sticky-img" />
+        <div class="pd-sticky-info">
+            <span class="pd-sticky-name">@Model.Product.Name</span>
+            <span class="pd-sticky-price">@priceStr / @unitLabel</span>
+        </div>
+        <button type="button" class="pd-sticky-btn" onclick="document.querySelector('.pd-order-row').requestSubmit()">
+            <i class="ri-shopping-basket-line"></i>
+            @SharedLocalizer["ADD TO BASKET"]
+        </button>
+    </div>
+</div>
+
+@* ── Image Lightbox ── *@
+<div class="pd-lightbox" id="pdLightbox" onclick="closeLightbox()">
+    <button class="pd-lb-close" onclick="closeLightbox()">&times;</button>
+    <img id="pdLightboxImg" src="" alt="" onclick="event.stopPropagation()" />
+</div>
+
 </div>
 
 @section Scripts {
@@ -409,7 +433,149 @@
             btn.querySelector('span').style.transition = 'transform .2s';
             btn.querySelector('span').style.display = 'inline-block';
         }
+
+        /* ── Sticky Add-to-Cart bar ── */
+        (function() {
+            var stickyBar = document.getElementById('pdStickyBar');
+            var addBtn    = document.querySelector('.pd-order-row');
+            if (!stickyBar || !addBtn) return;
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (!entry.isIntersecting) {
+                        stickyBar.classList.add('visible');
+                    } else {
+                        stickyBar.classList.remove('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            observer.observe(addBtn);
+        })();
+
+        /* ── Lightbox ── */
+        function openLightbox(src) {
+            var lb = document.getElementById('pdLightbox');
+            var img = document.getElementById('pdLightboxImg');
+            if (!lb || !img) return;
+            img.src = src;
+            lb.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeLightbox() {
+            var lb = document.getElementById('pdLightbox');
+            if (lb) lb.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeLightbox();
+        });
     </script>
+
+    <style>
+    /* ── Sticky cart bar ── */
+    .pd-sticky-bar {
+        position: fixed;
+        bottom: 0; left: 0; right: 0;
+        background: #003B6F;
+        color: #fff;
+        z-index: 900;
+        transform: translateY(100%);
+        transition: transform .35s cubic-bezier(.4,0,.2,1);
+        box-shadow: 0 -4px 20px rgba(0,27,53,.25);
+    }
+    .pd-sticky-bar.visible { transform: translateY(0); }
+    .pd-sticky-inner {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+    }
+    .pd-sticky-img {
+        width: 48px; height: 48px;
+        object-fit: cover;
+        border-radius: 6px;
+        flex-shrink: 0;
+        border: 2px solid rgba(212,160,23,.4);
+    }
+    .pd-sticky-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+    }
+    .pd-sticky-name {
+        font-family: 'Cairo', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .pd-sticky-price {
+        font-size: 13px;
+        color: #D4A017;
+        font-family: 'Cairo', sans-serif;
+        font-weight: 600;
+    }
+    .pd-sticky-btn {
+        padding: 10px 22px;
+        background: #D4A017;
+        color: #1A2B3C;
+        border: none;
+        border-radius: 6px;
+        font-family: 'Cairo', sans-serif;
+        font-size: 13px;
+        font-weight: 800;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        flex-shrink: 0;
+        transition: background .2s;
+    }
+    .pd-sticky-btn:hover { background: #C49010; }
+    .pd-sticky-btn i { font-size: 16px; }
+
+    /* ── Lightbox ── */
+    .pd-lightbox {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.88);
+        z-index: 9999;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        cursor: zoom-out;
+    }
+    .pd-lightbox.open { display: flex; }
+    .pd-lightbox img {
+        max-width: 90vw;
+        max-height: 90vh;
+        object-fit: contain;
+        border-radius: 6px;
+        box-shadow: 0 8px 48px rgba(0,0,0,.6);
+        cursor: default;
+    }
+    .pd-lb-close {
+        position: absolute;
+        top: 18px; right: 22px;
+        background: rgba(255,255,255,.12);
+        border: none;
+        color: #fff;
+        font-size: 30px;
+        line-height: 1;
+        padding: 4px 12px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background .15s;
+    }
+    .pd-lb-close:hover { background: rgba(255,255,255,.22); }
+
+    /* ── Zoomable cursor ── */
+    .pd-zoomable { cursor: zoom-in; }
+    </style>
 
 <!-- Recently Viewed strip -->
 <section class="container my-4" id="recentlyViewedWrap" style="display:none;">

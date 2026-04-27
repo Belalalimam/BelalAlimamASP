@@ -1,64 +1,283 @@
-﻿@{
-    ViewData["Title"] = "Order Confirmation";
+@{
+    ViewData["Title"] = "تم الطلب بنجاح";
+    var orderNum = "#" + DateTime.Now.ToString("yyyy") + "-" + Guid.NewGuid().ToString("N").Substring(0, 5).ToUpper();
 }
 
-<div class="container my-5 py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-            <div class="mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="#198754" class="bi bi-check-circle-fill shadow-sm rounded-circle" viewBox="0 0 16 16">
-                    <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
-                </svg>
-            </div>
+<div class="eg-success-page">
+    @* Confetti dots (CSS-animated) *@
+    <div class="eg-confetti" aria-hidden="true">
+        @for (int i = 0; i < 18; i++) {
+            <span class="eg-conf-dot" style="--i:@i"></span>
+        }
+    </div>
 
-            <h1 class="display-4 fw-bold mb-3" style="letter-spacing: -1px;">THANK YOU!</h1>
-            <p class="lead text-muted mb-5">
-                We have successfully received your order. One of our team members will review your information and get back to you within the next 48 hours.
-            </p>
+    <div class="eg-success-card">
 
-            <div class="card border-0 shadow-sm bg-light p-4 mb-5">
-                <div class="row text-start">
-                    <div class="col-sm-4 mb-3 mb-sm-0">
-                        <small class="text-uppercase text-muted d-block fw-bold">Order Number:</small>
-                        <span class="fw-bold text-dark">#@DateTime.Now.ToString("yyyy")-@Guid.NewGuid().ToString("N").Substring(0, 5).ToUpper()</span>
-                    </div>
-                    <div class="col-sm-4 mb-3 mb-sm-0">
-                        <small class="text-uppercase text-muted d-block fw-bold">Order Date:</small>
-                        <span class="fw-bold text-dark">@DateTime.Now.ToString("MMMM dd, yyyy")</span>
-                    </div>
-                    <div class="col-sm-4">
-                        <small class="text-uppercase text-muted d-block fw-bold">Payment Method:</small>
-                        <span class="fw-bold text-dark">Bank Transfer</span>
-                    </div>
-                </div>
-            </div>
+        @* Animated checkmark *@
+        <div class="eg-success-icon animate__animated animate__bounceIn">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="eg-chk-circle" cx="26" cy="26" r="25" fill="none" />
+                <path class="eg-chk-mark" fill="none" d="M14 27l8 8 16-18" />
+            </svg>
+        </div>
 
-            <div class="d-grid d-sm-flex justify-content-sm-center gap-3">
-                <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="btn btn-dark btn-lg px-5 py-3 fw-bold shadow-sm">
-                    CONTINUE SHOPPING
-                </a>
-                <button onclick="window.print()" class="btn btn-outline-secondary btn-lg px-4 py-3 fw-bold">
-                    PRINT RECEIPT
-                </button>
+        <h1 class="eg-success-title animate__animated animate__fadeInUp" style="animation-delay:.4s">
+            شكراً لطلبك!
+        </h1>
+        <p class="eg-success-sub animate__animated animate__fadeInUp" style="animation-delay:.55s">
+            تم استلام طلبك بنجاح. سيقوم أحد أعضاء فريقنا بمراجعة معلوماتك والتواصل معك خلال 48 ساعة.
+        </p>
+
+        @* Order mini-summary *@
+        <div class="eg-success-summary animate__animated animate__fadeInUp" style="animation-delay:.7s">
+            <div class="eg-ss-row">
+                <span class="eg-ss-label">رقم الطلب</span>
+                <span class="eg-ss-val eg-ss-order">@orderNum</span>
             </div>
+            <div class="eg-ss-row">
+                <span class="eg-ss-label">تاريخ الطلب</span>
+                <span class="eg-ss-val">@DateTime.Now.ToString("dd MMMM yyyy")</span>
+            </div>
+            <div class="eg-ss-row">
+                <span class="eg-ss-label">طريقة الدفع</span>
+                <span class="eg-ss-val">تحويل بنكي</span>
+            </div>
+            <div class="eg-ss-row">
+                <span class="eg-ss-label">وقت التوصيل المتوقع</span>
+                <span class="eg-ss-val">2 – 5 أيام عمل</span>
+            </div>
+        </div>
+
+        @* Timeline *@
+        <div class="eg-success-timeline animate__animated animate__fadeInUp" style="animation-delay:.85s">
+            <div class="eg-tl-step done">
+                <div class="eg-tl-dot"><i class="ri-check-line"></i></div>
+                <div class="eg-tl-bar"></div>
+                <span>تم الطلب</span>
+            </div>
+            <div class="eg-tl-step active">
+                <div class="eg-tl-dot"><i class="ri-loader-4-line"></i></div>
+                <div class="eg-tl-bar"></div>
+                <span>قيد المراجعة</span>
+            </div>
+            <div class="eg-tl-step">
+                <div class="eg-tl-dot"><i class="ri-truck-line"></i></div>
+                <div class="eg-tl-bar"></div>
+                <span>الشحن</span>
+            </div>
+            <div class="eg-tl-step">
+                <div class="eg-tl-dot"><i class="ri-home-4-line"></i></div>
+                <div class="eg-tl-bar eg-tl-bar-last"></div>
+                <span>التسليم</span>
+            </div>
+        </div>
+
+        @* Actions *@
+        <div class="eg-success-actions animate__animated animate__fadeInUp" style="animation-delay:1s">
+            <a asp-area="Customer" asp-controller="Home" asp-action="Index" class="eg-success-btn eg-success-btn-primary">
+                <i class="ri-store-2-line"></i> متابعة التسوق
+            </a>
+            <button onclick="window.print()" class="eg-success-btn eg-success-btn-outline">
+                <i class="ri-printer-line"></i> طباعة الإيصال
+            </button>
         </div>
     </div>
 </div>
 
 <style>
-    body {
-        background-color: #f8f9fa; /* لون خلفية هادئ */
-    }
-    .display-4 {
-        color: #212529;
-    }
-    .btn-dark {
-        background-color: #002211; /* أخضر غامق جداً مثل تصميمك */
-        border: none;
-        transition: all 0.3s ease;
-    }
-    .btn-dark:hover {
-        background-color: #004422;
-        transform: translateY(-2px);
-    }
+/* ═══════════════════════════════════════════
+   Egypt Order Success Page
+   ═══════════════════════════════════════════ */
+.eg-success-page {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 16px;
+    background: #F4F0E8;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ── Confetti ── */
+.eg-confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+.eg-conf-dot {
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    top: -20px;
+    left: calc(var(--i) * 5.8%);
+    animation: eg-fall calc(2.4s + var(--i) * 0.18s) linear calc(var(--i) * 0.12s) forwards;
+    background: hsl(calc(var(--i) * 20deg), 80%, 58%);
+    transform: rotate(calc(var(--i) * 37deg));
+}
+@@keyframes eg-fall {
+    0%   { top: -20px; opacity: 1; transform: rotate(0deg) translateX(0); }
+    100% { top: 110%; opacity: 0; transform: rotate(720deg) translateX(calc((var(--i) - 9) * 8px)); }
+}
+
+/* ── Card ── */
+.eg-success-card {
+    position: relative;
+    z-index: 2;
+    background: #fff;
+    border-radius: 20px;
+    padding: 52px 48px;
+    max-width: 560px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 12px 48px rgba(0,59,111,.15);
+    border-top: 4px solid #D4A017;
+}
+
+/* ── Animated checkmark SVG ── */
+.eg-success-icon {
+    width: 88px; height: 88px;
+    margin: 0 auto 20px;
+}
+.eg-success-icon svg { width: 100%; height: 100%; }
+.eg-chk-circle {
+    stroke: #2a7d4f;
+    stroke-width: 2;
+    stroke-dasharray: 166;
+    stroke-dashoffset: 0;
+}
+.eg-chk-mark {
+    stroke: #2a7d4f;
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 0;
+}
+
+.eg-success-title {
+    font-family: 'Cairo', sans-serif;
+    font-size: 32px; font-weight: 800;
+    color: #003B6F;
+    margin: 0 0 10px;
+    animation-fill-mode: both;
+}
+.eg-success-sub {
+    font-size: 15px; color: #777; line-height: 1.7;
+    margin: 0 0 28px;
+    animation-fill-mode: both;
+}
+
+/* ── Order summary ── */
+.eg-success-summary {
+    background: #F8F5EE;
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 28px;
+    text-align: start;
+    animation-fill-mode: both;
+}
+.eg-ss-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 7px 0;
+    border-bottom: 1px solid rgba(212,160,23,.15);
+    gap: 12px;
+}
+.eg-ss-row:last-child { border-bottom: none; }
+.eg-ss-label { font-size: 12px; color: #999; font-family: 'Cairo', sans-serif; }
+.eg-ss-val    { font-size: 14px; font-weight: 700; color: #1A2B3C; font-family: 'Cairo', sans-serif; }
+.eg-ss-order  { color: #003B6F; }
+
+/* ── Timeline ── */
+.eg-success-timeline {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0;
+    margin-bottom: 32px;
+    animation-fill-mode: both;
+}
+.eg-tl-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+.eg-tl-dot {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 2.5px solid #ddd;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    color: #ccc;
+    z-index: 2;
+    position: relative;
+    transition: all .3s;
+}
+.eg-tl-bar {
+    position: absolute;
+    top: 19px; left: 50%; right: -50%;
+    height: 2px;
+    background: #ddd;
+    z-index: 1;
+}
+.eg-tl-bar-last { display: none; }
+.eg-tl-step span {
+    font-size: 11px;
+    color: #aaa;
+    margin-top: 8px;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Done step */
+.eg-tl-step.done .eg-tl-dot {
+    background: #2a7d4f; border-color: #2a7d4f; color: #fff;
+}
+.eg-tl-step.done .eg-tl-bar { background: #2a7d4f; }
+.eg-tl-step.done span { color: #2a7d4f; }
+
+/* Active step */
+.eg-tl-step.active .eg-tl-dot {
+    background: #003B6F; border-color: #003B6F; color: #fff;
+    animation: eg-pulse-dot 1.8s infinite;
+}
+.eg-tl-step.active span { color: #003B6F; }
+@@keyframes eg-pulse-dot {
+    0%,100% { box-shadow: 0 0 0 0 rgba(0,59,111,.4); }
+    50%      { box-shadow: 0 0 0 8px rgba(0,59,111,.0); }
+}
+
+/* ── Buttons ── */
+.eg-success-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; animation-fill-mode: both; }
+.eg-success-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 13px 28px;
+    border-radius: 8px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 14px; font-weight: 800;
+    cursor: pointer; text-decoration: none;
+    border: none;
+    transition: background .2s, transform .15s;
+}
+.eg-success-btn-primary { background: #003B6F; color: #fff; }
+.eg-success-btn-primary:hover { background: #002a52; transform: translateY(-1px); color: #fff; }
+.eg-success-btn-outline { background: #fff; color: #555; border: 1.5px solid #ddd; }
+.eg-success-btn-outline:hover { border-color: #003B6F; color: #003B6F; }
+
+@@media (max-width: 560px) {
+    .eg-success-card { padding: 32px 20px; }
+    .eg-success-title { font-size: 24px; }
+    .eg-success-actions { flex-direction: column; }
+    .eg-success-btn { justify-content: center; }
+}
 </style>
+
+@section Scripts {
+<link rel="stylesheet" href="~/css/animate.css" />
+}

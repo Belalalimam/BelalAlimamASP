@@ -1,43 +1,63 @@
 @model Product
 @{
     var cardUnit = UnitHelper.GetShortLabel(Model.UnitPrice);
+    bool lowStock = Model.StockQuantity > 0 && Model.StockQuantity < 10;
+    bool outOfStock = Model.StockQuantity <= 0;
+    bool inStock = !outOfStock;
 }
 
 <div class="eg-pcard">
 
-    <div class="eg-pcard-head"></div>
-
+    @* Image + hover tray *@
     <a href="@Url.Action("Details", "Home", new { id = Model.Id, area = "Customer" })" class="eg-pcard-imgwrap" tabindex="-1">
-        <img src="~/images/@Model.MainImage" alt="@Model.Name"
-             onerror="this.src='https://via.placeholder.com/300x240?text=Fabric'" loading="lazy" />
 
+        <img src="~/images/@Model.MainImage" alt="@Model.Name"
+             onerror="this.src='https://via.placeholder.com/300x400?text=Fabric'" loading="lazy" />
+
+        @* Top badges *@
         <div class="eg-pcard-badges">
             @if (Model.IsOnSale) { <span class="eg-badge eg-sale">SALE</span> }
             @if (Model.IsNew)    { <span class="eg-badge eg-new">NEW</span> }
         </div>
 
-        <div class="eg-pcard-actions">
-            <button type="button" class="eg-act-btn wishlist-btn" data-pid="@Model.Id"
+        @* Slide-up action tray *@
+        <div class="eg-pcard-tray">
+            <button type="button" class="eg-tray-icon wishlist-btn" data-pid="@Model.Id"
                     onclick="toggleWishlist(@Model.Id, this); return false;" title="Wishlist">
                 <i class="far fa-heart"></i>
             </button>
-            <button type="button" class="eg-act-btn compare-btn" data-pid="@Model.Id"
+            <button type="button" class="eg-tray-icon compare-btn" data-pid="@Model.Id"
                     onclick="toggleCompare(@Model.Id, this); return false;" title="Compare">
                 <i class="ri-arrow-left-right-line"></i>
             </button>
-            <button type="button" class="eg-act-btn quickview-btn"
+            <button type="button" class="eg-tray-icon quickview-btn"
                     onclick="openQuickView(@Model.Id); return false;" title="Quick view">
                 <i class="ri-eye-line"></i>
             </button>
-            <button type="button" class="eg-act-btn sample-btn"
+            <button type="button" class="eg-tray-icon sample-btn"
                     onclick="requestSampleQuick(@Model.Id); return false;" title="Sample">
                 <i class="ri-scissors-cut-line"></i>
             </button>
+            <a href="@Url.Action("Details", "Home", new { id = Model.Id, area = "Customer" })"
+               class="eg-tray-cart" onclick="return true;">
+                <i class="ri-shopping-basket-line"></i>
+                <span>أضف للسلة</span>
+            </a>
         </div>
+
     </a>
 
+    @* Card body *@
     <div class="eg-pcard-body">
-        <p class="eg-pcard-cat">@Model.Category?.Name</p>
+
+        <div class="eg-pcard-meta">
+            <span class="eg-pcard-cat">@Model.Category?.Name</span>
+            <span class="eg-pcard-stock @(outOfStock ? "out" : lowStock ? "low" : "in")">
+                <span class="eg-stock-dot"></span>
+                @(outOfStock ? "نفذ" : lowStock ? "كمية محدودة" : "متوفر")
+            </span>
+        </div>
+
         <h3 class="eg-pcard-name">
             <a href="@Url.Action("Details", "Home", new { id = Model.Id, area = "Customer" })">
                 @(Model.Name.Length > 46 ? Model.Name.Substring(0, 46) + "…" : Model.Name)
@@ -53,7 +73,7 @@
         </div>
 
         <div class="eg-pcard-foot">
-            <div>
+            <div class="eg-pcard-pricing">
                 @if (Model.IsOnSale)
                 {
                     <span class="eg-price-sale">$@Model.FinalPrice.ToString("N2")</span>
@@ -65,98 +85,212 @@
                 }
                 <span class="eg-unit">/ @cardUnit</span>
             </div>
-            <a href="@Url.Action("Details", "Home", new { id = Model.Id, area = "Customer" })"
-               class="eg-view-btn">عرض</a>
         </div>
-    </div>
 
+    </div>
 </div>
 
 <style>
-/* ── Egypt Product Card ── */
+/* ═══════════════════════════════════════════
+   Egypt Product Card — Slide-Up Tray Design
+   ═══════════════════════════════════════════ */
+
 .eg-pcard {
-    display: flex; flex-direction: column;
-    background: #FDF5E6;
-    border: 1px solid rgba(212,160,23,.2);
-    border-radius: 2px; overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid rgba(212,160,23,.18);
+    border-radius: 8px;
+    overflow: hidden;
     transition: transform .3s ease, box-shadow .3s ease;
+    height: 100%;
 }
 .eg-pcard:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 14px 38px rgba(0,59,111,.14);
+    transform: translateY(-6px);
+    box-shadow: 0 16px 42px rgba(0,59,111,.16);
 }
 
-/* Blue Nile header stripe */
-.eg-pcard-head {
-    height: 4px;
-    background: linear-gradient(90deg, #003B6F 0%, #0055A4 50%, #003B6F 100%);
+/* ── Image wrapper ── */
+.eg-pcard-imgwrap {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    aspect-ratio: 3 / 4;
+    background: #F0E6C8;
+    text-decoration: none;
     flex-shrink: 0;
 }
-
-/* Image */
-.eg-pcard-imgwrap {
-    position: relative; display: block;
-    overflow: hidden; aspect-ratio: 4 / 3; background: #F0E0BA;
-    text-decoration: none;
-}
 .eg-pcard-imgwrap img {
-    width: 100%; height: 100%; object-fit: cover; display: block;
-    transition: transform .45s ease;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .5s ease;
 }
-.eg-pcard:hover .eg-pcard-imgwrap img { transform: scale(1.05); }
+.eg-pcard:hover .eg-pcard-imgwrap img {
+    transform: scale(1.06);
+}
 
-/* Badges */
+/* ── Badges ── */
 .eg-pcard-badges {
-    position: absolute; top: 8px; inset-inline-start: 8px;
-    display: flex; flex-direction: column; gap: 3px; z-index: 2;
+    position: absolute;
+    top: 10px;
+    inset-inline-start: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 4;
 }
-.eg-badge { font-size: 9px; font-weight: 800; letter-spacing: 1px; padding: 3px 8px; border-radius: 2px; text-transform: uppercase; }
+.eg-badge {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
 .eg-sale { background: #D4A017; color: #1A2B3C; }
 .eg-new  { background: #003B6F; color: #fff; }
 
-/* Action buttons — fade in over image */
-.eg-pcard-actions {
-    position: absolute; top: 8px; inset-inline-end: 8px;
-    display: flex; flex-direction: column; gap: 5px; z-index: 3;
-    opacity: 0; transition: opacity .25s ease;
+/* ── Slide-up action tray ── */
+.eg-pcard-tray {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 10px;
+    background: rgba(0,27,53,.82);
+    backdrop-filter: blur(4px);
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    z-index: 5;
 }
-.eg-pcard:hover .eg-pcard-actions { opacity: 1; }
-
-.eg-act-btn {
-    width: 32px; height: 32px; border-radius: 4px; border: none;
-    background: rgba(253,245,230,.95); color: #003B6F;
-    display: inline-flex; align-items: center; justify-content: center;
-    font-size: 14px; cursor: pointer;
-    box-shadow: 0 2px 6px rgba(0,0,0,.14);
-    transition: background .15s, color .15s;
+.eg-pcard:hover .eg-pcard-tray {
+    transform: translateY(0);
 }
-.eg-act-btn:hover { background: #D4A017; color: #1A2B3C; }
-.eg-act-btn.active { background: #D4A017; color: #1A2B3C; }
-.eg-act-btn.compare-btn.active { background: #003B6F; color: #D4A017; }
 
-/* Body */
-.eg-pcard-body { padding: 12px 14px 14px; background: #FDF5E6; }
-.eg-pcard-cat { font-size: 9px; letter-spacing: 2px; text-transform: uppercase; color: #B8860B; margin: 0 0 4px; }
+.eg-tray-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(253,245,230,.12);
+    color: #FDF5E6;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: background .2s, color .2s, transform .15s;
+}
+.eg-tray-icon:hover {
+    background: #D4A017;
+    color: #1A2B3C;
+    transform: scale(1.1);
+}
+.eg-tray-icon.active { background: #D4A017; color: #1A2B3C; }
+.eg-tray-icon.compare-btn.active { background: #0055A4; color: #D4A017; }
+
+.eg-tray-cart {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 10px;
+    background: #D4A017;
+    color: #1A2B3C;
+    border-radius: 6px;
+    font-family: 'Cairo', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background .2s, transform .15s;
+    white-space: nowrap;
+}
+.eg-tray-cart:hover {
+    background: #C49010;
+    color: #1A2B3C;
+    transform: scale(1.03);
+}
+.eg-tray-cart i { font-size: 14px; }
+
+/* ── Card body ── */
+.eg-pcard-body {
+    padding: 12px 14px 14px;
+    background: #fff;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* ── Meta row: category + stock ── */
+.eg-pcard-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+}
+.eg-pcard-cat {
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #B8860B;
+    margin: 0;
+}
+.eg-pcard-stock {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    letter-spacing: .5px;
+}
+.eg-stock-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.eg-pcard-stock.in  { color: #2a7d4f; }
+.eg-pcard-stock.in  .eg-stock-dot { background: #2a7d4f; box-shadow: 0 0 0 2px rgba(42,125,79,.2); }
+.eg-pcard-stock.low { color: #d47a00; }
+.eg-pcard-stock.low .eg-stock-dot { background: #d47a00; box-shadow: 0 0 0 2px rgba(212,122,0,.2); }
+.eg-pcard-stock.out { color: #c0392b; }
+.eg-pcard-stock.out .eg-stock-dot { background: #c0392b; box-shadow: 0 0 0 2px rgba(192,57,43,.2); }
+
+/* ── Product name ── */
 .eg-pcard-name {
     font-family: 'Cairo', sans-serif;
-    font-size: 14px; font-weight: 700; margin: 0 0 6px; line-height: 1.4;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.4;
 }
 .eg-pcard-name a { color: #1A2B3C; text-decoration: none; }
 .eg-pcard-name a:hover { color: #003B6F; }
 
-.eg-pcard-stars { color: #D4A017; font-size: 11px; margin-bottom: 8px; display: flex; align-items: center; gap: 3px; }
-.eg-pcard-stars span { color: #888; font-size: 10px; }
-
-.eg-pcard-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-.eg-price, .eg-price-sale { font-size: 15px; font-weight: 700; color: #003B6F; font-family: 'Cairo', sans-serif; }
-.eg-price-old { font-size: 11px; color: #bbb; text-decoration: line-through; }
-.eg-unit { font-size: 11px; color: #B8860B; }
-
-.eg-view-btn {
-    padding: 6px 14px; background: #003B6F; color: #fff;
-    font-family: 'Cairo', sans-serif; font-size: 12px; font-weight: 700;
-    text-decoration: none; border-radius: 3px; border: 2px solid #003B6F;
-    transition: background .2s, color .2s; white-space: nowrap; flex-shrink: 0;
+/* ── Stars ── */
+.eg-pcard-stars {
+    color: #D4A017;
+    font-size: 11px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
 }
-.eg-view-btn:hover { background: #D4A017; color: #1A2B3C; border-color: #D4A017; }
+.eg-pcard-stars span { color: #aaa; font-size: 10px; margin-inline-start: 2px; }
+
+/* ── Price row ── */
+.eg-pcard-foot { margin-top: auto; }
+.eg-pcard-pricing { display: flex; align-items: baseline; gap: 5px; flex-wrap: wrap; }
+.eg-price,
+.eg-price-sale { font-size: 16px; font-weight: 800; color: #003B6F; font-family: 'Cairo', sans-serif; }
+.eg-price-old  { font-size: 11px; color: #bbb; text-decoration: line-through; }
+.eg-unit       { font-size: 11px; color: #B8860B; }
 </style>

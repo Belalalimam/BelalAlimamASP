@@ -152,6 +152,7 @@
             @SharedLocalizer["SHOW FILTERS"]
         </button>
 
+        <div class="pp-mobile-overlay" id="mobileOverlay" onclick="toggleMobilePanel()"></div>
         <div class="pp-mobile-panel" id="mobilePanel">
             <div class="pp-mobile-panel-head">
                 <span>@SharedLocalizer["Filters"]</span>
@@ -322,17 +323,9 @@
         }
 
         <div class="pp-quick-bar">
-            <span class="pp-quick-label">Filter by:</span>
-            <select class="pp-quick-select">
-                <option value="">Type</option>
-                <option>Tweed</option>
-                <option>Bouclé</option>
-                <option>Jacquard</option>
-                <option>Velvet</option>
-                <option>Crêpe</option>
-            </select>
+            <span class="pp-quick-label">@SharedLocalizer["Filter by"]:</span>
             <select class="pp-quick-select" onchange="navigateFilter('Pattern', this.value)">
-                <option value="">Pattern</option>
+                <option value="">@SharedLocalizer["Pattern"]</option>
                 @foreach (var pv in Enum.GetValues<NakhlaBelal.Models.ProductPattern>())
                 {
                     if (pv == NakhlaBelal.Models.ProductPattern.None) { continue; }
@@ -341,11 +334,21 @@
                 }
             </select>
             <select class="pp-quick-select" onchange="document.getElementById('sortSelect').value=this.value; applyFilters()">
-                <option value="new">Sort: New</option>
-                <option value="asc">Price ↑</option>
-                <option value="desc">Price ↓</option>
-                <option value="name">Name A–Z</option>
+                <option value="new">@SharedLocalizer["Sort: New"]</option>
+                <option value="asc">@SharedLocalizer["Price"] ↑</option>
+                <option value="desc">@SharedLocalizer["Price"] ↓</option>
+                <option value="name">@SharedLocalizer["Name"] A–Z</option>
             </select>
+
+            @* Grid / List view toggle *@
+            <div class="pp-view-toggle" role="group" aria-label="View mode">
+                <button type="button" id="btnGrid" class="pp-vt-btn active" onclick="setView('grid')" title="Grid view">
+                    <i class="ri-layout-grid-line"></i>
+                </button>
+                <button type="button" id="btnList" class="pp-vt-btn" onclick="setView('list')" title="List view">
+                    <i class="ri-list-check-2"></i>
+                </button>
+            </div>
         </div>
 
         @await Html.PartialAsync("_ActiveFilterChips", ViewBag.Filter as NakhlaBelal.ViewModels.FilterVM)
@@ -448,14 +451,224 @@
 </div>
 
 <style>
-    .pp-card{position:relative}
-    .pp-card-actions{position:absolute;top:10px;inset-inline-end:10px;display:flex;flex-direction:column;gap:6px;z-index:3;opacity:0;transition:opacity .2s}
-    .pp-card:hover .pp-card-actions{opacity:1}
-    .pp-act{width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.96);box-shadow:0 2px 6px rgba(0,0,0,.12);display:inline-flex;align-items:center;justify-content:center;color:#013220;cursor:pointer;transition:.15s;font-size:15px}
-    .pp-act:hover{background:#013220;color:#fff;transform:scale(1.08)}
-    .pp-act.wishlist-btn.active{background:#e91e63;color:#fff}
-    .pp-act.compare-btn.active{background:#013220;color:#ffd700}
-    /* @@media (max-width: 768px){ .pp-card-actions{opacity:1} } */
+/* ═══════════════════════════════════════════
+   Egypt Category Search — Enhanced UX
+   ═══════════════════════════════════════════ */
+
+/* ── Quick bar & view toggle ── */
+.pp-quick-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 10px 0 14px;
+    border-bottom: 1px solid rgba(212,160,23,.15);
+    margin-bottom: 14px;
+}
+.pp-view-toggle {
+    display: flex;
+    gap: 4px;
+    margin-inline-start: auto;
+}
+.pp-vt-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,59,111,.2);
+    background: #fff;
+    color: #777;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s;
+}
+.pp-vt-btn:hover  { border-color: #003B6F; color: #003B6F; }
+.pp-vt-btn.active { background: #003B6F; color: #fff; border-color: #003B6F; }
+
+/* ── Grid card actions ── */
+.pp-card { position: relative; }
+.pp-card-actions {
+    position: absolute;
+    top: 10px;
+    inset-inline-end: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity .2s;
+}
+.pp-card:hover .pp-card-actions { opacity: 1; }
+
+.pp-act {
+    width: 34px; height: 34px;
+    border-radius: 6px;
+    border: none;
+    background: rgba(255,255,255,.96);
+    box-shadow: 0 2px 6px rgba(0,0,0,.12);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #003B6F;
+    cursor: pointer;
+    transition: .15s;
+    font-size: 15px;
+}
+.pp-act:hover                  { background: #003B6F; color: #fff; transform: scale(1.08); }
+.pp-act.wishlist-btn.active    { background: #e91e63; color: #fff; }
+.pp-act.compare-btn.active     { background: #003B6F; color: #D4A017; }
+
+/* ── Mobile overlay ── */
+.pp-mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,27,53,.55);
+    z-index: 1049;
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity .3s ease;
+}
+.pp-mobile-overlay.open { display: block; opacity: 1; }
+
+/* ── Mobile panel — slide in from start ── */
+.pp-mobile-panel {
+    position: fixed;
+    top: 0;
+    inset-inline-start: -340px;
+    width: 320px;
+    max-width: 85vw;
+    height: 100vh;
+    background: #fff;
+    z-index: 1050;
+    overflow-y: auto;
+    padding: 0 0 80px;
+    box-shadow: 4px 0 24px rgba(0,27,53,.2);
+    transition: inset-inline-start .32s cubic-bezier(.4,0,.2,1);
+}
+.pp-mobile-panel.open { inset-inline-start: 0; }
+[dir="rtl"] .pp-mobile-panel { inset-inline-start: auto; inset-inline-end: -340px; }
+[dir="rtl"] .pp-mobile-panel.open { inset-inline-end: 0; }
+
+.pp-mobile-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 18px;
+    background: #003B6F;
+    color: #fff;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+.pp-mobile-panel-head button {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 22px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+    opacity: .8;
+    transition: opacity .15s;
+}
+.pp-mobile-panel-head button:hover { opacity: 1; }
+
+/* ── LIST VIEW layout ── */
+#productGrid.list-view {
+    display: flex !important;
+    flex-direction: column;
+    gap: 14px;
+}
+#productGrid.list-view .pp-card {
+    display: flex;
+    flex-direction: row;
+    border-radius: 8px;
+    border: 1px solid rgba(212,160,23,.18);
+    background: #fff;
+    overflow: hidden;
+    transition: box-shadow .25s, transform .25s;
+    text-decoration: none;
+}
+#productGrid.list-view .pp-card:hover {
+    box-shadow: 0 8px 28px rgba(0,59,111,.14);
+    transform: translateY(-2px);
+}
+#productGrid.list-view .pp-card-img-wrap {
+    width: 160px;
+    min-width: 160px;
+    aspect-ratio: 1;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #F0E6C8;
+}
+#productGrid.list-view .pp-card-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform .4s ease;
+}
+#productGrid.list-view .pp-card:hover .pp-card-img-wrap img {
+    transform: scale(1.06);
+}
+#productGrid.list-view .pp-card-body {
+    flex: 1;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+}
+#productGrid.list-view .pp-card-name {
+    font-size: 16px;
+    font-weight: 700;
+    font-family: 'Cairo', sans-serif;
+    color: #1A2B3C;
+    margin: 0;
+    line-height: 1.35;
+}
+#productGrid.list-view .pp-card-price-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+#productGrid.list-view .pp-card-price {
+    font-size: 16px;
+    font-weight: 800;
+    color: #003B6F;
+    font-family: 'Cairo', sans-serif;
+}
+#productGrid.list-view .pp-card-actions {
+    position: static;
+    opacity: 1;
+    flex-direction: row;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+#productGrid.list-view .pp-act {
+    background: #F4F0E8;
+    color: #003B6F;
+    border-radius: 6px;
+}
+#productGrid.list-view .pp-act:hover {
+    background: #003B6F;
+    color: #fff;
+}
+#productGrid.list-view .pp-card-sku {
+    display: none; /* hide SKU badge in list view */
+}
+
+@@media (max-width: 640px) {
+    #productGrid.list-view .pp-card-img-wrap { width: 110px; min-width: 110px; }
+    #productGrid.list-view .pp-card-body { padding: 10px 12px; }
+}
 </style>
 
 <script>
@@ -536,7 +749,43 @@
         window.location.href = url.pathname;
     }
 
-    function toggleMobilePanel() { $('mobilePanel')?.classList.toggle('open'); }
+    function toggleMobilePanel() {
+        var panel   = $('mobilePanel');
+        var overlay = $('mobileOverlay');
+        if (!panel) return;
+        var isOpen = panel.classList.toggle('open');
+        if (overlay) {
+            if (isOpen) { overlay.style.display = 'block'; requestAnimationFrame(function(){ overlay.classList.add('open'); }); }
+            else         { overlay.classList.remove('open'); setTimeout(function(){ overlay.style.display = 'none'; }, 300); }
+        }
+        document.body.style.overflow = isOpen ? 'hidden' : '';
+    }
+
+    /* ── Grid / List view toggle ── */
+    function setView(mode) {
+        var grid = $('productGrid');
+        var btnG = $('btnGrid');
+        var btnL = $('btnList');
+        if (!grid) return;
+        if (mode === 'list') {
+            grid.classList.add('list-view');
+            if (btnG) btnG.classList.remove('active');
+            if (btnL) btnL.classList.add('active');
+        } else {
+            grid.classList.remove('list-view');
+            if (btnG) btnG.classList.add('active');
+            if (btnL) btnL.classList.remove('active');
+        }
+        try { localStorage.setItem('ppViewMode', mode); } catch(e) {}
+    }
+
+    /* restore saved view on load */
+    document.addEventListener('DOMContentLoaded', function() {
+        try {
+            var saved = localStorage.getItem('ppViewMode');
+            if (saved === 'list') setView('list');
+        } catch(e) {}
+    });
 
     document.addEventListener('DOMContentLoaded', () => {
         const s = $('searchInput');

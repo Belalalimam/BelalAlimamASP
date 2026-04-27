@@ -59,8 +59,8 @@
                         </div>
 
                         <div class="d-grid">
-                            <button type="submit" class="btn btn-lg fw-bold py-3 text-white" style="background-color:#002211;">
-                                <i class="fas fa-search me-2"></i> تتبع الطلب
+                            <button type="submit" class="btn btn-lg fw-bold py-3 text-white eg-track-btn">
+                                <i class="ri-search-line me-2"></i> تتبع الطلب
                             </button>
                         </div>
                     </form>
@@ -79,10 +79,59 @@
 </div>
 
 <style>
-    body { background-color: #f8f9fa; }
-    .form-control:focus {
-        border-color: #002211;
-        box-shadow: 0 0 0 0.2rem rgba(0, 34, 17, 0.15);
-    }
-    .btn:hover { transform: translateY(-1px); transition: all 0.2s; }
+/* Egypt tracking theme */
+body { background-color: #F4F0E8; }
+.form-control:focus {
+    border-color: #003B6F;
+    box-shadow: 0 0 0 0.2rem rgba(0,59,111,.15);
+}
+.card { border-radius: 14px !important; }
+
+/* Tracking page header icon color */
+.container svg { fill: #003B6F !important; }
+
+/* Track button */
+.eg-track-btn {
+    background: #003B6F !important;
+    border-color: #003B6F !important;
+    font-family: 'Cairo', sans-serif;
+    font-weight: 800;
+}
+.eg-track-btn:hover { background: #002a52 !important; transform: translateY(-2px); }
+.display-5 { color: #003B6F !important; }
+
+/* ── Order tracking timeline (shown after result is found) ── */
+.eg-track-timeline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    margin: 32px auto 0;
+    max-width: 560px;
+    padding: 24px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid rgba(212,160,23,.18);
+    box-shadow: 0 4px 18px rgba(0,59,111,.08);
+}
+.eg-tr-step { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+.eg-tr-dot {
+    width: 42px; height: 42px;
+    border-radius: 50%;
+    border: 2.5px solid #e0dbd0;
+    background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: #ccc;
+    z-index: 2; position: relative;
+}
+.eg-tr-label { font-size: 11px; font-weight: 700; color: #bbb; font-family: 'Cairo', sans-serif; text-align: center; }
+.eg-tr-bar { flex: 1; height: 2px; background: #e0dbd0; align-self: center; min-width: 20px; max-width: 60px; margin-bottom: 26px; }
+.eg-tr-step.done .eg-tr-dot { background: #2a7d4f; border-color: #2a7d4f; color: #fff; }
+.eg-tr-step.done .eg-tr-label { color: #2a7d4f; }
+.eg-tr-step.current .eg-tr-dot {
+    background: #003B6F; border-color: #003B6F; color: #fff;
+    box-shadow: 0 0 0 5px rgba(0,59,111,.15);
+}
+.eg-tr-step.current .eg-tr-label { color: #003B6F; }
+.eg-tr-bar.done { background: #2a7d4f; }
 </style>
