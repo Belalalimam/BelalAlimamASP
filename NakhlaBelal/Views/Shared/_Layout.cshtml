@@ -88,156 +88,86 @@
     }
     
     <div class="site">
-        <header class="">
-            <div class="container1 ">
-                <div class="content ">
 
-                    <div class="left">
-                        <a class="trigger" onclick="document.body.classList.add('showmenu'); return false;">
-                            <i class="ri-menu-line"></i>
-                        </a>
-                        <div class="logo ">
-                        @* <img src="~/images/Logo2.png" width="300px" alt="Alternate Text" /> *@
-                            <a href="/">@Localizer["Your  logo"]</a>
-                        </div>
+        @* ═══ MAGHREB HEADER — Full-width bold red navbar ═══ *@
+        <div class="mg-top-strip">
+            <span></span><span></span><span></span>
+        </div>
+
+        <header class="mg-header">
+            <div class="mg-header-inner">
+                <button class="mg-hamburger trigger" onclick="document.body.classList.add('showmenu'); return false;" aria-label="Menu">
+                    <i class="ri-menu-fill"></i>
+                </button>
+
+                <div class="mg-logo">
+                    <a href="/">@Localizer["Your  logo"]</a>
+                </div>
+
+                <nav class="mg-nav">
+                    <ul>
+                        <li><a href="/Customer/home/product">@Localizer["AllProduct"]</a></li>
+                        @await Component.InvokeAsync("NavMenu")
+                        <li class="dropdown1">
+                            <a href="/" class="dropdown1-btn">@Localizer["ByPattern"]</a>
+                            <div class="dropdown1-menu">
+                                <a href="/customer/home/CategroySearch?categoryId=13">item 1</a>
+                                <a href="/customer/home/CategroySearch?categoryId=14">item 2</a>
+                                <a href="/customer/home/CategroySearch?categoryId=15">item 3</a>
+                            </div>
+                        </li>
+                        <li><a href="#">@Localizer["Promo"]</a></li>
+                    </ul>
+                </nav>
+
+                <div class="mg-header-right">
+                    <a href="/Customer/Compare/Index" class="mg-icon-btn" title="Compare">
+                        <span id="compareBadgeDesktop" class="mg-badge d-none">0</span>
+                        <i class="ri-arrow-left-right-line"></i>
+                    </a>
+                    <a href="/Customer/Wishlist/Index" class="mg-icon-btn" title="Wishlist">
+                        <span id="wishlistBadgeDesktop" class="mg-badge d-none">0</span>
+                        <i class="ri-heart-line"></i>
+                    </a>
+                    <a href="/Customer/Cart/index" class="mg-icon-btn" title="Cart">
+                        <span id="cartBadge" class="mg-badge d-none">0</span>
+                        <i class="ri-shopping-bag-2-line"></i>
+                    </a>
+                    <div class="mg-icon-dd account-dd">
+                        <button class="mg-icon-btn dropdown1-btn" onclick="return false;"><i class="ri-user-line"></i></button>
+                        <ul class="dropdown1-menu account-menu">
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li><a class="dropdown-item" href="/Identity/Profile/index"><i class="ri-user-3-line me-2"></i>@SharedLocalizer["MyAccount"]</a></li>
+                                <li><a class="dropdown-item" href="/Customer/Wishlist/Index"><i class="ri-heart-line me-2"></i>@SharedLocalizer["Wishlist"] <span class="acc-count" id="wishlistBadgeAccount">0</span></a></li>
+                                <li><a class="dropdown-item" href="/Customer/Compare/Index"><i class="ri-arrow-left-right-line me-2"></i>@SharedLocalizer["Compare"] <span class="acc-count" id="compareBadgeAccount">0</span></a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Track", "Order", new { area = "Customer" })"><i class="ri-truck-line me-2"></i>@SharedLocalizer["TrackOrder"]</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("RequestSample", "Order", new { area = "Customer" })"><i class="ri-scissors-cut-line me-2"></i>@SharedLocalizer["RequestFabricsSamples"]</a></li>
+                                <li><hr class="dropdown-divider my-1" /></li>
+                                <li><a class="dropdown-item text-danger" href="/Identity/Account/Logout"><i class="ri-logout-box-r-line me-2"></i>@SharedLocalizer["Logout"]</a></li>
+                            }
+                            else
+                            {
+                                <li><a class="dropdown-item" href="/Identity/Account/Login"><i class="ri-login-box-line me-2"></i>@SharedLocalizer["Login"]</a></li>
+                                <li><a class="dropdown-item" href="/Identity/Account/Register"><i class="ri-user-add-line me-2"></i>@SharedLocalizer["Register"]</a></li>
+                            }
+                        </ul>
                     </div>
-
-
-
-
-
-                    <div class="middle">
-                        <nav>
-                            <ul>
-                                <li><a href="/Customer/home/product">@Localizer["AllProduct"]</a></li>
-                                
-                                @await Component.InvokeAsync("NavMenu")
-                                
-                                <li class="dropdown1">
-                                    <a href="/" class="dropdown1-btn">@Localizer["ByPattern"]</a>
-                                    <div class="dropdown1-menu">
-                                        <a href="https://localhost:7286/customer/home/CategroySearch?categoryId=13">item 1</a>
-                                        <a href="https://localhost:7286/customer/home/CategroySearch?categoryId=14">item 2</a>
-                                        <a href="https://localhost:7286/customer/home/CategroySearch?categoryId=15">item 3</a>
-                                    </div>
-                                </li>
-                                <li>
-                                    <a href="#">@Localizer["Promo"]</a>
-                                    
-                                </li>
-                            </ul>
-                        </nav>
-
-                    </div>
-
-                    <div class="right">
-                        <ul>
-                            @* <li class="d-flex justify-content-center ">
-                                @* <a href="#"><i class="ri-search-line"></i></a> 
-                                <form class="" action="@Url.Action("CategroySearch", "Home")" method="get">
-                                    <input type="text" name="Name" placeholder="Type & hit 'enter'" />
+                    <div class="mg-icon-dd">
+                        <button class="mg-icon-btn dropdown1-btn" onclick="return false;">🌐</button>
+                        <ul class="dropdown1-menu">
+                            <li style="padding:5px 0;margin-inline-start:7px;">
+                                <form asp-area="Customer" asp-controller="Language" asp-action="SetLanguage"
+                                      asp-route-returnUrl="@returnUrl" method="post">
+                                    <button type="submit" name="culture" value="ar" class="dropdown-item">العربية</button>
+                                    <button type="submit" name="culture" value="en" class="dropdown-item">English</button>
                                 </form>
-                                
-                            </li> *@
-
-                            
-
-                            <li>
-                                <a href="/Customer/Compare/Index" title="Compare">
-                                    <span id="compareBadgeDesktop" class="num d-none">0</span>
-                                    <i class="ri-arrow-left-right-line"></i>
-                                </a>
                             </li>
-
-                            <li>
-                                <a href="/Customer/Wishlist/Index" title="Wishlist">
-                                    <span id="wishlistBadgeDesktop" class="num d-none">0</span>
-                                    <i class="ri-heart-line"></i>
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="/Customer/Cart/index">
-                                    <span id="cartBadge" class="num d-none">0</span>
-                                    <i class="ri-shopping-bag-2-line"></i>
-                                </a>
-                            </li>
-
-                            <li class="dropdown1 account-dd">
-                                <div class="d-flex justify-content-center align-items-center">
-                                    <a class="dropdown1-btn" href="#" onclick="return false;">
-                                        <i class="ri-user-line"></i>
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
-                                            <span class="account-name">@User.Identity.Name</span>
-                                        }
-                                    </a>
-                                    <ul class="dropdown1-menu account-menu">
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
-                                            <li><a class="dropdown-item" href="/Identity/Profile/index"><i class="ri-user-3-line me-2"></i>@SharedLocalizer["MyAccount"]</a></li>
-                                            <li><a class="dropdown-item" href="/Customer/Wishlist/Index"><i class="ri-heart-line me-2"></i>@SharedLocalizer["Wishlist"] <span class="acc-count" id="wishlistBadgeAccount">0</span></a></li>
-                                            <li><a class="dropdown-item" href="/Customer/Compare/Index"><i class="ri-arrow-left-right-line me-2"></i>@SharedLocalizer["Compare"] <span class="acc-count" id="compareBadgeAccount">0</span></a></li>
-                                            <li><a class="dropdown-item" href="@Url.Action("Track", "Order", new { area = "Customer" })"><i class="ri-truck-line me-2"></i>@SharedLocalizer["TrackOrder"]</a></li>
-                                            <li><a class="dropdown-item" href="@Url.Action("RequestSample", "Order", new { area = "Customer" })"><i class="ri-scissors-cut-line me-2"></i>@SharedLocalizer["RequestFabricsSamples"]</a></li>
-                                            <li><hr class="dropdown-divider my-1" /></li>
-                                            <li><a class="dropdown-item text-danger" href="/Identity/Account/Logout"><i class="ri-logout-box-r-line me-2"></i>@SharedLocalizer["Logout"]</a></li>
-                                        }
-                                        else
-                                        {
-                                            <li><a class="dropdown-item" href="/Identity/Account/Login"><i class="ri-login-box-line me-2"></i>@SharedLocalizer["Login"]</a></li>
-                                            <li><a class="dropdown-item" href="/Identity/Account/Register"><i class="ri-user-add-line me-2"></i>@SharedLocalizer["Register"]</a></li>
-                                        }
-                                    </ul>
-                                </div>
-                            </li>
-
-                            
-
-                            
-
-                            @* <li class="nav-item">
-                                <a class="nav-link position-relative" href="
-
-
-("Index", "Cart", new { area = "Customer" })">
-                                    <i class="ri-shopping-bag-2-line"></i>
-                                    @if (User.Identity.IsAuthenticated)
-                                    {
-                                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger cart-badge"
-                                              id="cartBadge" style="font-size: 0.6rem;">
-                                            0
-                                        </span>
-                                    }
-                                </a>
-                            </li> *@
-                            @* <li><a href="#"><span class="num">3</span><i class="ri-heart-line"></i></a></li> *@
-
-
-                            <li class="dropdown1 ">
-                                <div class="d-flex justify-content-center align-items-center ">
-                                    <a class="dropdown1-btn " href="#">
-                                        🌐 @(requestCulture.RequestCulture.UICulture.Name == "ar" ? "العربية" : "English")
-                                    </a>
-                                    <ul class="dropdown1-menu ">
-                                        <li style="padding: 5px 0;margin-left: 7px;">
-                                            <form asp-area="Customer" asp-controller="Language" asp-action="SetLanguage"
-                                                  asp-route-returnUrl="@returnUrl" method="post">
-                                                <button type="submit" name="culture" value="ar" class="dropdown-item">العربية</button>
-                                                <button type="submit" name="culture" value="en" class="dropdown-item">English</button>
-                                            </form>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-
-                            @* moved into account dropdown *@
-
-
                         </ul>
                     </div>
                 </div>
             </div>
+            <div class="mg-header-zellige"></div>
         </header>
 
 
