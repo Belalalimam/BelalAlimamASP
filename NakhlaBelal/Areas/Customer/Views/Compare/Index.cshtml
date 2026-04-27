@@ -76,8 +76,22 @@
 </div>
 
 <style>
-    .compare-table th { vertical-align: middle; }
-    .compare-table td { vertical-align: middle; font-size: 14px; }
+body { background:#F4F0E8; }
+.compare-table { border-collapse:collapse; min-width:600px; }
+.compare-table th {
+    vertical-align:middle; background:#003B6F; color:#fff;
+    font-size:12px; font-weight:700; letter-spacing:1px; text-transform:uppercase;
+    padding:14px 16px;
+}
+.compare-table td { vertical-align:middle; font-size:14px; padding:12px 16px; color:#1A2B3C; background:#fff; }
+.compare-table tbody tr:nth-child(even) td { background:#FAFAF8; }
+.compare-table tbody tr:hover td { background:#F4F0E8; }
+.compare-table tbody th { background:#F4F0E8; color:#003B6F; font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:1px; border-right:2px solid #e8e2d6; }
+.compare-table .btn-dark { background:#003B6F; border-color:#003B6F; }
+.compare-table .btn-dark:hover { background:#D4A017; border-color:#D4A017; color:#1A2B3C; }
+.btn-outline-danger { border-color:#e91e63; color:#e91e63; }
+.btn-outline-danger:hover { background:#e91e63; color:#fff; }
+h2 { color:#003B6F; font-family:'Cairo',sans-serif; }
 </style>
 
 @section Scripts {

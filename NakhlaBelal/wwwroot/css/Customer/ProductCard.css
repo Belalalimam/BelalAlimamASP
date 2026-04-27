@@ -168,13 +168,13 @@ body {
     align-items: center;
     gap: 8px;
     padding: 8px 14px;
-    border: 1px solid var(--evergreen-color);
+    border: 1px solid #003B6F;
     border-radius: 6px;
     background-color: var(--pp-sidebar-bg);
     font-size: 13px;
     font-weight: 500;
     cursor: pointer;
-    color:var(--evergreen-color);
+    color:#003B6F;
     margin-bottom: 16px;
 }
 
@@ -219,7 +219,7 @@ body {
     align-items: center;
     gap: 8px;
     background: var(--pp-card-bg);
-    border: 1px solid var(--evergreen-color);
+    border: 1px solid #003B6F;
     border-radius: 8px;
     padding: 10px 14px;
     margin-bottom: 20px;
@@ -235,7 +235,7 @@ body {
     flex: 1 1 auto;
     min-width: 90px;
     padding: 6px 10px;
-    border: 1px solid var(--evergreen-color);
+    border: 1px solid #003B6F;
     border-radius: 6px;
     background: var(--pp-bg);
     font-size: 13px;
@@ -414,27 +414,52 @@ body {
 }
 
 .page-link {
-    display: block;
-    padding: 10px 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 14px;
     background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    color: var(--evergreen-color);
-    background-color: var(--jade-color);
+    border: 1.5px solid #e8e2d6;
+    border-radius: 8px;
+    color: #1A2B3C;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
     text-decoration: none;
-    transition: all 0.3s ease;
-}   
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
 
-    .page-link:hover {
-        background: #f8f6f3;
-        border-color: var(--jade-color);
-        color: var(--evergreen-color);
-    }
+.page-link:hover {
+    background: #F4F0E8;
+    border-color: #003B6F;
+    color: #003B6F;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(0,59,111,.12);
+}
 
 .page-item.active .page-link {
-    background: var(--evergreen-color);
-    border-color: var(--jade-color);
-    color: var(--cotton-color);
+    background: #003B6F;
+    border-color: #003B6F;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,59,111,.3);
+}
+
+.page-item.active .page-link:hover {
+    background: #D4A017;
+    border-color: #D4A017;
+    color: #1A2B3C;
+}
+
+.pagination {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    list-style: none;
 }
 
 /* ===== RESPONSIVE ===== */

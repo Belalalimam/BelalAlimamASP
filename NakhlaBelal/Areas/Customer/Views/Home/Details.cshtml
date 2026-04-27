@@ -137,16 +137,25 @@
                 .pd-sec-btn.compare-btn.active{background:#003B6F;color:#D4A017;border-color:#003B6F}
                 .pd-sec-btn i{font-size:16px}
             </style>
-            @if (minQty > 1 || step > 1)
-            {
-                <small class="pd-qty-hint">
-                    @SharedLocalizer["Minimum"]: @minQty @unitLabel
+            @* Minimum quantity – always visible *@
+            <div class="pd-minqty-bar">
+                <i class="ri-scissors-cut-line"></i>
+                <div>
+                    <span class="pd-minqty-label">@SharedLocalizer["Minimum order"]</span>
+                    <strong class="pd-minqty-val">@minQty @SharedLocalizer[@unitLabel]</strong>
                     @if (step > 1)
                     {
-                        <text> · @SharedLocalizer["Step"]: @step @unitLabel</text>
+                        <span class="pd-minqty-step"> · @SharedLocalizer["Step"]: @step</span>
                     }
-                </small>
-            }
+                </div>
+            </div>
+            <style>
+            .pd-minqty-bar{display:flex;align-items:center;gap:12px;background:#FFF8E1;border:1px solid rgba(212,160,23,.35);border-radius:8px;padding:12px 16px;margin-bottom:16px}
+            .pd-minqty-bar i{font-size:22px;color:#B8860B;flex-shrink:0}
+            .pd-minqty-label{display:block;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#888}
+            .pd-minqty-val{font-size:20px;font-weight:900;color:#003B6F;font-family:'Cairo',sans-serif}
+            .pd-minqty-step{font-size:13px;color:#888;margin-left:6px}
+            </style>
 
             @{
                 // Detect whether this product is a fabric (so we can hide fabric-only specs for
@@ -318,56 +327,95 @@
         </div>
     </div>
 
-    <!-- MATCHING PRODUCTS -->
+    @* ── You May Also Like – Swiper (same category & fabric type) ── *@
     @if (Model.RelatedProducts != null && Model.RelatedProducts.Any())
     {
-        <div class="pd-section">
+        <div class="pd-section pd-also-like">
             <div class="pd-section-head">
-                <h2>@SharedLocalizer["Matching products"]</h2>
-                <a href="@Url.Action("CategroySearch", "Home", new { categoryId = Model.Product.CategoryId })"
-                   class="pd-view-all">@SharedLocalizer["View all"]</a>
+                <div>
+                    <p class="pd-section-label">@SharedLocalizer["BASED ON"] @(Model.Product.Category?.Name ?? Model.Product.FabricType?.Name ?? SharedLocalizer["this fabric"].Value)</p>
+                    <h2 class="pd-section-title">@SharedLocalizer["You May Also Like"]</h2>
+                </div>
+                <a href="@Url.Action("CategroySearch", "Home", new { categoryId = Model.Product.CategoryId, area="Customer" })"
+                   class="pd-view-all">@SharedLocalizer["View all"] →</a>
             </div>
-            <div class="pd-related-scroll">
-                @foreach (var item in Model.RelatedProducts.Take(8))
-                {
-                    <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })"
-                           class="pd-related-card">
-                        <img src="~/images/@item.MainImage" alt="@item.Name" class="pd-related-img" />
-                        <h4 class="pd-related-name">@item.Name</h4>
-                        <span class="pd-related-badge">Premium</span>
-                        <div class="pd-related-prices">
-                            <span>€ @item.Price.ToString("N2").Replace(".", ",")</span>
-                            <span class="pd-related-stock">@item.StockQuantity m</span>
+
+            <div class="swiper pd-swiper">
+                <div class="swiper-wrapper">
+                    @foreach (var item in Model.RelatedProducts.Take(10))
+                    {
+                        var relPrice = item.Discount > 0
+                            ? item.Price - item.Price * (item.Discount / 100m)
+                            : item.Price;
+                        <div class="swiper-slide">
+                            <div class="pd-rel-card">
+                                <a href="@Url.Action("Details","Home", new { id=item.Id, area="Customer" })" class="pd-rel-img-wrap">
+                                    <img src="~/images/@item.MainImage" alt="@item.Name" loading="lazy" />
+                                    @if (item.Discount > 0) {
+                                        <span class="pd-rel-badge">-@item.Discount%</span>
+                                    }
+                                </a>
+                                <div class="pd-rel-body">
+                                    <span class="pd-rel-cat">@item.Category?.Name</span>
+                                    <a href="@Url.Action("Details","Home", new { id=item.Id, area="Customer" })" class="pd-rel-name">@item.Name</a>
+                                    <div class="pd-rel-price">€ @relPrice.ToString("N2")</div>
+                                </div>
+                            </div>
                         </div>
-                    </a>
-                }
+                    }
+                </div>
+                <div class="swiper-button-next pd-swiper-next"></div>
+                <div class="swiper-button-prev pd-swiper-prev"></div>
             </div>
         </div>
+
+        <style>
+        .pd-also-like { padding-top: 40px; border-top: 1px solid #e8e2d6; }
+        .pd-section-head { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+        .pd-section-label { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#B8860B; margin:0 0 4px; }
+        .pd-section-title { font-size:22px; font-weight:800; color:#1A2B3C; font-family:'Cairo',sans-serif; margin:0; }
+        .pd-view-all { font-size:13px; font-weight:700; color:#003B6F; text-decoration:none; white-space:nowrap; }
+        .pd-view-all:hover { color:#D4A017; }
+
+        .pd-swiper { position:relative; padding-bottom: 8px; }
+        .pd-rel-card { background:#fff; border-radius:8px; overflow:hidden; border:1px solid #ebe6da; transition:transform .25s, box-shadow .25s; height:100%; }
+        .pd-rel-card:hover { transform:translateY(-4px); box-shadow:0 8px 24px rgba(0,59,111,.12); }
+        .pd-rel-img-wrap { display:block; aspect-ratio:4/3; overflow:hidden; background:#f0e8d0; position:relative; }
+        .pd-rel-img-wrap img { width:100%; height:100%; object-fit:cover; transition:transform .4s; }
+        .pd-rel-card:hover .pd-rel-img-wrap img { transform:scale(1.05); }
+        .pd-rel-badge { position:absolute; top:8px; left:8px; background:#D4A017; color:#1A2B3C; font-size:10px; font-weight:800; padding:2px 7px; border-radius:3px; }
+        .pd-rel-body { padding:12px 14px; }
+        .pd-rel-cat { font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#B8860B; }
+        .pd-rel-name { display:block; font-size:13px; font-weight:700; color:#1A2B3C; text-decoration:none; margin:4px 0; line-height:1.35; font-family:'Cairo',sans-serif; }
+        .pd-rel-name:hover { color:#003B6F; }
+        .pd-rel-price { font-size:15px; font-weight:900; color:#003B6F; font-family:'Cairo',sans-serif; }
+
+        .pd-swiper-next, .pd-swiper-prev {
+            width:38px; height:38px; border-radius:50%;
+            background:#fff; border:1px solid #e0dbd0;
+            box-shadow:0 2px 8px rgba(0,0,0,.1);
+            color:#003B6F !important;
+        }
+        .pd-swiper-next::after, .pd-swiper-prev::after { font-size:14px !important; font-weight:900; color:#003B6F; }
+        .pd-swiper-next:hover, .pd-swiper-prev:hover { background:#003B6F; }
+        .pd-swiper-next:hover::after, .pd-swiper-prev:hover::after { color:#fff; }
+        </style>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            new Swiper('.pd-swiper', {
+                slidesPerView: 2,
+                spaceBetween: 14,
+                navigation: { nextEl: '.pd-swiper-next', prevEl: '.pd-swiper-prev' },
+                breakpoints: {
+                    576: { slidesPerView: 3 },
+                    900: { slidesPerView: 4 },
+                    1200: { slidesPerView: 5 }
+                }
+            });
+        });
+        </script>
     }
-
-    <!-- YOU MAY ALSO BE INTERESTED IN -->
-    <div class="pd-section">
-        <h2 class="pd-section-title">@SharedLocalizer["You may also be interested in..."]</h2>
-        <div class="pd-cat-grid-3">
-            <a href="#" class="pd-cat-card" style="background:#2c3e28"><span>@SharedLocalizer["Fine Suit Fabrics"]</span></a>
-            <a href="#" class="pd-cat-card" style="background:#1a2c4a"><span>@SharedLocalizer["Cashmere Fabrics"]</span></a>
-            <a href="#" class="pd-cat-card" style="background:#4a3a28"><span>@SharedLocalizer["Cotton Fabrics"]</span></a>
-        </div>
-        <div class="pd-cat-grid-2">
-            <a href="#" class="pd-cat-card" style="background:#3a3a3a"><span>@SharedLocalizer["Wool Fabrics"]</span></a>
-            <a href="#" class="pd-cat-card" style="background:#2e4a2e"><span>@SharedLocalizer["Green Fabrics"]</span></a>
-        </div>
-    </div>
-
-    <!-- MORE INSPIRATIONS -->
-    <div class="pd-section">
-        <h2 class="pd-section-title">@SharedLocalizer["More inspirations"]</h2>
-        <div class="pd-insp-row">
-            <a href="#" class="pd-insp-card" style="background:linear-gradient(135deg,#ffd700,#ffed4e)">@SharedLocalizer["ON SALE FABRICS"]</a>
-            <a href="#" class="pd-insp-card" style="background:linear-gradient(135deg,#89CFF0,#B2E5FF)">@SharedLocalizer["NEW ARRIVALS"]</a>
-            <a href="#" class="pd-insp-card" style="background:linear-gradient(135deg,#90EE90,#C1FFC1)">@SharedLocalizer["ORGANIC FABRICS"]</a>
-        </div>
-    </div>
 
     <!-- NEWSLETTER -->
     <div class="pd-newsletter">

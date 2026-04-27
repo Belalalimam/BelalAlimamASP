@@ -1,127 +1,249 @@
-﻿@model NakhlaBelal.ViewModels.CheckoutVM
+@model NakhlaBelal.ViewModels.CheckoutVM
 @using Microsoft.Extensions.Localization
 @using NakhlaBelal
 @inject IStringLocalizer<SharedResource> SharedLocalizer
 
-<div class="container py-5">
-    <h2 class="text-center mb-5">@SharedLocalizer["Checkout"]</h2>
-    <form asp-action="ProcessOrder" method="post">       
+@* ── Egypt Step Bar (step 2 active) ── *@
+<div class="eg-steps">
+    <div class="eg-step done">
+        <div class="eg-step-dot"><i class="ri-shopping-cart-2-line"></i></div>
+        <span>@SharedLocalizer["Cart"]</span>
+    </div>
+    <div class="eg-step-line done"></div>
+    <div class="eg-step active">
+        <div class="eg-step-dot"><i class="ri-secure-payment-line"></i></div>
+        <span>@SharedLocalizer["Checkout"]</span>
+    </div>
+    <div class="eg-step-line"></div>
+    <div class="eg-step">
+        <div class="eg-step-dot"><i class="ri-checkbox-circle-line"></i></div>
+        <span>@SharedLocalizer["Confirmation"]</span>
+    </div>
+</div>
 
-        @* لاحظ هنا سنرسل البيانات لـ Pay *@
-        <div class="row">
-            <div class="col-md-7">
-                <div class="card p-4 shadow-sm TableContainerCheck">
-                    <h4>@SharedLocalizer["Billing Details"]</h4>
-                    <hr />
-                    <div class="row">
-                        <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingFirstName">@SharedLocalizer["First Name"] *</label>
-                            <input asp-for="ShippingFirstName" class="form-control" />
-                            <span asp-validation-for="ShippingFirstName" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingLastName">@SharedLocalizer["Last Name"] *</label>
-                            <input asp-for="ShippingLastName" class="form-control" />
-                            <span asp-validation-for="ShippingLastName" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingAddress">@SharedLocalizer["Street Address"] *</label>
-                            <input asp-for="ShippingAddress" class="form-control" />
-                            <span asp-validation-for="ShippingAddress" class="text-danger"></span>
-                        </div>
-                        <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingCity">@SharedLocalizer["Town / City"] *</label>
-                            <input asp-for="ShippingCity" class="form-control" />
-                            <span asp-validation-for="ShippingCity" class="text-danger"></span>
-                        </div>
+<div class="container py-4" style="max-width:1100px;">
+    <form asp-action="ProcessOrder" method="post">
+        <div class="row g-4">
 
-                        <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingZipCode">@SharedLocalizer["Postcode / ZIP"] *</label>
-                            <input asp-for="ShippingZipCode" class="form-control" />
-                            <span asp-validation-for="ShippingZipCode" class="text-danger"></span>
+            @* ── Billing Details ── *@
+            <div class="col-lg-7">
+                <div class="eg-co-card">
+                    <h4 class="eg-co-card-title">
+                        <span class="eg-co-num">1</span> @SharedLocalizer["Billing Details"]
+                    </h4>
+                    <div class="row g-3 mt-1">
+                        <div class="col-md-6">
+                            <label class="eg-co-label">@SharedLocalizer["First Name"] <span class="req">*</span></label>
+                            <input asp-for="ShippingFirstName" class="eg-co-input" />
+                            <span asp-validation-for="ShippingFirstName" class="text-danger small"></span>
                         </div>
-                        <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingPhone">@SharedLocalizer["Phone"] *</label>
-                            <input asp-for="ShippingPhone" class="form-control" />
-                            <span asp-validation-for="ShippingPhone" class="text-danger"></span>
+                        <div class="col-md-6">
+                            <label class="eg-co-label">@SharedLocalizer["Last Name"] <span class="req">*</span></label>
+                            <input asp-for="ShippingLastName" class="eg-co-input" />
+                            <span asp-validation-for="ShippingLastName" class="text-danger small"></span>
                         </div>
-                        <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingEmail">@SharedLocalizer["Email"] *</label>
-                            <input asp-for="ShippingEmail" class="form-control" />
-                            <span asp-validation-for="ShippingEmail" class="text-danger"></span>
+                        <div class="col-md-6">
+                            <label class="eg-co-label">@SharedLocalizer["Street Address"] <span class="req">*</span></label>
+                            <input asp-for="ShippingAddress" class="eg-co-input" />
+                            <span asp-validation-for="ShippingAddress" class="text-danger small"></span>
                         </div>
-                        <div class="form-group col-md-6 mb-3">
-                            <label asp-for="ShippingState">@SharedLocalizer["State"] *</label>
-                            <input asp-for="ShippingState" class="form-control" />
-                            <span asp-validation-for="ShippingState" class="text-danger"></span>
+                        <div class="col-md-6">
+                            <label class="eg-co-label">@SharedLocalizer["Town / City"] <span class="req">*</span></label>
+                            <input asp-for="ShippingCity" class="eg-co-input" />
+                            <span asp-validation-for="ShippingCity" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="eg-co-label">@SharedLocalizer["Postcode / ZIP"] <span class="req">*</span></label>
+                            <input asp-for="ShippingZipCode" class="eg-co-input" />
+                            <span asp-validation-for="ShippingZipCode" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="eg-co-label">@SharedLocalizer["Phone"] <span class="req">*</span></label>
+                            <input asp-for="ShippingPhone" class="eg-co-input" />
+                            <span asp-validation-for="ShippingPhone" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="eg-co-label">@SharedLocalizer["Email"] <span class="req">*</span></label>
+                            <input asp-for="ShippingEmail" class="eg-co-input" />
+                            <span asp-validation-for="ShippingEmail" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="eg-co-label">@SharedLocalizer["State"] <span class="req">*</span></label>
+                            <input asp-for="ShippingState" class="eg-co-input" />
+                            <span asp-validation-for="ShippingState" class="text-danger small"></span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-5">
-                <div class="card p-4 shadow-sm TableContainerCheck">
-                    <h4>@SharedLocalizer["Your Order"]</h4>
-                    <table class="table mt-3">
+            @* ── Order Summary ── *@
+            <div class="col-lg-5">
+                <div class="eg-co-card eg-co-summary">
+                    <h4 class="eg-co-card-title">
+                        <span class="eg-co-num">2</span> @SharedLocalizer["Your Order"]
+                    </h4>
+
+                    <table class="w-100 mt-3 eg-co-table">
                         <thead>
                             <tr>
-                                <th class="TableContainerCheck">@SharedLocalizer["Product"]</th>
-                                <th class="text-end TableContainerCheck">@SharedLocalizer["Subtotal"]</th>
+                                <th>@SharedLocalizer["Product"]</th>
+                                <th class="text-end">@SharedLocalizer["Subtotal"]</th>
                             </tr>
                         </thead>
-                        <tbody class="">
+                        <tbody>
                             @if (Model.CartData != null && Model.CartData.CartItems.Any())
                             {
                                 @foreach (var item in Model.CartData.CartItems)
                                 {
-                                    <tr class="">
-                                        <td class="TableContainerCheck">@item.Product.Name × @item.Count</td>
-                                        <td class="text-end TableContainerCheck">€ @((item.Product.Price * item.Count).ToString("N2"))</td>
+                                    <tr>
+                                        <td>@item.Product.Name <span class="eg-qty">× @item.Count</span></td>
+                                        <td class="text-end fw-bold">€ @((item.Product.Price * item.Count).ToString("N2"))</td>
                                     </tr>
                                 }
                             }
                             else
                             {
-                                <tr><td colspan="2">@SharedLocalizer["Your cart is empty"]</td></tr>
+                                <tr><td colspan="2" class="text-muted">@SharedLocalizer["Your cart is empty"]</td></tr>
                             }
                         </tbody>
-                        <tfoot class="fw-bold">
-                            <tr class="">
-                                <td class="TableContainerCheck">@SharedLocalizer["Subtotal"]</td>
-                                <td class="text-end TableContainerCheck">€ @Model.CartData.Subtotal.ToString("N2")</td>
-                            </tr>
-                        </tr>
+                    </table>
+
+                    <div class="eg-co-totals">
+                        <div class="eg-co-total-row">
+                            <span>@SharedLocalizer["Subtotal"]</span>
+                            <span>€ @Model.CartData.Subtotal.ToString("N2")</span>
+                        </div>
                         @if (Model.CartData.Discount > 0)
                         {
-                            <tr class="text-danger ">
-                                <td class="TableContainerCheck">Discount (@Model.CartData.PromotionCode)</td>
-                                <td class="text-end TableContainerCheck">- € @Model.CartData.Discount.ToString("N2")</td>
-                            </tr>
+                            <div class="eg-co-total-row discount">
+                                <span>@SharedLocalizer["Discount"] (@Model.CartData.PromotionCode)</span>
+                                <span>− € @Model.CartData.Discount.ToString("N2")</span>
+                            </div>
                         }
                         @if (Model.CartData.Tax > 0)
                         {
-                            <tr>
-                                <td class="TableContainerCheck">@SharedLocalizer["VAT"] (19%)</td>
-                                <td class="text-end TableContainerCheck">€ @Model.CartData.Tax.ToString("N2")</td>
-                            </tr>
+                            <div class="eg-co-total-row">
+                                <span>@SharedLocalizer["VAT"] (19%)</span>
+                                <span>€ @Model.CartData.Tax.ToString("N2")</span>
+                            </div>
                         }
-                        <tr>
-                            <tr>
-                                <td class="TableContainerCheck">@SharedLocalizer["SHIPPING"]</td>
-                                <td class="text-end TableContainerCheck">€ @Model.CartData.Shipping.ToString("N2")</td>
-                            </tr>
-                            <tr class="text-primary h5 ">
-                                <td class="TableContainerCheck">@SharedLocalizer["TOTAL"]</td>
-                                <td class="text-end TableContainerCheck">€ @Model.CartData.Total.ToString("N2")</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-
-                    <div class="mt-4">
-                        <button type="submit" class="checkout-btn">@SharedLocalizer["Place Order"]</button>
+                        <div class="eg-co-total-row">
+                            <span>@SharedLocalizer["SHIPPING"]</span>
+                            <span>€ @Model.CartData.Shipping.ToString("N2")</span>
+                        </div>
+                        <div class="eg-co-total-row final">
+                            <span>@SharedLocalizer["TOTAL"]</span>
+                            <span>€ @Model.CartData.Total.ToString("N2")</span>
+                        </div>
                     </div>
+
+                    <button type="submit" class="eg-co-place-btn">
+                        <i class="ri-lock-line me-2"></i> @SharedLocalizer["Place Order"]
+                    </button>
+                    <p class="eg-co-secure"><i class="ri-shield-check-line"></i> @SharedLocalizer["Secure & encrypted checkout"]</p>
                 </div>
             </div>
+
         </div>
     </form>
 </div>
+
+<style>
+body { background: #F4F0E8; }
+
+/* ── Step bar ── */
+.eg-steps {
+    display:flex; align-items:center; justify-content:center;
+    gap:0; padding:28px 16px 0; max-width:420px; margin:0 auto;
+}
+.eg-step { display:flex; flex-direction:column; align-items:center; gap:6px; flex-shrink:0; }
+.eg-step-dot {
+    width:40px; height:40px; border-radius:50%;
+    border:2px solid #ddd; background:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; color:#bbb; transition:all .3s;
+}
+.eg-step span { font-size:11px; font-weight:700; color:#bbb; font-family:'Cairo',sans-serif; letter-spacing:.5px; }
+.eg-step.active .eg-step-dot { background:#003B6F; border-color:#003B6F; color:#fff; box-shadow:0 4px 14px rgba(0,59,111,.3); }
+.eg-step.active span { color:#003B6F; }
+.eg-step.done .eg-step-dot { background:#2a7d4f; border-color:#2a7d4f; color:#fff; }
+.eg-step.done span { color:#2a7d4f; }
+.eg-step-line { flex:1; height:2px; background:#ddd; margin-bottom:22px; min-width:40px; max-width:80px; }
+.eg-step-line.done { background:#2a7d4f; }
+
+/* ── Card ── */
+.eg-co-card {
+    background:#fff; border-radius:12px; padding:28px;
+    border:1px solid rgba(212,160,23,.15);
+    box-shadow:0 4px 18px rgba(0,59,111,.07);
+}
+.eg-co-card-title {
+    font-size:17px; font-weight:800; color:#003B6F;
+    font-family:'Cairo',sans-serif; margin:0 0 4px;
+    display:flex; align-items:center; gap:12px;
+}
+.eg-co-num {
+    width:28px; height:28px; border-radius:50%;
+    background:#003B6F; color:#fff;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:800; flex-shrink:0;
+}
+.eg-co-label {
+    display:block; font-size:12px; font-weight:700;
+    color:#555; text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px;
+}
+.req { color:#e91e63; }
+.eg-co-input {
+    display:block; width:100%; padding:11px 14px;
+    border:1.5px solid #e8e2d6; border-radius:7px;
+    font-size:14px; color:#1A2B3C; background:#fff;
+    transition:border-color .2s, box-shadow .2s;
+    font-family:'Cairo',sans-serif;
+}
+.eg-co-input:focus {
+    border-color:#003B6F; outline:none;
+    box-shadow:0 0 0 3px rgba(0,59,111,.12);
+}
+
+/* ── Summary card ── */
+.eg-co-summary { background:#fff; }
+.eg-co-table { border-collapse:collapse; }
+.eg-co-table thead th {
+    font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:1px; color:#B8860B; padding:0 0 10px;
+    border-bottom:2px solid rgba(212,160,23,.2);
+}
+.eg-co-table tbody td {
+    padding:10px 0; font-size:13.5px; color:#1A2B3C;
+    border-bottom:1px solid #f0ebe0;
+}
+.eg-qty { color:#888; font-size:12px; }
+.eg-co-totals { margin-top:16px; }
+.eg-co-total-row {
+    display:flex; justify-content:space-between;
+    padding:9px 0; font-size:14px; color:#444;
+    border-bottom:1px solid #f0ebe0;
+}
+.eg-co-total-row.discount { color:#c0392b; font-weight:700; }
+.eg-co-total-row.final {
+    font-size:20px; font-weight:900; color:#003B6F;
+    border-bottom:none; padding-top:14px;
+    font-family:'Cairo',sans-serif;
+}
+.eg-co-place-btn {
+    display:block; width:100%; margin-top:20px;
+    padding:16px; background:#003B6F; color:#fff;
+    border:none; border-radius:8px; font-size:16px;
+    font-weight:800; font-family:'Cairo',sans-serif;
+    letter-spacing:1px; text-transform:uppercase;
+    cursor:pointer; transition:all .25s;
+    box-shadow:0 4px 14px rgba(0,59,111,.25);
+}
+.eg-co-place-btn:hover { background:#D4A017; color:#1A2B3C; transform:translateY(-2px); }
+.eg-co-secure {
+    text-align:center; font-size:12px; color:#888;
+    margin-top:12px; margin-bottom:0;
+    display:flex; align-items:center; justify-content:center; gap:5px;
+}
+.eg-co-secure i { color:#2a7d4f; }
+</style>
