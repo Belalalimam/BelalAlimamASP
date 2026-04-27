@@ -358,61 +358,62 @@
         <div class="pp-grid" id="productGrid">
             @foreach (var item in Model)
             {
-                var itemPrice = item.Price - item.Price * (item.Discount / 100);
+                var itemPrice   = item.Price - item.Price * (item.Discount / 100);
                 var itemUnitKey = UnitHelper.Normalize(item.UnitPrice);
                 var itemCompStr = item.ProductCompositions == null ? "" :
                     string.Join(" ", item.ProductCompositions.Select(c => c.Composition?.Name ?? "")).ToLower();
+                var catItemUnit = UnitHelper.GetEnglishShort(item.UnitPrice);
 
-                <a href="@Url.Action("Details", "Home", new { id = item.Id, area = "Customer" })"
-                       class="pp-card"
-                       data-name="@item.Name.ToLower()"
-                       data-comp="@itemCompStr"
-                       data-price="@itemPrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
-                       data-width="@(item.Height ?? 0)"
-                       data-weight="@(item.Weight ?? 0)"
-                       data-unit="@itemUnitKey">
+                <div class="pp-card eg-fc"
+                     data-name="@item.Name.ToLower()"
+                     data-comp="@itemCompStr"
+                     data-price="@itemPrice.ToString("F2", System.Globalization.CultureInfo.InvariantCulture)"
+                     data-width="@(item.Height ?? 0)"
+                     data-weight="@(item.Weight ?? 0)"
+                     data-unit="@itemUnitKey">
 
-                    <div class="pp-card-actions" onclick="event.preventDefault();event.stopPropagation();">
-                        <button type="button" class="pp-act wishlist-btn" data-pid="@item.Id" onclick="toggleWishlist(@item.Id, this)" title="@SharedLocalizer["Wishlist"]"><i class="ri-heart-line"></i></button>
-                        <button type="button" class="pp-act compare-btn" data-pid="@item.Id" onclick="toggleCompare(@item.Id, this)" title="@SharedLocalizer["Compare"]"><i class="ri-arrow-left-right-line"></i></button>
-                        <button type="button" class="pp-act" onclick="openQuickView(@item.Id)" title="@SharedLocalizer["Quick View"]"><i class="ri-eye-line"></i></button>
-                        <button type="button" class="pp-act" onclick="requestSampleQuick(@item.Id)" title="@SharedLocalizer["Request Sample"]"><i class="ri-scissors-cut-line"></i></button>
-                    </div>
-
-                    <div class="pp-card-img-wrap">
-                        <img src="~/images/@item.MainImage" alt="@item.Name" class="pp-card-img" />
-                        <span class="pp-card-sku">@item.SKU</span>
-                        @if (item.Discount > 0)
-                        {
-                            <span class="pp-card-badge">–@item.Discount%</span>
+                    <div class="eg-fc-img-wrap">
+                        <a href="@Url.Action("Details","Home", new { id=item.Id, area="Customer" })" class="eg-fc-img-link">
+                            <img src="~/images/@item.MainImage" alt="@item.Name" loading="lazy" />
+                        </a>
+                        @if (item.Discount > 0) {
+                            <span class="eg-fc-badge">–@item.Discount%</span>
                         }
-                    </div>
-
-                    <div class="pp-card-body">
-                        <h3 class="pp-card-name">@item.Name</h3>
-                        @if (item.ProductCompositions?.Any() == true)
-                        {
-                            <p class="pp-card-comp">
-                                @string.Join("  ", item.ProductCompositions.Take(4)
-                                    .Select(c => $"{c.Percentage}% {(c.Composition?.Name?.Length > 2 ? c.Composition.Name.Substring(0, 2).ToUpper() : c.Composition?.Name?.ToUpper())}"))
-                            </p>
-                        }
-                        <div class="pp-card-specs">
-                            @if (item.Height.HasValue) { <span>@item.Height cm</span> }
-                            @if (item.Weight.HasValue) { <span>@item.Weight g/m</span> }
+                        <div class="eg-fc-actions" onclick="event.stopPropagation();">
+                            <button class="eg-fc-ico wishlist-btn" data-pid="@item.Id" onclick="toggleWishlist(@item.Id,this)" title="@SharedLocalizer["Wishlist"]"><i class="ri-heart-line"></i></button>
+                            <button class="eg-fc-ico compare-btn" data-pid="@item.Id" onclick="toggleCompare(@item.Id,this)" title="@SharedLocalizer["Compare"]"><i class="ri-arrow-left-right-line"></i></button>
+                            <button class="eg-fc-ico" onclick="openQuickView(@item.Id)" title="@SharedLocalizer["Quick View"]"><i class="ri-eye-line"></i></button>
+                            <button class="eg-fc-ico" onclick="requestSampleQuick(@item.Id)" title="@SharedLocalizer["Request Sample"]"><i class="ri-scissors-cut-line"></i></button>
                         </div>
-                        @{
-                            var catItemUnit = UnitHelper.GetEnglishShort(item.UnitPrice);
-                        }
-                        <div class="pp-card-price-row">
-                            <span class="pp-card-price">€ @itemPrice.ToString("N2").Replace(".", ",") / @catItemUnit</span>
-                            @if (item.StockQuantity != null)
-                            {
-                                <span class="pp-card-stock">@item.StockQuantity @catItemUnit</span>
+                    </div>
+
+                    <div class="eg-fc-body">
+                        <span class="eg-fc-cat">@item.Category?.Name</span>
+                        <h3 class="eg-fc-name">
+                            <a href="@Url.Action("Details","Home", new { id=item.Id, area="Customer" })">
+                                @(item.Name.Length > 50 ? item.Name.Substring(0,50)+"…" : item.Name)
+                            </a>
+                        </h3>
+                        <div class="eg-fc-stars">
+                            @for (int s = 1; s <= 5; s++) {
+                                <i class="@(s <= Math.Floor(item.AverageRating) ? "fas" : "far") fa-star"></i>
                             }
                         </div>
+                        <div class="eg-fc-bottom">
+                            <div class="eg-fc-price">
+                                @if (item.Discount > 0) {
+                                    <span class="eg-fc-price-now">€ @itemPrice.ToString("N2")</span>
+                                    <span class="eg-fc-price-old">€ @item.Price.ToString("N2")</span>
+                                } else {
+                                    <span class="eg-fc-price-now">€ @item.Price.ToString("N2")</span>
+                                }
+                                <span class="eg-fc-unit">/ @catItemUnit</span>
+                            </div>
+                            <a href="@Url.Action("Details","Home", new { id=item.Id, area="Customer" })"
+                               class="eg-fc-view-btn">@SharedLocalizer["View"]</a>
+                        </div>
                     </div>
-                </a>
+                </div>
             }
         </div>
 
@@ -487,38 +488,63 @@
 .pp-vt-btn:hover  { border-color: #003B6F; color: #003B6F; }
 .pp-vt-btn.active { background: #003B6F; color: #fff; border-color: #003B6F; }
 
-/* ── Grid card actions ── */
-.pp-card { position: relative; }
-.pp-card-actions {
-    position: absolute;
-    top: 10px;
-    inset-inline-end: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    z-index: 3;
-    opacity: 0;
-    transition: opacity .2s;
+/* ── eg-fc card (same as Product.cshtml) ── */
+.eg-fc {
+    background:#fff; border-radius:8px; overflow:hidden;
+    border:1px solid #ebe6da;
+    transition:box-shadow .25s,transform .25s;
+    display:flex; flex-direction:column; height:100%;
 }
-.pp-card:hover .pp-card-actions { opacity: 1; }
+.eg-fc:hover { box-shadow:0 8px 28px rgba(0,59,111,.13); transform:translateY(-4px); }
+.eg-fc-img-wrap { position:relative; overflow:hidden; aspect-ratio:4/3; background:#f0e8d0; flex-shrink:0; }
+.eg-fc-img-link { display:block; width:100%; height:100%; }
+.eg-fc-img-wrap img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .45s; }
+.eg-fc:hover .eg-fc-img-wrap img { transform:scale(1.04); }
+.eg-fc-badge {
+    position:absolute; top:10px; inset-inline-start:10px;
+    background:#D4A017; color:#1A2B3C;
+    font-size:10px; font-weight:800; padding:3px 8px; border-radius:3px; z-index:3;
+}
+.eg-fc-actions {
+    position:absolute; top:10px; inset-inline-end:10px;
+    display:flex; flex-direction:column; gap:6px; z-index:4;
+    opacity:0; transform:translateX(8px);
+    transition:opacity .22s,transform .22s;
+}
+.eg-fc:hover .eg-fc-actions { opacity:1; transform:translateX(0); }
+.eg-fc-ico {
+    width:34px; height:34px; border-radius:6px; border:none;
+    background:#fff; color:#003B6F;
+    display:inline-flex; align-items:center; justify-content:center;
+    font-size:15px; cursor:pointer;
+    box-shadow:0 2px 8px rgba(0,0,0,.12);
+    transition:background .15s,color .15s;
+}
+.eg-fc-ico:hover                  { background:#003B6F; color:#fff; }
+.eg-fc-ico.active                 { background:#D4A017; color:#1A2B3C; }
+.eg-fc-ico.wishlist-btn.active    { background:#e91e63; color:#fff; }
+.eg-fc-ico.compare-btn.active     { background:#003B6F; color:#D4A017; }
+.eg-fc-body { padding:12px 14px 14px; display:flex; flex-direction:column; gap:4px; flex:1; }
+.eg-fc-cat  { font-size:10px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:#B8860B; }
+.eg-fc-name { font-family:'Cairo',sans-serif; font-size:14px; font-weight:700; line-height:1.4; margin:0; }
+.eg-fc-name a { color:#1A2B3C; text-decoration:none; }
+.eg-fc-name a:hover { color:#003B6F; }
+.eg-fc-stars { color:#D4A017; font-size:11px; display:flex; gap:2px; }
+.eg-fc-bottom { display:flex; align-items:center; justify-content:space-between; gap:8px; margin-top:auto; padding-top:8px; border-top:1px solid #f0ebe0; }
+.eg-fc-price { display:flex; align-items:baseline; gap:5px; flex-wrap:wrap; }
+.eg-fc-price-now { font-size:15px; font-weight:800; color:#003B6F; font-family:'Cairo',sans-serif; }
+.eg-fc-price-old { font-size:11px; color:#bbb; text-decoration:line-through; }
+.eg-fc-unit      { font-size:11px; color:#B8860B; }
+.eg-fc-view-btn {
+    padding:6px 14px; background:#003B6F; color:#fff;
+    border-radius:4px; font-size:12px; font-weight:700;
+    font-family:'Cairo',sans-serif; text-decoration:none; flex-shrink:0;
+    transition:background .15s;
+}
+.eg-fc-view-btn:hover { background:#D4A017; color:#1A2B3C; }
 
-.pp-act {
-    width: 34px; height: 34px;
-    border-radius: 6px;
-    border: none;
-    background: rgba(255,255,255,.96);
-    box-shadow: 0 2px 6px rgba(0,0,0,.12);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #003B6F;
-    cursor: pointer;
-    transition: .15s;
-    font-size: 15px;
-}
-.pp-act:hover                  { background: #003B6F; color: #fff; transform: scale(1.08); }
-.pp-act.wishlist-btn.active    { background: #e91e63; color: #fff; }
-.pp-act.compare-btn.active     { background: #003B6F; color: #D4A017; }
+/* ── old pp-act compat (mobile) ── */
+.pp-card { position: relative; }
 
 /* ── Mobile overlay ── */
 .pp-mobile-overlay {
@@ -585,89 +611,54 @@
     flex-direction: column;
     gap: 14px;
 }
-#productGrid.list-view .pp-card {
-    display: flex;
+#productGrid.list-view .eg-fc {
     flex-direction: row;
     border-radius: 8px;
-    border: 1px solid rgba(212,160,23,.18);
-    background: #fff;
-    overflow: hidden;
-    transition: box-shadow .25s, transform .25s;
-    text-decoration: none;
+    transform: none;
 }
-#productGrid.list-view .pp-card:hover {
+#productGrid.list-view .eg-fc:hover {
     box-shadow: 0 8px 28px rgba(0,59,111,.14);
     transform: translateY(-2px);
 }
-#productGrid.list-view .pp-card-img-wrap {
+#productGrid.list-view .eg-fc-img-wrap {
     width: 160px;
     min-width: 160px;
     aspect-ratio: 1;
-    overflow: hidden;
     flex-shrink: 0;
-    background: #F0E6C8;
 }
-#productGrid.list-view .pp-card-img-wrap img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform .4s ease;
-}
-#productGrid.list-view .pp-card:hover .pp-card-img-wrap img {
+#productGrid.list-view .eg-fc:hover .eg-fc-img-wrap img {
     transform: scale(1.06);
 }
-#productGrid.list-view .pp-card-body {
+#productGrid.list-view .eg-fc-body {
     flex: 1;
     padding: 16px 18px;
-    display: flex;
-    flex-direction: column;
     justify-content: center;
-    gap: 6px;
 }
-#productGrid.list-view .pp-card-name {
+#productGrid.list-view .eg-fc-name {
     font-size: 16px;
-    font-weight: 700;
-    font-family: 'Cairo', sans-serif;
-    color: #1A2B3C;
-    margin: 0;
-    line-height: 1.35;
 }
-#productGrid.list-view .pp-card-price-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+#productGrid.list-view .eg-fc-bottom {
+    margin-top: 8px;
 }
-#productGrid.list-view .pp-card-price {
+#productGrid.list-view .eg-fc-price-now {
     font-size: 16px;
-    font-weight: 800;
-    color: #003B6F;
-    font-family: 'Cairo', sans-serif;
 }
-#productGrid.list-view .pp-card-actions {
+#productGrid.list-view .eg-fc-actions {
     position: static;
     opacity: 1;
+    transform: none;
     flex-direction: row;
     gap: 6px;
     flex-wrap: wrap;
-    margin-top: 4px;
+    margin-top: 8px;
 }
-#productGrid.list-view .pp-act {
+#productGrid.list-view .eg-fc-ico {
     background: #F4F0E8;
-    color: #003B6F;
-    border-radius: 6px;
-}
-#productGrid.list-view .pp-act:hover {
-    background: #003B6F;
-    color: #fff;
-}
-#productGrid.list-view .pp-card-sku {
-    display: none; /* hide SKU badge in list view */
 }
 
 @@media (max-width: 640px) {
-    #productGrid.list-view .pp-card-img-wrap { width: 110px; min-width: 110px; }
-    #productGrid.list-view .pp-card-body { padding: 10px 12px; }
+    #productGrid.list-view .eg-fc-img-wrap { width: 110px; min-width: 110px; }
+    #productGrid.list-view .eg-fc-body { padding: 10px 12px; }
 }
 </style>
 

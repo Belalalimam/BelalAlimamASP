@@ -6,7 +6,7 @@
 
 body {
     font-family: Arial, Helvetica, sans-serif;
-    background: #f3f1ec;
+    background: #F4F0E8;
     color: #333;
 }
 
@@ -138,7 +138,7 @@ body {
 .pd-title {
     font-size: 28px;
     font-weight: 600;
-    color: #2d4a2e;
+    color: #003B6F;
     line-height: 1.2;
     margin-bottom: 6px;
 }
@@ -152,13 +152,13 @@ body {
 
 .pd-sku {
     font-size: 13px;
-    color: #8a7a5a;
+    color: #888888;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
 .pd-brand {
-    background: #f0ede5;
+    background: #FDF5E6;
     border: 1px solid #ccc;
     border-radius: 4px;
     padding: 2px 8px;
@@ -171,7 +171,7 @@ body {
 .pd-desc {
     font-size: 15px;
     line-height: 1.7;
-    color: #6b5e45;
+    color: #555555;
     margin-bottom: 20px;
 }
 
@@ -183,17 +183,17 @@ body {
 .pd-price {
     font-size: 24px;
     font-weight: 500;
-    color: #2d4a2e;
+    color: #003B6F;
 }
 
 .pd-price-note {
     font-size: 13px;
-    color: #8a7a5a;
+    color: #888888;
 }
 
 .pd-price-discount {
     font-size: 13px;
-    color: #2d4a2e;
+    color: #003B6F;
     font-weight: 500;
     margin-bottom: 10px;
 }
@@ -203,9 +203,9 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background: #edf5ee;
-    color: #2d6a35;
-    border: 1px solid #b8debb;
+    background: rgba(0,59,111,.07);
+    color: #2a7d4f;
+    border: 1px solid rgba(0,59,111,.2);
     border-radius: 20px;
     padding: 4px 12px;
     font-size: 13px;
@@ -215,7 +215,7 @@ body {
 
 .pd-shipping {
     font-size: 14px;
-    color: #6b5e45;
+    color: #555555;
     margin-bottom: 20px;
 }
 
@@ -265,7 +265,7 @@ body {
 .pd-add-btn {
     flex: 1;
     height: 44px;
-    background: #2d4a2e;
+    background: #003B6F;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -282,7 +282,7 @@ body {
 }
 
     .pd-add-btn:hover {
-        background: #6b5e45;
+        background: #555555;
     }
 
 /* Specs grid */
@@ -331,7 +331,7 @@ body {
 
 .pd-spec-val {
     font-size: 13px;
-    color: #2d4a2e;
+    color: #003B6F;
 }
 
     .pd-spec-val small {
@@ -344,7 +344,7 @@ body {
     justify-content: center;
     gap: 18px;
     font-size: 13px;
-    color: #2d4a2e;
+    color: #003B6F;
     font-weight: 500;
 }
 
@@ -366,7 +366,7 @@ body {
     justify-content: space-between;
     align-items: center;
     padding: 13px 16px;
-    background: #2d4a2e;
+    background: #003B6F;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -377,7 +377,7 @@ body {
 }
 
     .pd-acc-btn:hover {
-        background: #3a5c3b;
+        background: #002a52;
     }
 
 .pd-acc-body {
@@ -460,7 +460,7 @@ body {
 
 .pd-related-badge {
     display: inline-block;
-    background: #ffd700;
+    background: #D4A017;
     color: #333;
     font-size: 10px;
     font-weight: 700;
@@ -477,7 +477,7 @@ body {
 }
 
 .pd-related-stock {
-    color: #5a8c6a;
+    color: #2a7d4f;
 }
 
 /* Category grids */
@@ -551,7 +551,7 @@ body {
     .pd-newsletter h3 {
         font-size: 17px;
         font-weight: 600;
-        color: #2d4a2e;
+        color: #003B6F;
         margin-bottom: 20px;
         line-height: 1.5;
     }
@@ -566,7 +566,7 @@ body {
     .pd-newsletter-form input {
         flex: 1;
         padding: 11px 16px;
-        border: 1px solid #2d4a2e;
+        border: 1px solid #003B6F;
         border-radius: 4px;
         font-size: 14px;
         outline: none;
@@ -575,7 +575,7 @@ body {
 
     .pd-newsletter-form button {
         padding: 11px 22px;
-        background: #2d4a2e;
+        background: #003B6F;
         color: #fff;
         border: none;
         border-radius: 4px;
@@ -585,7 +585,7 @@ body {
     }
 
         .pd-newsletter-form button:hover {
-            background: #3a5c3b;
+            background: #002a52;
         }
 
 /* Responsive */
@@ -631,3 +631,4 @@ body {
         font-size: 22px;
     }
 }
+
