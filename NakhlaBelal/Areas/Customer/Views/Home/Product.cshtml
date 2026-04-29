@@ -341,8 +341,7 @@
 
                     <div class="eg-fc-img-wrap">
                         <a href="@Url.Action("Details","Home", new { id=item.Id, area="Customer" })" class="eg-fc-img-link">
-                            <img src="~/wwwroot/images/@item.MainImage" alt="@item.Name" loading="lazy"
-                                 onerror="this.src='https://via.placeholder.com/400x300?text=Fabric'" />
+                            <img src="~/images/@item.MainImage" alt="@item.Name" loading="lazy" />
                         </a>
 
                         @* Sale badge *@
