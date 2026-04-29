@@ -25,6 +25,7 @@
     <link rel="stylesheet" href="~/css/Customer/DetailsProduct.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Navbar.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-egypt.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Customer/Wishlist.css" asp-append-version="true" />
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -102,7 +103,7 @@
 
         <header class="eg-header">
             <div class="eg-header-inner">
-                <button class="eg-hamburger trigger" onclick="document.body.classList.add('showmenu'); return false;" aria-label="Menu">
+                <button class="eg-hamburger trigger" onclick="egDrawerOpen(); return false;" aria-label="Menu">
                     <span></span><span></span><span></span>
                 </button>
 
@@ -161,14 +162,28 @@
                             }
                         </ul>
                     </div>
-                    <div class="eg-act-dd">
-                        <button class="eg-act-icon dropdown1-btn" onclick="return false;">🌐</button>
-                        <ul class="dropdown1-menu">
-                            <li style="padding:5px 0;margin-inline-start:7px;">
+                    <div class="eg-act-dd eg-lang-dd">
+                        <button class="eg-act-icon eg-lang-btn dropdown1-btn" title="Language / اللغة" onclick="return false;">
+                            <span class="eg-lang-flag">@(isArabic ? "🇸🇦" : "🇺🇸")</span>
+                            <span class="eg-lang-code">@(isArabic ? "AR" : "EN")</span>
+                        </button>
+                        <ul class="dropdown1-menu eg-lang-menu">
+                            <li>
                                 <form asp-area="Customer" asp-controller="Language" asp-action="SetLanguage"
                                       asp-route-returnUrl="@returnUrl" method="post">
-                                    <button type="submit" name="culture" value="ar" class="dropdown-item">العربية</button>
-                                    <button type="submit" name="culture" value="en" class="dropdown-item">English</button>
+                                    <button type="submit" name="culture" value="ar"
+                                            class="eg-lang-opt @(isArabic ? "active" : "")">
+                                        <span class="eg-lang-flag">🇸🇦</span> العربية
+                                    </button>
+                                </form>
+                            </li>
+                            <li>
+                                <form asp-area="Customer" asp-controller="Language" asp-action="SetLanguage"
+                                      asp-route-returnUrl="@returnUrl" method="post">
+                                    <button type="submit" name="culture" value="en"
+                                            class="eg-lang-opt @(!isArabic ? "active" : "")">
+                                        <span class="eg-lang-flag">🇺🇸</span> English
+                                    </button>
                                 </form>
                             </li>
                         </ul>
@@ -187,110 +202,151 @@
         </main>
 
 
-        <nav class="mobile-menu">
-            <div class="mini">
-                <a href="#" class="mini-close" onclick="document.body.classList.remove('showmenu'); document.querySelectorAll('.wider > div').forEach(function(p){p.classList.remove('active')}); return false;">
+        @* ═══ EGYPT DRAWER — Right-side mobile nav ═══ *@
+        <div class="eg-drawer-overlay" id="egDrawerOverlay" onclick="egDrawerClose()"></div>
+
+        <aside class="eg-drawer" id="egDrawer" aria-label="Navigation menu" role="dialog">
+
+            @* Head *@
+            <div class="eg-drawer-head">
+                <div class="eg-drawer-logo">Nakhla<span>Belal</span></div>
+                <button class="eg-drawer-close" onclick="egDrawerClose()" aria-label="Close menu">
                     <i class="ri-close-line"></i>
-                </a>
-                <div class="menu-head">
-                    <div class="top">
-                        <ul>
-                            <li><a href="/Customer/Cart/index"><span id="cartBadgeMobile" class="num d-none">0</span><i class="ri-shopping-bag-2-line"></i></a></li>
-                            <li><a href="/Customer/Wishlist/Index"><span id="wishlistBadgeMobile" class="num d-none">0</span><i class="ri-heart-line"></i></a></li>
-                            <li><a href="/Customer/Compare/Index"><span id="compareBadgeMobile" class="num d-none">0</span><i class="ri-arrow-left-right-line"></i></a></li>
-                            <li><a href="#" data-target="account"><i class="ri-user-line"></i></a></li>
-                            <li><a href="#" data-target="lunguage"><i class="ri-globe-line"></i></a></li>
-                        </ul>
-                    </div>
-                    <div class="logo"><a href="/">@Localizer["Your Logo"]</a></div>
-                    <div class="socials">
-                        <ul>
-                            <li><a href="#"><i class="ri-instagram-line"></i></a></li>
-                            <li><a href="#"><i class="ri-facebook-line"></i></a></li>
-                            <li><a href="#"><i class="ri-twitter-line"></i></a></li>
-                            <li><a href="#"><i class="ri-whatsapp-line"></i></a></li>
-                        </ul>
-                    </div>
-                </div>
+                </button>
             </div>
-            <div class="wider">
-                <div class="main-menu ">
-                    <div class="search">
+
+            <div class="eg-drawer-scroll">
+
+                @* Search *@
+                <div class="eg-drawer-search">
+                    <form action="/Customer/Home/Product" method="get">
                         <i class="ri-search-line"></i>
-                        <form action="/">
-                            <input type="search" placeholder="Search Products" />
-                        </form>
-                    </div>
-                    <div class="menu-list ">
-                        <ul class="">
-                            <li><a href="/Customer/home/product"><span>@Localizer["AllProduct"]</span></a></li>
-                            @await Component.InvokeAsync("MobilMenu")
+                        <input type="text" name="Name" placeholder="@(isArabic ? "ابحث عن قماش..." : "Search fabrics...")" autocomplete="off" />
+                    </form>
+                </div>
 
+                @* Quick actions — Cart / Wishlist / Compare *@
+                <div class="eg-drawer-quick">
+                    <a href="/Customer/Cart/index">
+                        <i class="ri-shopping-bag-2-line"></i>
+                        <span id="cartBadgeMobile" class="dq-badge d-none">0</span>
+                        @(isArabic ? "سلتي" : "Cart")
+                    </a>
+                    <a href="/Customer/Wishlist/Index">
+                        <i class="ri-heart-line"></i>
+                        <span id="wishlistBadgeMobile" class="dq-badge d-none">0</span>
+                        @(isArabic ? "المفضلة" : "Wishlist")
+                    </a>
+                    <a href="/Customer/Compare/Index">
+                        <i class="ri-arrow-left-right-line"></i>
+                        <span id="compareBadgeMobile" class="dq-badge d-none">0</span>
+                        @(isArabic ? "مقارنة" : "Compare")
+                    </a>
+                </div>
+
+                @* Main Nav — accordion *@
+                <nav class="eg-drawer-nav">
+                    <ul>
+                        <li>
+                            <a href="/Customer/Home/Product">
+                                <span>@Localizer["AllProduct"]</span>
+                            </a>
+                        </li>
+                        @await Component.InvokeAsync("MobilMenu")
+                        <li>
+                            <a href="/Customer/Home/CategroySearch">
+                                <span>@(isArabic ? "العروض" : "Promo")</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+
+                @* Account *@
+                <div class="eg-drawer-account">
+                    <span class="eg-drawer-section-title">
+                        <i class="ri-user-3-line"></i> @SharedLocalizer["My Account"]
+                    </span>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <ul class="eg-drawer-acc-list">
+                            <li><a href="/Identity/home/Account"><i class="ri-user-settings-line"></i> @SharedLocalizer["Profile"]</a></li>
+                            <li>
+                                <a href="/Customer/Wishlist/Index">
+                                    <i class="ri-heart-line"></i> @SharedLocalizer["Wishlist"]
+                                    <span id="wishlistBadgeAccountMobile" class="acc-count d-none">0</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="/Customer/Compare/Index">
+                                    <i class="ri-arrow-left-right-line"></i> @SharedLocalizer["Compare"]
+                                    <span id="compareBadgeAccountMobile" class="acc-count d-none">0</span>
+                                </a>
+                            </li>
+                            <li><a href="@Url.Action("Track", "Order", new { area = "Customer" })"><i class="ri-truck-line"></i> @SharedLocalizer["TrackOrder"]</a></li>
+                            <li><a href="@Url.Action("RequestSample", "Order", new { area = "Customer" })"><i class="ri-scissors-cut-line"></i> @SharedLocalizer["RequestFabricsSamples"]</a></li>
+                            <li>
+                                <form method="post" action="/Identity/Account/Logout">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="logout-link"><i class="ri-logout-box-r-line"></i> @SharedLocalizer["Logout"]</button>
+                                </form>
+                            </li>
                         </ul>
-                    </div>
-                    <div class="copyright">
-                        <p>2023 made with belal alimam</p>
-                    </div>
+                    }
+                    else
+                    {
+                        <ul class="eg-drawer-acc-list">
+                            <li><a href="/Identity/Account/Login"><i class="ri-login-box-line"></i> @SharedLocalizer["Login"]</a></li>
+                            <li><a href="/Identity/Account/Register"><i class="ri-user-add-line"></i> @SharedLocalizer["Register"]</a></li>
+                            <li><a href="@Url.Action("Track", "Order", new { area = "Customer" })"><i class="ri-truck-line"></i> @SharedLocalizer["TrackOrder"]</a></li>
+                        </ul>
+                    }
                 </div>
 
-                <div id="bag" data-target="bag">
-                    <span>cart</span><i class="ri-shopping-bag-2-line"></i>
-                </div>
-                <div id="wishlist" data-target="wishlist">
-                    <span>wishlist</span><i class="ri-heart-line"></i>
-                </div>
-                <div id="compare" data-target="compare">
-                    <span>compare</span><i class="ri-arrow-left-right-line"></i>
-                </div>
-                <div id="account" data-target="account">
-                    <div class="acc-panel-inner">
-                        <p class="acc-panel-title"><i class="ri-user-line"></i> @SharedLocalizer["My Account"]</p>
-                        @if (User.Identity != null && User.Identity.IsAuthenticated)
-                        {
-                            <ul class="acc-panel-list">
-                                <li><a href="/Identity/home/Account"><i class="ri-user-settings-line"></i> @SharedLocalizer["Profile"]</a></li>
-                                <li><a href="/Customer/Wishlist/Index"><i class="ri-heart-line"></i> @SharedLocalizer["Wishlist"] <span id="wishlistBadgeAccountMobile" class="acc-count d-none">0</span></a></li>
-                                <li><a href="/Customer/Compare/Index"><i class="ri-arrow-left-right-line"></i> @SharedLocalizer["Compare"] <span id="compareBadgeAccountMobile" class="acc-count d-none">0</span></a></li>
-                                <li><a href="@Url.Action("Track", "Order", new { area = "Customer" })"><i class="ri-truck-line"></i> @SharedLocalizer["Track Order"]</a></li>
-                                <li><a href="@Url.Action("RequestSample", "Order", new { area = "Customer" })"><i class="ri-file-paper-2-line"></i> @SharedLocalizer["Request Samples"]</a></li>
-                                <li>
-                                    <form method="post" action="/Identity/Account/Logout" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="acc-logout-btn"><i class="ri-logout-box-r-line"></i> @SharedLocalizer["Logout"]</button>
-                                    </form>
-                                </li>
-                            </ul>
-                        }
-                        else
-                        {
-                            <ul class="acc-panel-list">
-                                <li><a href="/Identity/Account/Login"><i class="ri-login-box-line"></i> @SharedLocalizer["Login"]</a></li>
-                                <li><a href="/Identity/Account/Register"><i class="ri-user-add-line"></i> @SharedLocalizer["Register"]</a></li>
-                                <li><a href="@Url.Action("Track", "Order", new { area = "Customer" })"><i class="ri-truck-line"></i> @SharedLocalizer["Track Order"]</a></li>
-                                <li><a href="@Url.Action("RequestSample", "Order", new { area = "Customer" })"><i class="ri-file-paper-2-line"></i> @SharedLocalizer["Request Samples"]</a></li>
-                            </ul>
-                        }
-                    </div>
-                </div>
-                <div id="lunguage" data-target="lunguage">
-                    <div class="lang-panel-inner">
-                        <p class="lang-panel-title">🌐 @Localizer["Choose Language"]</p>
+                @* Language *@
+                <div class="eg-drawer-lang">
+                    <span class="eg-drawer-section-title"><i class="ri-global-line"></i> @Localizer["Choose Language"]</span>
+                    <div class="eg-drawer-lang-btns">
                         <form asp-area="Customer" asp-controller="Language" asp-action="SetLanguage"
-                              asp-route-returnUrl="@returnUrl" method="post">
-                            <button type="submit" name="culture" value="ar" class="lang-opt-btn">
-                                🇸🇦 العربية
+                              asp-route-returnUrl="@returnUrl" method="post" style="flex:1;">
+                            <button type="submit" name="culture" value="ar"
+                                    class="eg-lang-btn @(isArabic ? "active" : "")">
+                                <span class="eg-lang-flag">🇸🇦</span> العربية
                             </button>
-                            <button type="submit" name="culture" value="en" class="lang-opt-btn">
-                                🇺🇸 English
+                        </form>
+                        <form asp-area="Customer" asp-controller="Language" asp-action="SetLanguage"
+                              asp-route-returnUrl="@returnUrl" method="post" style="flex:1;">
+                            <button type="submit" name="culture" value="en"
+                                    class="eg-lang-btn @(!isArabic ? "active" : "")">
+                                <span class="eg-lang-flag">🇺🇸</span> English
                             </button>
                         </form>
                     </div>
                 </div>
 
+            </div>@* /eg-drawer-scroll *@
 
+            @* Footer — contact + socials *@
+            <div class="eg-drawer-footer">
+                <div class="eg-drawer-contact">
+                    <a href="https://wa.me/201000000000" class="whatsapp-link" target="_blank" rel="noopener">
+                        <i class="ri-whatsapp-line"></i>
+                        @(isArabic ? "واتساب: +20 100 000 0000" : "WhatsApp: +20 100 000 0000")
+                    </a>
+                    <a href="mailto:info@nakhla.com" class="email-link">
+                        <i class="ri-mail-line"></i>
+                        info@@nakhla.com
+                    </a>
+                </div>
+                <div class="eg-drawer-socials">
+                    <a href="#" aria-label="Instagram"><i class="ri-instagram-line"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="ri-facebook-line"></i></a>
+                    <a href="#" aria-label="TikTok"><i class="ri-tiktok-line"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="ri-whatsapp-line"></i></a>
+                </div>
+                <p class="eg-drawer-copyright">© @DateTime.Now.Year NakhlaFabrics. All rights reserved.</p>
             </div>
-        </nav>
-        <div class="overlay" onclick="document.body.classList.remove('showmenu'); document.querySelectorAll('.wider > div').forEach(function(p){p.classList.remove('active')});"></div>
+
+        </aside>
 
 
     </div>
@@ -1021,6 +1077,71 @@
 
     <!-- Custom JS -->
     <script>
+
+        /* ─── Egypt Drawer (mobile nav) ─── */
+        function egDrawerOpen() {
+            document.getElementById('egDrawer').classList.add('open');
+            document.getElementById('egDrawerOverlay').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function egDrawerClose() {
+            document.getElementById('egDrawer').classList.remove('open');
+            document.getElementById('egDrawerOverlay').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        /* Close drawer on Escape key */
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') egDrawerClose();
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+
+            /* ── Drawer nav accordion (has-child items from MobilMenu) ── */
+            document.querySelectorAll('.eg-drawer-nav li.has-child > a').forEach(function (a) {
+                /* append chevron arrow */
+                const arr = document.createElement('i');
+                arr.className = 'ri-arrow-down-s-line eg-drawer-arr';
+                a.appendChild(arr);
+
+                a.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const li = a.closest('li');
+                    const wasOpen = li.classList.contains('expanded');
+                    /* collapse all siblings */
+                    li.closest('ul').querySelectorAll('li.has-child.expanded').forEach(function (sib) {
+                        sib.classList.remove('expanded');
+                    });
+                    if (!wasOpen) li.classList.add('expanded');
+                });
+            });
+
+            /* ── Desktop dropdown1 toggles (account + language) ── */
+            document.querySelectorAll('.eg-act-dd').forEach(function (dd) {
+                const btn = dd.querySelector('.dropdown1-btn');
+                if (!btn) return;
+                btn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    /* close all others first */
+                    document.querySelectorAll('.eg-act-dd.open').forEach(function (o) {
+                        if (o !== dd) o.classList.remove('open');
+                    });
+                    dd.classList.toggle('open');
+                });
+            });
+
+            /* close desktop dropdowns on outside click */
+            document.addEventListener('click', function () {
+                document.querySelectorAll('.eg-act-dd.open').forEach(function (dd) {
+                    dd.classList.remove('open');
+                });
+            });
+
+            /* prevent inside-dropdown click from closing immediately */
+            document.querySelectorAll('.eg-act-dd .dropdown1-menu, .eg-act-dd .eg-lang-menu').forEach(function (menu) {
+                menu.addEventListener('click', function (e) { e.stopPropagation(); });
+            });
+        });
 
             // Highlight current page in navigation
             document.addEventListener('DOMContentLoaded', function() {

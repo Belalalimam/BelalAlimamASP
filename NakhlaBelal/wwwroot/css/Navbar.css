@@ -24,7 +24,7 @@ ul {
 }
 
     .dropdown1 a {
-        color: var(--evergreen-color);
+        color: #003B6F;
     }
 
 .dropdown1-menu {
@@ -38,12 +38,12 @@ ul {
     display: none !important;
     flex-direction: column !important;
     box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-    background-color: var(--jade-color);
+    background-color: #fff;
     z-index: 999;
 }
 
     .dropdown1-menu a {
-        color: var(--evergreen-color);
+        color: #003B6F;
     }
 
     .dropdown1-menu.show {
@@ -62,7 +62,7 @@ ul {
     left: 50%;
     transform: translateX(-50%);
     border: 6px solid transparent;
-    border-bottom-color: var(--jade-color);
+    border-bottom-color: #fff;
     opacity: 0;
     pointer-events: none;
 }
@@ -84,8 +84,8 @@ header {
         justify-content: space-between;
         align-items: center;
         height: 80px;
-        border-bottom: 1px solid var(--dustyolive-color);
-        background-color: var(--cotton-color);
+        border-bottom: 1px solid #e8e2d6;
+        background-color: #FDF5E6;
     }
 
         header .content :where(.left, ul) {
@@ -96,7 +96,7 @@ header {
     header .logo a {
         font-size: 24px;
         font-weight: 600;
-        color: var(--evergreen-color);
+        color: #003B6F;
         text-transform: uppercase;
     }
 
@@ -169,7 +169,7 @@ header {
     width: 100%;
     height: 100%;
     max-width: 480px;
-    background-color: var(--jade-color);
+    background-color: #fff;
     box-shadow: 4px 0 40px rgba(0,0,0,0.15);
     z-index: 1000;
     display: flex;
@@ -197,7 +197,7 @@ header {
     flex-direction: column;
     align-items: center;
     padding: 20px 0;
-    background-color: var(--evergreen-color);
+    background-color: #003B6F;
     overflow: hidden;
     z-index: 10;
 }
@@ -293,7 +293,7 @@ header {
     font-weight: 700;
     letter-spacing: 2.5px;
     text-transform: uppercase;
-    color: var(--cotton-color);
+    color: #FDF5E6;
     white-space: nowrap;
     overflow: hidden;
     display: flex;
@@ -361,8 +361,8 @@ header {
     place-content: center;
     text-align: center;
     font-size: 3.5em;
-    color: var(--evergreen-color);
-    background-color: var(--cotton-color);
+    color: #003B6F;
+    background-color: #FDF5E6;
     transform: translateX(-110%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -404,7 +404,7 @@ header {
             background: transparent;
             padding: 0 16px 0 44px;
             font-size: 14px;
-            color: var(--evergreen-color);
+            color: #003B6F;
             box-sizing: border-box;
         }
 
@@ -432,7 +432,7 @@ header {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;*/
     position: relative;
-    background-color: var(--jade-color);
+    background-color: #fff;
 }
 
     .mobile-menu .menu-list::-webkit-scrollbar {
@@ -466,7 +466,7 @@ header {
         left: 27px;
         width: 100%;
         min-height: 100%;
-        background: var(--jade-color);
+        background: #fff;
         opacity: 0;
         visibility: hidden;
         transform: translateX(100%);
@@ -496,7 +496,7 @@ header {
         text-decoration: none;
         width: 100%;
         box-sizing: border-box;
-        color: var(--evergreen-color);
+        color: #003B6F;
     }
 
     /* نص العناصر الرئيسية (has span) */
@@ -504,7 +504,7 @@ header {
     .mobile-menu .menu-list ul li.has-child > a span {
         font-size: 16px;
         font-weight: 500;
-        color: var(--evergreen-color);
+        color: #003B6F;
     }
 
     /* سهم has-child */
@@ -525,7 +525,7 @@ header {
 
         .mobile-menu .menu-list ul li.back > a > i {
             font-size: 20px;
-            color: var(--evergreen-color);
+            color: #003B6F;
         }
 
         .mobile-menu .menu-list ul li.back > a > span {
@@ -533,7 +533,7 @@ header {
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 1px;
-            color: var(--evergreen-color);
+            color: #003B6F;
         }
 
     /* عناصر الـ foreach (بدون span - نص مباشر) */
@@ -546,7 +546,7 @@ header {
     }
 
         .mobile-menu .menu-list ul ul li:not(.back) > a:hover {
-            color: var(--evergreen-color);
+            color: #003B6F;
         }
 
 /* Copyright */
@@ -590,16 +590,16 @@ header {
 .lang-panel-title {
     font-size: 16px;
     font-weight: 700;
-    color: var(--evergreen-color);
+    color: #003B6F;
     margin: 0;
 }
 
 .lang-opt-btn {
     width: 100%;
     padding: 14px 20px;
-    background: var(--jade-color);
-    color: var(--evergreen-color);
-    border: 2px solid var(--evergreen-color);
+    background: #fff;
+    color: #003B6F;
+    border: 2px solid #003B6F;
     border-radius: 10px;
     font-size: 16px;
     font-weight: 600;
@@ -608,7 +608,7 @@ header {
 }
 
     .lang-opt-btn:hover {
-        background: var(--evergreen-color);
+        background: #003B6F;
         color: var(--white-color);
     }
 /* ==========================================

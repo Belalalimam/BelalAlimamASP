@@ -14,88 +14,112 @@
 
     <aside class="pp-sidebar">
         <div class="pp-sidebar-inner" id="sidebarInner">
-            <h2 class="pp-sidebar-title">@SharedLocalizer["Filters"]</h2>
 
-            <div class="pp-filter-block">
-                <div class="pp-filter-head">
-                    <span>@SharedLocalizer["Search Products"]</span>
-                    <button onclick="clearSearch()">@SharedLocalizer["Clear"]</button>
-                </div>
-                <div class="pp-search-wrap">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                    </svg>
-                    <input id="searchInput" type="text" class="pp-input" placeholder="@SharedLocalizer["Type & hit ENTER"]" oninput="applyFilters()" />
+            <!-- Egypt gradient header -->
+            <div class="pp-sb-header">
+                <span class="pp-sb-title"><i class="ri-equalizer-2-line"></i> @SharedLocalizer["Filters"]</span>
+                <button class="pp-sb-clearall" onclick="resetAll()">@SharedLocalizer["Clear All"]</button>
+            </div>
+
+            <!-- Active chips (JS-populated) -->
+            <div class="pp-chips" id="ppChips" style="display:none;"></div>
+
+            <!-- ACCORDION 1: Search (open) -->
+            <div class="pp-acc-item">
+                <button class="pp-acc-trigger open" onclick="ppToggleAcc(this)">
+                    <span class="pp-acc-label"><i class="ri-search-line"></i> @SharedLocalizer["Search"]</span>
+                    <i class="pp-acc-arrow ri-arrow-down-s-line"></i>
+                </button>
+                <div class="pp-acc-panel">
+                    <div class="pp-search-wrap">
+                        <i class="ri-search-line pp-search-icon"></i>
+                        <input id="searchInput" type="text" class="pp-input" placeholder="@SharedLocalizer["Type to filter..."]" />
+                        <button class="pp-search-clear" onclick="clearSearch()">×</button>
+                    </div>
                 </div>
             </div>
 
-            <div class="pp-filter-block">
-                <div class="pp-filter-head">
-                    <span>@SharedLocalizer["Sortby"]</span>
-                    <button onclick="resetSort()">@SharedLocalizer["Reset"]</button>
-                </div>
-                <select id="sortSelect" class="pp-select" onchange="applyFilters()">
-                    <option value="new">New arrivals</option>
-                    <option value="asc">Price: Low to High</option>
-                    <option value="desc">Price: High to Low</option>
-                    <option value="name">Name A-Z</option>
-                </select>
-            </div>
-
-            <div class="pp-filter-block">
-                <div class="pp-filter-head">
-                    <span>@SharedLocalizer["Width(cm)"]</span>
-                    <button onclick="resetRange('widthRange','200','widthVal','200 cm')">@SharedLocalizer["Reset"]</button>
-                </div>
-                <input type="range" id="widthRange" class="pp-range" min="100" max="200" value="200"
-                       oninput="document.getElementById('widthVal').textContent=this.value+' cm'; applyFilters()" />
-                <div class="pp-range-labels">
-                    <span>100 cm</span><span id="widthVal">200 cm</span>
+            <!-- ACCORDION 2: Sort (open) -->
+            <div class="pp-acc-item">
+                <button class="pp-acc-trigger open" onclick="ppToggleAcc(this)">
+                    <span class="pp-acc-label"><i class="ri-sort-desc"></i> @SharedLocalizer["Sort by"]</span>
+                    <i class="pp-acc-arrow ri-arrow-down-s-line"></i>
+                </button>
+                <div class="pp-acc-panel">
+                    <select id="sortSelect" class="pp-select" onchange="applyFilters()">
+                        <option value="new">@SharedLocalizer["New arrivals"]</option>
+                        <option value="asc">@SharedLocalizer["Price: Low to High"]</option>
+                        <option value="desc">@SharedLocalizer["Price: High to Low"]</option>
+                        <option value="name">@SharedLocalizer["Name A–Z"]</option>
+                    </select>
                 </div>
             </div>
 
-            <div class="pp-filter-block">
-                <div class="pp-filter-head">
-                    <span>@SharedLocalizer["Weight(g/m)"]</span>
-                    <button onclick="resetRange('weightRange','700','weightVal','700 g')">@SharedLocalizer["Reset"]</button>
-                </div>
-                <input type="range" id="weightRange" class="pp-range" min="200" max="700" value="700"
-                       oninput="document.getElementById('weightVal').textContent=this.value+' g'; applyFilters()" />
-                <div class="pp-range-labels">
-                    <span>200 g</span><span id="weightVal">700 g</span>
-                </div>
-            </div>
-
+            <!-- ACCORDION 3: Price (open) -->
             @{
                 var minP = (int)(ViewBag.MinPriceBound ?? 0);
                 var maxP = (int)(ViewBag.MaxPriceBound ?? 1000);
                 if (maxP <= minP) maxP = minP + 100;
             }
-            <div class="pp-filter-block">
-                <div class="pp-filter-head">
-                    <span>@SharedLocalizer["Price"] (€)</span>
-                    <button onclick="resetRange('priceRange','@maxP','priceVal','€ @maxP')">@SharedLocalizer["Reset"]</button>
-                </div>
-                <input type="range" id="priceRange" class="pp-range" min="@minP" max="@maxP" value="@maxP"
-                       oninput="document.getElementById('priceVal').textContent='€ '+this.value; applyFilters()" />
-                <div class="pp-range-labels">
-                    <span>€ @minP</span><span id="priceVal">€ @maxP</span>
+            <div class="pp-acc-item">
+                <button class="pp-acc-trigger open" onclick="ppToggleAcc(this)">
+                    <span class="pp-acc-label"><i class="ri-money-euro-circle-line"></i> @SharedLocalizer["Price"] (€)</span>
+                    <i class="pp-acc-arrow ri-arrow-down-s-line"></i>
+                </button>
+                <div class="pp-acc-panel">
+                    <input type="range" id="priceRange" class="pp-range" min="@minP" max="@maxP" value="@maxP"
+                           oninput="document.getElementById('priceVal').textContent='€ '+this.value; applyFilters(); updateChips();" />
+                    <div class="pp-range-labels">
+                        <span>€ @minP</span><span id="priceVal">€ @maxP</span>
+                    </div>
                 </div>
             </div>
 
-            <div class="pp-filter-block">
-                <div class="pp-filter-head">
-                    <span>@SharedLocalizer["Unit"]</span>
-                    <button onclick="document.getElementById('unitSelect').value=''; applyFilters()">@SharedLocalizer["Reset"]</button>
+            <!-- ACCORDION 4: Width (closed) -->
+            <div class="pp-acc-item">
+                <button class="pp-acc-trigger" onclick="ppToggleAcc(this)">
+                    <span class="pp-acc-label"><i class="ri-ruler-line"></i> @SharedLocalizer["Width (cm)"]</span>
+                    <i class="pp-acc-arrow ri-arrow-down-s-line"></i>
+                </button>
+                <div class="pp-acc-panel closed">
+                    <input type="range" id="widthRange" class="pp-range" min="100" max="200" value="200"
+                           oninput="document.getElementById('widthVal').textContent=this.value+' cm'; applyFilters(); updateChips();" />
+                    <div class="pp-range-labels">
+                        <span>100 cm</span><span id="widthVal">200 cm</span>
+                    </div>
                 </div>
-                <select id="unitSelect" class="pp-select" onchange="applyFilters()">
-                    <option value="">@SharedLocalizer["Any"]</option>
-                    <option value="@UnitHelper.Meter">@SharedLocalizer["Meter"]</option>
-                    <option value="@UnitHelper.Piece">@SharedLocalizer["Piece"]</option>
-                    <option value="@UnitHelper.Kilo">@SharedLocalizer["Kilo"]</option>
-                    <option value="@UnitHelper.Yard">@SharedLocalizer["Yard"]</option>
-                </select>
+            </div>
+
+            <!-- ACCORDION 5: Weight (closed) -->
+            <div class="pp-acc-item">
+                <button class="pp-acc-trigger" onclick="ppToggleAcc(this)">
+                    <span class="pp-acc-label"><i class="ri-scales-3-line"></i> @SharedLocalizer["Weight (g/m)"]</span>
+                    <i class="pp-acc-arrow ri-arrow-down-s-line"></i>
+                </button>
+                <div class="pp-acc-panel closed">
+                    <input type="range" id="weightRange" class="pp-range" min="200" max="700" value="700"
+                           oninput="document.getElementById('weightVal').textContent=this.value+' g'; applyFilters(); updateChips();" />
+                    <div class="pp-range-labels">
+                        <span>200 g</span><span id="weightVal">700 g</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCORDION 6: Unit (closed) -->
+            <div class="pp-acc-item">
+                <button class="pp-acc-trigger" onclick="ppToggleAcc(this)">
+                    <span class="pp-acc-label"><i class="ri-ruler-2-line"></i> @SharedLocalizer["Unit"]</span>
+                    <i class="pp-acc-arrow ri-arrow-down-s-line"></i>
+                </button>
+                <div class="pp-acc-panel closed">
+                    <select id="unitSelect" class="pp-select" onchange="applyFilters(); updateChips();">
+                        <option value="">@SharedLocalizer["Any"]</option>
+                        <option value="@UnitHelper.Meter">@SharedLocalizer["Meter"]</option>
+                        <option value="@UnitHelper.Piece">@SharedLocalizer["Piece"]</option>
+                        <option value="@UnitHelper.Kilo">@SharedLocalizer["Kilo"]</option>
+                        <option value="@UnitHelper.Yard">@SharedLocalizer["Yard"]</option>
+                    </select>
+                </div>
             </div>
 
             <button class="pp-view-all" onclick="resetAll()">@SharedLocalizer["View All Products"]</button>
@@ -105,26 +129,24 @@
     <main class="pp-main">
 
         <button class="pp-mobile-btn" onclick="toggleMobilePanel()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="4" y1="6" x2="20" y2="6" />
-                <line x1="8" y1="12" x2="20" y2="12" />
-                <line x1="12" y1="18" x2="20" y2="18" />
-            </svg>
+            <i class="ri-equalizer-2-line"></i>
             @SharedLocalizer["SHOW FILTERS"]
         </button>
 
+        <div class="pp-mobile-overlay" id="mobileOverlay" onclick="toggleMobilePanel()"></div>
         <div class="pp-mobile-panel" id="mobilePanel">
             <div class="pp-mobile-panel-head">
-                <span>@SharedLocalizer["Filters"]</span>
-                <button onclick="toggleMobilePanel()">×</button>
+                <span><i class="ri-equalizer-2-line"></i> @SharedLocalizer["Filters"]</span>
+                <button onclick="toggleMobilePanel()"><i class="ri-close-line"></i></button>
             </div>
-            <div class="pp-filter-block">
-                <div class="pp-filter-head"><span>@SharedLocalizer["Search"]</span></div>
-                <input id="mSearchInput" type="text" class="pp-input" placeholder="Type & hit ENTER"
-                       oninput="document.getElementById('searchInput').value=this.value; applyFilters()" />
+            <div style="padding:12px 16px 0;">
+                <div class="pp-search-wrap">
+                    <i class="ri-search-line pp-search-icon"></i>
+                    <input id="mSearchInput" type="text" class="pp-input" placeholder="@SharedLocalizer["Search..."]" />
+                </div>
             </div>
 
-            {{-- نفس الـ cs-topfilters للموبايل - تحويل server-side --}}
+            @* cs-topfilters للموبايل - server-side *@
             <div class="cs-topfilters">
                 <div class="cs-topfilter-item">
                     <span class="cs-topfilter-label">@SharedLocalizer["Color"]</span>
@@ -209,8 +231,9 @@
 
         <p class="pp-count" id="resultsCount">@Model.Count() @SharedLocalizer["products"]</p>
 
-        @* {{-- cs-topfilters الرئيسي - server-side --}} *@
-        <div class="cs-topfilters">
+        <div class="pp-topbar">
+          <div class="pp-topbar-left">
+            <div class="cs-topfilters">
             <div class="cs-topfilter-item">
                 <span class="cs-topfilter-label">@SharedLocalizer["Color"]</span>
                 <select class="cs-topfilter-select" onchange="navigateFilter('ColorId', this.value)">
@@ -283,7 +306,19 @@
                     <option>Floral</option>
                 </select>
             </div>
-        </div>
+            </div><!-- /cs-topfilters -->
+          </div><!-- /pp-topbar-left -->
+          <div class="pp-topbar-right">
+            <div class="pp-vt" role="group">
+                <button type="button" id="btnGrid" class="pp-vt-btn active" onclick="setView('grid')" title="Grid view">
+                    <i class="ri-layout-grid-line"></i>
+                </button>
+                <button type="button" id="btnList" class="pp-vt-btn" onclick="setView('list')" title="List view">
+                    <i class="ri-list-check-2"></i>
+                </button>
+            </div>
+          </div><!-- /pp-topbar-right -->
+        </div><!-- /pp-topbar -->
 
         <div class="pp-grid" id="productGrid">
             @foreach (var item in Model)
@@ -306,7 +341,7 @@
 
                     <div class="eg-fc-img-wrap">
                         <a href="@Url.Action("Details","Home", new { id=item.Id, area="Customer" })" class="eg-fc-img-link">
-                            <img src="~/images/@item.MainImage" alt="@item.Name" loading="lazy"
+                            <img src="~/wwwroot/images/@item.MainImage" alt="@item.Name" loading="lazy"
                                  onerror="this.src='https://via.placeholder.com/400x300?text=Fabric'" />
                         </a>
 
@@ -624,11 +659,73 @@
         $('mobilePanel')?.classList.toggle('open');
     }
 
-    // ربط الـ search بالـ debounce
+    // ربط الـ search بالـ debounce + إضافات جديدة
     document.addEventListener('DOMContentLoaded', () => {
         const s = $('searchInput');
         if (s) { s.removeAttribute('oninput'); s.addEventListener('input', onSearchInput); }
         const ms = $('mSearchInput');
         if (ms) ms.addEventListener('input', () => { const sEl=$('searchInput'); if (sEl) sEl.value = ms.value; onSearchInput(); });
+
+        // mark .has-value on server-side selects
+        document.querySelectorAll('.cs-topfilter-select').forEach(sel => {
+            const mark = () => sel.classList.toggle('has-value', sel.value !== '');
+            mark();
+            sel.addEventListener('change', mark);
+        });
+
+        updateChips();
     });
+
+    // ── Accordion toggle ──
+    function ppToggleAcc(btn) {
+        const panel = btn.nextElementSibling;
+        const isOpen = btn.classList.toggle('open');
+        panel.classList.toggle('closed', !isOpen);
+    }
+
+    // ── Active chips ──
+    function updateChips() {
+        const container = $('ppChips');
+        if (!container) return;
+        const chips = [];
+
+        const prEl = $('priceRange');
+        if (prEl) {
+            const maxPr = parseFloat(prEl.value), defPr = parseFloat(prEl.max);
+            if (maxPr < defPr) chips.push({
+                label: '≤ €' + maxPr,
+                reset: () => { prEl.value = prEl.max; $('priceVal').textContent = '€ ' + prEl.max; applyFilters(); updateChips(); }
+            });
+        }
+        const wEl = $('widthRange');
+        if (wEl && parseInt(wEl.value) < parseInt(wEl.max)) chips.push({
+            label: '≤ ' + wEl.value + ' cm',
+            reset: () => { wEl.value = wEl.max; $('widthVal').textContent = wEl.max + ' cm'; applyFilters(); updateChips(); }
+        });
+        const wtEl = $('weightRange');
+        if (wtEl && parseInt(wtEl.value) < parseInt(wtEl.max)) chips.push({
+            label: '≤ ' + wtEl.value + ' g',
+            reset: () => { wtEl.value = wtEl.max; $('weightVal').textContent = wtEl.max + ' g'; applyFilters(); updateChips(); }
+        });
+        const unit = $('unitSelect')?.value;
+        if (unit) chips.push({
+            label: unit,
+            reset: () => { $('unitSelect').value = ''; applyFilters(); updateChips(); }
+        });
+
+        container.innerHTML = chips.length
+            ? chips.map((c, i) => `<span class="pp-chip">${c.label} <button onclick="window._chipR[${i}]()">×</button></span>`).join('')
+            : '';
+        window._chipR = chips.map(c => c.reset);
+        container.style.display = chips.length ? 'flex' : 'none';
+    }
+
+    // ── Grid / List view toggle ──
+    function setView(mode) {
+        const grid = $('productGrid');
+        if (!grid) return;
+        grid.classList.toggle('pp-list-view', mode === 'list');
+        $('btnGrid')?.classList.toggle('active', mode === 'grid');
+        $('btnList')?.classList.toggle('active', mode === 'list');
+    }
 </script>
