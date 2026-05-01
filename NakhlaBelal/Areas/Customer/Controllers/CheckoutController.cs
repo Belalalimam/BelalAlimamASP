@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NakhlaBelal.Models;
+using NakhlaBelal.Utitlies;
 using Stripe;
 using Stripe.Checkout;
 using System.ComponentModel.DataAnnotations;
@@ -19,17 +20,20 @@ namespace NAKHLA.Areas.Customer.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IRepository<Promotion> _promotionRepository;
         private readonly ILogger<CheckoutController> _logger;
+        private readonly IPaymobService _paymobService;
 
         public CheckoutController(
             UserManager<ApplicationUser> userManager,
             ApplicationDbContext context,
             IRepository<Promotion> promotionRepository,
-            ILogger<CheckoutController> logger)
+            ILogger<CheckoutController> logger,
+            IPaymobService paymobService)
         {
             _userManager = userManager;
             _context = context;
             _promotionRepository = promotionRepository;
             _logger = logger;
+            _paymobService = paymobService;
         }
 
         [HttpGet]
@@ -222,6 +226,14 @@ namespace NAKHLA.Areas.Customer.Controllers
                     }
                 }
 
+                // توجيه حسب طريقة الدفع المختارة
+                if (order.PaymentMethod == "Paymob-Card")
+                    return RedirectToAction("ProcessPaymentPaymob", new { orderId = order.Id, paymentMethod = "card" });
+
+                if (order.PaymentMethod == "Paymob-Wallet")
+                    return RedirectToAction("ProcessPaymentPaymob", new { orderId = order.Id, paymentMethod = "wallet" });
+
+                // Cash on Delivery أو غيرها
                 return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
             }
             catch (Exception ex)
@@ -357,6 +369,30 @@ namespace NAKHLA.Areas.Customer.Controllers
             }
 
             return View(order);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ProcessPaymentPaymob(int orderId, string paymentMethod = "card")
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+                return NotFound();
+
+            try
+            {
+                string redirectUrl = await _paymobService.CreatePaymentIntentionAsync(order, paymentMethod);
+                await _context.SaveChangesAsync();
+                return Redirect(redirectUrl);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Paymob payment error: " + ex.Message);
+                TempData["error-notification"] = "حدث خطأ أثناء تهيئة الدفع. حاول مرة أخرى.";
+                return RedirectToAction("OrderConfirmation", new { orderId });
+            }
         }
     }
 

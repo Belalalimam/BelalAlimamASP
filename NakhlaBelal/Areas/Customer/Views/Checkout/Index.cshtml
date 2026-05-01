@@ -117,6 +117,32 @@
                         </tfoot>
                     </table>
 
+                    <hr />
+                    <h5 class="mb-3">@SharedLocalizer["Payment Method"]</h5>
+                    <div class="payment-methods">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="PaymentMethod" id="pm_cod" value="Cash on Delivery" checked>
+                            <label class="form-check-label" for="pm_cod">
+                                <strong>@SharedLocalizer["Cash on Delivery"]</strong>
+                                <small class="d-block text-muted">@SharedLocalizer["Pay in cash when your order arrives"]</small>
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="PaymentMethod" id="pm_card" value="Paymob-Card">
+                            <label class="form-check-label" for="pm_card">
+                                <strong>@SharedLocalizer["Credit / Debit Card"] (Paymob)</strong>
+                                <small class="d-block text-muted">@SharedLocalizer["Visa, Mastercard, Meeza"]</small>
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="radio" name="PaymentMethod" id="pm_wallet" value="Paymob-Wallet">
+                            <label class="form-check-label" for="pm_wallet">
+                                <strong>@SharedLocalizer["Mobile Wallet"] (Paymob)</strong>
+                                <small class="d-block text-muted">@SharedLocalizer["Vodafone Cash, Etisalat Cash, Orange Money"]</small>
+                            </label>
+                        </div>
+                    </div>
+
                     <div class="mt-4">
                         <button type="submit" class="checkout-btn">@SharedLocalizer["Place Order"]</button>
                     </div>
