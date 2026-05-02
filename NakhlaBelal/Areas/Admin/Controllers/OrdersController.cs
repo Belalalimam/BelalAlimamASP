@@ -169,7 +169,7 @@ namespace NAKHLA.Controllers.Admin
         // POST: Admin/Orders/UpdateStatus
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdateStatus(int orderId, string orderStatus, string paymentStatus, string adminNotes)
+        public async Task<IActionResult> UpdateStatus(int orderId, string orderStatus, string paymentStatus, string adminNotes, string? paymentMethod = null, string? paymentTransactionId = null, string? carrier = null, string? trackingNumber = null)
         {
             // ابحث عن الطلب من الداتابيز مباشرة
             var orderDb = await _context.Orders.FirstOrDefaultAsync(o => o.Id == orderId);
@@ -180,12 +180,27 @@ namespace NAKHLA.Controllers.Admin
             {
                 // احفظ الحالة القديمة لمعرفة هل فعلاً تغيّرت
                 var previousStatus = orderDb.OrderStatus;
+                var previousPaymentStatus = orderDb.PaymentStatus;
 
                 // نعدل القيم يدوياً على الكائن الذي يتم تتبعه حالياً
                 orderDb.OrderStatus = orderStatus;
                 orderDb.PaymentStatus = paymentStatus;
                 orderDb.AdminNotes = adminNotes;
                 orderDb.UpdatedAt = DateTime.Now;
+
+                // تحديث طريقة الدفع ومعرّف المعاملة (إن تم تمريرها)
+                if (!string.IsNullOrWhiteSpace(paymentMethod))
+                    orderDb.PaymentMethod = paymentMethod;
+                if (paymentTransactionId != null)
+                    orderDb.PaymentTransactionId = paymentTransactionId;
+                if (!string.IsNullOrWhiteSpace(carrier))
+                    orderDb.Carrier = carrier;
+                if (!string.IsNullOrWhiteSpace(trackingNumber))
+                    orderDb.TrackingNumber = trackingNumber;
+
+                // تسجيل تاريخ الدفع تلقائياً عند تحويل الحالة لـ Paid
+                if (paymentStatus == "Paid" && previousPaymentStatus != "Paid" && orderDb.PaymentDate == null)
+                    orderDb.PaymentDate = DateTime.Now;
 
                 // تحديث التواريخ تلقائياً (منطقك السابق ممتاز)
                 if (orderStatus == "Processing" && orderDb.ProcessingDate == null) orderDb.ProcessingDate = DateTime.Now;

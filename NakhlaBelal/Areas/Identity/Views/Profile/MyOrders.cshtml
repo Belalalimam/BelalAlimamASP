@@ -64,6 +64,14 @@
     .status-Delivered { background: #d1fae5; color: #065f46; }
     .status-Cancelled { background: #fee2e2; color: #991b1b; }
 
+    .pay-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 10px 0; padding: 8px 12px; background: #f9fafb; border-radius: 8px; font-size: 12px; }
+    .pay-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-weight: 600; }
+    .pay-method { background: #eef2ff; color: #3730a3; }
+    .pay-status-Paid { background: #d1fae5; color: #065f46; }
+    .pay-status-Pending { background: #fef3c7; color: #92400e; }
+    .pay-status-Failed { background: #fee2e2; color: #991b1b; }
+    .pay-status-Refunded { background: #e5e7eb; color: #374151; }
+
     .empty-state {
         text-align: center; padding: 80px 20px; background: #fff;
         border-radius: 12px; border: 1px solid #e5e7eb;
@@ -127,6 +135,38 @@
                             <div class="oc-date">@order.CreatedAt.ToString("dd MMM yyyy - HH:mm")</div>
                         </div>
                         <span class="status-badge status-@order.OrderStatus">@order.OrderStatus</span>
+                    </div>
+
+                    @{
+                        string payMethodLabel = order.PaymentMethod switch
+                        {
+                            "Cash on Delivery" => "💵 الدفع عند الاستلام",
+                            "Paymob-Card" => "💳 بطاقة ائتمانية",
+                            "Paymob-Wallet" => "📱 محفظة إلكترونية",
+                            _ => order.PaymentMethod
+                        };
+                        string payStatusLabel = order.PaymentStatus switch
+                        {
+                            "Paid" => "تم الدفع",
+                            "Pending" => "قيد الدفع",
+                            "Failed" => "فشل الدفع",
+                            "Refunded" => "مسترجع",
+                            _ => order.PaymentStatus
+                        };
+                        string payIcon = order.PaymentStatus switch
+                        {
+                            "Paid" => "ri-check-double-line",
+                            "Pending" => "ri-time-line",
+                            "Failed" => "ri-close-circle-line",
+                            "Refunded" => "ri-refund-2-line",
+                            _ => "ri-information-line"
+                        };
+                    }
+                    <div class="pay-row">
+                        <span class="pay-chip pay-method">@payMethodLabel</span>
+                        <span class="pay-chip pay-status-@order.PaymentStatus">
+                            <i class="@payIcon"></i> @payStatusLabel
+                        </span>
                     </div>
 
                     <div class="order-items-preview">

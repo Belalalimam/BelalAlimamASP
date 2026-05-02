@@ -8,7 +8,6 @@
 <form id="editOrderForm" method="post" action="/Admin/Orders/UpdateStatus">
     @Html.AntiForgeryToken()
     <input type="hidden" name="orderId" value="@Model.Id" />
-    <input type="hidden" name="paymentStatus" value="@Model.PaymentStatus" />
 
     <div class="modal-body">
         @* ملخص احترافي *@
@@ -44,6 +43,38 @@
                         <option value="Delivered" selected="@(Model.OrderStatus == "Delivered")">Delivered</option>
                         <option value="Cancelled" selected="@(Model.OrderStatus == "Cancelled")">Cancelled</option>
                     </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold"><i class="fas fa-money-bill-wave me-1"></i> Payment Status</label>
+                    <select name="paymentStatus" class="form-select shadow-none">
+                        <option value="Pending" selected="@(Model.PaymentStatus == "Pending")">Pending</option>
+                        <option value="Paid" selected="@(Model.PaymentStatus == "Paid")">Paid</option>
+                        <option value="Failed" selected="@(Model.PaymentStatus == "Failed")">Failed</option>
+                        <option value="Refunded" selected="@(Model.PaymentStatus == "Refunded")">Refunded</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold"><i class="fas fa-credit-card me-1"></i> Payment Method</label>
+                    <select name="paymentMethod" class="form-select shadow-none">
+                        <option value="Cash on Delivery" selected="@(Model.PaymentMethod == "Cash on Delivery")">Cash on Delivery</option>
+                        <option value="Paymob-Card" selected="@(Model.PaymentMethod == "Paymob-Card")">Paymob - Card</option>
+                        <option value="Paymob-Wallet" selected="@(Model.PaymentMethod == "Paymob-Wallet")">Paymob - Wallet</option>
+                        <option value="Credit Card" selected="@(Model.PaymentMethod == "Credit Card")">Credit Card</option>
+                        <option value="Bank Transfer" selected="@(Model.PaymentMethod == "Bank Transfer")">Bank Transfer</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label class="form-label fw-bold"><i class="fas fa-receipt me-1"></i> Transaction ID</label>
+                    <input type="text" name="paymentTransactionId" value="@Model.PaymentTransactionId" class="form-control shadow-none" placeholder="معرّف العملية" />
                 </div>
             </div>
 

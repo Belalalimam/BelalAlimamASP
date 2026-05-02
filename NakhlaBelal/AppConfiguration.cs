@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using NakhlaBelal.DataAccess;
 using NakhlaBelal.Models;
 using NakhlaBelal.Repositories;
@@ -14,6 +15,10 @@ namespace NakhlaBelal
     {
         public static void RegisterConfig(this IServiceCollection services, string connection, IConfiguration configuration)
         {
+            services.Configure<PaymobSettings>(configuration.GetSection("Paymob"));
+            services.AddScoped<IPaymobService, PaymobService>();
+            services.AddHttpClient();
+
             services.AddDbContext<ApplicationDbContext>(option =>
             {
                 //option.UseSqlServer(builder.Configuration.GetSection("ConnectionStrings")["DefaultConnection"]);

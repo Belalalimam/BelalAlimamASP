@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NakhlaBelal.Models;
+using NakhlaBelal.Utitlies;
 using Stripe;
 using Stripe.Checkout;
 using System.ComponentModel.DataAnnotations;
@@ -21,6 +22,7 @@ namespace NAKHLA.Areas.Customer.Controllers
         private readonly ILogger<CheckoutController> _logger;
         private readonly IWhatsAppService _whatsAppService;
         private readonly IAdminEmailNotifier _adminEmailNotifier;
+        private readonly IPaymobService _paymobService;
 
         public CheckoutController(
             UserManager<ApplicationUser> userManager,
@@ -28,7 +30,8 @@ namespace NAKHLA.Areas.Customer.Controllers
             IRepository<Promotion> promotionRepository,
             ILogger<CheckoutController> logger,
             IWhatsAppService whatsAppService,
-            IAdminEmailNotifier adminEmailNotifier)
+            IAdminEmailNotifier adminEmailNotifier,
+            IPaymobService paymobService)
         {
             _userManager = userManager;
             _context = context;
@@ -36,6 +39,7 @@ namespace NAKHLA.Areas.Customer.Controllers
             _logger = logger;
             _whatsAppService = whatsAppService;
             _adminEmailNotifier = adminEmailNotifier;
+            _paymobService = paymobService;
         }
 
         [HttpGet]
@@ -165,6 +169,10 @@ namespace NAKHLA.Areas.Customer.Controllers
                 model.CartItems = cartItems;
                 return View("Index", model);
             }
+
+            // استخدم نفس حسبة السلة (مصدر واحد للحقيقة) لضمان توافق الإجمالي مع ما يراه العميل ومع Paymob
+            var cartData = await BuildCartDataAsync(cartItems);
+
             // Create order
             var order = new Order
             {
@@ -191,12 +199,12 @@ namespace NAKHLA.Areas.Customer.Controllers
                 BillingZipCode = model.BillingSameAsShipping ? model.ShippingZipCode : model.BillingZipCode,
                 BillingCountry = model.BillingSameAsShipping ? model.ShippingCountry : model.BillingCountry,
 
-                // Order amounts — honor shipping option the user picked in the cart (saved in session)
-                Subtotal = cartItems.Sum(c => c.Price * c.Count),
-                ShippingCost = _ResolveShippingCost(),
-                TaxAmount = cartItems.Sum(c => c.Price * c.Count) * 0.08m,
-                DiscountAmount = model.DiscountAmount,
-                TotalAmount = cartItems.Sum(c => c.Price * c.Count) + _ResolveShippingCost() + (cartItems.Sum(c => c.Price * c.Count) * 0.08m) - model.DiscountAmount,
+                // Order amounts — مأخوذة مباشرة من حسبة السلة لضمان التطابق مع شاشة الدفع
+                Subtotal = cartData.Subtotal,
+                ShippingCost = cartData.Shipping,
+                TaxAmount = cartData.Tax,
+                DiscountAmount = cartData.Discount,
+                TotalAmount = cartData.Total,
 
                 // Payment info
                 PaymentMethod = model.PaymentMethod,
@@ -240,8 +248,12 @@ namespace NAKHLA.Areas.Customer.Controllers
                         // 2. إضافة الأوردر (الـ EF لحاله رح يعرف يربط الـ OrderItems ويعطيهم الـ OrderId الصح)
                         await _context.Orders.AddAsync(order);
 
-                        // 3. حذف السلة بنفس اللحظة
-                        _context.Carts.RemoveRange(cartItems);
+                        // 3. حذف السلة فقط للدفع عند الاستلام؛ Paymob يتم تنظيف السلة عند تأكيد الدفع في server callback
+                        bool isPaymobPayment = order.PaymentMethod == "Paymob-Card" || order.PaymentMethod == "Paymob-Wallet";
+                        if (!isPaymobPayment)
+                        {
+                            _context.Carts.RemoveRange(cartItems);
+                        }
 
                         // 4. تحديث بيانات عنوان اليوزر ليسترجعها بالطلبات القادمة
                         var user = await _userManager.FindByIdAsync(userId);
@@ -304,6 +316,14 @@ namespace NAKHLA.Areas.Customer.Controllers
                         order.OrderNumber);
                 }
 
+                // 7. توجيه حسب طريقة الدفع المختارة
+                if (order.PaymentMethod == "Paymob-Card")
+                    return RedirectToAction("ProcessPaymentPaymob", new { orderId = order.Id, paymentMethod = "card" });
+
+                if (order.PaymentMethod == "Paymob-Wallet")
+                    return RedirectToAction("ProcessPaymentPaymob", new { orderId = order.Id, paymentMethod = "wallet" });
+
+                // Cash on Delivery أو غيرها
                 return RedirectToAction("OrderConfirmation", new { orderId = order.Id });
             }
             catch (Exception ex)
@@ -439,6 +459,30 @@ namespace NAKHLA.Areas.Customer.Controllers
             }
 
             return View(order);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ProcessPaymentPaymob(int orderId, string paymentMethod = "card")
+        {
+            var order = await _context.Orders
+                .Include(o => o.OrderItems)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            if (order == null)
+                return NotFound();
+
+            try
+            {
+                string redirectUrl = await _paymobService.CreatePaymentIntentionAsync(order, paymentMethod);
+                await _context.SaveChangesAsync();
+                return Redirect(redirectUrl);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Paymob payment error: " + ex.Message);
+                TempData["error-notification"] = "حدث خطأ أثناء تهيئة الدفع. حاول مرة أخرى.";
+                return RedirectToAction("OrderConfirmation", new { orderId });
+            }
         }
     }
 
